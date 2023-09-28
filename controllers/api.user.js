@@ -1,7 +1,5 @@
 const UserModel = require("../models/model.user");
-const fs = require("fs");
-const path = require("path");
-const {randomUUID} = require("crypto");
+const UploadFile = require("../models/uploadFile");
 exports.addUser = async (req, res) => {
     let file = req.file;
     let password = req.body.password;
@@ -11,7 +9,37 @@ exports.addUser = async (req, res) => {
     let address = req.body.address;
     let email = req.body.email;
     let avatar;
-    validateRegisterUser(res, password, fullName, phoneNumber, role, address, email);
+    if (password == null) {
+        return res.send({message: "Password is required", code: 0});
+    }
+    if (fullName == null) {
+        return res.send({message: "Full name is required", code: 0});
+    }
+    if (phoneNumber == null) {
+        return res.send({message: "Phone number is required", code: 0});
+    }
+    if (role == null) {
+        return res.send({message: "role is required", code: 0});
+    }
+    if (address == null) {
+        return res.send({message: "Address is required", code: 0});
+    }
+    if (email == null) {
+        return res.send({message: "Email is required", code: 0});
+    }
+    try {
+        let userPhone = await UserModel.userModel.findOne({phoneNumber: phoneNumber});
+        let userEmail = await UserModel.userModel.findOne({email: email});
+        if (userPhone) {
+            return res.send({message: "phone number already exists", code: 0});
+        }
+        if (userEmail) {
+            return res.send({message: "email already exists", code: 0});
+        }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "register user fail"});
+    }
     if (file == null) {
         avatar = "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg";
         try {
@@ -41,8 +69,7 @@ exports.addUser = async (req, res) => {
                 address: address,
                 email: email,
             });
-            await user.save();
-            let statusCode = await uploadFile(req, res, user._id.toString());
+            let statusCode = await UploadFile.uploadFile(req, res, user._id.toString(), "user");
             if (statusCode === 0) {
                 return res.send({message: "Upload file fail", code: 0});
             } else {
@@ -92,14 +119,8 @@ exports.editUser = async (req, res) => {
         }
         if (file != null) {
             const pathImgDelete = user.avatar.split("3000");
-            fs.unlink(path.join(__dirname, "../public" + pathImgDelete[1]), (err) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("delete success");
-                }
-            });
-            let statusCode = await uploadFile(req, res, user._id.toString());
+            UploadFile.deleteFile(res, pathImgDelete[1]);
+            let statusCode = await UploadFile.uploadFile(req, res, user._id.toString(), "user");
             if (statusCode === 0) {
                 return res.send({message: "Upload file fail", code: 0});
             } else {
@@ -113,58 +134,7 @@ exports.editUser = async (req, res) => {
         return res.send({message: "User not found", code: 0});
     }
 }
-
-const uploadFile = (req, res, userId)=> {
-    return new Promise((resolve, reject) => {
-        let uploadDir = path.join(__dirname, "../public/images", userId);
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, {recursive: true});
-        }
-        let fileItem = req.file;
-        if (!fileItem) {
-            reject("0");
-        }
-        let filePath = path.join(uploadDir, randomUUID() + ".jpg");
-        fs.rename(fileItem.path, filePath, (err) => {
-            if (err) {
-                console.log(err.message);
-                reject("0");
-            } else {
-                fs.readdir(uploadDir, async (err, files) => {
-                    if (err) {
-                        console.log(err.message);
-                        reject("0");
-                    }
-                    const imageUrls = files.map((file) => {
-                        return `${req.protocol}://${req.get(
-                            "host"
-                        )}/images/${userId}/${file}`;
-                    });
-                    resolve(imageUrls.toString());
-                });
-            }
-        });
-    });
-}
-
-const validateRegisterUser = (res, password, fullName, phoneNumber, role, address, email) => {
-    if (password == null) {
-        return res.send({message: "Password is required", code: 0});
-    }
-    if (fullName == null) {
-        return res.send({message: "Full name is required", code: 0});
-    }
-    if (phoneNumber == null) {
-        return res.send({message: "Phone number is required", code: 0});
-    }
-    if (role == null) {
-        return res.send({message: "role is required", code: 0});
-    }
-    if (address == null) {
-        return res.send({message: "Address is required", code: 0});
-    }
-    if (email == null) {
-        return res.send({message: "Email is required", code: 0});
-    }
+exports.loginUser = (req, res) => {
+    return res.send({user: req.user, message: "Login success", code: 1});
 }
 

@@ -1,4 +1,4 @@
-const db = require("../models/database");
+const db = require("./database");
 const userSchema = db.mongoose.Schema(
     {
         avatar: {type: String, required: false},
