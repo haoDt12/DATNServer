@@ -1,5 +1,16 @@
 const UserModel = require("../models/model.user");
 const UploadFile = require("../models/uploadFile");
+const match = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/bmp",
+    "image/tiff",
+    "image/webp",
+    "image/svg+xml",
+    "image/x-icon",
+    "image/jp2",
+    "image/heif"];
 exports.addUser = async (req, res) => {
     let file = req.file;
     let password = req.body.password;
@@ -59,6 +70,9 @@ exports.addUser = async (req, res) => {
             return res.send({message: "Add user fail", code: 0})
         }
     } else {
+        if (match.indexOf(file.mimetype) === -1) {
+            return res.send({message: "The uploaded file is not in the correct format", code: 0});
+        }
         try {
             let user = new UserModel.userModel({
                 avatar: avatar,
@@ -69,7 +83,7 @@ exports.addUser = async (req, res) => {
                 address: address,
                 email: email,
             });
-            let statusCode = await UploadFile.uploadFile(req, res, user._id.toString(), "user");
+            let statusCode = await UploadFile.uploadFile(req, user._id.toString(), "user", file, ".jpg");
             if (statusCode === 0) {
                 return res.send({message: "Upload file fail", code: 0});
             } else {
@@ -118,9 +132,12 @@ exports.editUser = async (req, res) => {
             user.email = email;
         }
         if (file != null) {
+            if (match.indexOf(file.mimetype) === -1) {
+                return res.send({message: "The uploaded file is not in the correct format", code: 0});
+            }
             const pathImgDelete = user.avatar.split("3000");
             UploadFile.deleteFile(res, pathImgDelete[1]);
-            let statusCode = await UploadFile.uploadFile(req, res, user._id.toString(), "user");
+            let statusCode = await UploadFile.uploadFile(req, user._id.toString(), "user", file, ".jpg");
             if (statusCode === 0) {
                 return res.send({message: "Upload file fail", code: 0});
             } else {
