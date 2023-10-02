@@ -32,9 +32,6 @@ exports.addUser = async (req, res) => {
     if (role == null) {
         return res.send({message: "role is required", code: 0});
     }
-    if (address == null) {
-        return res.send({message: "Address is required", code: 0});
-    }
     if (email == null) {
         return res.send({message: "Email is required", code: 0});
     }
@@ -52,15 +49,12 @@ exports.addUser = async (req, res) => {
         return res.send({message: "register user fail"});
     }
     if (file == null) {
-        avatar = "https://inkythuatso.com/uploads/thumbnails/800/2023/03/9-anh-dai-dien-trang-inkythuatso-03-15-27-03.jpg";
         try {
             let user = new UserModel.userModel({
-                avatar: avatar,
                 password: password,
                 fullName: fullName,
                 phoneNumber: phoneNumber,
                 role: role,
-                address: address,
                 email: email,
             });
             await user.save();
@@ -75,12 +69,10 @@ exports.addUser = async (req, res) => {
         }
         try {
             let user = new UserModel.userModel({
-                avatar: avatar,
                 password: password,
                 fullName: fullName,
                 phoneNumber: phoneNumber,
                 role: role,
-                address: address,
                 email: email,
             });
             let statusCode = await UploadFile.uploadFile(req, user._id.toString(), "user", file, ".jpg");
