@@ -1,0 +1,22 @@
+const express = require('express');
+const router = express.Router();
+const Middleware = require("../middleware/middleware");
+const ApiUserController = require("../controllers/api.user");
+const ApiCategory = require("../controllers/api.category");
+const ApiProduct = require("../controllers/api.product");
+const multer = require("multer");
+const upload = multer({dest: "uploads/"});
+/* GET users listing. */
+router.post('/registerUser',upload.single('file'), ApiUserController.addUser);
+router.post('/editUser',Middleware.authorizationToken, upload.single('file'), ApiUserController.editUser);
+router.post('/loginUser',Middleware.validateUser, ApiUserController.loginUser);
+router.post('/addCategory',Middleware.authorizationToken, upload.single('file'), ApiCategory.addCategory);
+router.post('/editCategory',Middleware.authorizationToken, upload.single('file'), ApiCategory.editCategory);
+router.post('/deleteCategory',Middleware.authorizationToken, ApiCategory.deleteCategory);
+router.post('/getListCategory',Middleware.authorizationToken, ApiCategory.getListCategory);
+router.post('/addProduct',Middleware.authorizationToken, upload.fields([{name:"imgCover",maxCount: 1},{name:"listImgDes",maxCount: 10},{name:"videoDes",maxCount: 1}]), ApiProduct.addProduct);
+router.post('/getListProduct',Middleware.authorizationToken, ApiProduct.getListProduct);
+router.post('/deleteProduct',Middleware.authorizationToken, ApiProduct.deleteProduct);
+router.post('/editProduct',Middleware.authorizationToken, upload.fields([{name:"imgCover",maxCount: 1},{name:"listImgDes",maxCount: 10},{name:"videoDes",maxCount: 1}]),ApiProduct.editProduct);
+router.post('/getListUser',Middleware.authorizationToken,ApiUserController.getListUser);
+module.exports = router;
