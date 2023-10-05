@@ -11,6 +11,9 @@ const match = [
     "image/x-icon",
     "image/jp2",
     "image/heif"];
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
 exports.addUser = async (req, res) => {
     let file = req.file;
     let password = req.body.password;
@@ -23,17 +26,29 @@ exports.addUser = async (req, res) => {
     if (password == null) {
         return res.send({message: "Password is required", code: 0});
     }
+    if (!passwordRegex.test(password)) {
+        return res.send({
+            message: "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
+            code: 0
+        });
+    }
     if (fullName == null) {
         return res.send({message: "Full name is required", code: 0});
     }
     if (phoneNumber == null) {
         return res.send({message: "Phone number is required", code: 0});
     }
+    if (!phoneNumberRegex.test(phoneNumber)) {
+        return res.send({message: "The phone number is not in the correct format", code: 0});
+    }
     if (role == null) {
         return res.send({message: "role is required", code: 0});
     }
     if (email == null) {
         return res.send({message: "Email is required", code: 0});
+    }
+    if (!emailRegex.test(email)) {
+        return res.send({message: "The email is not in the correct format", code: 0});
     }
     try {
         let userPhone = await UserModel.userModel.findOne({phoneNumber: phoneNumber});
@@ -144,6 +159,14 @@ exports.editUser = async (req, res) => {
     }
 }
 exports.loginUser = (req, res) => {
-    return res.send({user: req.user, message: "Login success", code: 1});
+    return res.send({user: req.user, token: req.token, message: "Login success", code: 1});
 }
-
+exports.getListUser = async (req, res) => {
+    try {
+        let listUser = await UserModel.userModel.find();
+        return res.send({listUser: listUser, message: "get list user success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "get list user fail", code: 0});
+    }
+}

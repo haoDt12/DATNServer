@@ -1,5 +1,15 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    div.container-fluid
+        div
+            ul.nav.nav-tabs
+                li.nav-item
+                    a.nav-link.active(aria-current='page', href='') Product
+                li.nav-item
+                    a.nav-link(href='') Link
+                li.nav-item
+                    a.nav-link(href='') Link
+        div
+            h5.text-center.mt-2= title
+
