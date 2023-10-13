@@ -12,7 +12,7 @@ exports.validateUser = async (req, res, next) => {
     }
     try {
         let userEmail = await UserModel.userModel.findOne({email: username, password: password});
-        let userPhone = await UserModel.userModel.findOne({phoneNumber: username, password: password});
+        let userPhone = await UserModel.userModel.findOne({phone_number: username, password: password});
         if (!userEmail && !userPhone) {
             return res.send({message: "Login fail please check your username and password", code: 0})
         }
