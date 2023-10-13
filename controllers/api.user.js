@@ -16,12 +16,24 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$
 const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
 exports.addUser = async (req, res) => {
     let file = req.file;
+    console.log(file)
     let password = req.body.password;
-    let fullName = req.body.fullName;
-    let phoneNumber = req.body.phoneNumber;
-    let role = req.body.role;
+    let full_name = req.body.full_name;
+    let phone_number = req.body.phone_number;
     let address = req.body.address;
     let email = req.body.email;
+    let currentDate = new Date();
+    let options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        timeZoneName: 'short'
+    };
+    let date = currentDate.toLocaleDateString("en-US", options);
     let avatar;
     if (password == null) {
         return res.send({message: "Password is required", code: 0});
@@ -32,17 +44,11 @@ exports.addUser = async (req, res) => {
             code: 0
         });
     }
-    if (fullName == null) {
-        return res.send({message: "Full name is required", code: 0});
-    }
-    if (phoneNumber == null) {
+    if (phone_number == null) {
         return res.send({message: "Phone number is required", code: 0});
     }
-    if (!phoneNumberRegex.test(phoneNumber)) {
+    if (!phoneNumberRegex.test(phone_number)) {
         return res.send({message: "The phone number is not in the correct format", code: 0});
-    }
-    if (role == null) {
-        return res.send({message: "role is required", code: 0});
     }
     if (email == null) {
         return res.send({message: "Email is required", code: 0});
@@ -51,7 +57,7 @@ exports.addUser = async (req, res) => {
         return res.send({message: "The email is not in the correct format", code: 0});
     }
     try {
-        let userPhone = await UserModel.userModel.findOne({phoneNumber: phoneNumber});
+        let userPhone = await UserModel.userModel.findOne({phone_number: phone_number});
         let userEmail = await UserModel.userModel.findOne({email: email});
         if (userPhone) {
             return res.send({message: "phone number already exists", code: 0});
@@ -67,10 +73,11 @@ exports.addUser = async (req, res) => {
         try {
             let user = new UserModel.userModel({
                 password: password,
-                fullName: fullName,
-                phoneNumber: phoneNumber,
-                role: role,
+                full_name: full_name,
+                phone_number: phone_number,
+                date: date,
                 email: email,
+                address: address,
             });
             await user.save();
             return res.send({message: "Register user success", code: 1});
@@ -85,10 +92,11 @@ exports.addUser = async (req, res) => {
         try {
             let user = new UserModel.userModel({
                 password: password,
-                fullName: fullName,
-                phoneNumber: phoneNumber,
-                role: role,
+                full_name: full_name,
+                phone_number: phone_number,
+                date: date,
                 email: email,
+                address: address,
             });
             let statusCode = await UploadFile.uploadFile(req, user._id.toString(), "user", file, ".jpg");
             if (statusCode === 0) {
@@ -107,9 +115,8 @@ exports.addUser = async (req, res) => {
 exports.editUser = async (req, res) => {
     let file = req.file;
     let password = req.body.password;
-    let fullName = req.body.fullName;
-    let phoneNumber = req.body.phoneNumber;
-    let role = req.body.role;
+    let full_name = req.body.full_name;
+    let phone_number = req.body.phone_number;
     let address = req.body.address;
     let email = req.body.email;
     if (req.body.userId == null) {
@@ -123,14 +130,11 @@ exports.editUser = async (req, res) => {
         if (password != null) {
             user.password = password;
         }
-        if (fullName != null) {
-            user.fullName = fullName;
+        if (full_name != null) {
+            user.full_name = full_name;
         }
-        if (phoneNumber != null) {
-            user.phoneNumber = phoneNumber;
-        }
-        if (role != null) {
-            user.role = role;
+        if (phone_number != null) {
+            user.phone_number = phone_number;
         }
         if (address != null) {
             user.adress = address;

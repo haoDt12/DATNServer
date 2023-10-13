@@ -31,9 +31,9 @@ exports.addProduct = async (req, res) => {
     let category = req.body.category;
     let title = req.body.title;
     let description = req.body.description;
-    let fileImgCover = req.files["imgCover"];
-    let fileListImgDes = req.files["listImgDes"];
-    let fileVideoDes = req.files["videoDes"];
+    let fileimg_cover = req.files["img_cover"];
+    let filelist_img = req.files["list_img"];
+    let filevideo = req.files["video"];
     let color = req.body.color;
     let price = req.body.price;
     let quantity = req.body.quantity;
@@ -48,13 +48,13 @@ exports.addProduct = async (req, res) => {
     if (description == null) {
         return res.send({message: "description is required", code: 0});
     }
-    if (fileImgCover === undefined) {
+    if (fileimg_cover === undefined) {
         return res.send({message: "img cover is required", code: 0});
     }
-    if (fileListImgDes === undefined) {
+    if (filelist_img === undefined) {
         return res.send({message: "img des is required", code: 0});
     }
-    if (fileVideoDes === undefined) {
+    if (filevideo === undefined) {
         return res.send({message: "video des is required", code: 0});
     }
     if (color == null) {
@@ -73,16 +73,16 @@ exports.addProduct = async (req, res) => {
         return res.send({message: "date is required", code: 0});
     }
     let isFormat = true;
-    console.log({fileImgCover: fileImgCover, fileListImgDes: fileListImgDes, fileVideoDes: fileVideoDes});
-    fileListImgDes.map(item => {
+    console.log({fileimg_cover: fileimg_cover, filelist_img: filelist_img, filevideo: filevideo});
+    filelist_img.map(item => {
         if (matchImg.indexOf(item.mimetype) === -1) {
             isFormat = false;
         }
     });
-    if (matchImg.indexOf(fileImgCover[0].mimetype) === -1) {
+    if (matchImg.indexOf(fileimg_cover[0].mimetype) === -1) {
         isFormat = false;
     }
-    if (matchVideo.indexOf(fileVideoDes[0].mimetype) === -1) {
+    if (matchVideo.indexOf(filevideo[0].mimetype) === -1) {
         isFormat = false;
     }
     if (isFormat === false) {
@@ -99,21 +99,21 @@ exports.addProduct = async (req, res) => {
         date: req.body.date,
     })
     try {
-        let imgCover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileImgCover[0], ".jpg");
-        if (imgCover === 0) {
+        let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
+        if (img_cover === 0) {
             return res.send({message: "upload file fail", code: 0});
         }
-        let videoDes = await UploadFile.uploadFile(req, product._id.toString(), "product", fileVideoDes[0], ".mp4");
-        if (videoDes === 0) {
+        let video = await UploadFile.uploadFile(req, product._id.toString(), "product", filevideo[0], ".mp4");
+        if (video === 0) {
             return res.send({message: "upload file fail", code: 0});
         }
-        let listImgDes = await UploadFile.uploadFiles(req, product._id.toString(), "product", fileListImgDes, ".jpg");
-        if (listImgDes === 0) {
+        let list_img = await UploadFile.uploadFiles(req, product._id.toString(), "product", filelist_img, ".jpg");
+        if (list_img === 0) {
             return res.send({message: "upload file fail", code: 0});
         }
-        product.imgCover = imgCover;
-        product.listImgDes = listImgDes;
-        product.videoDes = videoDes;
+        product.img_cover = img_cover;
+        product.list_img = list_img;
+        product.video = video;
         await product.save();
         return res.send({message: "add product success", code: 1});
     } catch (e) {
@@ -140,13 +140,13 @@ exports.deleteProduct = async (req, res) => {
         if (!product) {
             return res.send({message: "product not found", code: 0});
         }
-        let listImgDes = product.listImgDes;
-        let imgCover = product.imgCover;
-        let videoDes = product.videoDes;
-        listImgDes.push(imgCover, videoDes);
-        let pathFolderDelete = imgCover.split("/")[5];
+        let list_img = product.list_img;
+        let img_cover = product.img_cover;
+        let video = product.video;
+        list_img.push(img_cover, video);
+        let pathFolderDelete = img_cover.split("/")[5];
         let isRemove = true;
-        listImgDes.map((item) => {
+        list_img.map((item) => {
             fs.unlink(path.join(__dirname, "../public" + item.split("3000")[1]), (err) => {
                 if (err) {
                     isRemove = false;
@@ -179,9 +179,9 @@ exports.editProduct = async (req, res) => {
     let quantity = req.body.quantity;
     let sold = req.body.sold;
     let date = req.body.date;
-    let fileImgCover = req.files["imgCover"];
-    let fileListImgDes = req.files["listImgDes"];
-    let fileVideoDes = req.files["videoDes"];
+    let fileimg_cover = req.files["img_cover"];
+    let filelist_img = req.files["list_img"];
+    let filevideo = req.files["video"];
     if (productId == null) {
         return res.send({message: "product not found", code: 0});
     }
@@ -215,20 +215,20 @@ exports.editProduct = async (req, res) => {
         if (date !== undefined) {
             product.date = date;
         }
-        if (fileImgCover !== undefined) {
-            if (matchImg.indexOf(fileImgCover[0].mimetype) === -1) {
+        if (fileimg_cover !== undefined) {
+            if (matchImg.indexOf(fileimg_cover[0].mimetype) === -1) {
                 return res.send({message: "The uploaded file is not in the correct format", code: 0});
             }
-            UploadFile.deleteFile(res, product.imgCover.split("3000")[1]);
-            let imgCover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileImgCover[0], ".jpg");
-            if (imgCover === 0) {
+            UploadFile.deleteFile(res, product.img_cover.split("3000")[1]);
+            let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
+            if (img_cover === 0) {
                 return res.send({message: "upload file fail", code: 0});
             }
-            product.imgCover = imgCover;
+            product.img_cover = img_cover;
         }
-        if (fileListImgDes !== undefined) {
+        if (filelist_img !== undefined) {
             let isFormat = true;
-            fileListImgDes.map(item => {
+            filelist_img.map(item => {
                 if (matchImg.indexOf(item.mimetype) === -1) {
                     isFormat = false;
                 }
@@ -236,25 +236,25 @@ exports.editProduct = async (req, res) => {
             if (isFormat === false) {
                 return res.send({message: "The uploaded file is not in the correct format", code: 0});
             }
-            product.listImgDes.map((item) => {
+            product.list_img.map((item) => {
                 UploadFile.deleteFile(res, item.split("3000")[1]);
             })
-            let listImgDes = await UploadFile.uploadFiles(req, product._id.toString(), "product", fileListImgDes, ".jpg");
-            if (listImgDes === 0) {
+            let list_img = await UploadFile.uploadFiles(req, product._id.toString(), "product", filelist_img, ".jpg");
+            if (list_img === 0) {
                 return res.send({message: "upload file fail", code: 0});
             }
-            product.listImgDes = listImgDes;
+            product.list_img = list_img;
         }
-        if (fileVideoDes !== undefined) {
-            if (matchImg.indexOf(fileVideoDes[0].mimetype) === -1) {
+        if (filevideo !== undefined) {
+            if (matchImg.indexOf(filevideo[0].mimetype) === -1) {
                 return res.send({message: "The uploaded file is not in the correct format", code: 0});
             }
-            UploadFile.deleteFile(res, product.videoDes.split("3000")[1]);
-            let videoDes = await UploadFile.uploadFile(req, product._id.toString(), "product", fileVideoDes[0], ".mp4");
-            if (videoDes === 0) {
+            UploadFile.deleteFile(res, product.video.split("3000")[1]);
+            let video = await UploadFile.uploadFile(req, product._id.toString(), "product", filevideo[0], ".mp4");
+            if (video === 0) {
                 return res.send({message: "upload file fail", code: 0});
             }
-            product.videoDes = videoDes;
+            product.video = video;
         }
         return res.send({message: "Edit product success", code: 1});
     } catch (e) {
