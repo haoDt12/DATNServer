@@ -1,0 +1,282 @@
+extends layout
+
+block content
+    #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
+        // Sidebar Start
+        aside.left-sidebar
+            // Sidebar scroll
+            div
+                .brand-logo.d-flex.align-items-center.justify-content-between
+                    a.text-nowrap.logo-img(href='/stech.manager/home')
+                        img(src='/images/logos/logo.jpeg' width='180' alt='')
+                    #sidebarCollapse.close-btn.d-xl-none.d-block.sidebartoggler.cursor-pointer
+                        i.ti.ti-x.fs-8
+                // Sidebar navigation
+                nav.sidebar-nav.scroll-sidebar(data-simplebar='')
+                    ul#sidebarnav
+                        li.nav-small-cap
+                            i.ti.ti-dots.nav-small-cap-icon.fs-4
+                            span.hide-menu Home
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/home' aria-expanded='false')
+                                span
+                                    i.ti.ti-layout-dashboard
+                                span.hide-menu Dashboard
+                        li.nav-small-cap
+                            i.ti.ti-dots.nav-small-cap-icon.fs-4
+                            span.hide-menu Manager
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
+                                span
+                                    i.ti.ti-article
+                                span.hide-menu Product
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
+                                span
+                                    i.ti.ti-alert-circle
+                                span.hide-menu Category
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
+                                span
+                                    i.ti.ti-cards
+                                span.hide-menu User
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/order' aria-expanded='false')
+                                span
+                                    i.ti.ti-file-description
+                                span.hide-menu Order
+                        li.nav-small-cap
+                            i.ti.ti-dots.nav-small-cap-icon.fs-4
+                            span.hide-menu AUTH
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/login' aria-expanded='false')
+                                span
+                                    i.ti.ti-login
+                                span.hide-menu Login
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/add' aria-expanded='false')
+                                span
+                                    i.ti.ti-user-plus
+                                span.hide-menu Add Admin
+                // End Sidebar navigation
+            // End Sidebar scroll
+        // Sidebar End
+        // Main wrapper
+        .body-wrapper
+            // Header Start
+            header.app-header
+                nav.navbar.navbar-expand-lg.navbar-light
+                    ul.navbar-nav
+                        li.nav-item.d-block.d-xl-none
+                            a#headerCollapse.nav-link.sidebartoggler.nav-icon-hover(href='javascript:void(0)')
+                                i.ti.ti-menu-2
+                    #navbarNav.navbar-collapse.justify-content-end.px-0
+                        ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                            li.nav-item.dropdown
+                                a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
+                                    img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
+                                .dropdown-menu.dropdown-menu-end.dropdown-menu-animate-up(aria-labelledby='drop2')
+                                    .message-body
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                            i.ti.ti-user.fs-6
+                                            p.mb-0.fs-3 My Profile
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                            i.ti.ti-mail.fs-6
+                                            p.mb-0.fs-3 My Account
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                            i.ti.ti-list-check.fs-6
+                                            p.mb-0.fs-3 My Task
+                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
+            // Header End
+            .container-fluid
+                // Row 1
+                .col-md-12
+                    .user-dashboard-info-box.table-responsive.mb-0.bg-white.p-4.shadow-sm
+                        table.table.manage-candidates-top.mb-0
+                            thead
+                                tr
+                                    th Candidate Name
+                                    th.text-center Status
+                                    th.action.text-right Action
+                            tbody
+                                tr.candidates-list
+                                    td.title
+                                        .thumb
+                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar7.png' alt='')
+                                        .candidate-list-details
+                                            .candidate-list-info
+                                                .candidate-list-title
+                                                    h5.mb-0
+                                                        a(href='#') Brooke Kelly
+                                                .candidate-list-option
+                                                    ul.list-unstyled
+                                                        li
+                                                            i.fas.fa-filter.pr-1
+                                                            | Information Technology
+                                                        li
+                                                            i.fas.fa-map-marker-alt.pr-1
+                                                            | Rolling Meadows, IL 60008
+                                    td.candidate-list-favourite-time.text-center
+                                        a.candidate-list-favourite.order-2.text-danger(href='#')
+                                            i.fas.fa-heart
+                                        span.candidate-list-time.order-1 Shortlisted
+                                    td
+                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
+                                            li
+                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
+                                                    i.far.fa-eye
+                                            li
+                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
+                                                    i.fas.fa-pencil-alt
+                                            li
+                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
+                                                    i.far.fa-trash-alt
+                                tr.candidates-list
+                                    td.title
+                                        .thumb
+                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar1.png' alt='')
+                                        .candidate-list-details
+                                            .candidate-list-info
+                                                .candidate-list-title
+                                                    h5.mb-0
+                                                        a(href='#') Ronald Bradley
+                                                .candidate-list-option
+                                                    ul.list-unstyled
+                                                        li
+                                                            i.fas.fa-filter.pr-1
+                                                            | Human Resources
+                                                        li
+                                                            i.fas.fa-map-marker-alt.pr-1
+                                                            | Monroe Township, NJ 08831
+                                    td.candidate-list-favourite-time.text-center
+                                        a.candidate-list-favourite.order-2.text-danger(href='#')
+                                            i.fas.fa-heart
+                                        span.candidate-list-time.order-1 Shortlisted
+                                    td
+                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
+                                            li
+                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
+                                                    i.far.fa-eye
+                                            li
+                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
+                                                    i.fas.fa-pencil-alt
+                                            li
+                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
+                                                    i.far.fa-trash-alt
+                                tr.candidates-list
+                                    td.title
+                                        .thumb
+                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar2.png' alt='')
+                                        .candidate-list-details
+                                            .candidate-list-info
+                                                .candidate-list-title
+                                                    h5.mb-0
+                                                        a(href='#') Rafael Briggs
+                                                .candidate-list-option
+                                                    ul.list-unstyled
+                                                        li
+                                                            i.fas.fa-filter.pr-1
+                                                            | Recruitment Consultancy
+                                                        li
+                                                            i.fas.fa-map-marker-alt.pr-1
+                                                            | Haines City, FL 33844
+                                    td.candidate-list-favourite-time.text-center
+                                        a.candidate-list-favourite.order-2.text-danger(href='#')
+                                            i.fas.fa-heart
+                                        span.candidate-list-time.order-1 Shortlisted
+                                    td
+                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
+                                            li
+                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
+                                                    i.far.fa-eye
+                                            li
+                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
+                                                    i.fas.fa-pencil-alt
+                                            li
+                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
+                                                    i.far.fa-trash-alt
+                                tr.candidates-list
+                                    td.title
+                                        .thumb
+                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar3.png' alt='')
+                                        .candidate-list-details
+                                            .candidate-list-info
+                                                .candidate-list-title
+                                                    h5.mb-0
+                                                        a(href='#') Vickie Meyer
+                                                .candidate-list-option
+                                                    ul.list-unstyled
+                                                        li
+                                                            i.fas.fa-filter.pr-1
+                                                            | Human Resources
+                                                        li
+                                                            i.fas.fa-map-marker-alt.pr-1
+                                                            | Minneapolis, MN 55406
+                                    td.candidate-list-favourite-time.text-center
+                                        a.candidate-list-favourite.order-2.text-danger(href='#')
+                                            i.fas.fa-heart
+                                        span.candidate-list-time.order-1 Shortlisted
+                                    td
+                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
+                                            li
+                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
+                                                    i.far.fa-eye
+                                            li
+                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
+                                                    i.fas.fa-pencil-alt
+                                            li
+                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
+                                                    i.far.fa-trash-alt
+                                tr.candidates-list
+                                    td.title
+                                        .thumb
+                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar4.png' alt='')
+                                        .candidate-list-details
+                                            .candidate-list-info
+                                                .candidate-list-title
+                                                    h5.mb-0
+                                                        a(href='#') Nichole Haynes
+                                                .candidate-list-option
+                                                    ul.list-unstyled
+                                                        li
+                                                            i.fas.fa-filter.pr-1
+                                                            | Information Technology
+                                                        li
+                                                            i.fas.fa-map-marker-alt.pr-1
+                                                            | Botchergate, Carlisle
+                                    td.candidate-list-favourite-time.text-center
+                                        a.candidate-list-favourite.order-2.text-danger(href='#')
+                                            i.fas.fa-heart
+                                        span.candidate-list-time.order-1 Shortlisted
+                                    td
+                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
+                                            li
+                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
+                                                    i.far.fa-eye
+                                            li
+                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
+                                                    i.fas.fa-pencil-alt
+                                            li
+                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
+                                                    i.far.fa-trash-alt
+                        .text-center.mt-3.mt-sm-3
+                            ul.pagination.justify-content-center.mb-0
+                                li.page-item.disabled
+                                    span.page-link Prev
+                                li.page-item.active(aria-current='page')
+                                    span.page-link 1
+                                    span.sr-only (current)
+                                li.page-item
+                                    a.page-link(href='#') 2
+                                li.page-item
+                                    a.page-link(href='#') 3
+                                li.page-item
+                                    a.page-link(href='#') ...
+                                li.page-item
+                                    a.page-link(href='#') 25
+                                li.page-item
+                                    a.page-link(href='#') Next
+                .py-6.px-6.text-center
+                    p.mb-0.fs-4
+                        | Design and Developed by
+                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') &nbsp;STECH

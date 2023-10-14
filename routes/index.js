@@ -17,4 +17,7 @@ router.get('/stech.manager/login', function (req, res, next) {
 router.get('/stech.manager/add', function (req, res, next) {
     res.render('addAdmin');
 });
+router.get('/stech.manager/user', function (req, res, next) {
+    res.render('user');
+});
 module.exports = router;
