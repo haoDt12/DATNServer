@@ -1,15 +1,392 @@
 extends layout
 
 block content
-    div.container-fluid
-        div
-            ul.nav.nav-tabs
-                li.nav-item
-                    a.nav-link.active(aria-current='page', href='') Product
-                li.nav-item
-                    a.nav-link(href='') Link
-                li.nav-item
-                    a.nav-link(href='') Link
-        div
-            h5.text-center.mt-2= title
-
+    #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
+        // Sidebar Start
+        aside.left-sidebar
+            // Sidebar scroll
+            div
+                .brand-logo.d-flex.align-items-center.justify-content-between
+                    a.text-nowrap.logo-img(href='/stech.manager/home')
+                        img(src='/images/logos/logo.jpeg' width='180' alt='')
+                    #sidebarCollapse.close-btn.d-xl-none.d-block.sidebartoggler.cursor-pointer
+                        i.ti.ti-x.fs-8
+                // Sidebar navigation
+                nav.sidebar-nav.scroll-sidebar(data-simplebar='')
+                    ul#sidebarnav
+                        li.nav-small-cap
+                            i.ti.ti-dots.nav-small-cap-icon.fs-4
+                            span.hide-menu Home
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/home' aria-expanded='false')
+                                span
+                                    i.ti.ti-layout-dashboard
+                                span.hide-menu Dashboard
+                        li.nav-small-cap
+                            i.ti.ti-dots.nav-small-cap-icon.fs-4
+                            span.hide-menu Manager
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
+                                span
+                                    i.ti.ti-article
+                                span.hide-menu Product
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
+                                span
+                                    i.ti.ti-alert-circle
+                                span.hide-menu Category
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
+                                span
+                                    i.ti.ti-cards
+                                span.hide-menu User
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/order' aria-expanded='false')
+                                span
+                                    i.ti.ti-file-description
+                                span.hide-menu Order
+                        li.nav-small-cap
+                            i.ti.ti-dots.nav-small-cap-icon.fs-4
+                            span.hide-menu AUTH
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/login' aria-expanded='false')
+                                span
+                                    i.ti.ti-login
+                                span.hide-menu Login
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/add' aria-expanded='false')
+                                span
+                                    i.ti.ti-user-plus
+                                span.hide-menu Add Admin
+                // End Sidebar navigation
+            // End Sidebar scroll
+        // Sidebar End
+        // Main wrapper
+        .body-wrapper
+            // Header Start
+            header.app-header
+                nav.navbar.navbar-expand-lg.navbar-light
+                    ul.navbar-nav
+                        li.nav-item.d-block.d-xl-none
+                            a#headerCollapse.nav-link.sidebartoggler.nav-icon-hover(href='javascript:void(0)')
+                                i.ti.ti-menu-2
+                    #navbarNav.navbar-collapse.justify-content-end.px-0
+                        ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                            li.nav-item.dropdown
+                                a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
+                                    img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
+                                .dropdown-menu.dropdown-menu-end.dropdown-menu-animate-up(aria-labelledby='drop2')
+                                    .message-body
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                            i.ti.ti-user.fs-6
+                                            p.mb-0.fs-3 My Profile
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                            i.ti.ti-mail.fs-6
+                                            p.mb-0.fs-3 My Account
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                            i.ti.ti-list-check.fs-6
+                                            p.mb-0.fs-3 My Task
+                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
+            // Header End
+            .container-fluid
+                // Row 1
+                .row
+                    .col-lg-8.d-flex.align-items-strech
+                        .card.w-100
+                            .card-body
+                                .d-sm-flex.d-block.align-items-center.justify-content-between.mb-9
+                                    .mb-3.mb-sm-0
+                                        h5.card-title.fw-semibold Sales Overview
+                                    div
+                                        select.form-select
+                                            option(value='1') March 2023
+                                            option(value='2') April 2023
+                                            option(value='3') May 2023
+                                            option(value='4') June 2023
+                                #chart
+                    .col-lg-4
+                        .row
+                            .col-lg-12
+                                // Yearly Breakup
+                                .card.overflow-hidden
+                                    .card-body.p-4
+                                        h5.card-title.mb-9.fw-semibold Yearly Breakup
+                                        .row.align-items-center
+                                            .col-8
+                                                h4.fw-semibold.mb-3 $36,358
+                                                .d-flex.align-items-center.mb-3
+                                                    span.me-1.rounded-circle.bg-light-success.round-20.d-flex.align-items-center.justify-content-center
+                                                        i.ti.ti-arrow-up-left.text-success
+                                                    p.text-dark.me-1.fs-3.mb-0 +9%
+                                                    p.fs-3.mb-0 last year
+                                                .d-flex.align-items-center
+                                                    .me-4
+                                                        span.round-8.bg-primary.rounded-circle.me-2.d-inline-block
+                                                        span.fs-2 2023
+                                                    div
+                                                        span.round-8.bg-light-primary.rounded-circle.me-2.d-inline-block
+                                                        span.fs-2 2023
+                                            .col-4
+                                                .d-flex.justify-content-center
+                                                    #breakup
+                            .col-lg-12
+                                // Monthly Earnings
+                                .card
+                                    .card-body
+                                        .row.alig.n-items-start
+                                            .col-8
+                                                h5.card-title.mb-9.fw-semibold  Monthly Earnings
+                                                h4.fw-semibold.mb-3 $6,820
+                                                .d-flex.align-items-center.pb-1
+                                                    span.me-2.rounded-circle.bg-light-danger.round-20.d-flex.align-items-center.justify-content-center
+                                                        i.ti.ti-arrow-down-right.text-danger
+                                                    p.text-dark.me-1.fs-3.mb-0 +9%
+                                                    p.fs-3.mb-0 last year
+                                            .col-4
+                                                .d-flex.justify-content-end
+                                                    .text-white.bg-secondary.rounded-circle.p-6.d-flex.align-items-center.justify-content-center
+                                                        i.ti.ti-currency-dollar.fs-6
+                                    #earning
+                .row
+                    .col-lg-4.d-flex.align-items-stretch
+                        .card.w-100
+                            .card-body.p-4
+                                .mb-4
+                                    h5.card-title.fw-semibold Recent Transactions
+                                ul.timeline-widget.mb-0.position-relative.mb-n5
+                                    li.timeline-item.d-flex.position-relative.overflow-hidden
+                                        .timeline-time.text-dark.flex-shrink-0.text-end 09:30
+                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
+                                            span.timeline-badge.border-2.border.border-primary.flex-shrink-0.my-8
+                                            span.timeline-badge-border.d-block.flex-shrink-0
+                                        .timeline-desc.fs-3.text-dark.mt-n1 Payment received from John Doe of $385.90
+                                    li.timeline-item.d-flex.position-relative.overflow-hidden
+                                        .timeline-time.text-dark.flex-shrink-0.text-end 10:00 am
+                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
+                                            span.timeline-badge.border-2.border.border-info.flex-shrink-0.my-8
+                                            span.timeline-badge-border.d-block.flex-shrink-0
+                                        .timeline-desc.fs-3.text-dark.mt-n1.fw-semibold
+                                            | New sale recorded
+                                            a.text-primary.d-block.fw-normal(href='javascript:void(0)') #ML-3467
+                                    li.timeline-item.d-flex.position-relative.overflow-hidden
+                                        .timeline-time.text-dark.flex-shrink-0.text-end 12:00 am
+                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
+                                            span.timeline-badge.border-2.border.border-success.flex-shrink-0.my-8
+                                            span.timeline-badge-border.d-block.flex-shrink-0
+                                        .timeline-desc.fs-3.text-dark.mt-n1 Payment was made of $64.95 to Michael
+                                    li.timeline-item.d-flex.position-relative.overflow-hidden
+                                        .timeline-time.text-dark.flex-shrink-0.text-end 09:30 am
+                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
+                                            span.timeline-badge.border-2.border.border-warning.flex-shrink-0.my-8
+                                            span.timeline-badge-border.d-block.flex-shrink-0
+                                        .timeline-desc.fs-3.text-dark.mt-n1.fw-semibold
+                                            | New sale recorded
+                                            a.text-primary.d-block.fw-normal(href='javascript:void(0)') #ML-3467
+                                    li.timeline-item.d-flex.position-relative.overflow-hidden
+                                        .timeline-time.text-dark.flex-shrink-0.text-end 09:30 am
+                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
+                                            span.timeline-badge.border-2.border.border-danger.flex-shrink-0.my-8
+                                            span.timeline-badge-border.d-block.flex-shrink-0
+                                        .timeline-desc.fs-3.text-dark.mt-n1.fw-semibold
+                                            | New arrival recorded
+                                    li.timeline-item.d-flex.position-relative.overflow-hidden
+                                        .timeline-time.text-dark.flex-shrink-0.text-end 12:00 am
+                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
+                                            span.timeline-badge.border-2.border.border-success.flex-shrink-0.my-8
+                                        .timeline-desc.fs-3.text-dark.mt-n1 Payment Done
+                    .col-lg-8.d-flex.align-items-stretch
+                        .card.w-100
+                            .card-body.p-4
+                                h5.card-title.fw-semibold.mb-4 Recent Transactions
+                                .table-responsive
+                                    table.table.text-nowrap.mb-0.align-middle
+                                        thead.text-dark.fs-4
+                                            tr
+                                                th.border-bottom-0
+                                                    h6.fw-semibold.mb-0 Id
+                                                th.border-bottom-0
+                                                    h6.fw-semibold.mb-0 Assigned
+                                                th.border-bottom-0
+                                                    h6.fw-semibold.mb-0 Name
+                                                th.border-bottom-0
+                                                    h6.fw-semibold.mb-0 Priority
+                                                th.border-bottom-0
+                                                    h6.fw-semibold.mb-0 Budget
+                                        tbody
+                                            tr
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0 1
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-1 Sunil Joshi
+                                                    span.fw-normal Web Designer
+                                                td.border-bottom-0
+                                                    p.mb-0.fw-normal Elite Admin
+                                                td.border-bottom-0
+                                                    .d-flex.align-items-center.gap-2
+                                                        span.badge.bg-primary.rounded-3.fw-semibold Low
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0.fs-4 $3.9
+                                            tr
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0 2
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-1 Andrew McDownland
+                                                    span.fw-normal Project Manager
+                                                td.border-bottom-0
+                                                    p.mb-0.fw-normal Real Homes WP Theme
+                                                td.border-bottom-0
+                                                    .d-flex.align-items-center.gap-2
+                                                        span.badge.bg-secondary.rounded-3.fw-semibold Medium
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0.fs-4 $24.5k
+                                            tr
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0 3
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-1 Christopher Jamil
+                                                    span.fw-normal Project Manager
+                                                td.border-bottom-0
+                                                    p.mb-0.fw-normal MedicalPro WP Theme
+                                                td.border-bottom-0
+                                                    .d-flex.align-items-center.gap-2
+                                                        span.badge.bg-danger.rounded-3.fw-semibold High
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0.fs-4 $12.8k
+                                            tr
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0 4
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-1 Nirav Joshi
+                                                    span.fw-normal Frontend Engineer
+                                                td.border-bottom-0
+                                                    p.mb-0.fw-normal Hosting Press HTML
+                                                td.border-bottom-0
+                                                    .d-flex.align-items-center.gap-2
+                                                        span.badge.bg-success.rounded-3.fw-semibold Critical
+                                                td.border-bottom-0
+                                                    h6.fw-semibold.mb-0.fs-4 $2.4k
+                .row
+                    .col-sm-6.col-xl-3
+                        .card.overflow-hidden.rounded-2
+                            .position-relative
+                                a(href='javascript:void(0)')
+                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
+                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
+                                    i.ti.ti-basket.fs-4
+                            .card-body.pt-3.p-4
+                                h6.fw-semibold.fs-4 Boat Headphone
+                                .d-flex.align-items-center.justify-content-between
+                                    h6.fw-semibold.fs-4.mb-0
+                                        | $50
+                                        span.ms-2.fw-normal.text-muted.fs-3
+                                            del $65
+                                    ul.list-unstyled.d-flex.align-items-center.mb-0
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                    .col-sm-6.col-xl-3
+                        .card.overflow-hidden.rounded-2
+                            .position-relative
+                                a(href='javascript:void(0)')
+                                    img.card-img-top.rounded-0(src='/images/products/s5.jpg' alt='...')
+                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
+                                    i.ti.ti-basket.fs-4
+                            .card-body.pt-3.p-4
+                                h6.fw-semibold.fs-4 MacBook Air Pro
+                                .d-flex.align-items-center.justify-content-between
+                                    h6.fw-semibold.fs-4.mb-0
+                                        | $650
+                                        span.ms-2.fw-normal.text-muted.fs-3
+                                            del $900
+                                    ul.list-unstyled.d-flex.align-items-center.mb-0
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                    .col-sm-6.col-xl-3
+                        .card.overflow-hidden.rounded-2
+                            .position-relative
+                                a(href='javascript:void(0)')
+                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
+                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
+                                    i.ti.ti-basket.fs-4
+                            .card-body.pt-3.p-4
+                                h6.fw-semibold.fs-4 Boat Headphone
+                                .d-flex.align-items-center.justify-content-between
+                                    h6.fw-semibold.fs-4.mb-0
+                                        | $50
+                                        span.ms-2.fw-normal.text-muted.fs-3
+                                            del $65
+                                    ul.list-unstyled.d-flex.align-items-center.mb-0
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                    .col-sm-6.col-xl-3
+                        .card.overflow-hidden.rounded-2
+                            .position-relative
+                                a(href='javascript:void(0)')
+                                    img.card-img-top.rounded-0(src='/images/products/s5.jpg' alt='...')
+                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
+                                    i.ti.ti-basket.fs-4
+                            .card-body.pt-3.p-4
+                                h6.fw-semibold.fs-4 MacBook Air Pro
+                                .d-flex.align-items-center.justify-content-between
+                                    h6.fw-semibold.fs-4.mb-0
+                                        | $650
+                                        span.ms-2.fw-normal.text-muted.fs-3
+                                            del $900
+                                    ul.list-unstyled.d-flex.align-items-center.mb-0
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a.me-1(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                                        li
+                                            a(href='javascript:void(0)')
+                                                i.ti.ti-star.text-warning
+                .py-6.px-6.text-center
+                    p.mb-0.fs-4
+                        | Design and Developed by
+                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') &nbsp;STECH
