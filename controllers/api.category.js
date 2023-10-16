@@ -13,10 +13,21 @@ const match = [
     "image/x-icon",
     "image/jp2",
     "image/heif"];
+let currentDate = new Date();
+let options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'short'
+};
+let date_time = currentDate.toLocaleDateString("en-US", options);
 exports.addCategory = async (req, res) => {
     let title = req.body.title;
     let file = req.file;
-    let date = req.body.date;
     if (title == null) {
         return res.send({message: "title is required", code: 0});
     }
@@ -26,13 +37,10 @@ exports.addCategory = async (req, res) => {
     if (match.indexOf(file.mimetype) === -1) {
         return res.send({message: "The uploaded file is not in the correct format", code: 0});
     }
-    if (date == null) {
-        return res.send({message: "date is required", code: 0});
-    }
     try {
         let category = new CategoryModel.categoryModel({
             title: title,
-            date: date,
+            date: date_time,
         })
         let statusCode = await UploadFile.uploadFile(req, category._id.toString(), "category", file, ".jpg");
         if (statusCode === 0) {
@@ -50,7 +58,6 @@ exports.addCategory = async (req, res) => {
 
 exports.editCategory = async (req, res) => {
     let file = req.file;
-    let date = req.body.date;
     let title = req.body.title;
     let categoryId = req.body.categoryId;
     if (categoryId == null) {
@@ -63,9 +70,6 @@ exports.editCategory = async (req, res) => {
         }
         if (title != null) {
             category.title = title;
-        }
-        if (date != null) {
-            category.date = date;
         }
         if (file != null) {
             if (match.indexOf(file.mimetype) === -1) {
