@@ -4,6 +4,7 @@ const Middleware = require("../middleware/middleware");
 const ApiUserController = require("../controllers/api.user");
 const ApiCategory = require("../controllers/api.category");
 const ApiProduct = require("../controllers/api.product");
+const ApiAddress = require("../controllers/api.address");
 const multer = require("multer");
 const upload = multer({dest: "uploads/"});
 /* GET users listing. */
@@ -19,4 +20,7 @@ router.post('/getListProduct',Middleware.authorizationToken, ApiProduct.getListP
 router.post('/deleteProduct',Middleware.authorizationToken, ApiProduct.deleteProduct);
 router.post('/editProduct',Middleware.authorizationToken, upload.fields([{name:"img_cover",maxCount: 1},{name:"list_img",maxCount: 10},{name:"video",maxCount: 1}]),ApiProduct.editProduct);
 router.post('/getListUser',Middleware.authorizationToken,ApiUserController.getListUser);
+router.post('/addAddress',Middleware.authorizationToken,ApiAddress.addAddress);
+router.post('/editAddress',Middleware.authorizationToken,ApiAddress.editAddress);
+router.post('/deleteAddress',Middleware.authorizationToken,ApiAddress.deleteAddress);
 module.exports = router;
