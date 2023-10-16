@@ -11,8 +11,8 @@ exports.validateUser = async (req, res, next) => {
         return res.send({message: "password is required", code: 0});
     }
     try {
-        let userEmail = await UserModel.userModel.findOne({email: username, password: password});
-        let userPhone = await UserModel.userModel.findOne({phone_number: username, password: password});
+        let userEmail = await UserModel.userModel.findOne({email: username, password: password}).populate("address");
+        let userPhone = await UserModel.userModel.findOne({phone_number: username, password: password}).populate("address");
         if (!userEmail && !userPhone) {
             return res.send({message: "Login fail please check your username and password", code: 0})
         }

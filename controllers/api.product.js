@@ -38,7 +38,18 @@ exports.addProduct = async (req, res) => {
     let price = req.body.price;
     let quantity = req.body.quantity;
     let sold = req.body.sold;
-    let date = req.body.date;
+    let currentDate = new Date();
+    let options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        timeZoneName: 'short'
+    };
+    let date_time = currentDate.toLocaleDateString("en-US", options);
     if (category == null) {
         return res.send({message: "category is required", code: 0});
     }
@@ -69,11 +80,16 @@ exports.addProduct = async (req, res) => {
     if (sold == null) {
         return res.send({message: "sold is required", code: 0});
     }
-    if (date == null) {
-        return res.send({message: "date is required", code: 0});
+    if(isNaN(price)){
+        return res.send({message: "price is number", code: 0});
+    }
+    if(isNaN(quantity)){
+        return res.send({message: "quantity is number", code: 0});
+    }
+    if(isNaN(sold)){
+        return res.send({message: "sold is number", code: 0});
     }
     let isFormat = true;
-    console.log({fileimg_cover: fileimg_cover, filelist_img: filelist_img, filevideo: filevideo});
     filelist_img.map(item => {
         if (matchImg.indexOf(item.mimetype) === -1) {
             isFormat = false;
@@ -96,7 +112,7 @@ exports.addProduct = async (req, res) => {
         price: req.body.price,
         quantity: req.body.quantity,
         sold: req.body.sold,
-        date: req.body.date,
+        date: date_time,
     })
     try {
         let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
@@ -178,7 +194,6 @@ exports.editProduct = async (req, res) => {
     let price = req.body.price;
     let quantity = req.body.quantity;
     let sold = req.body.sold;
-    let date = req.body.date;
     let fileimg_cover = req.files["img_cover"];
     let filelist_img = req.files["list_img"];
     let filevideo = req.files["video"];
@@ -211,9 +226,6 @@ exports.editProduct = async (req, res) => {
         }
         if (sold !== undefined) {
             product.sold = sold;
-        }
-        if (date !== undefined) {
-            product.date = date;
         }
         if (fileimg_cover !== undefined) {
             if (matchImg.indexOf(fileimg_cover[0].mimetype) === -1) {
