@@ -1,5 +1,6 @@
 const UserModel = require("../models/model.user");
 const UploadFile = require("../models/uploadFile");
+const moment = require('moment');
 const match = [
     "image/jpeg",
     "image/png",
@@ -22,18 +23,8 @@ exports.addUser = async (req, res) => {
     let phone_number = req.body.phone_number;
     let address = req.body.address;
     let email = req.body.email;
-    let currentDate = new Date();
-    let options = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        timeZoneName: 'short'
-    };
-    let date = currentDate.toLocaleDateString("en-US", options);
+    let date = new Date();
+    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     let avatar;
     if (password == null) {
         return res.send({message: "Password is required", code: 0});
@@ -75,7 +66,7 @@ exports.addUser = async (req, res) => {
                 password: password,
                 full_name: full_name,
                 phone_number: phone_number,
-                date: date,
+                date: date_time,
                 email: email,
                 address: address,
             });
@@ -94,7 +85,7 @@ exports.addUser = async (req, res) => {
                 password: password,
                 full_name: full_name,
                 phone_number: phone_number,
-                date: date,
+                date: date_time,
                 email: email,
                 address: address,
             });

@@ -17,6 +17,7 @@
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "mine": "^0.1.0",
+    "moment": "^2.29.4",
     "mongodb": "^6.1.0",
     "mongoose": "^7.5.2",
     "morgan": "~1.9.1",

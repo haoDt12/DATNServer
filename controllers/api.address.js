@@ -1,10 +1,13 @@
 const UserModel = require("../models/model.user");
 const AddressModel = require("../models/model.address");
+const moment = require('moment');
 exports.addAddress = async (req, res, next) => {
     let userId = req.body.userId;
     let name = req.body.name;
     let detail = req.body.detail;
     let phone_number = req.body.phone_number;
+    let date = new Date();
+    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
     if (name == null) {
         return res.send({message: "name is required", code: 0});
@@ -30,6 +33,7 @@ exports.addAddress = async (req, res, next) => {
             name: name,
             detail: detail,
             phone_number: phone_number,
+            date:date_time,
         })
         let currentAddress = user.address;
         currentAddress.push(addAddress._id.toString());

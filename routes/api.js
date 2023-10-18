@@ -5,9 +5,10 @@ const ApiUserController = require("../controllers/api.user");
 const ApiCategory = require("../controllers/api.category");
 const ApiProduct = require("../controllers/api.product");
 const ApiAddress = require("../controllers/api.address");
+const ApiOrder = require("../controllers/api.order");
 const multer = require("multer");
 const upload = multer({dest: "uploads/"});
-/* GET users listing. */
+/* GET api listing. */
 router.post('/registerUser',upload.single('file'), ApiUserController.addUser);
 router.post('/editUser',Middleware.authorizationToken, upload.single('file'), ApiUserController.editUser);
 router.post('/loginUser',Middleware.validateUser, ApiUserController.loginUser);
@@ -23,4 +24,8 @@ router.post('/getListUser',Middleware.authorizationToken,ApiUserController.getLi
 router.post('/addAddress',Middleware.authorizationToken,ApiAddress.addAddress);
 router.post('/editAddress',Middleware.authorizationToken,ApiAddress.editAddress);
 router.post('/deleteAddress',Middleware.authorizationToken,ApiAddress.deleteAddress);
+router.post('/createOrder',Middleware.authorizationToken,ApiOrder.creatOrder);
+router.post('/getOrderById',Middleware.authorizationToken,ApiOrder.getOrderByUserId);
+router.post('/getOrder',Middleware.authorizationToken,ApiOrder.getOrder);
+router.post('/deleteOrder',Middleware.authorizationToken,ApiOrder.deleteOrder);
 module.exports = router;

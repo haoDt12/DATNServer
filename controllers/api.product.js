@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const CategoryModel = require("../models/model.category");
 const UploadFile = require("../models/uploadFile");
+const moment = require('moment');
 const matchImg = [
     "image/jpeg",
     "image/png",
@@ -38,18 +39,10 @@ exports.addProduct = async (req, res) => {
     let price = req.body.price;
     let quantity = req.body.quantity;
     let sold = req.body.sold;
-    let currentDate = new Date();
-    let options = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        timeZoneName: 'short'
-    };
-    let date_time = currentDate.toLocaleDateString("en-US", options);
+    let ram = req.body.ram;
+    let rom = req.body.rom;
+    let date = new Date();
+    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (category == null) {
         return res.send({message: "category is required", code: 0});
     }
@@ -68,7 +61,7 @@ exports.addProduct = async (req, res) => {
     if (filevideo === undefined) {
         return res.send({message: "video des is required", code: 0});
     }
-    if (color == null) {
+    if (color === undefined) {
         return res.send({message: "color is required", code: 0});
     }
     if (price == null) {
@@ -80,13 +73,13 @@ exports.addProduct = async (req, res) => {
     if (sold == null) {
         return res.send({message: "sold is required", code: 0});
     }
-    if(isNaN(price)){
+    if (isNaN(price)) {
         return res.send({message: "price is number", code: 0});
     }
-    if(isNaN(quantity)){
+    if (isNaN(quantity)) {
         return res.send({message: "quantity is number", code: 0});
     }
-    if(isNaN(sold)){
+    if (isNaN(sold)) {
         return res.send({message: "sold is number", code: 0});
     }
     let isFormat = true;
@@ -105,14 +98,16 @@ exports.addProduct = async (req, res) => {
         return res.send({message: "The uploaded file is not in the correct format", code: 0});
     }
     let product = new ProductModel.productModel({
-        category: req.body.category,
-        title: req.body.title,
-        description: req.body.description,
-        color: req.body.color,
-        price: req.body.price,
-        quantity: req.body.quantity,
-        sold: req.body.sold,
+        category: category,
+        title: title,
+        description: description,
+        color: color,
+        price: price,
+        quantity: quantity,
+        sold: sold,
         date: date_time,
+        ram: ram,
+        rom: rom,
     })
     try {
         let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
@@ -197,6 +192,8 @@ exports.editProduct = async (req, res) => {
     let fileimg_cover = req.files["img_cover"];
     let filelist_img = req.files["list_img"];
     let filevideo = req.files["video"];
+    let ram = req.body.ram;
+    let rom = req.body.rom;
     if (productId == null) {
         return res.send({message: "product not found", code: 0});
     }
@@ -206,7 +203,6 @@ exports.editProduct = async (req, res) => {
             return res.send({message: "product not found", code: 0});
         }
         if (category !== undefined) {
-            console.log(product.category);
             product.category = category;
         }
         if (title !== undefined) {
@@ -226,6 +222,12 @@ exports.editProduct = async (req, res) => {
         }
         if (sold !== undefined) {
             product.sold = sold;
+        }
+        if (ram !== undefined) {
+            product.ram = ram;
+        }
+        if (rom !== undefined) {
+            product.rom = rom;
         }
         if (fileimg_cover !== undefined) {
             if (matchImg.indexOf(fileimg_cover[0].mimetype) === -1) {

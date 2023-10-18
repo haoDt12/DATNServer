@@ -5,16 +5,12 @@ const cartSchema = database.mongoose.Schema({
         ref: "user",
         required: true
     },
-    product: [{
+    productId: [{
         type: database.mongoose.Schema.Types.ObjectId,
         ref: 'product',
         required: false
     }],
-    title: {type: String, required: false},
-    img: {type: String, required: true},
-    quantity: {type: Number, required: true},
     total: {type: Number, required: true},
-    price: [{type: Number, required: true}],
     date: {type: String, required: false},
 }, {
     collection: "Cart"

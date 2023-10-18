@@ -2,6 +2,7 @@ const CategoryModel = require("../models/model.category");
 const UploadFile = require("../models/uploadFile");
 const fs = require("fs");
 const path = require("path");
+const moment = require('moment');
 const match = [
     "image/jpeg",
     "image/png",
@@ -13,18 +14,8 @@ const match = [
     "image/x-icon",
     "image/jp2",
     "image/heif"];
-let currentDate = new Date();
-let options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    timeZoneName: 'short'
-};
-let date_time = currentDate.toLocaleDateString("en-US", options);
+let date = new Date();
+let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
 exports.addCategory = async (req, res) => {
     let title = req.body.title;
     let file = req.file;
