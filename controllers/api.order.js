@@ -1,7 +1,7 @@
 const OrderModel = require("../models/model.order");
 const ProductModel = require("../models/model.product");
 const moment = require("moment/moment");
-exports.creatOrder = async (req, res, next) => {
+exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
@@ -36,7 +36,7 @@ exports.creatOrder = async (req, res, next) => {
         return res.send({message: "create order fail", code: 0});
     }
 }
-exports.getOrderByUserId = async (req, res, next) => {
+exports.getOrderByUserId = async (req, res) => {
     let userId = req.body.userId;
     console.log(userId);
     if (userId === null) {
@@ -50,7 +50,7 @@ exports.getOrderByUserId = async (req, res, next) => {
         return res.send({message: "get list order fail", code: 0});
     }
 }
-exports.getOrderByOrderId = async (req, res, next) => {
+exports.getOrderByOrderId = async (req, res) => {
     let orderId = req.body.orderId;
     if (orderId === null) {
         return res.send({message: "orderId is required", code: 0});
@@ -63,7 +63,7 @@ exports.getOrderByOrderId = async (req, res, next) => {
         return res.send({message: "get order fail", code: 0});
     }
 }
-exports.getOrder = async (req, res, next) => {
+exports.getOrder = async (req, res) => {
     try {
         let listOrder = await OrderModel.modelOrder.find().populate("product").populate("addressId");
         return res.send({listOrder: listOrder, message: "get list order success", code: 1});
@@ -72,13 +72,13 @@ exports.getOrder = async (req, res, next) => {
         return res.send({message: "get list order fail", code: 0});
     }
 }
-exports.deleteOrder = async (req, res, next) => {
+exports.deleteOrder = async (req, res) => {
     let orderId = req.body.orderId;
     if (orderId === null) {
         return res.send({message: "orderId is required", code: 0});
     }
     try {
-        let listOrder = await OrderModel.modelOrder.deleteOne({_id: orderId});
+        await OrderModel.modelOrder.deleteOne({_id: orderId});
         return res.send({message: "delete order success", code: 1});
     } catch (e) {
         console.log(e.message);

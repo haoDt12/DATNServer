@@ -14,7 +14,6 @@ const cartSchema = database.mongoose.Schema({
     },
     total: {type: Number, required: true},
     date: {type: String, required: true},
-    price: {type: Number, required: true}
 }, {
     collection: "Cart"
 });
