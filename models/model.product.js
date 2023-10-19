@@ -15,8 +15,7 @@ const productSchema = database.mongoose.Schema({
     list_img: [{type: String, required: true}],
     video: {type: String, required: true},
     date: {type: String, required: true},
-    ram:[{type:String}],
-    rom:[{type: String}]
+    ram_rom:[{type:String}],
 }, {
     collection: "Product"
 });

@@ -18,6 +18,7 @@ router.post('/deleteCategory',Middleware.authorizationToken, ApiCategory.deleteC
 router.post('/getListCategory',Middleware.authorizationToken, ApiCategory.getListCategory);
 router.post('/addProduct',Middleware.authorizationToken, upload.fields([{name:"img_cover",maxCount: 1},{name:"list_img",maxCount: 10},{name:"video",maxCount: 1}]), ApiProduct.addProduct);
 router.post('/getListProduct',Middleware.authorizationToken, ApiProduct.getListProduct);
+router.post('/getProductById',Middleware.authorizationToken, ApiProduct.getProductById);
 router.post('/deleteProduct',Middleware.authorizationToken, ApiProduct.deleteProduct);
 router.post('/editProduct',Middleware.authorizationToken, upload.fields([{name:"img_cover",maxCount: 1},{name:"list_img",maxCount: 10},{name:"video",maxCount: 1}]),ApiProduct.editProduct);
 router.post('/getListUser',Middleware.authorizationToken,ApiUserController.getListUser);
@@ -25,7 +26,7 @@ router.post('/addAddress',Middleware.authorizationToken,ApiAddress.addAddress);
 router.post('/editAddress',Middleware.authorizationToken,ApiAddress.editAddress);
 router.post('/deleteAddress',Middleware.authorizationToken,ApiAddress.deleteAddress);
 router.post('/createOrder',Middleware.authorizationToken,ApiOrder.creatOrder);
-router.post('/getOrderById',Middleware.authorizationToken,ApiOrder.getOrderByUserId);
+router.post('/getOrderByUserId',Middleware.authorizationToken,ApiOrder.getOrderByUserId);
 router.post('/getOrder',Middleware.authorizationToken,ApiOrder.getOrder);
 router.post('/deleteOrder',Middleware.authorizationToken,ApiOrder.deleteOrder);
 module.exports = router;

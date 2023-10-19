@@ -1,17 +1,20 @@
 const database = require("./database");
+const db = require("./database");
 const cartSchema = database.mongoose.Schema({
     userId: {
         type: database.mongoose.Schema.Types.ObjectId,
         ref: "user",
         required: true
     },
-    productId: [{
-        type: database.mongoose.Schema.Types.ObjectId,
-        ref: 'product',
-        required: false
-    }],
+    product: {
+        productId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'product', required: true},
+        color: {type: String, required: true},
+        ram_rom: {type: String, required: false},
+        quantity: {type: Number, required: true}
+    },
     total: {type: Number, required: true},
-    date: {type: String, required: false},
+    date: {type: String, required: true},
+    price: {type: Number, required: true}
 }, {
     collection: "Cart"
 });

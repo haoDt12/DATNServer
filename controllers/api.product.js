@@ -39,8 +39,7 @@ exports.addProduct = async (req, res) => {
     let price = req.body.price;
     let quantity = req.body.quantity;
     let sold = req.body.sold;
-    let ram = req.body.ram;
-    let rom = req.body.rom;
+    let ram_rom = req.body.ram_rom;
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (category == null) {
@@ -106,8 +105,7 @@ exports.addProduct = async (req, res) => {
         quantity: quantity,
         sold: sold,
         date: date_time,
-        ram: ram,
-        rom: rom,
+        ram_rom: ram_rom
     })
     try {
         let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
@@ -139,6 +137,19 @@ exports.getListProduct = async (req, res) => {
     } catch (e) {
         console.log(e.message);
         return res.send({message: "get list product fail", code: 0});
+    }
+}
+exports.getProductById = async (req, res) => {
+    let productId = req.body.productId;
+    if (productId == null) {
+        return res.send({message: "product id is required"})
+    }
+    try {
+        let product = await ProductModel.productModel.findById(productId).populate("category");
+        res.send({product: product, message: "get product success", code: 1})
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "get product fail", code: 0});
     }
 }
 exports.deleteProduct = async (req, res) => {
@@ -192,8 +203,7 @@ exports.editProduct = async (req, res) => {
     let fileimg_cover = req.files["img_cover"];
     let filelist_img = req.files["list_img"];
     let filevideo = req.files["video"];
-    let ram = req.body.ram;
-    let rom = req.body.rom;
+    let ram_rom = req.body.ram_rom;
     if (productId == null) {
         return res.send({message: "product not found", code: 0});
     }
@@ -223,11 +233,8 @@ exports.editProduct = async (req, res) => {
         if (sold !== undefined) {
             product.sold = sold;
         }
-        if (ram !== undefined) {
-            product.ram = ram;
-        }
-        if (rom !== undefined) {
-            product.rom = rom;
+        if (ram_rom !== undefined) {
+            product.ram_rom = ram_rom;
         }
         if (fileimg_cover !== undefined) {
             if (matchImg.indexOf(fileimg_cover[0].mimetype) === -1) {
