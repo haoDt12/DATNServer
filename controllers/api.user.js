@@ -1,6 +1,11 @@
 const UserModel = require("../models/model.user");
+const Otp = require("../models/otp");
+const UserTempModel = require("../models/model.user.temp");
 const UploadFile = require("../models/uploadFile");
 const moment = require('moment');
+const {sendOTPByEmail} = require("../models/otp");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 const match = [
     "image/jpeg",
     "image/png",
@@ -17,7 +22,6 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$
 const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
 exports.addUser = async (req, res) => {
     let file = req.file;
-    console.log(file)
     let password = req.body.password;
     let full_name = req.body.full_name;
     let phone_number = req.body.phone_number;
@@ -56,13 +60,8 @@ exports.addUser = async (req, res) => {
         if (userEmail) {
             return res.send({message: "email already exists", code: 0});
         }
-    } catch (e) {
-        console.log(e.message);
-        return res.send({message: "register user fail"});
-    }
-    if (file == null) {
-        try {
-            let user = new UserModel.userModel({
+        if (file == null) {
+            let userTemp = new UserTempModel.userTemModel({
                 password: password,
                 full_name: full_name,
                 phone_number: phone_number,
@@ -70,18 +69,19 @@ exports.addUser = async (req, res) => {
                 email: email,
                 address: address,
             });
-            await user.save();
-            return res.send({message: "Register user success", code: 1});
-        } catch (e) {
-            console.log(e.message);
-            return res.send({message: "Add user fail", code: 0})
-        }
-    } else {
-        if (match.indexOf(file.mimetype) === -1) {
-            return res.send({message: "The uploaded file is not in the correct format", code: 0});
-        }
-        try {
-            let user = new UserModel.userModel({
+            let index = sendOTPByEmail(email);
+            if (index === 0) {
+                return res.send({message: "Register user fail", code: 0});
+            } else {
+                userTemp.otp = index;
+                await userTemp.save();
+                return res.send({message: "Please verify your account", id: userTemp._id, code: 1});
+            }
+        } else {
+            if (match.indexOf(file.mimetype) === -1) {
+                return res.send({message: "The uploaded file is not in the correct format", code: 0});
+            }
+            let userTemp = new UserTempModel.userTemModel({
                 password: password,
                 full_name: full_name,
                 phone_number: phone_number,
@@ -93,14 +93,20 @@ exports.addUser = async (req, res) => {
             if (statusCode === 0) {
                 return res.send({message: "Upload file fail", code: 0});
             } else {
-                user.avatar = statusCode;
-                await user.save();
-                return res.send({message: "Register user success", code: 1});
+                let index = sendOTPByEmail(email);
+                if (index === 0) {
+                    return res.send({message: "Register user fail", code: 0});
+                } else {
+                    userTemp.avatar = statusCode;
+                    userTemp.otp = index;
+                    await userTemp.save();
+                    return res.send({message: "Please verify your account", id: userTemp._id, code: 1});
+                }
             }
-        } catch (e) {
-            console.log(e.message);
-            return res.send({message: "Add user fail", code: 0})
         }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "register user fail"});
     }
 }
 exports.editUser = async (req, res) => {
@@ -153,8 +159,39 @@ exports.editUser = async (req, res) => {
         return res.send({message: "User not found", code: 0});
     }
 }
-exports.loginUser = (req, res) => {
-    return res.send({user: req.user, token: req.token, message: "Login success", code: 1});
+exports.loginUser = async (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password
+    if (!username) {
+        return res.send({message: "user name is required", code: 0});
+    }
+    if (!password) {
+        return res.send({message: "password is required", code: 0});
+    }
+    try {
+        let userEmail = await UserModel.userModel.findOne({email: username, password: password}).populate("address");
+        let userPhone = await UserModel.userModel.findOne({phone_number: username, password: password,}).populate("address");
+        if (!userEmail && !userPhone) {
+            return res.send({message: "Login fail please check your username and password", code: 0})
+        }
+        if (userPhone) {
+            let token = jwt.sign({user: userPhone}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '900s'});
+            return res.send({user: userPhone, token: req.token, message: "Login success", code: 1});
+        }
+        if (userEmail) {
+            let index = sendOTPByEmail(userEmail.email);
+            if (index === 0) {
+                return res.send({message: "Verify user fail", code: 0});
+            } else {
+                userEmail.otp = index;
+                await userEmail.save();
+                return res.send({message: "Please verify your account", id: userEmail._id, code: 1});
+            }
+        }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "user not found", code: 0})
+    }
 }
 exports.getListUser = async (req, res) => {
     try {
@@ -163,5 +200,51 @@ exports.getListUser = async (req, res) => {
     } catch (e) {
         console.log(e.message);
         return res.send({message: "get list user fail", code: 0});
+    }
+}
+exports.verifyOtpRegister = async (req, res) => {
+    let userTempId = req.body.userTempId;
+    let otp = req.body.otp;
+    if (userTempId === null) {
+        return res.send({message: "userTempId is required", code: 0});
+    }
+    if (otp === null) {
+        return res.send({message: "otp is required", code: 0});
+    }
+    try {
+        let userTemp = await UserTempModel.userTemModel.findOne({_id: userTempId, otp: otp});
+        if (userTemp) {
+            let user = new UserModel.userModel({
+                password: userTemp.password,
+                full_name: userTemp.full_name,
+                phone_number: userTemp.phone_number,
+                date: userTemp.date,
+                email: userTemp.email,
+                address: userTemp.address,
+            })
+            user.otp = null;
+            await user.save();
+            await UserTempModel.userTemModel.deleteMany({email: userTemp.email});
+            return res.send({message: "verify user success", code: 0});
+        } else {
+            return res.send({message: "otp wrong", code: 0});
+        }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "verify user fail", code: 0});
+
+    }
+}
+exports.verifyOtpLogin = async (req, res) => {
+    let userId = req.body.userId;
+    let otp = req.body.otp;
+    let user = await UserModel.userModel.findOne({_id: userId, otp: otp});
+    if (user) {
+        let token = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '900s'});
+        user.otp = null;
+        await user.save();
+        return res.send({user: user, token: req.token, message: "Login success", code: 1});
+    } else {
+        return res.send({message: "otp wrong", code: 0});
     }
 }

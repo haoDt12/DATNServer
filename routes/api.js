@@ -12,8 +12,10 @@ const upload = multer({dest: "uploads/"});
 /* GET api listing. */
 router.post('/registerUser',upload.single('file'), ApiUserController.addUser);
 router.post('/editUser',Middleware.authorizationToken, upload.single('file'), ApiUserController.editUser);
-router.post('/loginUser',Middleware.validateUser, ApiUserController.loginUser);
+router.post('/loginUser', ApiUserController.loginUser);
 router.post('/getListUser',Middleware.authorizationToken,ApiUserController.getListUser);
+router.post('/verifyOtpRegister',ApiUserController.verifyOtpRegister);
+router.post('/verifyOtpLogin',ApiUserController.verifyOtpLogin);
 
 router.post('/addCategory',Middleware.authorizationToken, upload.single('file'), ApiCategory.addCategory);
 router.post('/editCategory',Middleware.authorizationToken, upload.single('file'), ApiCategory.editCategory);
