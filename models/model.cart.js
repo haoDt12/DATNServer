@@ -13,7 +13,7 @@ const cartSchema = database.mongoose.Schema({
         quantity: {type: Number, required: true}
     },
     total: {type: Number, required: true},
-    date: {type: String, required: true},
+    date_time: {type: String, required: true},
 }, {
     collection: "Cart"
 });

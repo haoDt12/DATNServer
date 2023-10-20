@@ -1,6 +1,7 @@
 const ProductModel = require("../models/model.product");
 const CartModel = require("../models/model.cart");
 const moment = require("moment/moment");
+const OrderModel = require("../models/model.order");
 exports.addCart = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
@@ -14,10 +15,8 @@ exports.addCart = async (req, res) => {
     }
     try {
         let total = 0;
-        await Promise.all(product.map(async item => {
-            let product = await ProductModel.productModel.findById(item.productId);
-            total += product.price * item.quantity;
-        }));
+        let productFind = await ProductModel.productModel.findById(product.productId);
+        total += productFind.price * product.quantity;
         let cart = new CartModel.cartModel({
             userId: userId,
             product: product,
@@ -78,5 +77,28 @@ exports.deleteCart = async (req, res) => {
     } catch (e) {
         console.log(e.message);
         return res.send({message: "get list cart fail", code: 0});
+    }
+}
+exports.editCart = async (req, res) => {
+    let userId = req.body.userId;
+    let product = req.body.product
+    let cartId = req.body.cartId;
+    try {
+        let cart = new OrderModel.modelOrder.findById(cartId);
+        if (userId !== null) {
+            cart.userId = userId;
+        }
+        if (product !== undefined) {
+            let total = 0;
+            let productFind = await ProductModel.productModel.findById(product.productId);
+            total += product.price * productFind.quantity;
+            cart.product = product;
+            cart.total = total;
+        }
+        await cart.save();
+        return res.send({message: "edit cart success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "edit cart fail", code: 0});
     }
 }

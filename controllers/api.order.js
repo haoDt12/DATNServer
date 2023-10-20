@@ -85,3 +85,32 @@ exports.deleteOrder = async (req, res) => {
         return res.send({message: "get list order fail", code: 0});
     }
 }
+exports.editOrder = async (req, res) => {
+    let orderId = req.body.orderId;
+    let userId = req.body.userId;
+    let product = req.body.product;
+    let address = req.body.address;
+    try {
+        let order = new OrderModel.modelOrder.findById(orderId);
+        if (userId !== null) {
+            order.userId = userId;
+        }
+        if (product !== undefined) {
+            let total = 0;
+            await Promise.all(product.map(async item => {
+                let product = await ProductModel.productModel.findById(item.productId);
+                total += product.price * item.quantity;
+            }));
+            order.product = product;
+            order.total = total;
+        }
+        if (address !== null) {
+            product.addressId = address;
+        }
+        await order.save();
+        return res.send({message: "edit order success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "edit order fail", code: 0});
+    }
+}
