@@ -1,7 +1,5 @@
 require('dotenv').config()
 const nodemailer = require('nodemailer');
-const otp = Math.floor(100000 + Math.random() * 900000);
-const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không cung cấp mã OTP cho bất kì ai`;
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -11,7 +9,9 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOTPByEmail = (email) => {
+    let otp = Math.floor(100000 + Math.random() * 900000);
     let index = otp;
+    let text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không cung cấp mã OTP cho bất kì ai`;
     const mailOptions = {
         from: process.env.USERNAME_EMAIL,
         to: email,
