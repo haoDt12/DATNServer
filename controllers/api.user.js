@@ -1,10 +1,10 @@
 const UserModel = require("../models/model.user");
-const Otp = require("../models/otp");
 const UserTempModel = require("../models/model.user.temp");
 const UploadFile = require("../models/uploadFile");
 const moment = require('moment');
 const {sendOTPByEmail} = require("../models/otp");
 const jwt = require("jsonwebtoken");
+const axios = require('axios');
 require("dotenv").config();
 const match = [
     "image/jpeg",
@@ -29,7 +29,6 @@ exports.addUser = async (req, res) => {
     let email = req.body.email;
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
-    let avatar;
     if (password == null) {
         return res.send({message: "Password is required", code: 0});
     }
@@ -169,14 +168,48 @@ exports.loginUser = async (req, res) => {
         return res.send({message: "password is required", code: 0});
     }
     try {
-        let userEmail = await UserModel.userModel.findOne({email: username, password: password}).populate("address");
-        let userPhone = await UserModel.userModel.findOne({phone_number: username, password: password,}).populate("address");
+        let userEmail = await UserModel.userModel.findOne({
+            email: username,
+            password: password
+        }).populate("address");
+        let userPhone = await UserModel.userModel.findOne({
+            phone_number: username,
+            password: password,
+        }).populate("address");
         if (!userEmail && !userPhone) {
             return res.send({message: "Login fail please check your username and password", code: 0})
         }
         if (userPhone) {
-            let token = jwt.sign({user: userPhone}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '900s'});
-            return res.send({user: userPhone, token: req.token, message: "Login success", code: 1});
+            const otp = Math.floor(100000 + Math.random() * 900000);
+            const apiKey = process.env.API_KEY;
+            const baseUrl = process.env.BASE_URL;
+            const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không cung cấp mã OTP cho bất kì ai`;
+            const  to = formatPhoneNumber(username);
+            const headers = {
+                'Authorization': `App ${apiKey}`,
+                'Content-Type': 'application/json',
+            };
+
+            const payload = {
+                messages: [
+                    {
+                        destinations: [{to}],
+                        text,
+                    },
+                ],
+            };
+
+            // Gửi tin nhắn OTP bằng InfoBip REST API
+            axios.post(baseUrl, payload, {headers})
+                .then(async () => {
+                    userPhone.otp = otp;
+                    await userPhone.save();
+                    return res.send({message: "Please verify your account", id: userPhone._id, code: 1});
+                })
+                .catch((error) => {
+                    console.error(error.message);
+                    return res.send({message: "Fail send code", code: 0});
+                });
         }
         if (userEmail) {
             let index = sendOTPByEmail(userEmail.email);
@@ -243,8 +276,18 @@ exports.verifyOtpLogin = async (req, res) => {
         let token = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '900s'});
         user.otp = null;
         await user.save();
-        return res.send({user: user, token: req.token, message: "Login success", code: 1});
+        return res.send({user: user, token: token, message: "Login success", code: 1});
     } else {
         return res.send({message: "otp wrong", code: 0});
     }
+}
+const formatPhoneNumber = (phoneNumber) =>{
+    // Loại bỏ tất cả các ký tự không phải số từ chuỗi
+    const numericPhoneNumber = phoneNumber.replace(/\D/g, '');
+
+    if (numericPhoneNumber.startsWith('0')) {
+        return `84${numericPhoneNumber.slice(1)}`;
+    }
+
+    return numericPhoneNumber;
 }
