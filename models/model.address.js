@@ -3,6 +3,7 @@ const addressSchema = mongoose.mongoose.Schema({
     name: {type: String, required: true},
     detail: {type: String, required: true},
     phone_number: {type: String, required: true},
+    date:{type: String, required: true},
 }, {
     collection: "Address"
 });
