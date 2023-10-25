@@ -20,4 +20,7 @@ router.get('/stech.manager/add', function (req, res, next) {
 router.get('/stech.manager/user', function (req, res, next) {
     res.render('user');
 });
+router.get('/stech.manager/verify', function (req, res, next) {
+    res.render('verify');
+});
 module.exports = router;
