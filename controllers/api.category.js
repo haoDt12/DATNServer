@@ -14,19 +14,21 @@ const match = [
     "image/x-icon",
     "image/jp2",
     "image/heif"];
-let date = new Date();
-let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+
+
 exports.addCategory = async (req, res) => {
+    let date = new Date();
+    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     let title = req.body.title;
     let file = req.file;
     if (title == null) {
-        return res.send({message: "title is required", code: 0});
+        return res.send({ message: "title is required", code: 0 });
     }
     if (file == null) {
-        return res.send({message: "img is required", code: 0});
+        return res.send({ message: "img is required", code: 0 });
     }
     if (match.indexOf(file.mimetype) === -1) {
-        return res.send({message: "The uploaded file is not in the correct format", code: 0});
+        return res.send({ message: "The uploaded file is not in the correct format", code: 0 });
     }
     try {
         let category = new CategoryModel.categoryModel({
@@ -35,15 +37,15 @@ exports.addCategory = async (req, res) => {
         })
         let statusCode = await UploadFile.uploadFile(req, category._id.toString(), "category", file, ".jpg");
         if (statusCode === 0) {
-            return res.send({message: "Upload file fail", code: 0});
+            return res.send({ message: "Upload file fail", code: 0 });
         } else {
             category.img = statusCode;
             await category.save();
-            return res.send({message: "add category success", code: 1});
+            return res.send({ message: "add category success", code: 1 });
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "Add category fail", code: 0})
+        return res.send({ message: "Add category fail", code: 0 })
     }
 };
 
@@ -52,46 +54,46 @@ exports.editCategory = async (req, res) => {
     let title = req.body.title;
     let categoryId = req.body.categoryId;
     if (categoryId == null) {
-        return res.send({message: "category not found", code: 0});
+        return res.send({ message: "category not found", code: 0 });
     }
     try {
         let category = await CategoryModel.categoryModel.findById(categoryId);
         if (!category) {
-            return res.send({message: "category not found", code: 0});
+            return res.send({ message: "category not found", code: 0 });
         }
         if (title != null) {
             category.title = title;
         }
         if (file != null) {
             if (match.indexOf(file.mimetype) === -1) {
-                return res.send({message: "The uploaded file is not in the correct format", code: 0});
+                return res.send({ message: "The uploaded file is not in the correct format", code: 0 });
             }
             const pathImgDelete = category.img.split("3000");
             UploadFile.deleteFile(res, pathImgDelete[1]);
             let statusCode = await UploadFile.uploadFile(req, category._id.toString(), "category", file, ".jpg");
             if (statusCode === 0) {
-                return res.send({message: "Upload file fail", code: 0});
+                return res.send({ message: "Upload file fail", code: 0 });
             } else {
                 category.img = statusCode;
             }
         }
         await category.save();
-        return res.send({message: "Edit category success", code: 1});
+        return res.send({ message: "Edit category success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "category not found", code: 0});
+        return res.send({ message: "category not found", code: 0 });
     }
 };
 exports.deleteCategory = async (req, res) => {
     let categoryId = req.body.categoryId;
     if (categoryId == null) {
-        return res.send({message: "category not found", code: 0});
+        return res.send({ message: "category not found", code: 0 });
 
     }
     try {
         let category = await CategoryModel.categoryModel.findById(categoryId);
         if (!category) {
-            return res.send({message: "category not found"});
+            return res.send({ message: "category not found" });
         }
         const pathFolderDelete = category.img.split("/")[5];
         const pathImgDelete = category.img.split("3000")[1];
@@ -103,23 +105,23 @@ exports.deleteCategory = async (req, res) => {
                     if (err) {
                         console.log(err.message);
                     } else {
-                        await CategoryModel.categoryModel.deleteOne({_id: categoryId});
-                        return res.send({message: "Delete category success", code: 1});
+                        await CategoryModel.categoryModel.deleteOne({ _id: categoryId });
+                        return res.send({ message: "Delete category success", code: 1 });
                     }
                 });
             }
         })
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "delete category fail", code: 0});
+        return res.send({ message: "delete category fail", code: 0 });
     }
 }
 exports.getListCategory = async (req, res) => {
     try {
         let listCategory = await CategoryModel.categoryModel.find();
-        return res.send({category: listCategory, message: "get list category success", code: 1});
+        return res.send({ category: listCategory, message: "get list category success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "category not found", code: 0})
+        return res.send({ message: "category not found", code: 0 })
     }
 }

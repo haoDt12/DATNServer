@@ -33,7 +33,7 @@ block content
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
                                 span
-                                    i.ti.ti-alert-circle
+                                    i.ti.ti-category
                                 span.hide-menu Category
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
@@ -72,6 +72,103 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                            //- Add Category
+                            a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='#', id='openCategoryModal') Add Category
+                            script.
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mzc4NDE5YTk1ZWE2NmIzZmZkYTAwZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6InZ1bmduZ3V5ZW5uMTAwMUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IlZ1bmdAMTIzIiwiZnVsbF9uYW1lIjoiVuG7r25nIiwicGhvbmVfbnVtYmVyIjoiMDM2NjExMjcyNiIsInJvbGUiOiJVc2VyIiwiYWRkcmVzcyI6W10sImRhdGUiOiIyMDIzLTEwLTI0LTE1OjQ0OjM4IiwiYWNjb3VudF90eXBlIjoiSW5kaXZpZHVhbCIsIm90cCI6IjYyMDY0OCIsIl9fdiI6MH0sImlhdCI6MTY5ODI2MTU4NSwiZXhwIjoxNjk4MjYyNDg1fQ.q0kNv_hi3rTXjqx1WZdN1qjrotiHL3fiLPTUkopz18M"
+                                    const openCategoryModalButton = document.getElementById("openCategoryModal");
+                                    const categoryModal = new bootstrap.Modal(document.getElementById("categoryModal"));
+                                    const addToCartModal = new bootstrap.Modal(document.getElementById("addToCartModal"));
+                                    const confirmDeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteCate"));
+                                    const saveCategoryButton = document.getElementById("saveCategoryButton");
+                                    const confirmDeleteButton = document.getElementById("confirmDelete");
+                                    const goCart = document.getElementById("goMyCart");
+
+                                    const deleteCateButtons = document.querySelectorAll(".delCate");
+                                    const editCateButton = document.querySelectorAll(".updateCate");
+                                    
+                                    deleteCateButtons.forEach(function (deleteCateBtn) {
+                                        deleteCateBtn.addEventListener("click", function () {
+                                            confirmDeleteModal.show()
+                                            const cateId = this.getAttribute("data-id");
+                                            //- console.log(cateId);
+
+                                            const dataDelete = new URLSearchParams();
+                                            dataDelete.append("categoryId", cateId);
+                                            confirmDeleteButton.addEventListener('click', function() {
+                                                //- Delete data
+                                                fetch('http://localhost:3000/api/deleteCategory', {     
+                                                    headers: {
+                                                        'Authorization': `${token}`,
+                                                        "Content-Type": "application/x-www-form-urlencoded",
+                                                    }, 
+                                                    method: "POST",
+                                                    body: dataDelete,
+                                                })
+                                                .then((response) => {
+                                                    console.log(response)
+                                                    location.reload();
+                                                })
+                                                .catch((error) => {
+                                                    console.error("Error:", error);
+                                                });
+                                            })   
+                                        });
+                                    });
+                                    
+                                    
+
+                                    editCateButton.forEach(function (editCateBtn) {
+                                        editCateBtn.addEventListener("click", function () {
+                                            const cateId = this.getAttribute("data-id");
+                                            console.log(cateId);
+                                        
+                                        });
+                                    });
+
+                                    
+
+                                    goCart.addEventListener("click", function () {
+                                        alert("Updating")
+                                    });
+                                
+
+                                    saveCategoryButton.addEventListener("click", function () {
+                                        const categoryName = document.getElementById("nameCate").value;
+                                        const dateTime = document.getElementById("dateCate").value;
+                                        const file = document.getElementById("imageCate").files[0];
+                                        const addToCartButton = document.getElementById("addToCartButton");
+                                        // Form Data
+                                        const formData = new FormData();
+                                        formData.append("title", categoryName);
+                                        formData.append("date", dateTime);
+                                        formData.append("file", file);
+                                        //- Push data
+                                        fetch('http://localhost:3000/api/addCategory', {     
+                                            headers: {
+                                                'Authorization': `${token}`
+                                            }, 
+                                            method: "POST",
+                                            body: formData,
+                                        })
+                                        .then((response) => {
+                                            console.log(response)
+                                            location.reload();
+                                        })
+                                        .catch((error) => {
+                                            console.error("Error:", error);
+                                        });
+                                        categoryModal.hide();
+                                    });
+                                    
+
+                                    openCategoryModalButton.addEventListener("click", function () {
+                                        categoryModal.show();
+                                    });
+                                });
+                            //- End 
+                            
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -87,83 +184,93 @@ block content
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
+            div#categoryModal.modal.fade
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Thêm thể loại
+                            button.close(type='button', data-bs-dismiss='modal') &times;
+                        .modal-body
+                            form(action="/", method="post")
+                                .mb-4
+                                    .form-group
+                                        label(for="imageCate") Hình ảnh 
+                                        input#imageCate(type="file", name="image", accept="image/*")
+                                .mb-4
+                                    .form-group(hidden)
+                                        label(for="progressCate") Tiến trình
+                                        p#progressCate
+                                .mb-4
+                                    .form-group
+                                        label(for="nameCate") Tên sản phẩm
+                                        input#nameCate(type="text", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+                                .mb-4
+                                    .form-group
+                                        label(for="dateCate") Date
+                                        input#dateCate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
+                        .modal-footer
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
+                            button.btn.btn-primary(type='button', id='saveCategoryButton') Thêm
+            div#addToCartModal.modal.fade
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Thêm vào giỏ hàng
+                            button.close(type='button', data-bs-dismiss='modal') &times;
+                        .modal-body
+                            p Sản phẩm đã được thêm vào giỏ hàng.
+                        .modal-footer
+                            button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Tiếp tục mua
+                            button.btn.btn-primary(type='button' data-bs-dismiss='modal' id='goMyCart') Đi tới giỏ hàng
+            
+            //- Modal Confirm Delete
+            #confirmDeleteCate.modal(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Warning!
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            p Bạn có chắc chắn muốn xoá item này.
+                        .modal-footer
+                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                            button.btn.btn-primary(type='button' id='confirmDelete') Đồng ý
+
+
             // Header End
             .container-fluid
-                // Row 1
                 .row
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Headphone
+                    //- Item Category
+                    each cate in category
+                        .col-sm-6.col-xl-3
+                            .card.overflow-hidden.rounded-2
+                                .position-relative
+                                    a(href='javascript:void(0)')
+                                        img.card-img-top.rounded-0(src=cate.img alt='...' style='max-width: 100%; height: 180px;')
+                                    a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' id='addToCartButton' data-bs-toggle='modal' data-bs-target='#addToCartModal' data-bs-placement='top' data-bs-title='Add To Cart')
+                                        i.ti.ti-basket.fs-4
+                                .card-body.pt-3.p-4
+                                    h6.fw-semibold.fs-4= cate.title
+                                    button.btn.btn-secondary(type='button' class="updateCate" data-id=cate._id) Sửa thông tin
+                                    button.btn.btn-danger(type='button' class='delCate' data-id=cate._id data-bs-toggle="modal" data-bs-target="#confirmDeleteCate") Xoá item
+                //- Start Pagination
+                nav(aria-label='Page navigation example')
+                    ul.pagination.justify-content-end
+                        li.page-item.disabled
+                            a.page-link(href='#' tabindex='-1') Previous
+                        li.page-item.active
+                            a.page-link(href='#') 1
+                        li.page-item
+                            a.page-link(href='#') 2
+                        li.page-item
+                            a.page-link(href='#') 3
+                        li.page-item
+                            a.page-link(href='#') Next
+                //- End Pagination
+
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
-                        | Design and Developed by
-                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') &nbsp;STECH
+                        | Design and Developed by&nbsp;
+                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
+
+
