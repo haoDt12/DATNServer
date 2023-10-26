@@ -116,6 +116,20 @@ exports.deleteCategory = async (req, res) => {
         return res.send({ message: "delete category fail", code: 0 });
     }
 }
+exports.getCategoryById = async (req, res) => {
+    let categoryId = req.body.categoryId;
+    if (categoryId == null) {
+        return res.send({message: "category id is required"})
+    }
+    try {
+        let category = await CategoryModel.categoryModel.findById(categoryId);
+        res.send({category: category, message: "get category success", code: 1})
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "get category fail", code: 0});
+    }
+}
+
 exports.getListCategory = async (req, res) => {
     try {
         let listCategory = await CategoryModel.categoryModel.find();

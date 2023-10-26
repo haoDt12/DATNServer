@@ -19,6 +19,7 @@ router.post('/verifyOtpLogin',ApiUserController.verifyOtpLogin);
 
 router.post('/addCategory',Middleware.authorizationToken, upload.single('file'), ApiCategory.addCategory);
 router.post('/editCategory',Middleware.authorizationToken, upload.single('file'), ApiCategory.editCategory);
+router.post('/getCategoryById',Middleware.authorizationToken, ApiCategory.getCategoryById);
 router.post('/deleteCategory',Middleware.authorizationToken, ApiCategory.deleteCategory);
 router.post('/getListCategory',Middleware.authorizationToken, ApiCategory.getListCategory);
 
