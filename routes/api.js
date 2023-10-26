@@ -13,6 +13,7 @@ const upload = multer({dest: "uploads/"});
 router.post('/registerUser',upload.single('file'), ApiUserController.addUser);
 router.post('/editUser',Middleware.authorizationToken, upload.single('file'), ApiUserController.editUser);
 router.post('/loginUser', ApiUserController.loginUser);
+router.post('/getUserById', Middleware.authorizationToken,ApiUserController.getUserById);
 router.post('/getListUser',Middleware.authorizationToken,ApiUserController.getListUser);
 router.post('/verifyOtpRegister',ApiUserController.verifyOtpRegister);
 router.post('/verifyOtpLogin',ApiUserController.verifyOtpLogin);

@@ -168,14 +168,8 @@ exports.loginUser = async (req, res) => {
         return res.send({message: "password is required", code: 0});
     }
     try {
-        let userEmail = await UserModel.userModel.findOne({
-            email: username,
-            password: password
-        }).populate("address");
-        let userPhone = await UserModel.userModel.findOne({
-            phone_number: username,
-            password: password,
-        }).populate("address");
+        let userEmail = await UserModel.userModel.findOne({email: username, password: password}).populate("address");
+        let userPhone = await UserModel.userModel.findOne({phone_number: username, password: password}).populate("address");
         if (!userEmail && !userPhone) {
             return res.send({message: "Login fail please check your username and password", code: 0})
         }
@@ -184,7 +178,7 @@ exports.loginUser = async (req, res) => {
             const apiKey = process.env.API_KEY;
             const baseUrl = process.env.BASE_URL;
             const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không cung cấp mã OTP cho bất kì ai`;
-            const  to = formatPhoneNumber(username);
+            const to = formatPhoneNumber(username);
             const headers = {
                 'Authorization': `App ${apiKey}`,
                 'Content-Type': 'application/json',
@@ -271,9 +265,12 @@ exports.verifyOtpRegister = async (req, res) => {
 exports.verifyOtpLogin = async (req, res) => {
     let userId = req.body.userId;
     let otp = req.body.otp;
-    let user = await UserModel.userModel.findOne({_id: userId, otp: otp});
+    if (otp == null){
+        return res.send({message:"otp is required",code: 0});
+    }
+    let user = await UserModel.userModel.findOne({_id: userId, otp: otp}).populate("address");
     if (user) {
-        let token = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '900s'});
+        let token = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '3600s'});
         user.otp = null;
         await user.save();
         return res.send({user: user, token: token, message: "Login success", code: 1});
@@ -281,7 +278,7 @@ exports.verifyOtpLogin = async (req, res) => {
         return res.send({message: "otp wrong", code: 0});
     }
 }
-const formatPhoneNumber = (phoneNumber) =>{
+const formatPhoneNumber = (phoneNumber) => {
     // Loại bỏ tất cả các ký tự không phải số từ chuỗi
     const numericPhoneNumber = phoneNumber.replace(/\D/g, '');
 
@@ -290,4 +287,17 @@ const formatPhoneNumber = (phoneNumber) =>{
     }
 
     return numericPhoneNumber;
+}
+exports.getUserById = async (req, res) => {
+    let userId = req.body.userId;
+    if (userId == null) {
+        return res.send({message: "userId is required", code: 0});
+    }
+    try {
+        let user = await UserModel.userModel.findById(userId).populate("address");
+        return res.send({user: user, message: "get user success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "get user fail", code: 0});
+    }
 }
