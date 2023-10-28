@@ -72,7 +72,8 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
-                            a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='#', id='openProductModal') Add Product
+                            a.btn.btn-primary#openProductModal(href='#', data-bs-toggle="modal", data-bs-target="#productModal") Add Product
+                                // Modal
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -87,10 +88,10 @@ block content
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
-                                        
+
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
-                                        
-            
+
+
             // Header End
             .container-fluid
                 .row
@@ -142,144 +143,26 @@ block content
                     p.mb-0.fs-4
                         | Design and Developed by&nbsp;
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
-
-            //- Modal Add Product
-            div#productModal.modal.fade
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Thêm sản phẩm
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                        .modal-body
-                            form(action="/", method="post")
-                                .mb-3
-                                    label.form-label(for='title') Name
-                                    input#title.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
-                                    //- p#title_value
-                                .mb-3
-                                    label.form-label(for='description') description 
-                                    input#description.form-control(type='text' name="description" aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for="img_cover") Hình ảnh 
-                                        input#img_cover(type="file", name="img_cover", accept="image/*")
-                                .mb-3
-                                    label.form-label(for='price') price 
-                                    input#price.form-control(type='number' name="price" aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='quantity') quantity 
-                                    input#quantity.form-control(type='number' name="quantity" aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='sold') sold 
-                                    input#sold.form-control(type='number' name="sold" aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for="video") videoDes  
-                                        input#video(type="file", name="video", accept="video/*")
-                                .mb-3
-                                    .form-group
-                                        label.form-label(for='Color') Color: 
-                                                input#color(type="checkbox" name="color")
-                                                label.form-label(for='Color') Black     
-                                                input#color(type="checkbox" name="color")
-                                                label.form-label(for='Color') White     
-                                                input#color(type="checkbox" name="color")
-                                                label.form-label(for='Color') Pink                                         
-                                .mb-3
-                                    .form-group
-                                        label(for="list_img") imageDes  
-                                        input#list_img(type="file",multiple="multiple", name="list_img", accept="image/*")
-                                .mb-3
-                                    label.form-label(for='date') date 
-                                    input#date.form-control(type='text' name="date" aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label.form-label(for='ram_rom') Ram-Rom: 
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="32/1T") 32/1T  
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button.btn.btn-primary(type='button', id='saveProductButton') Thêm
-
-            //- Modal Update Category
-            div#updateProductModal.modal.fade
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Sửa sản phẩm
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                        .modal-body
-                            form(action="/", method="post")
-                                .mb-3
-                                    .form-group
-                                        label(for="datePro") ID
-                                        input#idPro.idPro(type="text", name="idPro", class="form-control", placeholder="", aria-describedby="helpId" readonly)
-                                .mb-3
-                                    label.form-label(for='title') Name
-                                    input#title.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='description') description 
-                                    input#description.form-control(type='text' name="description" aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for="img_cover") Hình ảnh 
-                                        input#img_cover(type="file", name="img_cover", accept="image/*")
-                                .mb-3
-                                    label.form-label(for='price') price 
-                                    input#price.form-control(type='number' name="price" aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='quantity') quantity 
-                                    input#quantity.form-control(type='number' name="quantity" aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='sold') sold 
-                                    input#sold.form-control(type='number' name="sold" aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for="video") videoDes  
-                                        input#video(type="file", name="video", accept="video/*")
-                                .mb-3
-                                    .form-group
-                                        label.form-label(for='Color') Color: 
-                                                input#color(type="checkbox" name="color")
-                                                label.form-label(for='Color') Black     
-                                                input#color(type="checkbox" name="color")
-                                                label.form-label(for='Color') White     
-                                                input#color(type="checkbox" name="color")
-                                                label.form-label(for='Color') Pink                                         
-                                .mb-3
-                                    .form-group
-                                        label(for="list_img") imageDes  
-                                        input#list_img(type="file",multiple="multiple", name="list_img", accept="image/*")
-                                .mb-3
-                                    label.form-label(for='date') date 
-                                    input#date.form-control(type='text' name="date" aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label.form-label(for='ram_rom') Ram-Rom: 
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="32/1T") 32/1T  
-                                
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button.btn.btn-primary(type='button', id='updateProductButton') Cập nhật
-            
-            //- Modal Confirm Delete
-            #confirmDeletePro.modal(tabindex='-1')
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Warning!
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                        .modal-body
-                            p Bạn có chắc chắn muốn xoá item này.
-                        .modal-footer
-                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
+            //Modal add pro duct
+            .modal.fade#productModal(tabindex="-1", role="dialog", aria-labelledby="productModalLabel", aria-hidden="true")
+                                                .modal-dialog
+                                                    .modal-content
+                                                        .modal-header
+                                                            h5.modal-title#productModalLabel Add Product
+                                                            button.close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                                                                span(aria-hidden="true") ×
+                                                        .modal-body
+                                                            // Form to add a product
+                                                            form
+                                                                .form-group
+                                                                    label(for="productName") Product Name
+                                                                    input#productName.form-control(type="text", name="productName", required)
+                                                                .form-group
+                                                                    label(for="productDescription") Description
+                                                                    input#productDescription.form-control(type="text", name="productDescription")
+                                                                .form-group
+                                                                    label(for="productPrice") Price
+                                                                    input#productPrice.form-control(type="number", name="productPrice", step="0.01", required)
+                                                        .modal-footer
+                                                            button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
+                                                            button.btn.btn-primary#addProduct(type="button") Add Product
