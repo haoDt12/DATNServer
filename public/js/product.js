@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateUp = document.getElementById('dateUp');
     const ram_romUp = document.getElementById('ram_romUp');
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzhkZjY4MGFlNDkzMjg4YzA2M2Q2ZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6ImtpZXV0aGFuaHR1bmcyazNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJUdW5nQDEyMyIsImZ1bGxfbmFtZSI6Imt0dHVuZyIsInBob25lX251bWJlciI6IjA5NzQ1OTQxNzUiLCJyb2xlIjoiVXNlciIsImFkZHJlc3MiOltdLCJkYXRlIjoiMjAyMy0xMC0yNS0xNjoyNjo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJvdHAiOiI3ODEwODkiLCJfX3YiOjB9LCJpYXQiOjE2OTg2NTIwNDYsImV4cCI6MTY5ODY1NTY0Nn0.5TOiPRa6a32HVBBdmWUDzS8lkiUPDd0yYOa2FIpYtZM"
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzhkZjY4MGFlNDkzMjg4YzA2M2Q2ZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6ImtpZXV0aGFuaHR1bmcyazNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJUdW5nQDEyMyIsImZ1bGxfbmFtZSI6Imt0dHVuZyIsInBob25lX251bWJlciI6IjA5NzQ1OTQxNzUiLCJyb2xlIjoiVXNlciIsImFkZHJlc3MiOltdLCJkYXRlIjoiMjAyMy0xMC0yNS0xNjoyNjo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJvdHAiOiIzMzMxOTkiLCJfX3YiOjB9LCJpYXQiOjE2OTg2NzYwNzgsImV4cCI6MTY5ODY3OTY3OH0.1dAmpq24EwoU4S6Q33gmOGv5J8FUg1eq2H9Fm5-2k5U"
     document.getElementById('openProductModal').addEventListener('click', function () {
         myModal.show();
     });
@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
     updateProductButton.addEventListener("click", function(){
+        const categoryUp = document.getElementById("categoryUp").value;
         const titleUp = document.getElementById("titleUp").value;
         const descriptionUp = document.getElementById("descriptionUp").value;
         const img_coverUp = document.getElementById("img_coverUp").files[0];
@@ -127,29 +128,33 @@ document.addEventListener('DOMContentLoaded', function () {
         const dateUp = document.getElementById("dateUp").value;
         const ram_romUp = document.getElementById("ram_romUp").value;
 
-        const formDataUp = new FormData();
-        formDataUp.append("category", "653aa1fa459df580516ae7d0");
-        formDataUp.append("title", titleUp);
-        formDataUp.append("description", descriptionUp);
-        formDataUp.append("img_cover", img_coverUp);
-        formDataUp.append("price", priceUp);
-        formDataUp.append("quantity", quantityUp);
-        formDataUp.append("sold", soldUp);
-        formDataUp.append("video", videoUp);
-        formDataUp.append("color", colorUp);
-        formDataUp.append("list_img", list_imgUp);
-        formDataUp.append("date", dateUp);
-        formDataUp.append("ram_rom", ram_romUp);
+        const formDataUpdateProduct = new FormData();
+        formDataUpdateProduct.append("category", categoryUp);
+        formDataUpdateProduct.append("title", titleUp);
+        formDataUpdateProduct.append("description", descriptionUp);
+        formDataUpdateProduct.append("img_cover", img_coverUp);
+        formDataUpdateProduct.append("price", priceUp);
+        formDataUpdateProduct.append("quantity", quantityUp);
+        formDataUpdateProduct.append("sold", soldUp);
+        formDataUpdateProduct.append("video", videoUp);
+        formDataUpdateProduct.append("color", colorUp);
+        formDataUpdateProduct.append("list_img", list_imgUp);
+        formDataUpdateProduct.append("date", dateUp);
+        formDataUpdateProduct.append("ram_rom", ram_romUp);
         fetch('http://localhost:3000/api/editProduct', {
             headers: {
                 'Authorization': `${token}`
             },
             method: "POST",
-            body: formDataUp,
+            body: formDataUpdateProduct,
         })
             .then((response) => {
                 console.log(response)
                 // location.reload();
+                // if(response.body.code){
+                //     alert(response.body.message);
+                // }
+            
             })
             .catch((error) => {
                 console.error("Error:", error);
