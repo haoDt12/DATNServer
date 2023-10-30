@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateUp = document.getElementById('dateUp');
     const ram_romUp = document.getElementById('ram_romUp');
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzhkZjY4MGFlNDkzMjg4YzA2M2Q2ZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6ImtpZXV0aGFuaHR1bmcyazNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJUdW5nQDEyMyIsImZ1bGxfbmFtZSI6Imt0dHVuZyIsInBob25lX251bWJlciI6IjA5NzQ1OTQxNzUiLCJyb2xlIjoiVXNlciIsImFkZHJlc3MiOltdLCJkYXRlIjoiMjAyMy0xMC0yNS0xNjoyNjo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJvdHAiOiIzMzMxOTkiLCJfX3YiOjB9LCJpYXQiOjE2OTg2NzYwNzgsImV4cCI6MTY5ODY3OTY3OH0.1dAmpq24EwoU4S6Q33gmOGv5J8FUg1eq2H9Fm5-2k5U"
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzBiMzhhOWNkNmE0MzgwOTUyNjg0NSIsImF2YXRhciI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzAwMC9pbWFnZXMvdXNlci82NTMwYjM4YTljZDZhNDM4MDk1MjY4NDUvMGQ5NDkyNTAtM2YwYS00ZGRlLWE5ODMtODRmYzFhYjQxN2E3LmpwZyIsImVtYWlsIjoiZGllbnRjcGgyNzUxMkBmcHQuZWR1LnZuIiwicGFzc3dvcmQiOiJUcmluaGRpZW5AMTIzIiwiZnVsbF9uYW1lIjoiVHLhu4tuaCDEkGnhu4FuIiwicGhvbmVfbnVtYmVyIjoiMDM3MzM2MDYyNCIsInJvbGUiOiJVc2VyIiwiYWRkcmVzcyI6W3siX2lkIjoiNjUzMGUwN2MzNzMxMjhkZDQ5NzUzYTJmIiwibmFtZSI6IlRy4buLbmggQ8O0bmcgxJBp4buBbiIsImRldGFpbCI6IkjDoCBO4buZaSIsInBob25lX251bWJlciI6IjAzNzMzNjA2MjQiLCJkYXRlIjoiMjAyMy0xMC0xOS0xNDo1MzozMiIsIl9fdiI6MH1dLCJkYXRlIjoiMjAyMy0xMC0xOS0xMTo0MTo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJfX3YiOjEsIm90cCI6Ijc2MTY2MyJ9LCJpYXQiOjE2OTg2NzkxMDIsImV4cCI6MTY5ODY4MjcwMn0.P-H9CWHes5nQ3FkR-JbslkfdmMVt7Nss0gk7Zru9xBw"
     document.getElementById('openProductModal').addEventListener('click', function () {
         myModal.show();
     });
@@ -72,13 +72,13 @@ document.addEventListener('DOMContentLoaded', function () {
             body: formData,
         })
             .then((response) => {
-                console.log(response)
+              //them dk o day nhe
                 location.reload();
             })
             .catch((error) => {
                 console.error("Error:", error);
             });
-        myModal.hide();   
+        myModal.hide();
     });
     
     editProButton.forEach(function (editProBtn) {
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }).then(function (response) {
                 let jsonData = response.data.product
-                categoryUp.value = jsonData.category
+                categoryUp.value = jsonData.category._id;
                 titleUp.value = jsonData.title
                 descriptionUp.value = jsonData.description
                 img_coverUp.src = jsonData.img_cover
@@ -114,7 +114,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         });
     });
-    updateProductButton.addEventListener("click", function(){
+    updateProductButton.addEventListener("click", async function(){
+
         const categoryUp = document.getElementById("categoryUp").value;
         const titleUp = document.getElementById("titleUp").value;
         const descriptionUp = document.getElementById("descriptionUp").value;
@@ -129,6 +130,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const ram_romUp = document.getElementById("ram_romUp").value;
 
         const formDataUpdateProduct = new FormData();
+        //fix cung productId
+        formDataUpdateProduct.append("productId", "653f5fc0d580c8e1b05225bf");
         formDataUpdateProduct.append("category", categoryUp);
         formDataUpdateProduct.append("title", titleUp);
         formDataUpdateProduct.append("description", descriptionUp);
@@ -141,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formDataUpdateProduct.append("list_img", list_imgUp);
         formDataUpdateProduct.append("date", dateUp);
         formDataUpdateProduct.append("ram_rom", ram_romUp);
-        fetch('http://localhost:3000/api/editProduct', {
+        await axios.post('http://localhost:3000/api/editProduct', {
             headers: {
                 'Authorization': `${token}`
             },
@@ -149,16 +152,17 @@ document.addEventListener('DOMContentLoaded', function () {
             body: formDataUpdateProduct,
         })
             .then((response) => {
-                console.log(response)
-                // location.reload();
-                // if(response.body.code){
-                //     alert(response.body.message);
-                // }
-            
+                console.log(response);
+                if(response.data.code === 1){
+                    alert(response.data.message);
+                }else {
+                    alert(response.data.message);
+                }
             })
             .catch((error) => {
                 console.error("Error:", error);
             });
+        // location.reload();
         myModalUp.hide();
     })
 

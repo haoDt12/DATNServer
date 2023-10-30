@@ -279,6 +279,7 @@ exports.editProduct = async (req, res) => {
             }
             product.video = video;
         }
+        await product.save();
         return res.send({message: "Edit product success", code: 1});
     } catch (e) {
         console.log(e);
