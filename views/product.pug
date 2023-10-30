@@ -181,12 +181,12 @@ block content
                                                                 .mb-3
                                                                     .form-group
                                                                         label.form-label(for='Color') Color: 
-                                                                                input#color(type="checkbox" name="color")
+                                                                                input#color(type="checkbox" value="Black" name="color")
                                                                                 label.form-label(for='Color') Black     
-                                                                                //- input#color(type="checkbox" name="color")
-                                                                                //- label.form-label(for='Color') White     
-                                                                                //- input#color(type="checkbox" name="color")
-                                                                                //- label.form-label(for='Color') Pink                                         
+                                                                                input#color(type="checkbox" value="White" name="color")
+                                                                                label.form-label(for='Color') White     
+                                                                                input#color(type="checkbox" name="color")
+                                                                                label.form-label(for='Color') Pink                                         
                                                                 .mb-3
                                                                     .form-group
                                                                         label(for="list_img") imageDes  
@@ -199,10 +199,10 @@ block content
                                                                         label.form-label(for='ram_rom') Ram-Rom: 
                                                                                 input#ram_rom(type="checkbox" name="ram_rom")
                                                                                 label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
-                                                                                //- input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                //- label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
-                                                                                //- input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                //- label.form-label(for='ram_rom' value="32/1T") 32/1T  
+                                                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
+                                                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                                                label.form-label(for='ram_rom' value="32/1T") 32/1T  
                                                         .modal-footer
                                                             button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
                                                             button.btn.btn-primary#addProduct(type="button") Add Product
@@ -220,7 +220,7 @@ block content
                                         label(for="datePro") ID
                                         input#idPro.idPro(type="text", name="idPro", class="form-control", placeholder="", aria-describedby="helpId" readonly)
                                 .mb-3
-                                    label.form-label(for='category') Name
+                                    label.form-label(for='category') Loại
                                     input#categoryUp.form-control(type='text' name="category" value="Hello World" aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='title') Name
@@ -284,4 +284,4 @@ block content
                             p Bạn có chắc chắn muốn xoá item này.
                         .modal-footer
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý                                                
+                            button.btn.btn-danger(type='button' id='deleteProduct') Đồng ý                                                

@@ -3,7 +3,13 @@
 document.addEventListener('DOMContentLoaded', function () {
     var myModal = new bootstrap.Modal(document.getElementById('productModal'));
     var myModalUp = new bootstrap.Modal(document.getElementById('updateProductBtn'));
-    var myModalDe = new bootstrap.Modal(document.getElementById('deleteProductBtn'));
+    var myModalDe = new bootstrap.Modal(document.getElementById('DeleteProductModal'));
+
+    const deleteProButtons = document.querySelectorAll(".delPro");
+    const editProButton = document.querySelectorAll(".updatePro");
+
+    const updateProductButton = document.getElementById("updateProduct");
+    const confirmDeleteButton = document.getElementById("deleteProduct");
 
     const categoryUp = document.getElementById('categoryUp');
     const titleUp = document.getElementById('titleUp');
@@ -18,17 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateUp = document.getElementById('dateUp');
     const ram_romUp = document.getElementById('ram_romUp');
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzhkZjY4MGFlNDkzMjg4YzA2M2Q2ZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6ImtpZXV0aGFuaHR1bmcyazNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJUdW5nQDEyMyIsImZ1bGxfbmFtZSI6Imt0dHVuZyIsInBob25lX251bWJlciI6IjA5NzQ1OTQxNzUiLCJyb2xlIjoiVXNlciIsImFkZHJlc3MiOltdLCJkYXRlIjoiMjAyMy0xMC0yNS0xNjoyNjo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJvdHAiOiI5NTg0MDEiLCJfX3YiOjB9LCJpYXQiOjE2OTg1Njk3ODYsImV4cCI6MTY5ODU3MzM4Nn0.m6vra3B_JeqOMOH5sZG_irSroCC2MstRb4H--MTXJXk"
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzhkZjY4MGFlNDkzMjg4YzA2M2Q2ZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6ImtpZXV0aGFuaHR1bmcyazNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJUdW5nQDEyMyIsImZ1bGxfbmFtZSI6Imt0dHVuZyIsInBob25lX251bWJlciI6IjA5NzQ1OTQxNzUiLCJyb2xlIjoiVXNlciIsImFkZHJlc3MiOltdLCJkYXRlIjoiMjAyMy0xMC0yNS0xNjoyNjo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJvdHAiOiI3ODEwODkiLCJfX3YiOjB9LCJpYXQiOjE2OTg2NTIwNDYsImV4cCI6MTY5ODY1NTY0Nn0.5TOiPRa6a32HVBBdmWUDzS8lkiUPDd0yYOa2FIpYtZM"
     document.getElementById('openProductModal').addEventListener('click', function () {
         myModal.show();
     });
-    document.getElementById('updateProductModal').addEventListener('click', function () {
-        myModalUp.show();
-    });
-    document.getElementById('DeleteProductModal').addEventListener('click', function () {
+    document.getElementById('deleteProductBtn').addEventListener('click', function () {
         myModalDe.show();
     });
-
+    
     document.getElementById('addProduct').addEventListener('click', function () {
         // Handle adding the product data here
         // You can use JavaScript to send the product data to your server or perform any desired actions.
@@ -42,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const quantity = document.getElementById("quantity").value;
         const sold = document.getElementById("sold").value;
         const video = document.getElementById("video").files[0];
-        const color = document.getElementById("color").value;
+        const color = document.querySelectorAll("color").value;
         const list_img = document.getElementById("list_img").files[0];
         const date = document.getElementById("date").value;
         const ram_rom = document.getElementById("ram_rom").value;
@@ -70,71 +73,116 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then((response) => {
                 console.log(response)
-                // location.reload();
+                location.reload();
             })
             .catch((error) => {
                 console.error("Error:", error);
             });
-        // alert(formData);
-        myModal.hide();
-        // location.reload();
+        myModal.hide();   
     });
-    document.getElementById('updateProduct').addEventListener('click', function () {
+    
+    editProButton.forEach(function (editProBtn) {
+        editProBtn.addEventListener("click", function () {
             const proId = this.getAttribute("data-id");
-            // console.log(proId);
+            console.log(proId);
 
-            const dateProductSelected = {
+            const dateProductYSelected = {
                 productId: proId
             };
 
-            axios.post("http://localhost:3000/api/getProductById", dateProductSelected, {
+            axios.post("http://localhost:3000/api/getProductById", dateProductYSelected, {
                 headers: {
                     'Authorization': token
                 }
             }).then(function (response) {
                 let jsonData = response.data.product
+                categoryUp.value = jsonData.category
                 titleUp.value = jsonData.title
                 descriptionUp.value = jsonData.description
-                img_coverUp.value = jsonData.img_cover
+                img_coverUp.src = jsonData.img_cover
                 priceUp.value = jsonData.price
                 quantityUp.value = jsonData.quantity
                 soldUp.value = jsonData.sold
-                videoUp.value = jsonData.video
+                videoUp.src = jsonData.video
                 colorUp.value = jsonData.color
-                list_imgUp.value = jsonData.list_img
-                dateUp.value = jsonData.data
+                list_imgUp.src = jsonData.list_img
+                dateUp.value = jsonData.date
                 ram_romUp.value = jsonData.ram_rom
             })
                 .catch(function (error) {
                     console.log(error);
                 });
-        myModalUp.hide();
+        });
     });
-    document.getElementById('confirmDelete').addEventListener('click', function () {
-        const proId = this.getAttribute("data-id");
-        //- console.log(cateId);
+    updateProductButton.addEventListener("click", function(){
+        const titleUp = document.getElementById("titleUp").value;
+        const descriptionUp = document.getElementById("descriptionUp").value;
+        const img_coverUp = document.getElementById("img_coverUp").files[0];
+        const priceUp = document.getElementById("priceUp").value;
+        const quantityUp = document.getElementById("quantityUp").value;
+        const soldUp = document.getElementById("soldUp").value;
+        const videoUp = document.getElementById("videoUp").files[0];
+        const colorUp = document.getElementById("colorUp").value;
+        const list_imgUp = document.getElementById("list_imgUp").files[0];
+        const dateUp = document.getElementById("dateUp").value;
+        const ram_romUp = document.getElementById("ram_romUp").value;
 
-        const dataDelete = new URLSearchParams();
-        dataDelete.append("productId", );
-        confirmDeleteButton.addEventListener('click', function () {
-            //- Delete data
-            fetch('http://localhost:3000/api/deleteProduct', {
-                headers: {
-                    'Authorization': `${token}`,
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                method: "POST",
-                body: dataDelete,
-            })
-                .then((response) => {
-                    console.log(response)   
-                    // location.reload();
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+        const formDataUp = new FormData();
+        formDataUp.append("category", "653aa1fa459df580516ae7d0");
+        formDataUp.append("title", titleUp);
+        formDataUp.append("description", descriptionUp);
+        formDataUp.append("img_cover", img_coverUp);
+        formDataUp.append("price", priceUp);
+        formDataUp.append("quantity", quantityUp);
+        formDataUp.append("sold", soldUp);
+        formDataUp.append("video", videoUp);
+        formDataUp.append("color", colorUp);
+        formDataUp.append("list_img", list_imgUp);
+        formDataUp.append("date", dateUp);
+        formDataUp.append("ram_rom", ram_romUp);
+        fetch('http://localhost:3000/api/editProduct', {
+            headers: {
+                'Authorization': `${token}`
+            },
+            method: "POST",
+            body: formDataUp,
         })
-        myModalDe.hide();
-        // location.reload();
+            .then((response) => {
+                console.log(response)
+                // location.reload();
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+        myModalUp.hide();
+    })
+
+    deleteProButtons.forEach(function (deleteProBtn) {
+        deleteProBtn.addEventListener("click", function () {
+            myModalDe.show()
+            const proId = this.getAttribute("data-id");
+            //- console.log(cateId);
+
+            const dataDelete = new URLSearchParams();
+            dataDelete.append("productId", proId);
+            confirmDeleteButton.addEventListener('click', function () {
+                //- Delete data
+                fetch('http://localhost:3000/api/deleteProduct', {
+                    headers: {
+                        'Authorization': `${token}`,
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    method: "POST",
+                    body: dataDelete,
+                })
+                    .then((response) => {
+                        console.log(response)
+                        location.reload();
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            })
+        });
     });
 });
