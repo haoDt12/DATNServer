@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log(error);
                 });
         });
-    });
+    });  
     updateProductButton.addEventListener("click", async function(){
 
         const categoryUp = document.getElementById("categoryUp").value;
