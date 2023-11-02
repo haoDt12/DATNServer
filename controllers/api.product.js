@@ -4,6 +4,7 @@ const path = require("path");
 const CategoryModel = require("../models/model.category");
 const UploadFile = require("../models/uploadFile");
 const moment = require('moment');
+const { get } = require("http");
 const matchImg = [
     "image/jpeg",
     "image/png",
@@ -134,6 +135,7 @@ exports.getListProduct = async (req, res) => {
     try {
         let listProduct = await ProductModel.productModel.find().populate("category");
         res.send({product: listProduct, message: "get list product success", code: 1})
+        res.json(listProduct);
     } catch (e) {
         console.log(e.message);
         return res.send({message: "get list product fail", code: 0});
@@ -277,6 +279,7 @@ exports.editProduct = async (req, res) => {
             }
             product.video = video;
         }
+        await product.save();
         return res.send({message: "Edit product success", code: 1});
     } catch (e) {
         console.log(e);
