@@ -160,7 +160,7 @@ exports.editUser = async (req, res) => {
 }
 exports.loginUser = async (req, res) => {
     let username = req.body.username;
-    let password = req.body.password
+    let password = req.body.password;
     if (!username) {
         return res.send({message: "user name is required", code: 0});
     }
@@ -177,7 +177,7 @@ exports.loginUser = async (req, res) => {
             const otp = Math.floor(100000 + Math.random() * 900000);
             const apiKey = process.env.API_KEY;
             const baseUrl = process.env.BASE_URL;
-            const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không cung cấp mã OTP cho bất kì ai`;
+            const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không chia sẻ mã OTP cho bất kì ai`;
             const to = formatPhoneNumber(username);
             const headers = {
                 'Authorization': `App ${apiKey}`,
