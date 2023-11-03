@@ -72,6 +72,8 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                            a.btn.btn-primary#openProductModal(href='#', data-bs-toggle="modal", data-bs-target="#productModal") Add Product
+                                // Modal
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -86,252 +88,200 @@ block content
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
+
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
+
+
             // Header End
             .container-fluid
-                // Row 1
                 .row
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Boat Headphone
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $50
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $65
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s5.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 MacBook Air Pro
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $650
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $900
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Boat Headphone
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $50
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $65
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s5.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 MacBook Air Pro
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $650
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $900
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Boat Headphone
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $50
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $65
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s5.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 MacBook Air Pro
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $650
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $900
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s4.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 Boat Headphone
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $50
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $65
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                    .col-sm-6.col-xl-3
-                        .card.overflow-hidden.rounded-2
-                            .position-relative
-                                a(href='javascript:void(0)')
-                                    img.card-img-top.rounded-0(src='/images/products/s5.jpg' alt='...')
-                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' data-bs-toggle='tooltip' data-bs-placement='top' data-bs-title='Add To Cart')
-                                    i.ti.ti-basket.fs-4
-                            .card-body.pt-3.p-4
-                                h6.fw-semibold.fs-4 MacBook Air Pro
-                                .d-flex.align-items-center.justify-content-between
-                                    h6.fw-semibold.fs-4.mb-0
-                                        | $650
-                                        span.ms-2.fw-normal.text-muted.fs-3
-                                            del $900
-                                    ul.list-unstyled.d-flex.align-items-center.mb-0
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a.me-1(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
-                                        li
-                                            a(href='javascript:void(0)')
-                                                i.ti.ti-star.text-warning
+                    //- Item Category
+                    each product in products
+                        .col-sm-6.col-xl-3
+                            .card.overflow-hidden.rounded-2
+                                .position-relative
+                                    a(href='#')
+                                        img.card-img-top.rounded-0(src=product.img_cover alt='...' style='max-width: 100%; height: 180px;')
+                                    a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' id='addToCartButton' data-bs-toggle='modal' data-bs-target='#addToCartModal' data-bs-placement='top' data-bs-title='Add To Cart')
+                                        i.ti.ti-basket.fs-4
+                                .card-body.pt-3.p-4
+                                    h6.fw-semibold.fs-4= product.title
+                                    h6.fw-semibold.fs-4= product.price
+                                    ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                                        li.nav-item.dropdown
+                                            //- .nav-link
+                                            a#drop2.nav-icon-hover(href='#' data-bs-toggle='dropdown' aria-expanded='false')
+                                                button.btn.btn-secondary(type='button') Tuỳ chọn
+                                                .dropdown-menu.dropdown-menu-end.dropdown-menu-animate-up(aria-labelledby='drop2')
+                                                    .message-body
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                            i.ti.ti-eye-off.fs-6
+                                                            p.mb-0.fs-3 Ẩn khỏi app
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                            i.ti.ti-edit.fs-6
+                                                            p.mb-0.fs-3(class="updatePro" id="updateProductBtn" data-id=product._id  data-bs-toggle="modal" data-bs-target="#updateProductModal") Sửa thông tin
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                            i.ti.ti-trash.fs-6
+                                                            p.mb-0.fs-3(class='delPro' id="deleteProductBtn" data-id=product._id data-bs-toggle="modal" data-bs-target="#confirmDeletePro") Xoá sản phẩm
+                                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Updating..
+                //- Start Pagination
+                nav(aria-label='Page navigation example')
+                    ul.pagination.justify-content-end
+                        li.page-item.disabled
+                            a.page-link(href='#' tabindex='-1') Previous
+                        li.page-item.active
+                            a.page-link(href='#') 1
+                        li.page-item
+                            a.page-link(href='#') 2
+                        li.page-item
+                            a.page-link(href='#') 3
+                        li.page-item
+                            a.page-link(href='#') Next
+                //- End Pagination
+
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
-                        | Design and Developed by
-                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') &nbsp;STECH
+                        | Design and Developed by&nbsp;
+                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
+            //Modal add pro duct
+            .modal.fade#productModal(tabindex="-1", role="dialog", aria-labelledby="productModalLabel", aria-hidden="true")
+                                                .modal-dialog
+                                                    .modal-content
+                                                        .modal-header
+                                                            h5.modal-title Thêm sản phẩm
+                                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                                        .modal-body
+                                                            form(action="/", method="post")
+                                                                .mb-3
+                                                                    label.form-label(for='category') category
+                                                                    input#category.form-control(type='text' name="category" value="Hello World" aria-describedby='textHelp')
+                                                                .mb-3
+                                                                    label.form-label(for='title') Name
+                                                                    input#title.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
+                                                                .mb-3
+                                                                    label.form-label(for='description') description 
+                                                                    input#description.form-control(type='text' name="description" aria-describedby='textHelp')
+                                                                .mb-3
+                                                                    .form-group
+                                                                        label(for="img_cover") Hình ảnh 
+                                                                        input#img_cover(type="file", name="img_cover", accept="image/*")
+                                                                .mb-3
+                                                                    label.form-label(for='price') price 
+                                                                    input#price.form-control(type='number' name="price" aria-describedby='textHelp')
+                                                                .mb-3
+                                                                    label.form-label(for='quantity') quantity 
+                                                                    input#quantity.form-control(type='number' name="quantity" aria-describedby='textHelp')
+                                                                .mb-3
+                                                                    label.form-label(for='sold') sold 
+                                                                    input#sold.form-control(type='number' name="sold" aria-describedby='textHelp')
+                                                                .mb-3
+                                                                    .form-group
+                                                                        label(for="video") videoDes  
+                                                                        input#video(type="file", name="video", accept="video/*")
+                                                                .mb-3
+                                                                    .form-group
+                                                                        label.form-label(for='Color') Color: 
+                                                                                input#color(type="checkbox" value="Black" name="color")
+                                                                                label.form-label(for='Color') Black     
+                                                                                input#color(type="checkbox" value="White" name="color")
+                                                                                label.form-label(for='Color') White     
+                                                                                input#color(type="checkbox" name="color")
+                                                                                label.form-label(for='Color') Pink                                         
+                                                                .mb-3
+                                                                    .form-group
+                                                                        label(for="list_img") imageDes  
+                                                                        input#list_img(type="file",multiple="multiple", name="list_img", accept="image/*")
+                                                                .mb-3
+                                                                    label.form-label(for='date') date 
+                                                                    input#date.form-control(type='text' name="date" aria-describedby='textHelp')
+                                                                .mb-3
+                                                                    .form-group
+                                                                        label.form-label(for='ram_rom') Ram-Rom: 
+                                                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
+                                                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
+                                                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                                                label.form-label(for='ram_rom' value="32/1T") 32/1T  
+                                                        .modal-footer
+                                                            button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
+                                                            button.btn.btn-primary#addProduct(type="button") Add Product
+            //Modal add pro duct
+            div#updateProductModal.modal.fade
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Sửa sản phẩm
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="/", method="post")
+                                .mb-3.fade
+                                    .form-group
+                                        label(for="datePro") ID
+                                        input#idPro.idPro(type="text", name="idPro", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                                .mb-3
+                                    label.form-label(for='category') Loại
+                                    input#categoryUp.form-control(type='text' name="category" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='title') Name
+                                    input#titleUp.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='description') description 
+                                    input#descriptionUp.form-control(type='text' name="description" aria-describedby='textHelp')
+                                .mb-3
+                                    .form-group
+                                        label(for="img_cover") Hình ảnh 
+                                        input#img_coverUp(type="file", name="img_cover", accept="image/*")
+                                .mb-3
+                                    label.form-label(for='price') price 
+                                    input#priceUp.form-control(type='number' name="price" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='quantity') quantity 
+                                    input#quantityUp.form-control(type='number' name="quantity" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='sold') sold 
+                                    input#soldUp.form-control(type='number' name="sold" aria-describedby='textHelp')
+                                .mb-3
+                                    .form-group
+                                        label(for="video") videoDes  
+                                        input#videoUp(type="file", name="video", accept="video/*")
+                                .mb-3
+                                    .form-group
+                                        label.form-label(for='Color') Color: 
+                                                input#colorUp(type="checkbox" name="color")
+                                                label.form-label(for='Color') Black     
+                                                //- input#color(type="checkbox" name="color")
+                                                //- label.form-label(for='Color') White     
+                                                //- input#color(type="checkbox" name="color")
+                                                //- label.form-label(for='Color') Pink                                         
+                                .mb-3
+                                    .form-group
+                                        label(for="list_img") imageDes  
+                                        input#list_imgUp(type="file",multiple="multiple", name="list_img", accept="image/*")
+                                .mb-3
+                                    label.form-label(for='date') date 
+                                    input#dateUp.form-control(type='text' name="date" aria-describedby='textHelp')
+                                .mb-3
+                                    .form-group
+                                        label.form-label(for='ram_rom') Ram-Rom: 
+                                                input#ram_romUp(type="checkbox" name="ram_rom")
+                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
+                                                //- input#ram_rom(type="checkbox" name="ram_rom")
+                                                //- label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
+                                                //- input#ram_rom(type="checkbox" name="ram_rom")
+                                                //- label.form-label(for='ram_rom' value="32/1T") 32/1T  
+                                
+                        .modal-footer
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
+                            button.btn.btn-primary(type='button', id='updateProduct') Cập nhật
+            #DeleteProductModal.modal(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Warning!
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            p Bạn có chắc chắn muốn xoá item này.
+                        .modal-footer
+                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                            button.btn.btn-danger(type='button' id='deleteProduct') Đồng ý                                                

@@ -4,14 +4,14 @@ head
   meta(http-equiv='X-UA-Compatible' content='IE=edge')
   meta(name='viewport' content='width=device-width, initial-scale=1.0')
   title OTP Verification Form
+  link(rel='shortcut icon' type='image/png' href='/images/logos/logo.jpeg')
   link(rel='stylesheet' href='/css/style_verify.css')
-  link(href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet')
-  script(src='/js/script_verify.js' defer='')
+  script(src='/js/verify.js')
   .container
     header
       i.bx.bxs-check-shield
     h4 Enter OTP Code
-    form(action='#')
+    form
       .input-field
         input(type='number')
         input(type='number' disabled='')
@@ -19,4 +19,4 @@ head
         input(type='number' disabled='')
         input(type='number' disabled='')
         input(type='number' disabled='')
-      button Verify OTP
+      button(type="click") Verify OTP
