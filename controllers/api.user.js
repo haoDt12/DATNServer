@@ -149,13 +149,18 @@ exports.editUser = async (req, res) => {
   try {
     let user = await UserModel.userModel.findById(req.body.userId);
     if (user == null) {
-      return res.send({ message: "User not found", code: 0 });
+      return res.send({message: "User not found", code: 0});
     }
     if (password != null) {
       user.password = password;
     }
     if (full_name != null) {
       user.full_name = full_name;
+    }
+  }catch (e) {
+    console.log(e.message);
+    return res.send({ message: "User not found", code: 0 });
+  }
 }
 exports.loginUser = async (req, res) => {
     let username = req.body.username;
@@ -247,9 +252,6 @@ exports.loginUser = async (req, res) => {
     }
     await user.save();
     return res.send({ message: "Edit user success", code: 1 });
-  } catch (e) {
-    console.log(e.message);
-    return res.send({ message: "User not found", code: 0 });
   }
 };
 exports.loginUser = async (req, res) => {
