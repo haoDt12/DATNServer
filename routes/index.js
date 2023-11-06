@@ -45,4 +45,13 @@ router.get('/stech.manager/user', function (req, res, next) {
 router.get("/stech.manager/verify", function (req, res, next) {
   res.render("verify");
 });
+router.get("/stech.manager/profile", function (req, res, next) {
+  res.render("profile");
+});
+router.get("/stech.manager/chat", function (req, res, next) {
+  res.render("chat");
+});
+router.get("/stech.manager/order", function (req, res, next) {
+  res.render("order");
+});
 module.exports = router;
