@@ -1,5 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1Mzc4NDE5YTk1ZWE2NmIzZmZkYTAwZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6InZ1bmduZ3V5ZW5uMTAwMUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IlZ1bmdAMTIzIiwiZnVsbF9uYW1lIjoiVuG7r25nIiwicGhvbmVfbnVtYmVyIjoiMDM2NjExMjcyNiIsInJvbGUiOiJVc2VyIiwiYWRkcmVzcyI6W10sImRhdGUiOiIyMDIzLTEwLTI0LTE1OjQ0OjM4IiwiYWNjb3VudF90eXBlIjoiSW5kaXZpZHVhbCIsIm90cCI6IjQ0MzM0NCIsIl9fdiI6MH0sImlhdCI6MTY5ODM0MTMzMCwiZXhwIjoxNjk4MzQyMjMwfQ.zcBmf0MofnKvdoNvxlwg_s4_eOdf0laQQAsqUdXg5cM"
+    function getCookieValue(name) {
+        const cookies = document.cookie.split("; ");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].split("=");
+            if (cookie[0] === name) {
+                return decodeURIComponent(cookie[1]);
+            }
+        }
+        return null;
+    }
+    const token = getCookieValue("token");
     const openCategoryModalButton = document.getElementById("openCategoryModal");
     const openEditCategoryModal = document.getElementById("openEditCategoryModal");
     const categoryModal = new bootstrap.Modal(document.getElementById("categoryModal"));

@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function (){
         if (data.code === 1) {
           const token = data.token;
           document.cookie = "token=" + encodeURIComponent(token);
-          window.location.href = 'http://localhost:3000/stech.manager/home';
+          window.location.assign('http://localhost:3000/stech.manager/home');
         }else {
           showMessage(data.message);
         }
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function (){
     }else if(typeVerify === "signup"){
       verifySignUp(Uid, otp).then(data  => {
         if (data.code === 1) {
-          window.location.href = 'http://localhost:3000/stech.manager/login';
+          window.location.assign('http://localhost:3000/stech.manager/login');
         }else {
           showMessage(data.message);
         }
