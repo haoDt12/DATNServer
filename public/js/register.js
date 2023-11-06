@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function (){
         return true;
     }
 
-    function showMessage(message) {
+    function showMessageSignUp(message) {
         alert(message);
     }
 
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function (){
                     document.cookie = "typeVerify=" + "signup";
                     window.location.href = 'http://localhost:3000/stech.manager/verify';
                 }else {
-                    showMessage(data.message);
+                    showMessageSignUp(data.message);
                 }
             }).catch(error => {
                 console.error('Login error:', error);
