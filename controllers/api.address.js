@@ -4,7 +4,8 @@ const moment = require('moment');
 exports.addAddress = async (req, res, next) => {
     let userId = req.body.userId;
     let name = req.body.name;
-    let detail = req.body.detail;
+    let city = req.body.city;
+    let street = req.body.street;
     let phone_number = req.body.phone_number;
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
@@ -12,8 +13,11 @@ exports.addAddress = async (req, res, next) => {
     if (name == null) {
         return res.send({message: "name is required", code: 0});
     }
-    if (detail == null) {
-        return res.send({message: "detail is required", code: 0});
+    if (city == null) {
+        return res.send({message: "city is required", code: 0});
+    }
+    if (street == null) {
+        return res.send({message: "street is required", code: 0});
     }
     if (phone_number == null) {
         return res.send({message: "phone_number is required", code: 0});
@@ -31,7 +35,8 @@ exports.addAddress = async (req, res, next) => {
         }
         let addAddress = new AddressModel.modelAddress({
             name: name,
-            detail: detail,
+            city: city,
+            street: street,
             phone_number: phone_number,
             date:date_time,
         })
@@ -48,7 +53,8 @@ exports.addAddress = async (req, res, next) => {
 }
 exports.editAddress = async (req, res, next) => {
     let name = req.body.name;
-    let detail = req.body.detail;
+    let city = req.body.city;
+    let street = req.body.street;
     let phone_number = req.body.phone_number;
     let addressId = req.body.addressId;
     const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
@@ -63,8 +69,11 @@ exports.editAddress = async (req, res, next) => {
         if (name != null) {
             editAddress.name = name;
         }
-        if (detail != null) {
-            editAddress.detail = detail;
+        if (city != null) {
+            editAddress.city = city;
+        }
+        if (street != null) {
+            editAddress.street = street;
         }
         if (phone_number != null) {
             if (!phoneNumberRegex.test(phone_number)) {
