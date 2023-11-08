@@ -103,7 +103,7 @@ exports.deleteAddress = async (req, res, next) => {
             return res.send({message: "delete address fail", code: 0});
         }
         let currentAddress = user.address;
-        user.address = currentAddress.filter(item => item !== addressId);
+        user.address = currentAddress.filter(item => item.toString() !== addressId);
         await AddressModel.modelAddress.deleteOne({_id: addressId});
         await user.save();
         return res.send({message: "delete address success", code: 1});

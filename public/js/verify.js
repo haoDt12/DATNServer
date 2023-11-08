@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function (){
     alert(message)
   }
 
-  verifyButton.addEventListener("submit",function () {
+  verifyButton.addEventListener("click",function () {
     const otp = inputs[0].value + inputs[1].value + inputs[2].value + inputs[3].value + inputs[4].value + inputs[5].value;
     const Uid = getCookieValue("Uid");
     const typeVerify = getCookieValue("typeVerify");
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function (){
         if (data.code === 1) {
           const token = data.token;
           document.cookie = "token=" + encodeURIComponent(token);
-          window.location.href = 'http://localhost:3000/stech.manager/home';
+          window.location.assign('http://localhost:3000/stech.manager/home');
         }else {
           showMessage(data.message);
         }
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function (){
     }else if(typeVerify === "signup"){
       verifySignUp(Uid, otp).then(data  => {
         if (data.code === 1) {
-          window.location.href = 'http://localhost:3000/stech.manager/login';
+          window.location.assign('http://localhost:3000/stech.manager/login');
         }else {
           showMessage(data.message);
         }
