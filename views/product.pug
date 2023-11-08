@@ -151,10 +151,10 @@ block content
                                                             h5.modal-title Thêm sản phẩm
                                                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                                                         .modal-body
-                                                            form(action="/", method="post")
+                                                            form
                                                                 .mb-3
                                                                     label.form-label(for='category') category
-                                                                    input#category.form-control(type='text' name="category" value="Hello World" aria-describedby='textHelp')
+                                                                    input#category.form-control(type='dropdown' name="category" value="title" aria-describedby='textHelp')
                                                                 .mb-3
                                                                     label.form-label(for='title') Name
                                                                     input#title.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
@@ -181,12 +181,7 @@ block content
                                                                 .mb-3
                                                                     .form-group
                                                                         label.form-label(for='Color') Color: 
-                                                                                input#color(type="checkbox" value="Black" name="color")
-                                                                                label.form-label(for='Color') Black     
-                                                                                input#color(type="checkbox" value="White" name="color")
-                                                                                label.form-label(for='Color') White     
-                                                                                input#color(type="checkbox" name="color")
-                                                                                label.form-label(for='Color') Pink                                         
+                                                                                input#color(type="color")                                      
                                                                 .mb-3
                                                                     .form-group
                                                                         label(for="list_img") imageDes  
@@ -248,12 +243,7 @@ block content
                                 .mb-3
                                     .form-group
                                         label.form-label(for='Color') Color: 
-                                                input#colorUp(type="checkbox" name="color")
-                                                label.form-label(for='Color') Black     
-                                                //- input#color(type="checkbox" name="color")
-                                                //- label.form-label(for='Color') White     
-                                                //- input#color(type="checkbox" name="color")
-                                                //- label.form-label(for='Color') Pink                                         
+                                                input#colorUp(type="color")                                
                                 .mb-3
                                     .form-group
                                         label(for="list_img") imageDes  
@@ -266,10 +256,10 @@ block content
                                         label.form-label(for='ram_rom') Ram-Rom: 
                                                 input#ram_romUp(type="checkbox" name="ram_rom")
                                                 label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
-                                                //- input#ram_rom(type="checkbox" name="ram_rom")
-                                                //- label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
-                                                //- input#ram_rom(type="checkbox" name="ram_rom")
-                                                //- label.form-label(for='ram_rom' value="32/1T") 32/1T  
+                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
+                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                label.form-label(for='ram_rom' value="32/1T") 32/1T  
                                 
                         .modal-footer
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ

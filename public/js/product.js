@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const updateProductButton = document.getElementById("updateProduct");
     const confirmDeleteButton = document.getElementById("deleteProduct");
+    const color = document.getElementById('color');
+
 
     const categoryUp = document.getElementById('categoryUp');
     const titleUp = document.getElementById('titleUp');
@@ -24,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateUp = document.getElementById('dateUp');
     const ram_romUp = document.getElementById('ram_romUp');
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzBiMzhhOWNkNmE0MzgwOTUyNjg0NSIsImF2YXRhciI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzAwMC9pbWFnZXMvdXNlci82NTMwYjM4YTljZDZhNDM4MDk1MjY4NDUvMGQ5NDkyNTAtM2YwYS00ZGRlLWE5ODMtODRmYzFhYjQxN2E3LmpwZyIsImVtYWlsIjoiZGllbnRjcGgyNzUxMkBmcHQuZWR1LnZuIiwicGFzc3dvcmQiOiJUcmluaGRpZW5AMTIzIiwiZnVsbF9uYW1lIjoiVHLhu4tuaCDEkGnhu4FuIiwicGhvbmVfbnVtYmVyIjoiMDM3MzM2MDYyNCIsInJvbGUiOiJVc2VyIiwiYWRkcmVzcyI6W3siX2lkIjoiNjUzMGUwN2MzNzMxMjhkZDQ5NzUzYTJmIiwibmFtZSI6IlRy4buLbmggQ8O0bmcgxJBp4buBbiIsImRldGFpbCI6IkjDoCBO4buZaSIsInBob25lX251bWJlciI6IjAzNzMzNjA2MjQiLCJkYXRlIjoiMjAyMy0xMC0xOS0xNDo1MzozMiIsIl9fdiI6MH1dLCJkYXRlIjoiMjAyMy0xMC0xOS0xMTo0MTo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJfX3YiOjEsIm90cCI6Ijc2MTY2MyJ9LCJpYXQiOjE2OTg2NzkxMDIsImV4cCI6MTY5ODY4MjcwMn0.P-H9CWHes5nQ3FkR-JbslkfdmMVt7Nss0gk7Zru9xBw"
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzhkZjY4MGFlNDkzMjg4YzA2M2Q2ZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6ImtpZXV0aGFuaHR1bmcyazNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJUdW5nQDEyMyIsImZ1bGxfbmFtZSI6Imt0dHVuZyIsInBob25lX251bWJlciI6IjA5NzQ1OTQxNzUiLCJyb2xlIjoiVXNlciIsImFkZHJlc3MiOltdLCJkYXRlIjoiMjAyMy0xMC0yNS0xNjoyNjo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJvdHAiOiI1ODQ0MjIiLCJfX3YiOjB9LCJpYXQiOjE2OTk0NTI0OTMsImV4cCI6MTY5OTQ1NjA5M30.sTiLg2RfwRAjxmOFzuCZwLLTlV6k4HbspA32Rrp5jSs"
     document.getElementById('openProductModal').addEventListener('click', function () {
         myModal.show();
     });
@@ -50,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const date = document.getElementById("date").value;
         const ram_rom = document.getElementById("ram_rom").value;
 
+
         const formData = new FormData();
         formData.append("category", "653aa1fa459df580516ae7d0");
         formData.append("title", title);
@@ -59,10 +62,11 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append("quantity", quantity);
         formData.append("sold", sold);
         formData.append("video", video);
-        formData.append("color", color);
+        formData.append("color", listColor);
         formData.append("list_img", list_img);
         formData.append("date", date);
         formData.append("ram_rom", ram_rom);
+
         //- Push data
         fetch('http://localhost:3000/api/addProduct', {
             headers: {
@@ -80,6 +84,15 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         myModal.hide();
     });
+    let listColor = [];
+    listColor.push(color)
+    let selectedColor;
+    color.addEventListener('input', (event) => {
+        selectedColor = event.target.value;
+        console.log('Selected color:', selectedColor);
+        // Xử lý màu đã chọn ở đây
+    });
+    
     
     editProButton.forEach(function (editProBtn) {
         editProBtn.addEventListener("click", function () {

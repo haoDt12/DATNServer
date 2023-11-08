@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
         editCateBtn.addEventListener("click", function () {
             const cateId = this.getAttribute("data-id");
             console.log(cateId);
-
             const dateCategorYSelected = {
                 categoryId: cateId
             };
