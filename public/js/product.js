@@ -1,6 +1,19 @@
 // myscript.js
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    function getCookieValue(name) {
+        const cookies = document.cookie.split("; ");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].split("=");
+            if (cookie[0] === name) {
+                return decodeURIComponent(cookie[1]);
+            }
+        }
+        return null;
+    }
+    const token = getCookieValue("token");
+    
     var myModal = new bootstrap.Modal(document.getElementById('productModal'));
     var myModalUp = new bootstrap.Modal(document.getElementById('updateProductBtn'));
     var myModalDe = new bootstrap.Modal(document.getElementById('DeleteProductModal'));
@@ -26,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateUp = document.getElementById('dateUp');
     const ram_romUp = document.getElementById('ram_romUp');
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzhkZjY4MGFlNDkzMjg4YzA2M2Q2ZCIsImF2YXRhciI6Imh0dHBzOi8vaW5reXRodWF0c28uY29tL3VwbG9hZHMvdGh1bWJuYWlscy84MDAvMjAyMy8wMy85LWFuaC1kYWktZGllbi10cmFuZy1pbmt5dGh1YXRzby0wMy0xNS0yNy0wMy5qcGciLCJlbWFpbCI6ImtpZXV0aGFuaHR1bmcyazNAZ21haWwuY29tIiwicGFzc3dvcmQiOiJUdW5nQDEyMyIsImZ1bGxfbmFtZSI6Imt0dHVuZyIsInBob25lX251bWJlciI6IjA5NzQ1OTQxNzUiLCJyb2xlIjoiVXNlciIsImFkZHJlc3MiOltdLCJkYXRlIjoiMjAyMy0xMC0yNS0xNjoyNjo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJvdHAiOiI1ODQ0MjIiLCJfX3YiOjB9LCJpYXQiOjE2OTk0NTI0OTMsImV4cCI6MTY5OTQ1NjA5M30.sTiLg2RfwRAjxmOFzuCZwLLTlV6k4HbspA32Rrp5jSs"
     document.getElementById('openProductModal').addEventListener('click', function () {
         myModal.show();
     });
@@ -93,40 +105,44 @@ document.addEventListener('DOMContentLoaded', function () {
         // Xử lý màu đã chọn ở đây
     });
     
-    
+    async function getProductById(proId){
+        const proId = this.getAttribute("data-id");
+        console.log(proId);
+        axios.post("http://localhost:3000/api/getProductById", dateProductYSelected, {
+            headers: {
+                'Authorization': `${token}`
+            }
+        }).then(function (response) {
+            let jsonData = response.data.product;              
+            categoryUp.value = jsonData.category;
+            titleUp.value = jsonData.title
+            descriptionUp.value = jsonData.description
+            img_coverUp.src = jsonData.img_cover
+            priceUp.value = jsonData.price
+            quantityUp.value = jsonData.quantity
+            soldUp.value = jsonData.sold
+            videoUp.src = jsonData.video
+            colorUp.value = jsonData.color
+            list_imgUp.src = jsonData.list_img
+            dateUp.value = jsonData.date
+            ram_romUp.value = jsonData.ram_rom
+        })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
     editProButton.forEach(function (editProBtn) {
         editProBtn.addEventListener("click", function () {
-            const proId = this.getAttribute("data-id");
-            console.log(proId);
+           
 
             const dateProductYSelected = {
                 productId: proId
             };
 
-            axios.post("http://localhost:3000/api/getProductById", dateProductYSelected, {
-                headers: {
-                    'Authorization': token
-                }
-            }).then(function (response) {
-                let jsonData = response.data.product
-                categoryUp.value = jsonData.category._id;
-                titleUp.value = jsonData.title
-                descriptionUp.value = jsonData.description
-                img_coverUp.src = jsonData.img_cover
-                priceUp.value = jsonData.price
-                quantityUp.value = jsonData.quantity
-                soldUp.value = jsonData.sold
-                videoUp.src = jsonData.video
-                colorUp.value = jsonData.color
-                list_imgUp.src = jsonData.list_img
-                dateUp.value = jsonData.date
-                ram_romUp.value = jsonData.ram_rom
-            })
-                .catch(function (error) {
-                    console.log(error);
-                });
+           
         });
     });  
+
     updateProductButton.addEventListener("click", async function(){
 
         const categoryUp = document.getElementById("categoryUp").value;
