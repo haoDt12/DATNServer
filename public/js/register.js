@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function (){
     // create function
     async function register(full_name, phone_number, email, password) {
         try {
-            const response = await axios.post('http://localhost:3000/api/registerUser', {
+            const response = await axios.post('/api/registerUser', {
                 full_name: full_name,
                 phone_number: phone_number,
                 email: email,
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function (){
                     const Uid = data.id;
                     document.cookie = "Uid=" + encodeURIComponent(Uid);
                     document.cookie = "typeVerify=" + "signup";
-                    window.location.href = 'http://localhost:3000/stech.manager/verify';
+                    window.location.assign('/stech.manager/verify');
                 }else {
                     showMessageSignUp(data.message);
                 }

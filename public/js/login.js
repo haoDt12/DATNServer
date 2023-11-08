@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded",function () {
     // create function
     async function login(username, password) {
         try {
-            const response = await axios.post('http://localhost:3000/api/loginUser', {
+            const response = await axios.post('/api/loginUser', {
                 username: username,
                 password: password
             });
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded",function () {
                     const Uid = data.id;
                     document.cookie = "Uid=" + encodeURIComponent(Uid);
                     document.cookie = "typeVerify=" + "login";
-                    window.location.href = 'http://localhost:3000/stech.manager/verify';
+                    window.location.assign('/stech.manager/verify');
                 }else {
                     showMessage(data.message);
                 }
