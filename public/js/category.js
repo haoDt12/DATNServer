@@ -1,15 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    function getCookieValue(name) {
-        const cookies = document.cookie.split("; ");
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].split("=");
-            if (cookie[0] === name) {
-                return decodeURIComponent(cookie[1]);
-            }
-        }
-        return null;
-    }
-    const token = getCookieValue("token");
+
+    const token = utils.GetCookie("token");
     const openCategoryModalButton = document.getElementById("openCategoryModal");
     const openEditCategoryModal = document.getElementById("openEditCategoryModal");
     const categoryModal = new bootstrap.Modal(document.getElementById("categoryModal"));

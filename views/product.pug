@@ -54,7 +54,7 @@ block content
                                     i.ti.ti-login
                                 span.hide-menu Login
                         li.sidebar-item
-                            a.sidebar-link(href='/stech.manager/add' aria-expanded='false')
+                            a.sidebar-link(href='/stech.manager/register' aria-expanded='false')
                                 span
                                     i.ti.ti-user-plus
                                 span.hide-menu Add Admin
@@ -151,58 +151,53 @@ block content
                                                             h5.modal-title Thêm sản phẩm
                                                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                                                         .modal-body
-                                                            form(action="/", method="post")
+                                                            form
                                                                 .mb-3
                                                                     label.form-label(for='category') category
-                                                                    input#category.form-control(type='text' name="category" value="Hello World" aria-describedby='textHelp')
+                                                                    input#category.form-control(type='dropdown' name="category" value="title" aria-describedby='textHelp')
                                                                 .mb-3
                                                                     label.form-label(for='title') Name
                                                                     input#title.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
                                                                 .mb-3
-                                                                    label.form-label(for='description') description 
+                                                                    label.form-label(for='description') description
                                                                     input#description.form-control(type='text' name="description" aria-describedby='textHelp')
                                                                 .mb-3
                                                                     .form-group
-                                                                        label(for="img_cover") Hình ảnh 
+                                                                        label(for="img_cover") Hình ảnh
                                                                         input#img_cover(type="file", name="img_cover", accept="image/*")
                                                                 .mb-3
-                                                                    label.form-label(for='price') price 
+                                                                    label.form-label(for='price') price
                                                                     input#price.form-control(type='number' name="price" aria-describedby='textHelp')
                                                                 .mb-3
-                                                                    label.form-label(for='quantity') quantity 
+                                                                    label.form-label(for='quantity') quantity
                                                                     input#quantity.form-control(type='number' name="quantity" aria-describedby='textHelp')
                                                                 .mb-3
-                                                                    label.form-label(for='sold') sold 
+                                                                    label.form-label(for='sold') sold
                                                                     input#sold.form-control(type='number' name="sold" aria-describedby='textHelp')
                                                                 .mb-3
                                                                     .form-group
-                                                                        label(for="video") videoDes  
+                                                                        label(for="video") videoDes
                                                                         input#video(type="file", name="video", accept="video/*")
                                                                 .mb-3
                                                                     .form-group
-                                                                        label.form-label(for='Color') Color: 
-                                                                                input#color(type="checkbox" value="Black" name="color")
-                                                                                label.form-label(for='Color') Black     
-                                                                                input#color(type="checkbox" value="White" name="color")
-                                                                                label.form-label(for='Color') White     
-                                                                                input#color(type="checkbox" name="color")
-                                                                                label.form-label(for='Color') Pink                                         
+                                                                        label.form-label(for='Color') Color:
+                                                                                input#color(type="color")
                                                                 .mb-3
                                                                     .form-group
-                                                                        label(for="list_img") imageDes  
+                                                                        label(for="list_img") imageDes
                                                                         input#list_img(type="file",multiple="multiple", name="list_img", accept="image/*")
                                                                 .mb-3
-                                                                    label.form-label(for='date') date 
+                                                                    label.form-label(for='date') date
                                                                     input#date.form-control(type='text' name="date" aria-describedby='textHelp')
                                                                 .mb-3
                                                                     .form-group
-                                                                        label.form-label(for='ram_rom') Ram-Rom: 
+                                                                        label.form-label(for='ram_rom') Ram-Rom:
                                                                                 input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
+                                                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb
                                                                                 input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
+                                                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb
                                                                                 input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                label.form-label(for='ram_rom' value="32/1T") 32/1T  
+                                                                                label.form-label(for='ram_rom' value="32/1T") 32/1T
                                                         .modal-footer
                                                             button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
                                                             button.btn.btn-primary#addProduct(type="button") Add Product
@@ -221,56 +216,51 @@ block content
                                         input#idPro.idPro(type="text", name="idPro", class="form-control", placeholder="", aria-describedby="helpId" readonly)
                                 .mb-3
                                     label.form-label(for='category') Loại
-                                    input#categoryUp.form-control(type='text' name="category" aria-describedby='textHelp')
+                                    input#categoryUp.form-control(type='text' name="category" aria-describedby='textHelp' readonly)
                                 .mb-3
                                     label.form-label(for='title') Name
                                     input#titleUp.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
                                 .mb-3
-                                    label.form-label(for='description') description 
+                                    label.form-label(for='description') description
                                     input#descriptionUp.form-control(type='text' name="description" aria-describedby='textHelp')
                                 .mb-3
                                     .form-group
-                                        label(for="img_cover") Hình ảnh 
+                                        label(for="img_cover") Hình ảnh
                                         input#img_coverUp(type="file", name="img_cover", accept="image/*")
                                 .mb-3
-                                    label.form-label(for='price') price 
+                                    label.form-label(for='price') price
                                     input#priceUp.form-control(type='number' name="price" aria-describedby='textHelp')
                                 .mb-3
-                                    label.form-label(for='quantity') quantity 
+                                    label.form-label(for='quantity') quantity
                                     input#quantityUp.form-control(type='number' name="quantity" aria-describedby='textHelp')
                                 .mb-3
-                                    label.form-label(for='sold') sold 
+                                    label.form-label(for='sold') sold
                                     input#soldUp.form-control(type='number' name="sold" aria-describedby='textHelp')
                                 .mb-3
                                     .form-group
-                                        label(for="video") videoDes  
+                                        label(for="video") videoDes
                                         input#videoUp(type="file", name="video", accept="video/*")
                                 .mb-3
                                     .form-group
-                                        label.form-label(for='Color') Color: 
-                                                input#colorUp(type="checkbox" name="color")
-                                                label.form-label(for='Color') Black     
-                                                //- input#color(type="checkbox" name="color")
-                                                //- label.form-label(for='Color') White     
-                                                //- input#color(type="checkbox" name="color")
-                                                //- label.form-label(for='Color') Pink                                         
+                                        label.form-label(for='Color') Color:
+                                                input#colorUp(type="color")
                                 .mb-3
                                     .form-group
-                                        label(for="list_img") imageDes  
+                                        label(for="list_img") imageDes
                                         input#list_imgUp(type="file",multiple="multiple", name="list_img", accept="image/*")
                                 .mb-3
-                                    label.form-label(for='date') date 
+                                    label.form-label(for='date') date
                                     input#dateUp.form-control(type='text' name="date" aria-describedby='textHelp')
                                 .mb-3
                                     .form-group
-                                        label.form-label(for='ram_rom') Ram-Rom: 
+                                        label.form-label(for='ram_rom') Ram-Rom:
                                                 input#ram_romUp(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb   
-                                                //- input#ram_rom(type="checkbox" name="ram_rom")
-                                                //- label.form-label(for='ram_rom' value="16/256gb") 16/256gb     
-                                                //- input#ram_rom(type="checkbox" name="ram_rom")
-                                                //- label.form-label(for='ram_rom' value="32/1T") 32/1T  
-                                
+                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb
+                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb
+                                                input#ram_rom(type="checkbox" name="ram_rom")
+                                                label.form-label(for='ram_rom' value="32/1T") 32/1T
+
                         .modal-footer
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
                             button.btn.btn-primary(type='button', id='updateProduct') Cập nhật
@@ -284,4 +274,4 @@ block content
                             p Bạn có chắc chắn muốn xoá item này.
                         .modal-footer
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='deleteProduct') Đồng ý                                                
+                            button.btn.btn-danger(type='button' id='deleteProduct') Đồng ý

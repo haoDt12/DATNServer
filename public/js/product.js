@@ -1,6 +1,8 @@
 // myscript.js
 
 document.addEventListener('DOMContentLoaded', function () {
+    const token = utils.GetCookie("token");
+    
     var myModal = new bootstrap.Modal(document.getElementById('productModal'));
     var myModalUp = new bootstrap.Modal(document.getElementById('updateProductBtn'));
     var myModalDe = new bootstrap.Modal(document.getElementById('DeleteProductModal'));
@@ -10,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const updateProductButton = document.getElementById("updateProduct");
     const confirmDeleteButton = document.getElementById("deleteProduct");
+    const color = document.getElementById('color');
+
 
     const categoryUp = document.getElementById('categoryUp');
     const titleUp = document.getElementById('titleUp');
@@ -24,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const dateUp = document.getElementById('dateUp');
     const ram_romUp = document.getElementById('ram_romUp');
 
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjY1MzBiMzhhOWNkNmE0MzgwOTUyNjg0NSIsImF2YXRhciI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzAwMC9pbWFnZXMvdXNlci82NTMwYjM4YTljZDZhNDM4MDk1MjY4NDUvMGQ5NDkyNTAtM2YwYS00ZGRlLWE5ODMtODRmYzFhYjQxN2E3LmpwZyIsImVtYWlsIjoiZGllbnRjcGgyNzUxMkBmcHQuZWR1LnZuIiwicGFzc3dvcmQiOiJUcmluaGRpZW5AMTIzIiwiZnVsbF9uYW1lIjoiVHLhu4tuaCDEkGnhu4FuIiwicGhvbmVfbnVtYmVyIjoiMDM3MzM2MDYyNCIsInJvbGUiOiJVc2VyIiwiYWRkcmVzcyI6W3siX2lkIjoiNjUzMGUwN2MzNzMxMjhkZDQ5NzUzYTJmIiwibmFtZSI6IlRy4buLbmggQ8O0bmcgxJBp4buBbiIsImRldGFpbCI6IkjDoCBO4buZaSIsInBob25lX251bWJlciI6IjAzNzMzNjA2MjQiLCJkYXRlIjoiMjAyMy0xMC0xOS0xNDo1MzozMiIsIl9fdiI6MH1dLCJkYXRlIjoiMjAyMy0xMC0xOS0xMTo0MTo0NiIsImFjY291bnRfdHlwZSI6IkluZGl2aWR1YWwiLCJfX3YiOjEsIm90cCI6Ijc2MTY2MyJ9LCJpYXQiOjE2OTg2NzkxMDIsImV4cCI6MTY5ODY4MjcwMn0.P-H9CWHes5nQ3FkR-JbslkfdmMVt7Nss0gk7Zru9xBw"
     document.getElementById('openProductModal').addEventListener('click', function () {
         myModal.show();
     });
@@ -50,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const date = document.getElementById("date").value;
         const ram_rom = document.getElementById("ram_rom").value;
 
+
         const formData = new FormData();
         formData.append("category", "653aa1fa459df580516ae7d0");
         formData.append("title", title);
@@ -59,10 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append("quantity", quantity);
         formData.append("sold", sold);
         formData.append("video", video);
-        formData.append("color", color);
+        formData.append("color", listColor);
         formData.append("list_img", list_img);
         formData.append("date", date);
         formData.append("ram_rom", ram_rom);
+
         //- Push data
         fetch('http://localhost:3000/api/addProduct', {
             headers: {
@@ -80,40 +85,53 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         myModal.hide();
     });
+    let listColor = [];
+    listColor.push(color)
+    let selectedColor;
+    color.addEventListener('input', (event) => {
+        selectedColor = event.target.value;
+        console.log('Selected color:', selectedColor);
+        // Xử lý màu đã chọn ở đây
+    });
     
+    async function getProductById(){
+        const proId = this.getAttribute("data-id");
+        console.log(proId);
+        axios.post("http://localhost:3000/api/getProductById", dateProductYSelected, {
+            headers: {
+                'Authorization': `${token}`
+            }
+        }).then(function (response) {
+            let jsonData = response.data.product;              
+            categoryUp.value = jsonData.category;
+            titleUp.value = jsonData.title
+            descriptionUp.value = jsonData.description
+            img_coverUp.src = jsonData.img_cover
+            priceUp.value = jsonData.price
+            quantityUp.value = jsonData.quantity
+            soldUp.value = jsonData.sold
+            videoUp.src = jsonData.video
+            colorUp.value = jsonData.color
+            list_imgUp.src = jsonData.list_img
+            dateUp.value = jsonData.date
+            ram_romUp.value = jsonData.ram_rom
+        })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
     editProButton.forEach(function (editProBtn) {
         editProBtn.addEventListener("click", function () {
-            const proId = this.getAttribute("data-id");
-            console.log(proId);
+           
 
             const dateProductYSelected = {
                 productId: proId
             };
 
-            axios.post("http://localhost:3000/api/getProductById", dateProductYSelected, {
-                headers: {
-                    'Authorization': token
-                }
-            }).then(function (response) {
-                let jsonData = response.data.product
-                categoryUp.value = jsonData.category._id;
-                titleUp.value = jsonData.title
-                descriptionUp.value = jsonData.description
-                img_coverUp.src = jsonData.img_cover
-                priceUp.value = jsonData.price
-                quantityUp.value = jsonData.quantity
-                soldUp.value = jsonData.sold
-                videoUp.src = jsonData.video
-                colorUp.value = jsonData.color
-                list_imgUp.src = jsonData.list_img
-                dateUp.value = jsonData.date
-                ram_romUp.value = jsonData.ram_rom
-            })
-                .catch(function (error) {
-                    console.log(error);
-                });
+           
         });
     });  
+
     updateProductButton.addEventListener("click", async function(){
 
         const categoryUp = document.getElementById("categoryUp").value;
