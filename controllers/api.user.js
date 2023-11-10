@@ -235,7 +235,7 @@ exports.loginUser = async (req, res) => {
           code: 0,
         });
       }
-      const pathImgDelete = user.avatar.split("3000");
+      const pathImgDelete = user.avatar.split("app");
       UploadFile.deleteFile(res, pathImgDelete[1]);
       let statusCode = await UploadFile.uploadFile(
         req,

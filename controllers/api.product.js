@@ -202,7 +202,7 @@ exports.deleteProduct = async (req, res) => {
         let isRemove = true;
         list_img.map((item) => {
             fs.unlink(
-                path.join(__dirname, "../public" + item.split("3000")[1]),
+                path.join(__dirname, "../public" + item.split("app")[1]),
                 (err) => {
                     if (err) {
                         isRemove = false;
@@ -275,28 +275,32 @@ exports.editProduct = async (req, res) => {
             product.ram_rom = ram_rom;
         }
         if (fileimg_cover !== undefined) {
+            console.log(fileimg_cover[0].mimetype);
             if (matchImg.indexOf(fileimg_cover[0].mimetype) === -1) {
-                return res.send({message: "The uploaded file is not in the correct format", code: 0});
+                console.log(fileimg_cover[0].mimetype);
+                return res.send({message: "The uploaded file is not in the correct format 1", code: 0});
             }
-            UploadFile.deleteFile(res, product.img_cover.split("3000")[1]);
-            let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
-            if (img_cover === 0) {
-                return res.send({message: "upload file fail", code: 0});
-            }
-            product.img_cover = img_cover;
+            // UploadFile.deleteFile(res, product.img_cover.split("app")[1]);
+            // let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
+            // if (img_cover === 0) {
+            //     return res.send({message: "upload file fail", code: 0});
+            // }
+            // product.img_cover = img_cover;
         }
         if (filelist_img !== undefined) {
             let isFormat = true;
             filelist_img.map(item => {
+                console.log(item.mimetype);
                 if (matchImg.indexOf(item.mimetype) === -1) {
+                    console.log(item.mimetype);
                     isFormat = false;
                 }
             });
             if (isFormat === false) {
-                return res.send({message: "The uploaded file is not in the correct format", code: 0});
+                return res.send({message: "The uploaded file is not in the correct format 2", code: 0});
             }
             product.list_img.map((item) => {
-                UploadFile.deleteFile(res, item.split("3000")[1]);
+                UploadFile.deleteFile(res, item.split("app")[1]);
             })
             let list_img = await UploadFile.uploadFiles(req, product._id.toString(), "product", filelist_img, ".jpg");
             if (list_img === 0) {
@@ -305,10 +309,12 @@ exports.editProduct = async (req, res) => {
             product.list_img = list_img;
         }
         if (filevideo !== undefined) {
-            if (matchImg.indexOf(filevideo[0].mimetype) === -1) {
-                return res.send({message: "The uploaded file is not in the correct format", code: 0});
+            console.log(filevideo[0].mimetype)
+            if (matchVideo.indexOf(filevideo[0].mimetype) === -1) {
+                console.log(filevideo[0].mimetype)
+                return res.send({message: "The uploaded file is not in the correct format 3", code: 0});
             }
-            UploadFile.deleteFile(res, product.video.split("3000")[1]);
+            UploadFile.deleteFile(res, product.video.split("app")[1]);
             let video = await UploadFile.uploadFile(req, product._id.toString(), "product", filevideo[0], ".mp4");
             if (video === 0) {
                 return res.send({message: "upload file fail", code: 0});
@@ -321,5 +327,4 @@ exports.editProduct = async (req, res) => {
         console.log(e);
         return res.send({message: "Edit product fail", code: 0});
     }
-    return res.send({message: "Edit product success", code: 1});
 }
