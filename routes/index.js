@@ -33,11 +33,8 @@ router.get("/stech.manager/category", async function (req, res, next) {
 router.get("/stech.manager/login", function (req, res, next) {
   res.render("login");
 });
-router.get("/stech.manager/add", function (req, res, next) {
-  res.render("addAdmin");
-});
-router.get('/stech.manager/addProduct', function (req, res, next) {
-    res.render('addProduct');
+router.get("/stech.manager/register", function (req, res, next) {
+  res.render("register");
 });
 router.get('/stech.manager/user', function (req, res, next) {
     res.render('user');
@@ -53,5 +50,11 @@ router.get("/stech.manager/chat", function (req, res, next) {
 });
 router.get("/stech.manager/order", function (req, res, next) {
   res.render("order");
+});
+router.get("/stech.manager/invoice", function (req, res, next) {
+  res.render("invoice");
+});
+router.get("/stech.manager/cart", function (req, res, next) {
+  res.render("cart");
 });
 module.exports = router;

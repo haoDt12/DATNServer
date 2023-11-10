@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function (){
   window.addEventListener("load", () => inputs[0].focus());
   async function verifyLogin(userId, otp){
     try {
-      const response = await axios.post('http://localhost:3000/api/verifyOtpLogin', {
+      const response = await axios.post('/api/verifyOtpLogin', {
         userId: userId,
         otp: otp
       });
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function (){
   }
   async function verifySignUp(userTempId, otp){
     try {
-      const response = await axios.post('http://localhost:3000/api/verifyOtpRegister', {
+      const response = await axios.post('/api/verifyOtpRegister', {
         userTempId: userTempId,
         otp: otp
       });
@@ -56,32 +56,19 @@ document.addEventListener("DOMContentLoaded", function (){
       console.error(error);
     }
   }
-  function getCookieValue(name) {
-    const cookies = document.cookie.split("; ");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].split("=");
-      if (cookie[0] === name) {
-        return decodeURIComponent(cookie[1]);
-      }
-    }
-    return null;
-  }
-  function showMessage(message) {
-    alert(message)
-  }
 
   verifyButton.addEventListener("click",function () {
     const otp = inputs[0].value + inputs[1].value + inputs[2].value + inputs[3].value + inputs[4].value + inputs[5].value;
-    const Uid = getCookieValue("Uid");
-    const typeVerify = getCookieValue("typeVerify");
+    const Uid = utils.GetCookie("Uid");
+    const typeVerify = utils.GetCookie("typeVerify");
     if (typeVerify === "login"){
       verifyLogin(Uid, otp).then(data  => {
         if (data.code === 1) {
           const token = data.token;
-          document.cookie = "token=" + encodeURIComponent(token);
-          window.location.assign('http://localhost:3000/stech.manager/home');
+          utils.PushCookie("token", token);
+          window.location.assign('/stech.manager/home');
         }else {
-          showMessage(data.message);
+          utils.showMessage(data.message);
         }
       }).catch(error => {
         console.error('Login error:', error);
@@ -89,9 +76,9 @@ document.addEventListener("DOMContentLoaded", function (){
     }else if(typeVerify === "signup"){
       verifySignUp(Uid, otp).then(data  => {
         if (data.code === 1) {
-          window.location.assign('http://localhost:3000/stech.manager/login');
+          window.location.assign('/stech.manager/login');
         }else {
-          showMessage(data.message);
+          utils.showMessage(data.message);
         }
       }).catch(error => {
         console.error('Login error:', error);
@@ -99,4 +86,6 @@ document.addEventListener("DOMContentLoaded", function (){
     }
   });
 });
+
+
 
