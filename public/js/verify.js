@@ -56,32 +56,19 @@ document.addEventListener("DOMContentLoaded", function (){
       console.error(error);
     }
   }
-  function getCookieValue(name) {
-    const cookies = document.cookie.split("; ");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].split("=");
-      if (cookie[0] === name) {
-        return decodeURIComponent(cookie[1]);
-      }
-    }
-    return null;
-  }
-  function showMessage(message) {
-    alert(message)
-  }
 
   verifyButton.addEventListener("click",function () {
     const otp = inputs[0].value + inputs[1].value + inputs[2].value + inputs[3].value + inputs[4].value + inputs[5].value;
-    const Uid = getCookieValue("Uid");
-    const typeVerify = getCookieValue("typeVerify");
+    const Uid = utils.GetCookie("Uid");
+    const typeVerify = utils.GetCookie("typeVerify");
     if (typeVerify === "login"){
       verifyLogin(Uid, otp).then(data  => {
         if (data.code === 1) {
           const token = data.token;
-          document.cookie = "token=" + encodeURIComponent(token);
+          utils.PushCookie("token", token);
           window.location.assign('/stech.manager/home');
         }else {
-          showMessage(data.message);
+          utils.showMessage(data.message);
         }
       }).catch(error => {
         console.error('Login error:', error);
@@ -91,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function (){
         if (data.code === 1) {
           window.location.assign('/stech.manager/login');
         }else {
-          showMessage(data.message);
+          utils.showMessage(data.message);
         }
       }).catch(error => {
         console.error('Login error:', error);

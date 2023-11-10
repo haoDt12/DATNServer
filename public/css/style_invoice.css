@@ -15,7 +15,7 @@ body{
     position: relative;
     box-shadow: 0 1px 21px #acacac;
     color: #333333;
-    font-family: open sans;
+    font-family: open sans, serif;
 }
 .receipt-main p {
     color: #333333;

@@ -5,7 +5,7 @@ html(lang='en')
         title Invoice
         meta(name='viewport', content='width=device-width, initial-scale=1')
         link(href='https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', rel='stylesheet')
-        link(rel='stylesheet', href='/css/detail_invoice.css')
+        link(rel='stylesheet', href='/css/style_invoice.css')
     body
         .col-md-12
             .row
@@ -47,29 +47,23 @@ html(lang='en')
                                 .receipt-left
                                     h3 H&oacute;a &dstrok;&#x1A1;n # 102
                     div
-                        table.table.table-bordered
+                        table.table
                             thead
-                                tr
+                                tr.text-muted
                                     th M&ocirc; t&#x1EA3;
+                                    th S&#x1ED1; l&#x1B0;&#x1EE3;ng
                                     th S&#x1ED1; ti&#x1EC1;n
                             tbody
                                 tr
-                                    td.col-md-9 Iphone 15 Pro Max 256
+                                    td.col-md-7 Iphone 15 Pro Max 256
+                                    td.col-md-2
+                                        i.fa.fa-inr
+                                        | 1
                                     td.col-md-3
                                         i.fa.fa-inr
                                         | 50.000.000 Vnd
                                 tr
-                                    td.col-md-9 Macbook E M1
-                                    td.col-md-3
-                                        i.fa.fa-inr
-                                        | 78.000.000 Vnd
-                                tr
-                                    td.col-md-9 Airport Pro
-                                    td.col-md-3
-                                        i.fa.fa-inr
-                                        | 5.000.000 Vnd
-                                tr
-                                    td.text-right
+                                    td.text-left.text-muted
                                         p
                                             strong T&ocirc;&#x309;ng c&ocirc;&#x323;ng:
                                         p
@@ -79,31 +73,33 @@ html(lang='en')
                                         p
                                             strong S&#x1ED1; d&#x1B0;:
                                     td
+                                    td.text-muted
                                         p
                                             strong
                                                 i.fa.fa-inr
-                                                |  65,500/-
+                                                |  65,500
                                         p
                                             strong
                                                 i.fa.fa-inr
-                                                |  500/-
+                                                |  500
                                         p
                                             strong
                                                 i.fa.fa-inr
-                                                |  1300/-
+                                                |  1300
                                         p
                                             strong
                                                 i.fa.fa-inr
-                                                |  9500/-
+                                                |  9500
                                 tr
-                                    td.text-right
+                                    td.text-right.text-muted
                                         h2
                                             strong Th&agrave;nh ti&#x1EC1;n:
+                                    td
                                     td.text-left.text-danger
                                         h2
                                             strong
                                                 i.fa.fa-inr
-                                                |  31.566/-
+                                                |  31.566
                     .row
                         .receipt-header.receipt-header-mid.receipt-footer
                             .col-xs-8.col-sm-8.col-md-8.text-left

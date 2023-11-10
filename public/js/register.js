@@ -44,9 +44,6 @@ document.addEventListener("DOMContentLoaded", function (){
         return true;
     }
 
-    function showMessageSignUp(message) {
-        alert(message);
-    }
 
     registerButton.addEventListener("click",function () {
         const full_name = document.getElementById("full_name").value;
@@ -58,10 +55,11 @@ document.addEventListener("DOMContentLoaded", function (){
                 if (data.code === 1){
                     const Uid = data.id;
                     document.cookie = "Uid=" + encodeURIComponent(Uid);
-                    document.cookie = "typeVerify=" + "signup";
+                    utils.PushCookie("Uid", Uid);
+                    utils.PushCookie("typeVerify", "signup");
                     window.location.assign('/stech.manager/verify');
                 }else {
-                    showMessageSignUp(data.message);
+                    utils.showMessage(data.message);
                 }
             }).catch(error => {
                 console.error('Login error:', error);

@@ -52,7 +52,7 @@ router.get("/stech.manager/order", function (req, res, next) {
   res.render("order");
 });
 router.get("/stech.manager/invoice", function (req, res, next) {
-  res.render("detail_invoice");
+  res.render("invoice");
 });
 router.get("/stech.manager/cart", function (req, res, next) {
   res.render("cart");

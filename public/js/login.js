@@ -37,10 +37,6 @@ document.addEventListener("DOMContentLoaded",function () {
         }
         return true;
     }
-    // get message
-    function showMessage(message) {
-        alert(message)
-    }
 
     loginButton.addEventListener("click",function () {
         const user = document.getElementById("username").value;
@@ -49,11 +45,11 @@ document.addEventListener("DOMContentLoaded",function () {
             login(user, pass).then(data => {
                 if (data.code === 1){
                     const Uid = data.id;
-                    document.cookie = "Uid=" + encodeURIComponent(Uid);
-                    document.cookie = "typeVerify=" + "login";
+                    utils.PushCookie("Uid", Uid);
+                    utils.PushCookie("typeVerify", "login");
                     window.location.assign('/stech.manager/verify');
                 }else {
-                    showMessage(data.message);
+                    utils.showMessage(data.message);
                 }
             }).catch(error => {
                     console.error('Login error:', error);
