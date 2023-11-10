@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
             dataDelete.append("categoryId", cateId);
             confirmDeleteButton.addEventListener('click', function () {
                 //- Delete data
-                fetch('http://localhost:3000/api/deleteCategory', {
+                fetch('/api/deleteCategory', {
                     headers: {
                         'Authorization': `${token}`,
                         "Content-Type": "application/x-www-form-urlencoded",
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 categoryId: cateId
             };
 
-            axios.post("http://localhost:3000/api/getCategoryById", dateCategorYSelected, {
+            axios.post("/api/getCategoryById", dateCategorYSelected, {
                 headers: {
                     'Authorization': token
                 }
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("date", dateTime);
         formData.append("file", file);
         //- Push data
-        fetch('http://localhost:3000/api/addCategory', {
+        fetch('/api/addCategory', {
             headers: {
                 'Authorization': `${token}`
             },
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formDataUpdate.append("date", dateTime);
         formDataUpdate.append("file", file);
         //- Push data
-        fetch('http://localhost:3000/api/editCategory', {
+        fetch('/api/editCategory', {
             headers: {
                 'Authorization': `${token}`
             },

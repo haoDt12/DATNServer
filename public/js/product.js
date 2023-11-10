@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append("ram_rom", ram_rom);
 
         //- Push data
-        fetch('http://localhost:3000/api/addProduct', {
+        fetch('/api/addProduct', {
             headers: {
                 'Authorization': `${token}`
             },
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function getProductById(){
         const proId = this.getAttribute("data-id");
         console.log(proId);
-        axios.post("http://localhost:3000/api/getProductById", dateProductYSelected, {
+        axios.post("/api/getProductById", dateProductYSelected, {
             headers: {
                 'Authorization': `${token}`
             }
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formDataUpdateProduct.append("list_img", list_imgUp);
         formDataUpdateProduct.append("date", dateUp);
         formDataUpdateProduct.append("ram_rom", ram_romUp);
-        await axios.post('http://localhost:3000/api/editProduct', {
+        await axios.post('/api/editProduct', {
             headers: {
                 'Authorization': `${token}`
             },
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dataDelete.append("productId", proId);
             confirmDeleteButton.addEventListener('click', function () {
                 //- Delete data
-                fetch('http://localhost:3000/api/deleteProduct', {
+                fetch('/api/deleteProduct', {
                     headers: {
                         'Authorization': `${token}`,
                         "Content-Type": "application/x-www-form-urlencoded",
