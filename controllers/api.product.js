@@ -175,9 +175,15 @@ exports.getProductById = async (req, res) => {
         return res.send({message: "product id is required"});
     }
     try {
+        console.log(productId);
         let product = await ProductModel.productModel
             .findById(productId)
             .populate("category");
+
+        console.log(product);
+        if(!product){
+            return res.send({message: "get product fail", code: 0});
+        }
         res.send({product: product, message: "get product success", code: 1});
     } catch (e) {
         console.log(e.message);
