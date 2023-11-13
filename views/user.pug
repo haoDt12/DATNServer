@@ -72,6 +72,7 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                            a.btn.btn-primary#openUserModal(href='#', data-bs-toggle="modal", data-bs-target="#UserModal") Add User
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -89,176 +90,55 @@ block content
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
             // Header End
             .container-fluid
-                // Row 1
+                form#searchForm(action='/search', method='GET')
+                    .input-group.mb-3
+                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
+                        button#searchButton.btn.btn-outline-secondary(type='submit') Search
                 .col-md-12
                     .user-dashboard-info-box.table-responsive.mb-0.bg-white.p-4.shadow-sm
                         table.table.manage-candidates-top.mb-0
                             thead
                                 tr
-                                    th Candidate Name
-                                    th.text-center Status
-                                    th.action.text-right Action
+                                    th.col-2 Candidate Name
+                                    th.text-center.col-2 Role
+                                    th.text-start.col-1  Action
                             tbody
-                                tr.candidates-list
-                                    td.title
-                                        .thumb
-                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar7.png' alt='')
-                                        .candidate-list-details
-                                            .candidate-list-info
-                                                .candidate-list-title
-                                                    h5.mb-0
-                                                        a(href='#') Brooke Kelly
-                                                .candidate-list-option
-                                                    ul.list-unstyled
-                                                        li
-                                                            i.fas.fa-filter.pr-1
-                                                            | Information Technology
-                                                        li
-                                                            i.fas.fa-map-marker-alt.pr-1
-                                                            | Rolling Meadows, IL 60008
-                                    td.candidate-list-favourite-time.text-center
-                                        a.candidate-list-favourite.order-2.text-danger(href='#')
-                                            i.fas.fa-heart
-                                        span.candidate-list-time.order-1 Shortlisted
-                                    td
-                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
-                                            li
-                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
-                                                    i.far.fa-eye
-                                            li
-                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
-                                                    i.fas.fa-pencil-alt
-                                            li
-                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
-                                                    i.far.fa-trash-alt
-                                tr.candidates-list
-                                    td.title
-                                        .thumb
-                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar1.png' alt='')
-                                        .candidate-list-details
-                                            .candidate-list-info
-                                                .candidate-list-title
-                                                    h5.mb-0
-                                                        a(href='#') Ronald Bradley
-                                                .candidate-list-option
-                                                    ul.list-unstyled
-                                                        li
-                                                            i.fas.fa-filter.pr-1
-                                                            | Human Resources
-                                                        li
-                                                            i.fas.fa-map-marker-alt.pr-1
-                                                            | Monroe Township, NJ 08831
-                                    td.candidate-list-favourite-time.text-center
-                                        a.candidate-list-favourite.order-2.text-danger(href='#')
-                                            i.fas.fa-heart
-                                        span.candidate-list-time.order-1 Shortlisted
-                                    td
-                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
-                                            li
-                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
-                                                    i.far.fa-eye
-                                            li
-                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
-                                                    i.fas.fa-pencil-alt
-                                            li
-                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
-                                                    i.far.fa-trash-alt
-                                tr.candidates-list
-                                    td.title
-                                        .thumb
-                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar2.png' alt='')
-                                        .candidate-list-details
-                                            .candidate-list-info
-                                                .candidate-list-title
-                                                    h5.mb-0
-                                                        a(href='#') Rafael Briggs
-                                                .candidate-list-option
-                                                    ul.list-unstyled
-                                                        li
-                                                            i.fas.fa-filter.pr-1
-                                                            | Recruitment Consultancy
-                                                        li
-                                                            i.fas.fa-map-marker-alt.pr-1
-                                                            | Haines City, FL 33844
-                                    td.candidate-list-favourite-time.text-center
-                                        a.candidate-list-favourite.order-2.text-danger(href='#')
-                                            i.fas.fa-heart
-                                        span.candidate-list-time.order-1 Shortlisted
-                                    td
-                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
-                                            li
-                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
-                                                    i.far.fa-eye
-                                            li
-                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
-                                                    i.fas.fa-pencil-alt
-                                            li
-                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
-                                                    i.far.fa-trash-alt
-                                tr.candidates-list
-                                    td.title
-                                        .thumb
-                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar3.png' alt='')
-                                        .candidate-list-details
-                                            .candidate-list-info
-                                                .candidate-list-title
-                                                    h5.mb-0
-                                                        a(href='#') Vickie Meyer
-                                                .candidate-list-option
-                                                    ul.list-unstyled
-                                                        li
-                                                            i.fas.fa-filter.pr-1
-                                                            | Human Resources
-                                                        li
-                                                            i.fas.fa-map-marker-alt.pr-1
-                                                            | Minneapolis, MN 55406
-                                    td.candidate-list-favourite-time.text-center
-                                        a.candidate-list-favourite.order-2.text-danger(href='#')
-                                            i.fas.fa-heart
-                                        span.candidate-list-time.order-1 Shortlisted
-                                    td
-                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
-                                            li
-                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
-                                                    i.far.fa-eye
-                                            li
-                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
-                                                    i.fas.fa-pencil-alt
-                                            li
-                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
-                                                    i.far.fa-trash-alt
-                                tr.candidates-list
-                                    td.title
-                                        .thumb
-                                            img.img-fluid(src='https://bootdey.com/img/Content/avatar/avatar4.png' alt='')
-                                        .candidate-list-details
-                                            .candidate-list-info
-                                                .candidate-list-title
-                                                    h5.mb-0
-                                                        a(href='#') Nichole Haynes
-                                                .candidate-list-option
-                                                    ul.list-unstyled
-                                                        li
-                                                            i.fas.fa-filter.pr-1
-                                                            | Information Technology
-                                                        li
-                                                            i.fas.fa-map-marker-alt.pr-1
-                                                            | Botchergate, Carlisle
-                                    td.candidate-list-favourite-time.text-center
-                                        a.candidate-list-favourite.order-2.text-danger(href='#')
-                                            i.fas.fa-heart
-                                        span.candidate-list-time.order-1 Shortlisted
-                                    td
-                                        ul.list-unstyled.mb-0.d-flex.justify-content-end
-                                            li
-                                                a.text-primary(href='#' data-toggle='tooltip' title='' data-original-title='view')
-                                                    i.far.fa-eye
-                                            li
-                                                a.text-info(href='#' data-toggle='tooltip' title='' data-original-title='Edit')
-                                                    i.fas.fa-pencil-alt
-                                            li
-                                                a.text-danger(href='#' data-toggle='tooltip' title='' data-original-title='Delete')
-                                                    i.far.fa-trash-alt
+                                each user in users
+                                    tr.candidates-list
+                                        td.title
+                                            .thumb
+                                                img.img-fluid(src=user.avatar, alt='')
+                                                a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' id='addToCartButton' data-bs-toggle='modal' data-bs-target='#addToCartModal' data-bs-placement='top' data-bs-title='Add To Cart')
+                                            .candidate-list-details
+                                                .candidate-list-info
+                                                    .candidate-list-title
+                                                        h5.mb-0
+                                                            a(href='#')=user.full_name
+                                                    .candidate-list-option
+                                                        ul.list-unstyled
+                                                            li(style="margin-right: 20px")
+                                                                i.fas.fa-envelope.pr-1
+                                                                span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= user.email
+                                                                div
+                                                                    each address in user.address
+                                                                        i.fas.fa-map-marker-alt.pr-1
+                                                                        span(style="margin-left: 5px; font-size: 14px; color: black; padding-top:15px;")= address.city
+
+                                        td.candidate-list-favourite-time.text-center
+                                            a.candidate-list-favourite.order-2.text-danger(href='#')
+                                                i.fas.fa-user(style="color: green;")
+                                            span=user.role
+                                        td
+                                            ul.list-unstyled.mb-0.d-flex
+                                                li
+                                                    a.text-primary(href='#', data-toggle='tooltip', title='', data-original-title='View')
+                                                        i.far.fa-eye
+                                                li
+                                                    a.text-info(class="updateUs" id="updateUserBtn" data-id=user._id  data-bs-toggle="modal" data-bs-target="#updateUserModal")
+                                                        i.fas.fa-pencil-alt
+                                                li
+                                                    a.text-danger(class="deleteUs" id="deleteUserBtn" data-id=user._id  data-bs-toggle="modal" data-bs-target="#deleteUserModal")
+                                                        i.far.fa-trash-alt
                         .text-center.mt-3.mt-sm-3
                             ul.pagination.justify-content-center.mb-0
                                 li.page-item.disabled
@@ -278,5 +158,53 @@ block content
                                     a.page-link(href='#') Next
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
-                        | Design and Developed by
-                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') &nbsp;STECH
+                        | Design and Developed by&nbsp;
+                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
+                //Modal add pro duct
+            div#UserModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="userModalLabel", aria-hidden="true")
+                    .modal-dialog
+                        .modal-content
+                            .modal-header
+                                h5.modal-title Thêm Người Dùng
+                                button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            .modal-body
+                                form(action="/", method="post")
+                                    .mb-3
+                                        label.form-label(for='email') Email
+                                        input#email.form-control(type='text' name="email" aria-describedby='textHelp')
+                                    .mb-3
+                                        label.form-label(for='password') Password
+                                        input#password.form-control(type='text' name="password" aria-describedby='textHelp')
+                                    .mb-3
+                                        label.form-label(for='full_name') Name
+                                        input#full_name.form-control(type='text' name="full_name"  aria-describedby='textHelp')
+                                    .mb-3
+                                        label.form-label(for='phone') Phone
+                                        input#phone.form-control(type='text' name="phone" aria-describedby='textHelp')
+                                    .mb-3
+                                        label.form-label(for='role') Role
+                                            input#role.form-check-input(type='radio' name='role' value='user' checked)
+                                            label.form-check-label(for='role') User
+
+                                            //input#role.form-check-input(type='radio' name='role' value='admin')
+                                            //label.form-check-label(for='role') Admin
+                                    .mb-3
+                                        .form-group
+                                            label(for="avatar") Hình ảnh
+                                            input#avatar(type="file", name="avatar", accept="image/*")
+                            .modal-footer
+                                button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
+                                button.btn.btn-primary#addUser(type="button") Add User
+
+            #deleteUserModal.modal(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Warning!
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            p Bạn có chắc chắn muốn xoá item này.
+                        .modal-footer
+                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                            button.btn.btn-danger(type='button' id='deleteUser') Đồng ý
+
