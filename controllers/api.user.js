@@ -152,108 +152,79 @@ exports.editUser = async (req, res) => {
       return res.send({message: "User not found", code: 0});
     }
     if (password != null) {
+      if (!passwordRegex.test(password)) {
+        return res.send({
+          message:
+              "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
+          code: 0,
+        });
+      }
       user.password = password;
     }
     if (full_name != null) {
       user.full_name = full_name;
     }
-  }catch (e) {
-    console.log(e.message);
-    return res.send({ message: "User not found", code: 0 });
-  }
-}
-exports.loginUser = async (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
-    if (!username) {
-        return res.send({message: "user name is required", code: 0});
-    }
-    if (phone_number != null) {
+    if(phone_number != null){
+      if (!phoneNumberRegex.test(phone_number)) {
+        return res.send({
+          message: "The phone number is not in the correct format",
+          code: 0,
+        });
+      }
       user.phone_number = phone_number;
     }
-    if (address != null) {
-      user.adress = address;
-    try {
-        let userEmail = await UserModel.userModel.findOne({email: username, password: password}).populate("address");
-        let userPhone = await UserModel.userModel.findOne({phone_number: username, password: password}).populate("address");
-        if (!userEmail && !userPhone) {
-            return res.send({message: "Login fail please check your username and password", code: 0})
-        }
-        if (userPhone) {
-            const otp = Math.floor(100000 + Math.random() * 900000);
-            const apiKey = process.env.API_KEY;
-            const baseUrl = process.env.BASE_URL;
-            const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không chia sẻ mã OTP cho bất kì ai`;
-            const to = formatPhoneNumber(username);
-            const headers = {
-                'Authorization': `App ${apiKey}`,
-                'Content-Type': 'application/json',
-            };
-
-            const payload = {
-                messages: [
-                    {
-                        destinations: [{to}],
-                        text,
-                    },
-                ],
-            };
-
-            // Gửi tin nhắn OTP bằng InfoBip REST API
-            axios.post(baseUrl, payload, {headers})
-                .then(async () => {
-                    userPhone.otp = otp;
-                    await userPhone.save();
-                    return res.send({message: "Please verify your account", id: userPhone._id, code: 1});
-                })
-                .catch((error) => {
-                    console.error(error.message);
-                    return res.send({message: "Fail send code", code: 0});
-                });
-        }
-        if (userEmail) {
-            let index = sendOTPByEmail(userEmail.email);
-            if (index === 0) {
-                return res.send({message: "Verify user fail", code: 0});
-            } else {
-                userEmail.otp = index;
-                await userEmail.save();
-                return res.send({message: "Please verify your account", id: userEmail._id, code: 1});
-            }
-        }
-    } catch (e) {
-        console.log(e.message);
-        return res.send({message: "user not found", code: 0})
-    }
-    if (email != null) {
+    if(email != null){
+      if (!emailRegex.test(email)) {
+        return res.send({
+          message: "The email is not in the correct format",
+          code: 0,
+        });
+      }
       user.email = email;
     }
-    if (file != null) {
+    if(file != null){
       if (match.indexOf(file.mimetype) === -1) {
         return res.send({
           message: "The uploaded file is not in the correct format",
           code: 0,
         });
       }
-      const pathImgDelete = user.avatar.split("app");
-      UploadFile.deleteFile(res, pathImgDelete[1]);
-      let statusCode = await UploadFile.uploadFile(
-        req,
-        user._id.toString(),
-        "user",
-        file,
-        ".jpg"
-      );
-      if (statusCode === 0) {
-        return res.send({ message: "Upload file fail", code: 0 });
-      } else {
-        user.avatar = statusCode;
+      if(user.avatar.split("app")[1] === undefined){
+        let statusCode = await UploadFile.uploadFile(
+            req,
+            user._id.toString(),
+            "user",
+            file,
+            ".jpg"
+        );
+        if (statusCode === 0) {
+          return res.send({ message: "Upload file fail", code: 0 });
+        } else {
+          user.avatar = statusCode;
+        }
+      }else {
+        UploadFile.deleteFile(res, user.avatar.split("app")[1]);
+        let statusCode = await UploadFile.uploadFile(
+            req,
+            user._id.toString(),
+            "user",
+            file,
+            ".jpg"
+        );
+        if (statusCode === 0) {
+          return res.send({ message: "Upload file fail", code: 0 });
+        } else {
+          user.avatar = statusCode;
+        }
       }
     }
     await user.save();
-    return res.send({ message: "Edit user success", code: 1 });
+    return res.send({message:"Edit success",code:1});
+  }catch (e) {
+    console.log(e.message);
+    return res.send({ message: "User not found", code: 0 });
   }
-};
+}
 exports.loginUser = async (req, res) => {
   let username = req.body.username;
   let password = req.body.password;
