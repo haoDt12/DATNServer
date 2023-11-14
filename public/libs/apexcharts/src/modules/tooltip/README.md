@@ -16,5 +16,5 @@ This file deals with positioning of the tooltip.
 ### Tooltip.js
 This is the primary file which is an entry point for all tooltip related functionality.
 
-### Utils.js
+### utils.js
 Helper functions related to tooltips.

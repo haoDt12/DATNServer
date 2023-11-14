@@ -1,15 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    function getCookieValue(name) {
-        const cookies = document.cookie.split("; ");
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].split("=");
-            if (cookie[0] === name) {
-                return decodeURIComponent(cookie[1]);
-            }
-        }
-        return null;
-    }
-    const token = getCookieValue("token");
+
+    const token = utils.GetCookie("token");
     const openCategoryModalButton = document.getElementById("openCategoryModal");
     const openEditCategoryModal = document.getElementById("openEditCategoryModal");
     const categoryModal = new bootstrap.Modal(document.getElementById("categoryModal"));
@@ -39,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
             dataDelete.append("categoryId", cateId);
             confirmDeleteButton.addEventListener('click', function () {
                 //- Delete data
-                fetch('http://localhost:3000/api/deleteCategory', {
+                fetch('/api/deleteCategory', {
                     headers: {
                         'Authorization': `${token}`,
                         "Content-Type": "application/x-www-form-urlencoded",
@@ -66,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 categoryId: cateId
             };
 
-            axios.post("http://localhost:3000/api/getCategoryById", dateCategorYSelected, {
+            axios.post("/api/getCategoryById", dateCategorYSelected, {
                 headers: {
                     'Authorization': token
                 }
@@ -98,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("date", dateTime);
         formData.append("file", file);
         //- Push data
-        fetch('http://localhost:3000/api/addCategory', {
+        fetch('/api/addCategory', {
             headers: {
                 'Authorization': `${token}`
             },
@@ -135,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formDataUpdate.append("date", dateTime);
         formDataUpdate.append("file", file);
         //- Push data
-        fetch('http://localhost:3000/api/editCategory', {
+        fetch('/api/editCategory', {
             headers: {
                 'Authorization': `${token}`
             },

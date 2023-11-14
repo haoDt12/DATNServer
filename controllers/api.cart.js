@@ -10,6 +10,7 @@ exports.addCart = async (req, res) => {
   let price = req.body.price;
   let imgCover = req.body.imgCover;
   let title = req.body.title;
+  let ram_rom = req.body.ram_rom;
   let date = new Date();
   let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
   if (userId == null) {
@@ -31,7 +32,10 @@ exports.addCart = async (req, res) => {
     let myCart = await CartModel.cartModel.findOne({ userId: userId });
     if (myCart) {
       const index = myCart.product.findIndex(
-        (id) => id.productId === productId
+        (id) =>
+          id.productId === productId &&
+          id.color === color &&
+          id.ram_rom === ram_rom
       );
 
       if (index == -1) {
@@ -40,6 +44,7 @@ exports.addCart = async (req, res) => {
           quantity: quantity,
           color: color,
           title: title,
+          ram_rom: ram_rom,
           price: price,
           imgCover: imgCover,
         });
@@ -59,6 +64,7 @@ exports.addCart = async (req, res) => {
         quantity: quantity,
         color: color,
         title: title,
+        ram_rom: ram_rom,
         price: price,
         imgCover: imgCover,
       });
@@ -183,6 +189,15 @@ exports.editCart = async (req, res) => {
           if (cart.product[index].quantity == 0) {
             cart.product.splice(index, 1);
             await cart.save();
+            if (cart.product.length == 0) {
+              await CartModel.cartModel.findOneAndDelete({
+                userId: userId,
+              });
+              return res.send({
+                message: "delete your cart",
+                code: 1,
+              });
+            }
             return res.send({
               message:
                 "reduct quantity product and remove product in your  cart success",
