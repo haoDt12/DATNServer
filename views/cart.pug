@@ -114,59 +114,60 @@ html(lang='en')
                                             a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
                 // Header End
                 .container-fluid
-                    .card
-                        .card-header
-                            .col-lg-5.col-md-4.col-6
-                                input.form-control(type='text', placeholder='Search...')
-                        .card-body
-                            .table-responsive
-                                table.table.table-bordered.m-0
-                                    thead
-                                        tr
-                                            th.text-center.py-3.px-4(style='min-width: 400px;') Product name and detail
-                                            th.text-right.py-3.px-4(style='width: 100px;') Price
-                                            th.text-center.py-3.px-4(style='width: 120px;') Quantity
-                                            th.text-right.py-3.px-4(style='width: 100px;') Total
-                                            th.text-center.align-middle.py-3.px-0(style='width: 40px;')
-                                                a.shop-tooltip.float-none.text-light(href='#', title='', data-original-title='Clear cart')
-                                                    i.ino.ion-md-trash
-                                    tbody
-                                        tr
-                                            td.p-4
-                                                .media.align-items-center
-                                                    img.d-block.ui-w-40.ui-bordered.mr-4(src='https://bootdey.com/img/Content/avatar/avatar2.png', alt='')
-                                                    .media-body
-                                                        a.d-block.text-dark(href='#') Product 3
-                                                        small
-                                                            span.text-muted Color:
-                                                            |
-                                                            span.ui-product-color.ui-product-color-sm.align-text-bottom(style='background:#e81e2c;')
-                                                            |  &nbsp;
-                                                            |
-                                                            span.text-muted Option
-                                                            |  32GB
-                                            td.text-right.font-weight-semibold.align-middle.p-4 $20.55
-                                            td.align-middle.p-4
-                                                input#quantity.form-control.text-center(type='number', name='quantity', min='1', value='1')
-                                            td.text-right.font-weight-semibold.align-middle.p-4 $20.55
-                                            td.text-center.align-middle.px-0
-                                                a.shop-tooltip.close.float-none.text-danger(href='#', title='', data-original-title='Remove') &times;
-                            .d-flex.flex-wrap.justify-content-between.align-items-center.pb-4
-                                .mt-4
-                                    label.text-muted.font-weight-normal Code
-                                    input.form-control(type='text', placeholder='Code')
-                                .d-flex
-                                    .text-right.mt-4.mr-5
-                                        label.text-muted.font-weight-normal.m-0 Chi&#x1EBF;t kh&#x1EA5;u
-                                        .text-large
-                                            strong $20
-                                    .text-right.mt-4
-                                        label.text-muted.font-weight-normal.m-0 Total
-                                        .text-large
-                                            strong $1164.65
-                            .float-right
-                                .text-sm-end.mt-2.mt-sm-0
-                                    a.btn.btn-success(href='')
-                                        i.mdi.mdi-cart-outline.me-1 Đặt hàng
+                    .container.clearfix
+                        .card
+                            .card-header
+                                .col-lg-5.col-md-4.col-6
+                                    input.form-control(type='text', placeholder='Search...')
+                            .card-body
+                                .table-responsive
+                                    table.table.table-bordered.m-0
+                                        thead
+                                            tr
+                                                th.text-center.py-3.px-4(style='min-width: 400px;') Product name and detail
+                                                th.text-right.py-3.px-4(style='width: 100px;') Price
+                                                th.text-center.py-3.px-4(style='width: 120px;') Quantity
+                                                th.text-right.py-3.px-4(style='width: 100px;') Total
+                                                th.text-center.align-middle.py-3.px-0(style='width: 40px;')
+                                                    a.shop-tooltip.float-none.text-light(href='#', title='', data-original-title='Clear cart')
+                                                        i.ino.ion-md-trash
+                                        tbody
+                                            tr
+                                                td.p-4
+                                                    .media.align-items-center
+                                                        img.d-block.ui-w-40.ui-bordered.mr-4(src='https://bootdey.com/img/Content/avatar/avatar2.png', alt='')
+                                                        .media-body
+                                                            a.d-block.text-dark(href='#') Product 3
+                                                            small
+                                                                span.text-muted Color:
+                                                                |
+                                                                span.ui-product-color.ui-product-color-sm.align-text-bottom(style='background:#e81e2c;')
+                                                                |  &nbsp;
+                                                                |
+                                                                span.text-muted Option
+                                                                |  32GB
+                                                td.text-right.font-weight-semibold.align-middle.p-4 $20.55
+                                                td.align-middle.p-4
+                                                    input#quantity.form-control.text-center(type='number', name='quantity', min='1', value='1')
+                                                td.text-right.font-weight-semibold.align-middle.p-4 $20.55
+                                                td.text-center.align-middle.px-0
+                                                    a.shop-tooltip.close.float-none.text-danger(href='#', title='', data-original-title='Remove') &times;
+                                .d-flex.flex-wrap.justify-content-between.align-items-center.pb-4
+                                    .mt-4
+                                        label.text-muted.font-weight-normal Code
+                                        input.form-control(type='text', placeholder='Code')
+                                    .d-flex
+                                        .text-right.mt-4.mr-5
+                                            label.text-muted.font-weight-normal.m-0 Chi&#x1EBF;t kh&#x1EA5;u
+                                            .text-large
+                                                strong $20
+                                        .text-right.mt-4
+                                            label.text-muted.font-weight-normal.m-0 Total
+                                            .text-large
+                                                strong $1164.65
+                                .float-right
+                                    .text-sm-end.mt-2.mt-sm-0
+                                        a.btn.btn-success(href='')
+                                            i.mdi.mdi-cart-outline.me-1 Đặt hàng
         script(src='https://code.jquery.com/jquery-1.10.2.min.js')
         script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js')
