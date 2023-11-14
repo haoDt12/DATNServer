@@ -6,61 +6,167 @@ html(lang='en')
         meta(name='viewport', content='width=device-width, initial-scale=1')
         link(href='https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css', rel='stylesheet')
         link(rel='stylesheet', href='/css/style_cart.css')
+        link(rel='stylesheet' href='/css/styles.min.css')
+        link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css'
+            integrity='sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=' crossorigin='anonymous')
+        link(href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css', rel='stylesheet')
     body
-        .container.px-3.my-5.clearfix
-            .card
-                .card-header
-                    .col-lg-5.col-md-4.col-6
-                        input.form-control(type='text', placeholder='Search...')
-                .card-body
-                    .table-responsive
-                        table.table.table-bordered.m-0
-                            thead
-                                tr
-                                    th.text-center.py-3.px-4(style='min-width: 400px;') T&ecirc;n s&#x1EA3;n ph&#x1EA9;m &amp; chi ti&#x1EBF;t
-                                    th.text-right.py-3.px-4(style='width: 100px;') Gi&aacute;
-                                    th.text-center.py-3.px-4(style='width: 120px;') S&#x1ED1; l&#x1B0;&#x1EE3;ng
-                                    th.text-right.py-3.px-4(style='width: 100px;') T&#x1ED5;ng
-                                    th.text-center.align-middle.py-3.px-0(style='width: 40px;')
-                                        a.shop-tooltip.float-none.text-light(href='#', title='', data-original-title='Clear cart')
-                                            i.ino.ion-md-trash
-                            tbody
-                                tr
-                                    td.p-4
-                                        .media.align-items-center
-                                            img.d-block.ui-w-40.ui-bordered.mr-4(src='https://bootdey.com/img/Content/avatar/avatar2.png', alt='')
-                                            .media-body
-                                                a.d-block.text-dark(href='#') Product 3
-                                                small
-                                                    span.text-muted Color:
-                                                    |
-                                                    span.ui-product-color.ui-product-color-sm.align-text-bottom(style='background:#e81e2c;')
-                                                    |  &nbsp;
-                                                    |
-                                                    span.text-muted Dung l&#x1B0;&#x1EE3;ng:
-                                                    |  32GB
-                                    td.text-right.font-weight-semibold.align-middle.p-4 $20.55
-                                    td.align-middle.p-4
-                                        input#quantity.form-control.text-center(type='number', name='quantity', min='1', value='1')
-                                    td.text-right.font-weight-semibold.align-middle.p-4 $20.55
-                                    td.text-center.align-middle.px-0
-                                        a.shop-tooltip.close.float-none.text-danger(href='#', title='', data-original-title='Remove') &times;
-                    .d-flex.flex-wrap.justify-content-between.align-items-center.pb-4
-                        .mt-4
-                            label.text-muted.font-weight-normal M&atilde; gi&#x1EA3;m gi&aacute;
-                            input.form-control(type='text', placeholder='Code')
-                        .d-flex
-                            .text-right.mt-4.mr-5
-                                label.text-muted.font-weight-normal.m-0 Chi&#x1EBF;t kh&#x1EA5;u
-                                .text-large
-                                    strong $20
-                            .text-right.mt-4
-                                label.text-muted.font-weight-normal.m-0 T&#x1ED5;ng c&#x1ED9;ng
-                                .text-large
-                                    strong $1164.65
-                    .float-right
-                        .text-sm-end.mt-2.mt-sm-0
-                            a.btn.btn-success(href='')
-                                i.mdi.mdi-cart-outline.me-1 Đặt hàng
+        #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
+            // Sidebar Start
+            aside.left-sidebar
+                // Sidebar scroll
+                div
+                    .brand-logo.d-flex.align-items-center.justify-content-between
+                        a.text-nowrap.logo-img(href='/stech.manager/home')
+                            img(src='/images/logos/logo.jpeg' width='180' alt='')
+                        #sidebarCollapse.close-btn.d-xl-none.d-block.sidebartoggler.cursor-pointer
+                            i.ti.ti-x.fs-8
+                    // Sidebar navigation
+                    nav.sidebar-nav.scroll-sidebar(data-simplebar='')
+                        ul#sidebarnav
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu Home
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/home' aria-expanded='false')
+                                    span
+                                        i.ti.ti-layout-dashboard
+                                    span.hide-menu Dashboard
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu Manager
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
+                                    span
+                                        i.ti.ti-article
+                                    span.hide-menu Product
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
+                                    span
+                                        i.ti.ti-category
+                                    span.hide-menu Category
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/cart' aria-expanded='false')
+                                    span
+                                        i.ti.ti-shopping-cart
+                                    span.hide-menu Cart
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/chat' aria-expanded='false')
+                                    span
+                                        i.ti.ti-message-chatbot
+                                    span.hide-menu Chat
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/notification' aria-expanded='false')
+                                    span
+                                        i.ti.ti-notification
+                                    span.hide-menu Notification
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
+                                    span
+                                        i.ti.ti-cards
+                                    span.hide-menu User
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/order' aria-expanded='false')
+                                    span
+                                        i.ti.ti-file-description
+                                    span.hide-menu Order
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu AUTH
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/login' aria-expanded='false')
+                                    span
+                                        i.ti.ti-login
+                                    span.hide-menu Login
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/add' aria-expanded='false')
+                                    span
+                                        i.ti.ti-user-plus
+                                    span.hide-menu Add Admin
+                    // End Sidebar navigation
+                // End Sidebar scroll
+            // Sidebar End
+            // Main wrapper
+            .body-wrapper
+                // Header Start
+                header.app-header
+                    nav.navbar.navbar-expand-lg.navbar-light
+                        ul.navbar-nav
+                            li.nav-item.d-block.d-xl-none
+                                a#headerCollapse.nav-link.sidebartoggler.nav-icon-hover(href='javascript:void(0)')
+                                    i.ti.ti-menu-2
+                        #navbarNav.navbar-collapse.justify-content-end.px-0
+                            ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                                li.nav-item.dropdown
+                                    a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
+                                        img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
+                                    .dropdown-menu.dropdown-menu-end.dropdown-menu-animate-up(aria-labelledby='drop2')
+                                        .message-body
+                                            a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                i.ti.ti-user.fs-6
+                                                p.mb-0.fs-3 My Profile
+                                            a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                i.ti.ti-mail.fs-6
+                                                p.mb-0.fs-3 My Account
+                                            a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                i.ti.ti-list-check.fs-6
+                                                p.mb-0.fs-3 My Task
+                                            a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
+                // Header End
+                .container-fluid
+                    .card
+                        .card-header
+                            .col-lg-5.col-md-4.col-6
+                                input.form-control(type='text', placeholder='Search...')
+                        .card-body
+                            .table-responsive
+                                table.table.table-bordered.m-0
+                                    thead
+                                        tr
+                                            th.text-center.py-3.px-4(style='min-width: 400px;') Product name and detail
+                                            th.text-right.py-3.px-4(style='width: 100px;') Price
+                                            th.text-center.py-3.px-4(style='width: 120px;') Quantity
+                                            th.text-right.py-3.px-4(style='width: 100px;') Total
+                                            th.text-center.align-middle.py-3.px-0(style='width: 40px;')
+                                                a.shop-tooltip.float-none.text-light(href='#', title='', data-original-title='Clear cart')
+                                                    i.ino.ion-md-trash
+                                    tbody
+                                        tr
+                                            td.p-4
+                                                .media.align-items-center
+                                                    img.d-block.ui-w-40.ui-bordered.mr-4(src='https://bootdey.com/img/Content/avatar/avatar2.png', alt='')
+                                                    .media-body
+                                                        a.d-block.text-dark(href='#') Product 3
+                                                        small
+                                                            span.text-muted Color:
+                                                            |
+                                                            span.ui-product-color.ui-product-color-sm.align-text-bottom(style='background:#e81e2c;')
+                                                            |  &nbsp;
+                                                            |
+                                                            span.text-muted Option
+                                                            |  32GB
+                                            td.text-right.font-weight-semibold.align-middle.p-4 $20.55
+                                            td.align-middle.p-4
+                                                input#quantity.form-control.text-center(type='number', name='quantity', min='1', value='1')
+                                            td.text-right.font-weight-semibold.align-middle.p-4 $20.55
+                                            td.text-center.align-middle.px-0
+                                                a.shop-tooltip.close.float-none.text-danger(href='#', title='', data-original-title='Remove') &times;
+                            .d-flex.flex-wrap.justify-content-between.align-items-center.pb-4
+                                .mt-4
+                                    label.text-muted.font-weight-normal Code
+                                    input.form-control(type='text', placeholder='Code')
+                                .d-flex
+                                    .text-right.mt-4.mr-5
+                                        label.text-muted.font-weight-normal.m-0 Chi&#x1EBF;t kh&#x1EA5;u
+                                        .text-large
+                                            strong $20
+                                    .text-right.mt-4
+                                        label.text-muted.font-weight-normal.m-0 Total
+                                        .text-large
+                                            strong $1164.65
+                            .float-right
+                                .text-sm-end.mt-2.mt-sm-0
+                                    a.btn.btn-success(href='')
+                                        i.mdi.mdi-cart-outline.me-1 Đặt hàng
         script(src='https://code.jquery.com/jquery-1.10.2.min.js')
         script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js')

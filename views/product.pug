@@ -36,6 +36,11 @@ block content
                                     i.ti.ti-category
                                 span.hide-menu Category
                         li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/cart' aria-expanded='false')
+                                span
+                                    i.ti.ti-shopping-cart
+                                span.hide-menu Cart
+                        li.sidebar-item
                             a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
                                 span
                                     i.ti.ti-cards
@@ -57,7 +62,7 @@ block content
                             a.sidebar-link(href='/stech.manager/register' aria-expanded='false')
                                 span
                                     i.ti.ti-user-plus
-                                span.hide-menu Add Admin
+                                span.hide-menu Register
                 // End Sidebar navigation
             // End Sidebar scroll
         // Sidebar End
@@ -72,8 +77,7 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
-                            a.btn.btn-primary#openProductModal(href='#', data-bs-toggle="modal", data-bs-target="#productModal") Add Product
-                                // Modal
+                            a#CreateProduct.btn.btn-outline-primary(data-bs-toggle='modal' data-bs-target='CreProModal') Create Product
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -88,11 +92,7 @@ block content
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
-
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
-
-
-            // Header End
             .container-fluid
                 .row
                     //- Item Category
@@ -101,8 +101,8 @@ block content
                             .card.overflow-hidden.rounded-2
                                 .position-relative
                                     a(href='#')
-                                        img.card-img-top.rounded-0(src=product.img_cover alt='...' style='max-width: 100%; height: 180px;')
-                                    a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' id='addToCartButton' data-bs-toggle='modal' data-bs-target='#addToCartModal' data-bs-placement='top' data-bs-title='Add To Cart')
+                                        img.card-img-top.rounded-0(src=product.img_cover alt='...')
+                                    a#AddToCartButton.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='')
                                         i.ti.ti-basket.fs-4
                                 .card-body.pt-3.p-4
                                     h6.fw-semibold.fs-4= product.title
@@ -117,13 +117,13 @@ block content
                                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                                             i.ti.ti-eye-off.fs-6
                                                             p.mb-0.fs-3 Ẩn khỏi app
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)' data-id=product._id)
                                                             i.ti.ti-edit.fs-6
-                                                            p.mb-0.fs-3(class="updatePro" id="updateProductBtn" data-id=product._id  data-bs-toggle="modal" data-bs-target="#updateProductModal") Sửa thông tin
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                                            p.mb-0.fs-3 Chi tiết sản phẩm
+                                                        a#OpenDelete.d-flex.align-items-center.gap-2.dropdown-item.DeletePro(href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")
                                                             i.ti.ti-trash.fs-6
-                                                            p.mb-0.fs-3(class='delPro' id="deleteProductBtn" data-id=product._id data-bs-toggle="modal" data-bs-target="#confirmDeletePro") Xoá sản phẩm
-                                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Updating..
+                                                            p.mb-0.fs-3 Xoá sản phẩm
+                                                        a#OpenUpdate.btn.btn-outline-primary.mx-3.mt-2.d-block.UpdatePro(href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#UpProModal") Updating..
                 //- Start Pagination
                 nav(aria-label='Page navigation example')
                     ul.pagination.justify-content-end
@@ -138,140 +138,68 @@ block content
                         li.page-item
                             a.page-link(href='#') Next
                 //- End Pagination
-
                 .py-6.px-6.text-center
-                    p.mb-0.fs-4
-                        | Design and Developed by&nbsp;
+                    p.mb-0.fs-4 Design and Developed by&nbsp;
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
-            //Modal add pro duct
-            .modal.fade#productModal(tabindex="-1", role="dialog", aria-labelledby="productModalLabel", aria-hidden="true")
-                                                .modal-dialog
-                                                    .modal-content
-                                                        .modal-header
-                                                            h5.modal-title Thêm sản phẩm
-                                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                                                        .modal-body
-                                                            form
-                                                                .mb-3
-                                                                    label.form-label(for='category') category
-                                                                    input#category.form-control(type='dropdown' name="category" value="title" aria-describedby='textHelp')
-                                                                .mb-3
-                                                                    label.form-label(for='title') Name
-                                                                    input#title.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
-                                                                .mb-3
-                                                                    label.form-label(for='description') description
-                                                                    input#description.form-control(type='text' name="description" aria-describedby='textHelp')
-                                                                .mb-3
-                                                                    .form-group
-                                                                        label(for="img_cover") Hình ảnh
-                                                                        input#img_cover(type="file", name="img_cover", accept="image/*")
-                                                                .mb-3
-                                                                    label.form-label(for='price') price
-                                                                    input#price.form-control(type='number' name="price" aria-describedby='textHelp')
-                                                                .mb-3
-                                                                    label.form-label(for='quantity') quantity
-                                                                    input#quantity.form-control(type='number' name="quantity" aria-describedby='textHelp')
-                                                                .mb-3
-                                                                    label.form-label(for='sold') sold
-                                                                    input#sold.form-control(type='number' name="sold" aria-describedby='textHelp')
-                                                                .mb-3
-                                                                    .form-group
-                                                                        label(for="video") videoDes
-                                                                        input#video(type="file", name="video", accept="video/*")
-                                                                .mb-3
-                                                                    .form-group
-                                                                        label.form-label(for='Color') Color:
-                                                                                input#color(type="color")
-                                                                .mb-3
-                                                                    .form-group
-                                                                        label(for="list_img") imageDes
-                                                                        input#list_img(type="file",multiple="multiple", name="list_img", accept="image/*")
-                                                                .mb-3
-                                                                    label.form-label(for='date') date
-                                                                    input#date.form-control(type='text' name="date" aria-describedby='textHelp')
-                                                                .mb-3
-                                                                    .form-group
-                                                                        label.form-label(for='ram_rom') Ram-Rom:
-                                                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb
-                                                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb
-                                                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                                                label.form-label(for='ram_rom' value="32/1T") 32/1T
-                                                        .modal-footer
-                                                            button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
-                                                            button.btn.btn-primary#addProduct(type="button") Add Product
-            //Modal add pro duct
-            div#updateProductModal.modal.fade
+            //Modal product
+            #CreProModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Sửa sản phẩm
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
+                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form(action="/", method="post")
-                                .mb-3.fade
-                                    .form-group
-                                        label(for="datePro") ID
-                                        input#idPro.idPro(type="text", name="idPro", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                            form(action="/" method="post")
                                 .mb-3
-                                    label.form-label(for='category') Loại
-                                    input#categoryUp.form-control(type='text' name="category" aria-describedby='textHelp' readonly)
+                                    label.form-label(for='category') Danh m&#x1EE5;c
+                                    input#category.form-control(type='text', placeholder='Tìm danh mục', aria-describedby='textHelp')
                                 .mb-3
-                                    label.form-label(for='title') Name
-                                    input#titleUp.form-control(type='text' name="title" value="Hello World" aria-describedby='textHelp')
+                                    label.form-label(for='title') T&ecirc;n s&#x1EA3;n ph&#x1EA9;m
+
+                                    input#title.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp')
                                 .mb-3
-                                    label.form-label(for='description') description
-                                    input#descriptionUp.form-control(type='text' name="description" aria-describedby='textHelp')
+                                    label.form-label(for='description') M&ocirc; t&#x1EA3; s&#x1EA3;n ph&#x1EA9;m
+                                    input#description.form-control(type='textarea', placeholder='Mô tả sản phẩm', name='description', aria-describedby='textHelp')
                                 .mb-3
                                     .form-group
-                                        label(for="img_cover") Hình ảnh
-                                        input#img_coverUp(type="file", name="img_cover", accept="image/*")
+                                        label(for='img_cover') &#x1EA2;nh n&#x1EC1;n
+                                        input#img_cover(type='file', accept='image/*')
                                 .mb-3
                                     label.form-label(for='price') price
-                                    input#priceUp.form-control(type='number' name="price" aria-describedby='textHelp')
+                                    input#price.form-control(placeholder='Giá', type='number', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='quantity') quantity
-                                    input#quantityUp.form-control(type='number' name="quantity" aria-describedby='textHelp')
+                                    input#quantity.form-control(placeholder='Số lượng', type='number', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='sold') sold
-                                    input#soldUp.form-control(type='number' name="sold" aria-describedby='textHelp')
+                                    input#sold.form-control(type='number', aria-describedby='textHelp')
                                 .mb-3
                                     .form-group
-                                        label(for="video") videoDes
-                                        input#videoUp(type="file", name="video", accept="video/*")
+                                        label(for='video') Video
+                                        input#video(type='file', accept='video/*')
                                 .mb-3
                                     .form-group
-                                        label.form-label(for='Color') Color:
-                                                input#colorUp(type="color")
+                                        label.form-label(for='color') color
+                                            input#color(type='color')
                                 .mb-3
                                     .form-group
-                                        label(for="list_img") imageDes
-                                        input#list_imgUp(type="file",multiple="multiple", name="list_img", accept="image/*")
+                                        label(for='list_img') Ảnh mô tả
+                                        input#list_img(type='file', multiple='multiple', accept='image/*')
                                 .mb-3
-                                    label.form-label(for='date') date
-                                    input#dateUp.form-control(type='text' name="date" aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label.form-label(for='ram_rom') Ram-Rom:
-                                                input#ram_romUp(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="8/128gb") 8/128gb
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="16/256gb") 16/256gb
-                                                input#ram_rom(type="checkbox" name="ram_rom")
-                                                label.form-label(for='ram_rom' value="32/1T") 32/1T
-
+                                    label.form-label(for='ram_rom') Option
+                                    input#ram_rom.form-control(type='text', aria-describedby='textHelp')
                         .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button.btn.btn-primary(type='button', id='updateProduct') Cập nhật
-            #DeleteProductModal.modal(tabindex='-1')
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                            button#ConfirmCrePro.btn.btn-outline-dark-light(type='button') Lưu sản phẩm
+            #DelProModal.modal
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Warning!
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            h5.modal-title Xác nhận xóa !
+                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            p Bạn có chắc chắn muốn xoá item này.
+                            p Bạn có chắc chắn muốn xoá sản phẩm này.
                         .modal-footer
-                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='deleteProduct') Đồng ý
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                            button#ConfirmDelPro.btn.btn-danger(type='button') Xác nhận
+    script(src="/js/product.js")

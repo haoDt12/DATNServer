@@ -17,6 +17,7 @@
     "firebase": "^10.5.0",
     "firebase-admin": "^11.11.0",
     "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.2",
     "mine": "^0.1.0",

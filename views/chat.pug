@@ -1,202 +1,659 @@
 doctype html
 html(lang='en')
     head
+        title Messenger
+        |
         meta(charset='utf-8')
-        title Chat
-        meta(name='viewport', content='width=device-width, initial-scale=1')
-        link(href='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css', rel='stylesheet')
+        |
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        |
+        meta(http-equiv='X-UA-Compatible', content='ie=edge')
+        |
+        link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css')
+        |
         link(rel='stylesheet', href='/css/style_chat.css')
+        |
+        link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css')
+        |
+        link(rel='stylesheet', href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css')
+        |
+        link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css')
     body
-        main.content
-            .container.p-0
-                h1.h3.mb-3 Messages
-                .card
-                    .row.g-0
-                        .col-12.col-lg-5.col-xl-3.border-right
-                            .px-4.d-none.d-md-block
-                                .d-flex.align-items-center
-                                    .flex-grow-1
-                                        input.form-control.my-3(type='text', placeholder='Search...')
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .badge.bg-success.float-right 5
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar5.png', alt='Vanessa Tucker', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | Vanessa Tucker
-                                        .small
-                                            span.fas.fa-circle.chat-online
-                                            |  Online
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .badge.bg-success.float-right 2
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar2.png', alt='William Harris', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | William Harris
-                                        .small
-                                            span.fas.fa-circle.chat-online
-                                            |  Online
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | Sharon Lessman
-                                        .small
-                                            span.fas.fa-circle.chat-online
-                                            |  Online
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar4.png', alt='Christina Mason', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | Christina Mason
-                                        .small
-                                            span.fas.fa-circle.chat-offline
-                                            |  Offline
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar5.png', alt='Fiona Green', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | Fiona Green
-                                        .small
-                                            span.fas.fa-circle.chat-offline
-                                            |  Offline
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar2.png', alt='Doris Wilder', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | Doris Wilder
-                                        .small
-                                            span.fas.fa-circle.chat-offline
-                                            |  Offline
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar4.png', alt='Haley Kennedy', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | Haley Kennedy
-                                        .small
-                                            span.fas.fa-circle.chat-offline
-                                            |  Offline
-                            a.list-group-item.list-group-item-action.border-0(href='#')
-                                .d-flex.align-items-start
-                                    img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Jennifer Chang', width='40', height='40')
-                                    .flex-grow-1.ml-3
-                                        | Jennifer Chang
-                                        .small
-                                            span.fas.fa-circle.chat-offline
-                                            |  Offline
-                            hr.d-block.d-lg-none.mt-1.mb-0
-                        .col-12.col-lg-7.col-xl-9
-                            .py-2.px-4.border-bottom.d-none.d-lg-block
-                                .d-flex.align-items-center.py-1
-                                    .position-relative
-                                        img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                    .flex-grow-1.pl-3
-                                        strong Sharon Lessman
-                                        .text-muted.small
-                                            em Typing...
-                                    div
-                                        button.btn.btn-primary.btn-lg.mr-1.px-3
-                                            svg.feather.feather-phone.feather-lg(xmlns='http://www.w3.org/2000/svg', width='24', height='24', viewBox='0 0 24 24', fill='none', stroke='currentColor', stroke-width='2', stroke-linecap='round', stroke-linejoin='round')
-                                                path(d='M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z')
-                                        button.btn.btn-info.btn-lg.mr-1.px-3.d-none.d-md-inline-block
-                                            svg.feather.feather-video.feather-lg(xmlns='http://www.w3.org/2000/svg', width='24', height='24', viewBox='0 0 24 24', fill='none', stroke='currentColor', stroke-width='2', stroke-linecap='round', stroke-linejoin='round')
-                                                polygon(points='23 7 16 12 23 17 23 7')
-                                                rect(x='1', y='5', width='15', height='14', rx='2', ry='2')
-                                        button.btn.btn-light.border.btn-lg.px-3
-                                            svg.feather.feather-more-horizontal.feather-lg(xmlns='http://www.w3.org/2000/svg', width='24', height='24', viewBox='0 0 24 24', fill='none', stroke='currentColor', stroke-width='2', stroke-linecap='round', stroke-linejoin='round')
-                                                circle(cx='12', cy='12', r='1')
-                                                circle(cx='19', cy='12', r='1')
-                                                circle(cx='5', cy='12', r='1')
-                            .position-relative
-                                .chat-messages.p-4
-                                    .chat-message-right.pb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar1.png', alt='Chris Wood', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:33 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.mr-3
-                                            .font-weight-bold.mb-1 You
-                                            | Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                    .chat-message-left.pb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:34 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.ml-3
-                                            .font-weight-bold.mb-1 Sharon Lessman
-                                            | Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                    .chat-message-right.mb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar1.png', alt='Chris Wood', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:35 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.mr-3
-                                            .font-weight-bold.mb-1 You
-                                            | Cum ea graeci tractatos.
-                                    .chat-message-left.pb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:36 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.ml-3
-                                            .font-weight-bold.mb-1 Sharon Lessman
-                                            | Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-                                            | Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-                                    .chat-message-left.pb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:37 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.ml-3
-                                            .font-weight-bold.mb-1 Sharon Lessman
-                                            | Cras pulvinar, sapien id vehicula aliquet, diam velit elementum orci.
-                                    .chat-message-right.mb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar1.png', alt='Chris Wood', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:38 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.mr-3
-                                            .font-weight-bold.mb-1 You
-                                            | Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                    .chat-message-left.pb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:39 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.ml-3
-                                            .font-weight-bold.mb-1 Sharon Lessman
-                                            | Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                                    .chat-message-right.mb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar1.png', alt='Chris Wood', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:40 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.mr-3
-                                            .font-weight-bold.mb-1 You
-                                            | Cum ea graeci tractatos.
-                                    .chat-message-right.mb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar1.png', alt='Chris Wood', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:41 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.mr-3
-                                            .font-weight-bold.mb-1 You
-                                            | Morbi finibus, lorem id placerat ullamcorper, nunc enim ultrices massa, id dignissim metus urna eget purus.
-                                    .chat-message-left.pb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:42 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.ml-3
-                                            .font-weight-bold.mb-1 Sharon Lessman
-                                            | Sed pulvinar, massa vitae interdum pulvinar, risus lectus porttitor magna, vitae commodo lectus mauris et velit.
-                                            | Proin ultricies placerat imperdiet. Morbi varius quam ac venenatis tempus.
-                                    .chat-message-right.mb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar1.png', alt='Chris Wood', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:43 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.mr-3
-                                            .font-weight-bold.mb-1 You
-                                            | Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                    .chat-message-left.pb-4
-                                        div
-                                            img.rounded-circle.mr-1(src='https://bootdey.com/img/Content/avatar/avatar3.png', alt='Sharon Lessman', width='40', height='40')
-                                            .text-muted.small.text-nowrap.mt-2 2:44 am
-                                        .flex-shrink-1.bg-light.rounded.py-2.px-3.ml-3
-                                            .font-weight-bold.mb-1 Sharon Lessman
-                                            | Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal commodo.
-                            .flex-grow-0.py-3.px-4.border-top
-                                .input-group
-                                    input.form-control(type='text', placeholder='Type your message')
-                                    button.btn.btn-primary Send
-        script(src='https://code.jquery.com/jquery-1.10.2.min.js')
-        script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js')
+        .main-wrapper
+            .container
+                .page-content
+                    .container.mt-5
+                        .row
+                            .col-md-4.col-12.card-stacked
+                                .card.shadow-line.mb-3.chat
+                                    .chat-user-detail
+                                        .p-3.chat-header
+                                            .w-100
+                                                .d-flex.pl-0
+                                                    .d-flex.flex-row.mt-1.mb-1
+                                                        span.margin-auto.mr-2
+                                                            a.user-undetail-trigger.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                                svg.feather(viewBox='0 0 24 24', width='18', height='18', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                                    polyline(points='15 18 9 12 15 6')
+                                                        |
+                                                        p.margin-auto.fw-400.text-dark-75
+                                                            | Profile
+                                                    |
+                                                    div
+                                        |
+                                        .p-3.chat-user-info
+                                            .card-body.text-center
+                                                a(href='#!')
+                                                    img.rounded-circle.img-fluid.shadow.avatar-xxl(src='https://user-images.githubusercontent.com/35243461/168796876-2e363a49-b32c-4218-b5a3-ce12493af69e.jpg')
+                                                |
+                                                .pt-4.text-center.animate4
+                                                    h6.fw-300.mb-1 Quan Albert
+                                                    |
+                                                    p.text-muted Web Developer
+                                                    |
+                                                    .mt-4
+                                                        a.btn.btn-light-skype.btn-icon.btn-circle.btn-sm.btn-shadow.mr-2(href='#')
+                                                            i.bx.bxl-skype
+                                                        |
+                                                        a.btn.btn-light-facebook.btn-icon.btn-circle.btn-sm.btn-shadow.mr-2(href='#')
+                                                            i.bx.bxl-facebook
+                                                        |
+                                                        a.btn.btn-light-twitter.btn-icon.btn-circle.btn-sm.btn-shadow.mr-2(href='#')
+                                                            i.bx.bxl-twitter
+                                                        |
+                                                        a.btn.btn-light-instagram.btn-icon.btn-circle.btn-sm.btn-shadow.mr-2(href='#')
+                                                            i.bx.bxl-instagram
+                                    |
+                                    .p-3.chat-header
+                                        .d-flex
+                                            .w-100.d-flex.pl-0
+                                                img.user-detail-trigger.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(src='https://user-images.githubusercontent.com/35243461/168796876-2e363a49-b32c-4218-b5a3-ce12493af69e.jpg')
+                                            |
+                                            .flex-shrink-0.margin-auto
+                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                        rect(x='2', y='7', width='20', height='15', rx='2', ry='2')
+                                                        |
+                                                        polyline(points='17 2 12 7 7 2')
+                                                |
+                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                        path(d='M12 20h9')
+                                                        |
+                                                        path(d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z')
+                                                |
+                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                        circle(cx='12', cy='12', r='1')
+                                                        |
+                                                        circle(cx='12', cy='5', r='1')
+                                                        |
+                                                        circle(cx='12', cy='19', r='1')
+                                    |
+                                    .chat-search.pl-3.pr-3
+                                        .input-group
+                                            input.form-control(type='text', placeholder='Search a conversation')
+                                            |
+                                            .input-group-append.prepend-white
+                                                span.input-group-text.pl-2.pr-2
+                                                    i.fs-17.las.la-search.drop-shadow
+                                    |
+                                    .archived-messages.d-flex.p-3
+                                        .w-100
+                                            .d-flex.pl-0
+                                                .d-flex.flex-row.mt-1
+                                                    span.margin-auto.mr-2
+                                                        .svg15.archived
+                                                    |
+                                                    p.margin-auto.fw-400.text-dark-75
+                                                        | Archived
+                                                |
+                                                div
+                                    |
+                                    .chat-user-panel
+                                        .pb-3.d-flex.flex-column.navigation-mobile.pagination-scrool.chat-user-scroll
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.shadow.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796884-ee3aafb6-8083-48ec-9cfb-51b95eae08fe.jpg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Emily Woods
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.double-check
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    | I&apos;m
+                                                                    | looking forward to it
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 08:55
+                                                        |
+                                                        .text-right.d-flex.flex-row
+                                                            span
+                                                                .svg18.pinned
+                                                            |
+                                                            i.text-muted.la.la-angle-down.ml-1.fs-15
+                                            |
+                                            .chat-item.active.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.shadow.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796877-f6c8819a-5d6e-4b2a-bd56-04963639239b.jpg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Beate Lemoine
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.double-check
+                                                                |
+                                                                span.message-shortcut.margin-auto.fw-400.fs-13.ml-1.mr-4
+                                                                    | Hey
+                                                                    | Quan, If you are free now we can meet
+                                                                    | tonight ?
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 08:21
+                                                        |
+                                                        span.round.badge.badge-light-success.margin-auto 2
+                                            |
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.shadow.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796879-f8c5e585-15c0-49ff-94de-c70539ae434c.jpg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Tessa Nau
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.single-check
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    | No
+                                                                    | that&apos;s everyhing, thanks again!
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 04:21
+                                            |
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.shadow.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796872-7251e655-cdf0-4031-a253-bf0db09cdf0f.jpg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Eric Campos
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.double-check-blue
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    | So
+                                                                    | cool, I&apos;ll let you know if anything else
+                                                                    | is needed
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 03:47
+                                            |
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796904-de09be7a-511c-4ae6-8312-4e81b8721555.svg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Lone Rangers
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.double-check-blue
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    .d-flex.flex-row.text-muted
+                                                                        span Diego
+                                                                        | :
+                                                                        |
+                                                                        span.message-shortcut.margin-auto.fs-13.ml-1.mr-4
+                                                                            | So
+                                                                            | cool, I&apos;ll let you know if anything
+                                                                            | else is needed
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 01:15
+                                            |
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.shadow.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796882-28875c5c-424a-40d4-8f69-cfb7f18ccd14.jpg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Luis Hamilton
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.double-check
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    | no
+                                                                    | problem
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | yesterday
+                                            |
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796906-ab4fc0f3-551c-4036-b455-be2dfedb9680.svg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Joel Lehtinen
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.double-check
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    | find
+                                                                    | it hard to believe you don&apos;t know
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 4.10.2021
+                                            |
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.shadow.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796881-383d6cc9-a4cc-402f-b730-e9edc4e1e9b7.jpg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | James Tolonen
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.single-check
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    | All
+                                                                    | your life
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 6.10.2021
+                                            |
+                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3
+                                                .w-100
+                                                    .d-flex.pl-0
+                                                        img.rounded-circle.avatar-sm.mr-3(src='https://user-images.githubusercontent.com/35243461/168796906-ab4fc0f3-551c-4036-b455-be2dfedb9680.svg')
+                                                        |
+                                                        div
+                                                            p.margin-auto.fw-400.text-dark-75
+                                                                | Cory Bryant
+                                                            |
+                                                            .d-flex.flex-row.mt-1
+                                                                span
+                                                                    .svg15.double-check-blue
+                                                                |
+                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                    | 12-year
+                                                                    | journey to visit more asteroids than
+                                                                    | any other
+                                                |
+                                                .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                    .d-flex.flex-column
+                                                        p.text-muted.text-right.fs-13.mb-2
+                                                            | 1.9.2021
+                            |
+                            .col-md-8.col-12.card-stacked
+                                .card.shadow-line.mb-3.chat.chat-panel
+                                    .p-3.chat-header
+                                        .d-flex
+                                            .w-100.d-flex.pl-0
+                                                img.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(src='https://user-images.githubusercontent.com/35243461/168796877-f6c8819a-5d6e-4b2a-bd56-04963639239b.jpg')
+                                                |
+                                                .mr-3
+                                                    a(href='!#')
+                                                        p.fw-400.mb-0.text-dark-75
+                                                            | Beate Lemoine
+                                                    |
+                                                    p.sub-caption.text-muted.text-small.mb-0
+                                                        i.la.la-clock.mr-1
+                                                        | last seen today at
+                                                        |                                                     09:15 PM
+                                            |
+                                            .flex-shrink-0.margin-auto
+                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                        circle(cx='12', cy='12', r='10')
+                                                        |
+                                                        line(x1='12', y1='16', x2='12', y2='12')
+                                                        |
+                                                        line(x1='12', y1='8', x2='12.01', y2='8')
+                                                |
+                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                        polygon(points='23 7 16 12 23 17 23 7')
+                                                        |
+                                                        rect(x='1', y='5', width='15', height='14', rx='2', ry='2')
+                                                |
+                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                        circle(cx='11', cy='11', r='8')
+                                                        |
+                                                        line(x1='21', y1='21', x2='16.65', y2='16.65')
+                                                |
+                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                                        circle(cx='12', cy='12', r='1')
+                                                        |
+                                                        circle(cx='12', cy='5', r='1')
+                                                        |
+                                                        circle(cx='12', cy='19', r='1')
+                                    |
+                                    .d-flex.flex-row.mb-3.navigation-mobile.scrollable-chat-panel.chat-panel-scroll
+                                        .w-100.p-3
+                                            .svg36.loader-animate3.horizontal-margin-auto.mb-2
+                                            |
+                                            .text-center.letter-space.drop-shadow.text-uppercase.fs-12.w-100.mb-3
+                                                | Today
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4 Hi, Quan
+                                                |
+                                                .message-options
+                                                    .message-time 06:15
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .d-flex.flex-row-reverse.mb-2
+                                                .right-chat-message.fs-13.mb-2
+                                                    .mb-0.mr-3.pr-4
+                                                        .d-flex.flex-row
+                                                            .pr-2 Hey, Beate
+                                                            |
+                                                            .pr-4
+                                                    |
+                                                    .message-options.dark
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 06:49
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4
+                                                    | Oh hey, I didn&rsquo;t see you there. Did you already get a
+                                                    | table?
+                                                |
+                                                .message-options
+                                                    .message-time 06:52
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4 I just want to ask
+                                                |
+                                                .message-options
+                                                    .message-time 06:53
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .d-flex.flex-row-reverse.mb-2
+                                                .right-chat-message.fs-13.mb-2
+                                                    .mb-0.mr-3.pr-4
+                                                        .d-flex.flex-row
+                                                            .pr-2 Yeah, right over here.
+                                                            |
+                                                            .pr-4
+                                                    |
+                                                    .message-options.dark
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 06:53
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4
+                                                    | I&rsquo;m glad we had time to meet up.
+                                                |
+                                                .message-options
+                                                    .message-time 06:54
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .d-flex.flex-row-reverse.mb-2
+                                                .right-chat-message.fs-13.mb-2
+                                                    .mb-0.mr-3.pr-4
+                                                        .d-flex.flex-row
+                                                            .pr-2 ;)
+                                                            |
+                                                            .pr-4
+                                                    |
+                                                    .message-options.dark
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 06:57
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .d-flex.flex-row-reverse.mb-2
+                                                .right-chat-message.fs-13.mb-2
+                                                    .mb-0.mr-3.pr-4
+                                                        .d-flex.flex-row
+                                                            .pr-4
+                                                                | Me too. So, what&rsquo;s going on?
+                                                            |
+                                                            .pr-4
+                                                    |
+                                                    .message-options.dark
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 06:57
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4 Oh, not much. You?
+                                                |
+                                                .message-options
+                                                    .message-time 07:05
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .d-flex.flex-row-reverse.mb-2
+                                                .right-chat-message.fs-13.mb-2
+                                                    .d-flex.flex-row
+                                                        .pr-2
+                                                            | Not much. Hey, how did your interview go? Wasn&rsquo;t
+                                                            | that today?
+                                                        |
+                                                        .pr-4
+                                                    |
+                                                    .message-options.dark
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 07:06
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4
+                                                    | Oh, yeah. I think it went well. I don&rsquo;t know if I got
+                                                    | the job yet, but they said they would call in a few
+                                                    | days.
+                                                |
+                                                .message-options
+                                                    .message-time 07:09
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .d-flex.flex-row-reverse.mb-2
+                                                .right-chat-message.fs-13.mb-2
+                                                    .mb-0.mr-3.pr-4
+                                                        .d-flex.flex-row
+                                                            .pr-2
+                                                                | Well, I&rsquo;m sure you did great. Good luck.
+                                                            |
+                                                            .pr-4
+                                                    |
+                                                    .message-options.dark
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 07:12
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4
+                                                    | Thanks. I&rsquo;m just happy that it&rsquo;s over. I was really
+                                                    | nervous about it.
+                                                |
+                                                .message-options
+                                                    .message-time 07:16
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .d-flex.flex-row-reverse.mb-2
+                                                .right-chat-message.fs-13.mb-2
+                                                    .d-flex.flex-row
+                                                        .pr-2
+                                                            | I can understand that. I get nervous before
+                                                            | interviews, too
+                                                        |
+                                                        .pr-4
+                                                    |
+                                                    .message-options.dark
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 07:21
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4
+                                                    | Well, thanks for being supportive. I appreciate it.
+                                                |
+                                                .message-options
+                                                    .message-time 07:24
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4
+                                                    | Hey Quan, If you are free now we can meet tonight ?
+                                                |
+                                                .message-options
+                                                    .message-time 08:21
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                    |
+                                    .chat-search.pl-3.pr-3
+                                        .input-group
+                                            input.form-control(type='text', placeholder='Write a message')
+                                            |
+                                            .input-group-append.prepend-white
+                                                span.input-group-text.pl-2.pr-2
+                                                    i.chat-upload-trigger.fs-19.bi.bi-file-earmark-plus.ml-2.mr-2
+                                                    |
+                                                    i.fs-19.bi.bi-emoji-smile.ml-2.mr-2
+                                                    // cmt
+                                                    // <i class="fs-19 bi bi-camera ml-2 mr-2"></i>
+                                                    i.fs-19.bi.bi-cursor.ml-2.mr-2
+                                                    |
+                                                    .chat-upload
+                                                        .d-flex.flex-column
+                                                            //
+                                                              <div class="p-2">
+                                                              <button type="button"
+                                                              class="btn btn-secondary btn-md btn-icon btn-circle btn-blushing">
+                                                              <i class="fs-15 bi bi-camera"></i>
+                                                              </button>
+                                                              </div>
+                                                            .p-2
+                                                                button.btn.btn-success.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                                                    i.fs-15.bi.bi-file-earmark-plus
+                                                            |
+                                                            .p-2
+                                                                button.btn.btn-warning.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                                                    i.fs-15.bi.bi-person
+                                                            |
+                                                            .p-2
+                                                                button.btn.btn-danger.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                                                    i.fs-15.bi.bi-card-image
+        |
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js')
+        |
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.7/js/min/perfect-scrollbar.jquery.min.js')
+        |
+        script.
+            (function ($) {
+                "use strict";
+                $('.scrollable-chat-panel').perfectScrollbar();
+                var position = $(".chat-search").last().position().top;
+                $('.scrollable-chat-panel').scrollTop(position);
+                $('.scrollable-chat-panel').perfectScrollbar('update');
+                $('.pagination-scrool').perfectScrollbar();
+                $('.chat-upload-trigger').on('click', function (e) {
+                    $(this).parent().find('.chat-upload').toggleClass("active");
+                });
+                $('.user-detail-trigger').on('click', function (e) {
+                    $(this).closest('.chat').find('.chat-user-detail').toggleClass("active");
+                });
+                $('.user-undetail-trigger').on('click', function (e) {
+                    $(this).closest('.chat').find('.chat-user-detail').toggleClass("active");
+                });
+            })(jQuery);

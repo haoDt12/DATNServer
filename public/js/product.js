@@ -1,215 +1,172 @@
-// myscript.js
-
 document.addEventListener('DOMContentLoaded', function () {
+    // get token
     const token = utils.GetCookie("token");
-    
-    var myModal = new bootstrap.Modal(document.getElementById('productModal'));
-    var myModalUp = new bootstrap.Modal(document.getElementById('updateProductBtn'));
-    var myModalDe = new bootstrap.Modal(document.getElementById('DeleteProductModal'));
+    // Modal
+    const CreProModal = new bootstrap.Modal(document.getElementById('CreProModal'));
+    // const UpProModal = new bootstrap.Modal(document.getElementById('UpProModal'));
+    const DelProModal = new bootstrap.Modal(document.getElementById('DelProModal'));
+    // Button call api
+    const ConfirmCrePro = document.getElementById("ConfirmCrePro");
+    // const ConfirmUpdate = document.getElementById("update");
+    const ConfirmDelPro = document.getElementById("ConfirmDelPro");
+    // Button call modal
+    const DeletePro = document.querySelectorAll(".DeletePro");
+    const CreateProduct = document.getElementById("CreateProduct");
+    console.log(CreateProduct);
+    const UpdatePro = document.querySelectorAll(".UpdatePro");
 
-    const deleteProButtons = document.querySelectorAll(".delPro");
-    const editProButton = document.querySelectorAll(".updatePro");
-
-    const updateProductButton = document.getElementById("updateProduct");
-    const confirmDeleteButton = document.getElementById("deleteProduct");
-    const color = document.getElementById('color');
-
-
-    const categoryUp = document.getElementById('categoryUp');
-    const titleUp = document.getElementById('titleUp');
-    const descriptionUp = document.getElementById('descriptionUp');
-    const img_coverUp = document.getElementById('img_coverUp');
-    const priceUp = document.getElementById('priceUp');
-    const quantityUp = document.getElementById('quantityUp');
-    const soldUp = document.getElementById('soldUp');
-    const videoUp = document.getElementById('videoUp');
-    const colorUp = document.getElementById('colorUp');
-    const list_imgUp = document.getElementById('list_imgUp');
-    const dateUp = document.getElementById('dateUp');
-    const ram_romUp = document.getElementById('ram_romUp');
-
-    document.getElementById('openProductModal').addEventListener('click', function () {
-        myModal.show();
-    });
-    document.getElementById('deleteProductBtn').addEventListener('click', function () {
-        myModalDe.show();
-    });
-    
-    document.getElementById('addProduct').addEventListener('click', function () {
-        // Handle adding the product data here
-        // You can use JavaScript to send the product data to your server or perform any desired actions.
-        // After adding the product, you can close the modal:
-
-        // const category = document.getElementById("category").value;
-        const title = document.getElementById("title").value;
-        const description = document.getElementById("description").value;
-        const img_cover = document.getElementById("img_cover").files[0];
-        const price = document.getElementById("price").value;
-        const quantity = document.getElementById("quantity").value;
-        const sold = document.getElementById("sold").value;
-        const video = document.getElementById("video").files[0];
-        const color = document.querySelectorAll("color").value;
-        const list_img = document.getElementById("list_img").files[0];
-        const date = document.getElementById("date").value;
-        const ram_rom = document.getElementById("ram_rom").value;
-
-
-        const formData = new FormData();
-        formData.append("category", "653aa1fa459df580516ae7d0");
-        formData.append("title", title);
-        formData.append("description", description);
-        formData.append("img_cover", img_cover);
-        formData.append("price", price);
-        formData.append("quantity", quantity);
-        formData.append("sold", sold);
-        formData.append("video", video);
-        formData.append("color", listColor);
-        formData.append("list_img", list_img);
-        formData.append("date", date);
-        formData.append("ram_rom", ram_rom);
-
-        //- Push data
-        fetch('/api/addProduct', {
-            headers: {
-                'Authorization': `${token}`
-            },
-            method: "POST",
-            body: formData,
-        })
-            .then((response) => {
-              //them dk o day nhe
-                location.reload();
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-        myModal.hide();
-    });
-    let listColor = [];
-    listColor.push(color)
-    let selectedColor;
-    color.addEventListener('input', (event) => {
-        selectedColor = event.target.value;
-        console.log('Selected color:', selectedColor);
-        // Xử lý màu đã chọn ở đây
-    });
-    
-    async function getProductById(){
-        const proId = this.getAttribute("data-id");
-        console.log(proId);
-        axios.post("/api/getProductById", dateProductYSelected, {
-            headers: {
-                'Authorization': `${token}`
-            }
-        }).then(function (response) {
-            let jsonData = response.data.product;              
-            categoryUp.value = jsonData.category;
-            titleUp.value = jsonData.title
-            descriptionUp.value = jsonData.description
-            img_coverUp.src = jsonData.img_cover
-            priceUp.value = jsonData.price
-            quantityUp.value = jsonData.quantity
-            soldUp.value = jsonData.sold
-            videoUp.src = jsonData.video
-            colorUp.value = jsonData.color
-            list_imgUp.src = jsonData.list_img
-            dateUp.value = jsonData.date
-            ram_romUp.value = jsonData.ram_rom
-        })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-    editProButton.forEach(function (editProBtn) {
-        editProBtn.addEventListener("click", function () {
-           
-
-            const dateProductYSelected = {
-                productId: proId
-            };
-
-           
-        });
-    });  
-
-    updateProductButton.addEventListener("click", async function(){
-
-        const categoryUp = document.getElementById("categoryUp").value;
-        const titleUp = document.getElementById("titleUp").value;
-        const descriptionUp = document.getElementById("descriptionUp").value;
-        const img_coverUp = document.getElementById("img_coverUp").files[0];
-        const priceUp = document.getElementById("priceUp").value;
-        const quantityUp = document.getElementById("quantityUp").value;
-        const soldUp = document.getElementById("soldUp").value;
-        const videoUp = document.getElementById("videoUp").files[0];
-        const colorUp = document.getElementById("colorUp").value;
-        const list_imgUp = document.getElementById("list_imgUp").files[0];
-        const dateUp = document.getElementById("dateUp").value;
-        const ram_romUp = document.getElementById("ram_romUp").value;
-
-        const formDataUpdateProduct = new FormData();
-        //fix cung productId
-        formDataUpdateProduct.append("productId", "653f5fc0d580c8e1b05225bf");
-        formDataUpdateProduct.append("category", categoryUp);
-        formDataUpdateProduct.append("title", titleUp);
-        formDataUpdateProduct.append("description", descriptionUp);
-        formDataUpdateProduct.append("img_cover", img_coverUp);
-        formDataUpdateProduct.append("price", priceUp);
-        formDataUpdateProduct.append("quantity", quantityUp);
-        formDataUpdateProduct.append("sold", soldUp);
-        formDataUpdateProduct.append("video", videoUp);
-        formDataUpdateProduct.append("color", colorUp);
-        formDataUpdateProduct.append("list_img", list_imgUp);
-        formDataUpdateProduct.append("date", dateUp);
-        formDataUpdateProduct.append("ram_rom", ram_romUp);
-        await axios.post('/api/editProduct', {
-            headers: {
-                'Authorization': `${token}`
-            },
-            method: "POST",
-            body: formDataUpdateProduct,
-        })
-            .then((response) => {
-                console.log(response);
-                if(response.data.code === 1){
-                    alert(response.data.message);
-                }else {
-                    alert(response.data.message);
+    async function createProduct(category, title, description, img_cover, price, quantity, sold, video, color, list_img, ram_rom) {
+        try {
+            const response = await axios.post("/api/addProduct", {
+                category: category,
+                title: title,
+                description: description,
+                img_cover: img_cover,
+                list_img: list_img,
+                price: price,
+                quantity: quantity,
+                sold: sold,
+                video: video,
+                color: color,
+                ram_rom: ram_rom
+            }, {
+                headers: {
+                    'Authorization': token
                 }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
             });
-        // location.reload();
-        myModalUp.hide();
-    })
+            return response.data;
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
-    deleteProButtons.forEach(function (deleteProBtn) {
-        deleteProBtn.addEventListener("click", function () {
-            myModalDe.show()
-            const proId = this.getAttribute("data-id");
-            //- console.log(cateId);
+    async function deleteProduct(productId) {
+        try {
+            const response = await axios.post("/api/deleteProduct", {
+                productId: productId
+            }, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            return response.data;
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
-            const dataDelete = new URLSearchParams();
-            dataDelete.append("productId", proId);
-            confirmDeleteButton.addEventListener('click', function () {
-                //- Delete data
-                fetch('/api/deleteProduct', {
-                    headers: {
-                        'Authorization': `${token}`,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    method: "POST",
-                    body: dataDelete,
-                })
-                    .then((response) => {
-                        console.log(response)
-                        location.reload();
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    });
+    async function getListCategory() {
+        try {
+            const response = await axios.post("/api/getListCategory", {
+            });
+            return response.data;
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    async function getProduct() {
+        try {
+            const response = await axios.post("/api/getProductById");
+            return response.data;
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    // async function getListProduct() {
+    //     try {
+    //         const response = await axios.get("/api/getListProduct", {
+    //             headers: {
+    //                 'Authorization': `${token}`
+    //             }
+    //         });
+    //         return response.data;
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
+
+    CreateProduct.addEventListener("click", function (e){
+        CreProModal.show();
+    });
+    ConfirmCrePro.addEventListener("click", function () {
+        const title = document.getElementById("title");
+        const description = document.getElementById("description");
+        const img_cover = document.getElementById("img_cover");
+        const price = document.getElementById("price");
+        const quantity = document.getElementById("quantity");
+        const sold = document.getElementById("sold");
+        const video = document.getElementById("video");
+        const color = document.getElementById("color");
+        const list_img = document.getElementById("list_img");
+        const ram_rom = document.getElementById("ram_rom");
+        let Id_product;
+
+        let listColor = [];
+        let selectedColor;
+        color.addEventListener('input', (event) => {
+            selectedColor = event.target.value;
+        });
+        listColor.push(selectedColor);
+        createProduct("654a784a1ab38cd5dd0f7e27", title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor.values(), list_img.files[0], ram_rom.value).then(data => {
+            if (data.code === 1) {
+                utils.showMessage(data.message);
+            } else {
+                utils.showMessage(data.message);
+            }
+        }).catch(error => {
+            console.error('Login error:', error);
+        });
+        CreProModal.hide();
+    });
+
+    DeletePro.forEach(function (DeleteProduct){
+        DeleteProduct.addEventListener("click", function() {
+            const Id_product = this.getAttribute("data-id");
+            ConfirmDelPro.addEventListener("click", function (){
+                deleteProduct(Id_product).then(data => {
+                    // if (data.code === 1) {
+                    //     DelProModal.hide();
+                    //     location.reload();
+                    // } else {
+                        utils.showMessage(token)
+                    // }
+                }).catch(error => {
+                    console.error('Login error:', error);
+                });
             })
         });
     });
+
+    // UpdatePro.forEach(function (UpdateProduct){
+    //     UpdateProduct.addEventListener("click", function (){
+    //         // Id_product = this.getAttribute("data-id");
+    //         getProduct().then(data =>{
+    //             title.value = data.product.title;
+    //             description.value = data.product.description;
+    //             img_cover.src = data.product.img_cover;
+    //             price.value = data.product.price;
+    //             quantity.value = data.product.quantity;
+    //             sold.value = data.product.sold;
+    //             color.value = data.product.color;
+    //             video.src = data.product.video;
+    //             list_img.src = data.product.list_img;
+    //             ram_rom.value = data.product.ram_rom;
+    //         }).catch(error => {
+    //             console.error('Login error:', error);
+    //         });
+    //     });
+    // });
+    // ConfirmUpdate.addEventListener("click", function () {
+    //     updateProduct(Id_product).then(data => {
+    //         if (data.code === 1) {
+    //             UpProModal.hide();
+    //             location.reload();
+    //         } else {
+    //             utils.showMessage(data.message);
+    //         }
+    //     }).catch(error => {
+    //         console.error('Login error:', error);
+    //     });
+    // });
 });
