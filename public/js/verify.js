@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function (){
     }else if(typeVerify === "signup"){
       verifySignUp(Uid, otp).then(data  => {
         if (data.code === 1) {
-          window.location.assign('/stech.manager/login');
+          window.location.href = '/stech.manager/login';
         }else {
           utils.showMessage(data.message);
         }
