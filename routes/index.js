@@ -5,6 +5,7 @@ const OrderModel = require("./../models/model.order");
 
 
 const CategoryModel = require("./../models/model.category");
+const UserModel = require("./../models/model.user");
 
 /* GET home page. */
 router.get("/stech.manager/home", function (req, res, next) {
@@ -38,8 +39,18 @@ router.get("/stech.manager/login", function (req, res, next) {
 router.get("/stech.manager/register", function (req, res, next) {
   res.render("register");
 });
-router.get('/stech.manager/user', function (req, res, next) {
-    res.render('user');
+router.get('/stech.manager/user',  async function (req, res, next) {
+    try {
+        let listUser = await UserModel.userModel.find().populate({path: 'address', select:'city'});
+        res.render("user", {
+            users: listUser,
+            message: "get list user success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "user not found", code: 0});
+    }
 });
 router.get("/stech.manager/verify", function (req, res, next) {
   res.render("verify");

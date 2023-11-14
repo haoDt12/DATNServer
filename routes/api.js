@@ -10,7 +10,7 @@ const ApiOrder = require("../controllers/api.order");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 /* GET api listing. */
-router.post("/registerUser", upload.single("file"), ApiUserController.addUser);
+router.post("/registerUser",upload.single("file"), ApiUserController.addUser);
 router.post(
   "/editUser",
   Middleware.authorizationToken,
