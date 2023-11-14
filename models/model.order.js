@@ -15,5 +15,37 @@ const orderSchema = db.mongoose.Schema({
 }, {
     collection: "Order"
 });
+orderSchema.methods.getAllProductInfo = async function(){
+    const productInfoPromises = this.product.map(async (product) => {
+        const productId = product.productId;
+
+        if (productId) {
+            // Sử dụng Mongoose populate để lấy dữ liệu từ bảng product
+            const productInfo = await db.mongoose.model('product').findById(productId);
+
+            // Trả về thông tin của sản phẩm
+            return productInfo;
+        } else {
+            return null;
+        }
+    });
+
+    // Chờ tất cả các Promise của productInfoPromises được giải quyết
+    const allProductInfo = await Promise.all(productInfoPromises);
+
+    return allProductInfo;
+};
+orderSchema.methods.getUserInfo = async function(){
+    const userId = this.userId;
+    if (userId) {
+        // Sử dụng Mongoose populate để lấy dữ liệu từ bảng product
+        const userInfo = await db.mongoose.model('user').findById(userId);
+        
+        // Trả về toàn bộ thông tin của sản phẩm
+        return userInfo;
+    } else {
+        return null;
+    }
+};
 const modelOrder = db.mongoose.model("order", orderSchema);
 module.exports = {modelOrder};
