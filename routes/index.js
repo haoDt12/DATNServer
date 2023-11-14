@@ -37,6 +37,7 @@ router.get("/stech.manager/login", function (req, res, next) {
 router.get("/stech.manager/register", function (req, res, next) {
   res.render("register");
 });
+
 router.get('/stech.manager/user',  async function (req, res, next) {
     try {
         let listUser = await UserModel.userModel.find().populate({path: 'address', select:'city'});

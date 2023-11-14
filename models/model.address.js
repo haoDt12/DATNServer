@@ -1,3 +1,4 @@
+
 const mongoose = require('./database');
 const addressSchema = mongoose.mongoose.Schema({
     name: {type: String, required: true},
