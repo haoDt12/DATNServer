@@ -84,4 +84,7 @@ router.get("/stech.manager/invoice", function (req, res, next) {
 router.get("/stech.manager/cart", function (req, res, next) {
   res.render("cart");
 });
+router.get("/stech.manager/notification", function (req, res, next) {
+  res.render("notification");
+});
 module.exports = router;
