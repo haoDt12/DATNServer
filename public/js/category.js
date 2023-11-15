@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
             axios.post("/api/getCategoryById", dateCategorYSelected, {
                 headers: {
                     'Authorization': token
-                }
+                },
             }).then(function (response) {
                 let jsonData = response.data.category
                 idCateInput.value = jsonData._id
@@ -73,10 +73,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
     });
+
     goCart.addEventListener("click", function () {
         alert("Updating")
     });
-
 
     saveCategoryButton.addEventListener("click", function () {
         const categoryName = document.getElementById("nameCate").value;
@@ -105,7 +105,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         categoryModal.hide();
     });
-
 
     updateCategoryButton.addEventListener("click", function () {
         const idCate = document.getElementById("idCate").value;
@@ -142,7 +141,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         categoryModal.hide();
     });
-
 
     openCategoryModalButton.addEventListener("click", function () {
         categoryModal.show();

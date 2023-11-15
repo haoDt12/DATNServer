@@ -28,13 +28,28 @@ block content
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
                                 span
-                                    i.ti.ti-article
+                                    i.ti.ti-brand-producthunt
                                 span.hide-menu Product
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
                                 span
                                     i.ti.ti-category
                                 span.hide-menu Category
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/cart' aria-expanded='false')
+                                span
+                                    i.ti.ti-shopping-cart
+                                span.hide-menu Cart
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/chat' aria-expanded='false')
+                                span
+                                    i.ti.ti-message-chatbot
+                                span.hide-menu Chat
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/notification' aria-expanded='false')
+                                span
+                                    i.ti.ti-notification
+                                span.hide-menu Notification
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
                                 span
@@ -54,10 +69,10 @@ block content
                                     i.ti.ti-login
                                 span.hide-menu Login
                         li.sidebar-item
-                            a.sidebar-link(href='/stech.manager/add' aria-expanded='false')
+                            a.sidebar-link(href='/stech.manager/register' aria-expanded='false')
                                 span
                                     i.ti.ti-user-plus
-                                span.hide-menu Add Admin
+                                span.hide-menu Register
                 // End Sidebar navigation
             // End Sidebar scroll
         // Sidebar End
@@ -110,13 +125,13 @@ block content
                 .row
                     table.table.table-striped.align-middle.table-nowrap
                         thead
-                                tr
-                                    th.text-center Ảnh
-                                    th.text-center NameProduct
-                                    th.text-center InfoUser
-                                    th.text-center InfoProduct
-                                    th.text-center Price
-                                    th.text-center Action
+                            tr
+                                th.text-center Ảnh
+                                th.text-center NameProduct
+                                th.text-center InfoUser
+                                th.text-center InfoProduct
+                                th.text-center Price
+                                th.text-center Action
                         tbody
                             each order in orders
                                 tr
@@ -132,7 +147,7 @@ block content
                                             li
                                                 p.text-muted.mb-1.text-truncate.text-center
                                                     i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
-                                                         =  order.userInfo.full_name
+                                                        =  order.userInfo.full_name
                                             li
                                                 p.text-muted.mb-1.text-truncate.text-center
                                                     i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
@@ -158,7 +173,7 @@ block content
                                                             | Đã thanh toán
                                                         else if order.status === 'WaitConfirm'
                                                             | Chờ xác nhận
-                                                    
+
                                     td(style='width: 220px;')
                                         h3.mb-0.font-size-18.text-center(style='font-size: 15px;')
                                             span.text-muted.me-2
@@ -212,3 +227,5 @@ block content
                         .modal-footer
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                             button.btn.btn-danger(type='button' id='updateStatusOrder') Đồng ý
+            script(src='https://code.jquery.com/jquery-1.10.2.min.js')
+            script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js')
