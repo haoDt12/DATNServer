@@ -8,6 +8,7 @@ const axios = require("axios");
 require("dotenv").config();
 const match = [
   "image/jpeg",
+  "image/*",
   "image/png",
   "image/gif",
   "image/bmp",
@@ -141,7 +142,6 @@ exports.editUser = async (req, res) => {
   let password = req.body.password;
   let full_name = req.body.full_name;
   let phone_number = req.body.phone_number;
-  let address = req.body.address;
   let email = req.body.email;
   if (req.body.userId == null) {
     return res.send({ message: "User not found", code: 0 });
@@ -184,6 +184,7 @@ exports.editUser = async (req, res) => {
     }
     if(file != null){
       if (match.indexOf(file.mimetype) === -1) {
+        console.log(file.mimetype);
         return res.send({
           message: "The uploaded file is not in the correct format",
           code: 0,
