@@ -108,7 +108,7 @@ exports.editOrder = async (req, res) => {
     let status = req.body.status;
     let addressId = req.body.addressId;
     try {
-        let order = new OrderModel.modelOrder.findById(orderId);
+        let order = await OrderModel.modelOrder.findById(orderId);
         if(status !== null){
             order.status = status;
         }
