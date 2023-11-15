@@ -2,6 +2,7 @@
 extends layout
 
 block content
+    link(rel='stylesheet' href='/css/user.css')
     #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
         // Sidebar Start
         aside.left-sidebar
@@ -29,13 +30,28 @@ block content
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
                                 span
-                                    i.ti.ti-article
+                                    i.ti.ti-brand-producthunt
                                 span.hide-menu Product
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
                                 span
                                     i.ti.ti-category
                                 span.hide-menu Category
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/cart' aria-expanded='false')
+                                span
+                                    i.ti.ti-shopping-cart
+                                span.hide-menu Cart
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/chat' aria-expanded='false')
+                                span
+                                    i.ti.ti-message-chatbot
+                                span.hide-menu Chat
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/notification' aria-expanded='false')
+                                span
+                                    i.ti.ti-notification
+                                span.hide-menu Notification
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
                                 span
@@ -55,10 +71,10 @@ block content
                                     i.ti.ti-login
                                 span.hide-menu Login
                         li.sidebar-item
-                            a.sidebar-link(href='/stech.manager/add' aria-expanded='false')
+                            a.sidebar-link(href='/stech.manager/register' aria-expanded='false')
                                 span
                                     i.ti.ti-user-plus
-                                span.hide-menu Add Admin
+                                span.hide-menu Register
                 // End Sidebar navigation
             // End Sidebar scroll
         // Sidebar End
@@ -73,7 +89,7 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
-                            a.btn.btn-primary#openUserModal(href='#', data-bs-toggle="modal", data-bs-target="#UserModal") Add User
+                            a#openUserModal.btn.btn-outline-primary(data-bs-toggle='modal' data-bs-target='UserModal') Create User
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -163,39 +179,39 @@ block content
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
                 //Modal add pro duct
             div#UserModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="userModalLabel", aria-hidden="true")
-                    .modal-dialog
-                        .modal-content
-                            .modal-header
-                                h5.modal-title Thêm Người Dùng
-                                button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                            .modal-body
-                                form(action="/", method="post")
-                                    .mb-3
-                                        label.form-label(for='email') Email
-                                        input#email.form-control(type='text' name="email" aria-describedby='textHelp')
-                                    .mb-3
-                                        label.form-label(for='password') Password
-                                        input#password.form-control(type='text' name="password" aria-describedby='textHelp')
-                                    .mb-3
-                                        label.form-label(for='full_name') Name
-                                        input#full_name.form-control(type='text' name="full_name"  aria-describedby='textHelp')
-                                    .mb-3
-                                        label.form-label(for='phone') Phone
-                                        input#phone.form-control(type='text' name="phone" aria-describedby='textHelp')
-                                    .mb-3
-                                        label.form-label(for='role') Role
-                                            input#role.form-check-input(type='radio' name='role' value='user' checked)
-                                            label.form-check-label(for='role') User
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Thêm Người Dùng
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="/", method="post")
+                                .mb-3
+                                    label.form-label(for='email') Email
+                                    input#email.form-control(type='text' name="email" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='password') Password
+                                    input#password.form-control(type='text' name="password" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='full_name') Name
+                                    input#full_name.form-control(type='text' name="full_name"  aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='phone') Phone
+                                    input#phone.form-control(type='text' name="phone" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='role') Role
+                                        input#role.form-check-input(type='radio' name='role' value='user' checked)
+                                        label.form-check-label(for='role') User
 
-                                            //input#role.form-check-input(type='radio' name='role' value='admin')
-                                            //label.form-check-label(for='role') Admin
-                                    .mb-3
-                                        .form-group
-                                            label(for="avatar") Hình ảnh
-                                            input#avatar(type="file", name="avatar", accept="image/*")
-                            .modal-footer
-                                button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
-                                button.btn.btn-primary#addUser(type="button") Add User
+                                        //input#role.form-check-input(type='radio' name='role' value='admin')
+                                        //label.form-check-label(for='role') Admin
+                                .mb-3
+                                    .form-group
+                                        label(for="avatar") Hình ảnh
+                                        input#avatar(type="file", name="avatar", accept="image/*")
+                        .modal-footer
+                            button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
+                            button.btn.btn-primary#addUser(type="button") Add User
 
             #deleteUserModal.modal(tabindex='-1')
                 .modal-dialog
@@ -208,4 +224,4 @@ block content
                         .modal-footer
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                             button.btn.btn-danger(type='button' id='deleteUser') Đồng ý
-
+    script(src='/js/user.js')
