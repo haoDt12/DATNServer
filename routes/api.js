@@ -9,6 +9,7 @@ const ApiAddress = require("../controllers/api.address");
 const ApiOrder = require("../controllers/api.order");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
+const ApiBanner = require("../controllers/api.banner");
 /* GET api listing. */
 router.post("/registerUser", upload.single("file"), ApiUserController.addUser);
 router.post(
@@ -149,5 +150,9 @@ router.post(
   Middleware.authorizationToken,
   ApiCart.getCartByUserId
 );
+router.post("/addBanner",upload.single("file"),ApiBanner.addBanner);
+router.post("/editBanner",upload.single("file"),ApiBanner.editBanner);
+router.post("/deleteBanner",upload.single("file"),ApiBanner.deleteBanner);
+router.post("/getListBanner",upload.single("file"),ApiBanner.getLisBanner);
 
 module.exports = router;
