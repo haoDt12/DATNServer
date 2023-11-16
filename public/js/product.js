@@ -158,14 +158,14 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
         createProduct("654a752e1ab38cd5dd0f7e17", title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value).then(data => {
             console.log(data);
-            if (data.code === 1) {
-                utils.showMessage(data);
-                location.reload();
-            }else {
-                utils.showMessage(data.message);
-            }
+            // if (data.code === 1) {
+            //     utils.showMessage(data);
+            //     location.reload();
+            // }else {
+            //     utils.showMessage(data.message);
+            // }
         }).catch(error => {
-            console.error('Login error:', error);
+            console.error(error);
         });
         CreProModal.hide();
     });
@@ -177,10 +177,13 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log(id_product);
             ConfirmDelPro.addEventListener("click", function (){
                 deleteProduct(id_product).then(data => {
-                    console.log(data);
-                    DelProModal.hide();
-                    location.reload();
-                    utils.showMessage(data.message)
+                    if (data.code === 1){
+                        console.log(data);
+                        DelProModal.hide();
+                        location.reload();
+                    }else {
+                        utils.showMessage(data.message)
+                    }
                 }).catch(error => {
                     console.error('Login error:', error);
                 });
@@ -205,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 update_list_img.src = data.product.list_img;
                 update_ram_rom.value = data.product.ram_rom;
             }).catch(error => {
-                console.error('Login error:', error);
+                console.error(error);
             });
             ConfirmUpdate.addEventListener("click", function () {
                 // updateProduct(Id_product, title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
