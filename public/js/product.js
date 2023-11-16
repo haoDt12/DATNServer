@@ -176,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //     document.cookie = `${name}=${value}; path=/`;
     // }
     //     setCookie("productId", productId);
+
     detailLinks.forEach(function(detailLink) {
         detailLink.addEventListener("click", function(event) {
             event.preventDefault();
