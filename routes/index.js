@@ -14,7 +14,11 @@ router.get("/stech.manager/home", function (req, res, next) {
 router.get('/stech.manager/product', async function (req, res, next) {
     try {
         let listProduct = await ProductModel.productModel.find();
-        res.render("product", { products: listProduct, message: "get list product success", code: 1 });
+        res.render("product", {
+            products: listProduct,
+            message: "get list product success",
+            code: 1
+        });
     } catch (e) {
         console.log(e.message);
         res.send({ message: "product not found", code: 0 })
@@ -22,12 +26,12 @@ router.get('/stech.manager/product', async function (req, res, next) {
 });
 router.get("/stech.manager/category", async function (req, res, next) {
   try {
-    let listCategory = await CategoryModel.categoryModel.find();
-    res.render("category", {
-      category: listCategory,
-      message: "get list category success",
-      code: 1,
-    });
+      let listCategory = await CategoryModel.categoryModel.find();
+      res.render("category", {
+          category: listCategory,
+          message: "get list category success",
+          code: 1,
+      });
   } catch (e) {
     console.log(e.message);
     res.send({ message: "category not found", code: 0 });

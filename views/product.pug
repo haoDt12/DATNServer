@@ -159,13 +159,12 @@ block content
                             h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
                             button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form(action="/" method="post")
+                            form
                                 .mb-3
                                     label.form-label(for='category') Danh m&#x1EE5;c
                                     input#category.form-control(type='text', placeholder='Tìm danh mục', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='title') T&ecirc;n s&#x1EA3;n ph&#x1EA9;m
-
                                     input#title.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='description') M&ocirc; t&#x1EA3; s&#x1EA3;n ph&#x1EA9;m
@@ -201,6 +200,56 @@ block content
                         .modal-footer
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
                             button#ConfirmCrePro.btn.btn-outline-dark-light(type='button') Lưu sản phẩm
+            //Update
+            #UpProModal.modal.fade
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
+                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                        .modal-body
+                            form
+                                .mb-3
+                                    label.form-label(for='update_category') Danh m&#x1EE5;c
+                                    input#update_category.form-control(type='text', placeholder='Tìm danh mục', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='update_title') T&ecirc;n s&#x1EA3;n ph&#x1EA9;m
+
+                                    input#update_title.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='update_description') M&ocirc; t&#x1EA3; s&#x1EA3;n ph&#x1EA9;m
+                                    input#update_description.form-control(type='textarea', placeholder='Mô tả sản phẩm', name='description', aria-describedby='textHelp')
+                                .mb-3
+                                    .form-group
+                                        label(for='update_img_cover') &#x1EA2;nh n&#x1EC1;n
+                                        input#update_img_cover(type='file', accept='image/*')
+                                .mb-3
+                                    label.form-label(for='update_price') price
+                                    input#update_price.form-control(placeholder='Giá', type='number', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='update_quantity') quantity
+                                    input#update_quantity.form-control(placeholder='Số lượng', type='number', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='update_sold') sold
+                                    input#update_sold.form-control(type='number', aria-describedby='textHelp')
+                                .mb-3
+                                    .form-group
+                                        label(for='update_video') Video
+                                        input#update_video(type='file', accept='video/*')
+                                .mb-3
+                                    .form-group
+                                        label.form-label(for='update_color') color
+                                            input#update_color(type='color')
+                                .mb-3
+                                    .form-group
+                                        label(for='update_list_img') Ảnh mô tả
+                                        input#update_list_img(type='file', multiple='multiple', accept='image/*')
+                                .mb-3
+                                    label.form-label(for='update_ram_rom') Option
+                                    input#update_ram_rom.form-control(type='text', aria-describedby='textHelp')
+                        .modal-footer
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                            button#ConfirmUpPro.btn.btn-outline-dark-light(type='button') Lưu sản phẩm
             #DelProModal.modal
                 .modal-dialog
                     .modal-content
