@@ -125,7 +125,7 @@ exports.editOrder = async (req, res) => {
             order.total = total;
         }
         if (addressId !== null) {
-            product.addressId = addressId;
+            order.addressId = addressId;
         }
         await order.save();
         return res.send({message: "edit order success", code: 1});
