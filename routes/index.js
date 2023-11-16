@@ -39,7 +39,6 @@ router.get("/stech.manager/login", function (req, res, next) {
 router.get("/stech.manager/register", function (req, res, next) {
   res.render("register");
 });
-
 router.get("/stech.manager/detail_product", async function (req, res, next) {
     try {
         var encodedProductId = req.query.productId;
