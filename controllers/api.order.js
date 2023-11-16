@@ -1,5 +1,6 @@
 const OrderModel = require("../models/model.order");
 const ProductModel = require("../models/model.product");
+const Cart = require("../models/model.cart");
 const moment = require("moment/moment");
 exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
@@ -30,6 +31,21 @@ exports.creatOrder = async (req, res) => {
             date_time: date_time,
         })
         await order.save();
+        let cart = await Cart.cartModel.find({userId: userId});
+        if (cart) {
+            let currentProduct = cart[0].product;
+            let newProduct = [];
+            console.log(currentProduct);
+            await Promise.all(currentProduct.map(item => {
+                product.map(data => {
+                    if (item.productId.toString() !== data.productId.toString()) {
+                        newProduct.push(item)
+                    }
+                })
+            }));
+            cart[0].product = newProduct;
+            await cart[0].save();
+        }
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -89,9 +105,13 @@ exports.editOrder = async (req, res) => {
     let orderId = req.body.orderId;
     let userId = req.body.userId;
     let product = req.body.product;
-    let address = req.body.address;
+    let status = req.body.status;
+    let addressId = req.body.addressId;
     try {
-        let order = new OrderModel.modelOrder.findById(orderId);
+        let order = await OrderModel.modelOrder.findById(orderId);
+        if(status !== null){
+            order.status = status;
+        }
         if (userId !== null) {
             order.userId = userId;
         }
@@ -104,8 +124,8 @@ exports.editOrder = async (req, res) => {
             order.product = product;
             order.total = total;
         }
-        if (address !== null) {
-            product.addressId = address;
+        if (addressId !== null) {
+            order.addressId = addressId;
         }
         await order.save();
         return res.send({message: "edit order success", code: 1});
