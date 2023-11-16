@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function () {
     // get token
     const token = utils.GetCookie("token");
