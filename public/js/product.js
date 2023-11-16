@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     // get token
     const token = utils.GetCookie("token");
+    var detailLinks = document.querySelectorAll(".DetailPro");
+    var detailLink = document.getElementById("Detail");
     // Modal
     const CreProModal = new bootstrap.Modal(document.getElementById('CreProModal'));
     // const UpProModal = new bootstrap.Modal(document.getElementById('UpProModal'));
@@ -169,4 +171,18 @@ document.addEventListener('DOMContentLoaded', function () {
     //         console.error('Login error:', error);
     //     });
     // });
+
+    // function setCookie(name, value) {
+    //     document.cookie = `${name}=${value}; path=/`;
+    // }
+    //     setCookie("productId", productId);
+    detailLinks.forEach(function(detailLink) {
+        detailLink.addEventListener("click", function(event) {
+            event.preventDefault();
+            var productId = this.getAttribute("data-id");
+            var encodedProductId = btoa(productId);
+            console.log(encodedProductId); // Xuất mã hóa
+            window.location.href = "/stech.manager/detail_product?productId=" + encodedProductId;
+        });
+    });
 });
