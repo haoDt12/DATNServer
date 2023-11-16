@@ -136,7 +136,7 @@ block content
                                                                 i.fas.fa-envelope.pr-1
                                                                 span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= user.email
                                                                 div
-                                                                    each address in user.address
+                                                                    each address in user.address.slice(0,1)
                                                                         i.fas.fa-map-marker-alt.pr-1
                                                                         span(style="margin-left: 5px; font-size: 14px; color: black; padding-top:15px;")= address.city
 
