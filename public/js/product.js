@@ -14,9 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const CreateProduct = document.getElementById("CreateProduct");
     const UpdatePro = document.querySelectorAll(".UpdatePro");
 
-    async function createProduct(category, title, description, img_cover, price, quantity, sold, video, color, list_img, ram_rom) {
+    async function createProduct(category, title, description, img_cover, price,
+                                 quantity, sold, video, color, list_img, ram_rom) {
         try {
-            const response = await axios.post("/api/addProduct", {
+            const response = await axios.post(`/api/addProduct`, {
                 category: category,
                 title: title,
                 description: description,
@@ -118,17 +119,6 @@ document.addEventListener('DOMContentLoaded', function () {
     //         console.log(e)
     //     }
     // }
-    const category = document.getElementById("category");
-    const title = document.getElementById("title");
-    const description = document.getElementById("description");
-    const img_cover = document.getElementById("img_cover");
-    const price = document.getElementById("price");
-    const quantity = document.getElementById("quantity");
-    const sold = document.getElementById("sold");
-    const video = document.getElementById("video");
-    const color = document.getElementById("color");
-    const list_img = document.getElementById("list_img");
-    const ram_rom = document.getElementById("ram_rom");
     const update_category = document.getElementById("update_category");
     const update_title = document.getElementById("update_title");
     const update_description = document.getElementById("update_description");
@@ -154,20 +144,79 @@ document.addEventListener('DOMContentLoaded', function () {
     CreateProduct.addEventListener("click", function (e){
         CreProModal.show();
     });
-    ConfirmCrePro.addEventListener("click", function () {
-        console.log(title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
-        createProduct("654a752e1ab38cd5dd0f7e17", title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value).then(data => {
-            console.log(data);
-            // if (data.code === 1) {
-            //     utils.showMessage(data);
-            //     location.reload();
-            // }else {
-            //     utils.showMessage(data.message);
-            // }
-        }).catch(error => {
-            console.error(error);
-        });
+    ConfirmCrePro.addEventListener("click", async function () {
+        const category = document.getElementById("category");
+        const title = document.getElementById("title");
+        const description = document.getElementById("description");
+        const img_cover = document.getElementById("img_cover");
+        const price = document.getElementById("price");
+        const quantity = document.getElementById("quantity");
+        const sold = document.getElementById("sold");
+        const video = document.getElementById("video");
+        const color = document.getElementById("color");
+        const list_img = document.getElementById("list_img");
+        const ram_rom = document.getElementById("ram_rom");
+        // console.log(title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("img_cover", img_cover);
+        formData.append("price", price);
+        formData.append("quantity", quantity);
+        formData.append("sold", sold);
+        formData.append("video", video);
+        formData.append("color", listColor);
+        formData.append("list_img", list_img);
+        formData.append("ram_rom", ram_rom);
+        formData.append("category", category);
+        //- Push data
+        fetch('/api/addProduct', {
+            headers: {
+                'Authorization': `${token}`
+            },
+            method: "POST",
+            body: formData,
+        })
+            .then(response => {
+                // location.reload();
+                console.log(response)
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
         CreProModal.hide();
+        // try {
+        //     await axios.post(`/api/addProduct`, {
+        //         category: category.value,
+        //         title:title.value,
+        //         description:description.value,
+        //         img_cover: img_cover.files[0],
+        //         price:price.value,
+        //         quantity:quantity.value,
+        //         sold:sold.value,
+        //         video:video.files[0],
+        //         color:"listColor",
+        //         list_img:list_img.files[0],
+        //         ram_rom:ram_rom.value
+        //     }, {
+        //         headers: {
+        //             'Authorization': `${token}`
+        //         }
+        //     }).then(response => {
+        //         console.log(response.data);
+        //         if (response.data.code === 1) {
+        //             utils.showMessage(response.data);
+        //             location.reload();
+        //         }else {
+        //             utils.showMessage(response.data.message);
+        //         }
+        //     }).catch(error => {
+        //         console.error(error);
+        //     });
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        // CreProModal.hide();
     });
 
     DeletePro.forEach(function (DeleteProduct){
