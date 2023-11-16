@@ -1,5 +1,6 @@
 extends layout
 
+
 block content
     #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
         // Sidebar Start
@@ -127,7 +128,7 @@ block content
                                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                                             i.ti.ti-eye-off.fs-6
                                                             p.mb-0.fs-3 Ẩn khỏi app
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)' data-id=product._id)
+                                                        a#Detail.d-flex.align-items-center.gap-2.dropdown-item.DetailPro(aria-expanded='false' data-id=product._id)
                                                             i.ti.ti-edit.fs-6
                                                             p.mb-0.fs-3 Chi tiết sản phẩm
                                                         a#OpenDelete.d-flex.align-items-center.gap-2.dropdown-item.DeletePro(href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")

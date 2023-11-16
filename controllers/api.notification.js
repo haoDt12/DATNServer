@@ -26,7 +26,7 @@ exports.getListNotification = async (req, res) => {
 exports.addNotification = async (req, res, next) => {
     let userId = req.body.userId;
     let title = req.body.title;
-    let image = req.body.imgage;
+    let image = req.body.image;
     let type = req.body.type;
     let currentDate = new Date();
     let options = {

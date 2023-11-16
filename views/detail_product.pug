@@ -1,123 +1,151 @@
-doctype html
-html(lang='en')
-    head
-        meta(charset='utf-8')
-        title bs4 product detail - Bootdey.com
-        meta(name='viewport', content='width=device-width, initial-scale=1')
-        link(href='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css', rel='stylesheet')
-        style(type='text/css').
-            body{
-                background-color: #edf1f5;
-                margin-top:20px;
-            }
-            .card {
-                margin-bottom: 30px;
-            }
-            .card {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #fff;
-                background-clip: border-box;
-                border: 0 solid transparent;
-                border-radius: 0;
-            }
-            .card .card-subtitle {
-                font-weight: 300;
-                margin-bottom: 10px;
-                color: #8898aa;
-            }
-            .table-product.table-striped tbody tr:nth-of-type(odd) {
-                background-color: #f3f8fa!important
-            }
-            .table-product td{
-                border-top: 0px solid #dee2e6 !important;
-                color: #728299!important;
-            }
-    body
-        link(href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel='stylesheet')
-        .container
-            .card
-                .card-body
-                    h3.card-title Rounded Chair
-                    h6.card-subtitle globe type chair for rest
-                    .row
-                        .col-lg-5.col-md-5.col-sm-6
-                            .white-box.text-center
-                                img.img-responsive(src='https://www.bootdey.com/image/430x600/00CED1/000000')
-                        .col-lg-7.col-md-7.col-sm-6
-                            h4.box-title.mt-5 Product description
-                            p
-                                | Lorem Ipsum available,but the majority have suffered alteration in some form,by injected humour,or randomised words which don&apos;t look even slightly believable.but the majority have suffered alteration in some form,by injected humour
-                            h2.mt-5
-                                | $153
-                                small.text-success (36%off)
-                            button.btn.btn-dark.btn-rounded.mr-1(data-toggle='tooltip', title='', data-original-title='Add to cart')
-                                i.fa.fa-shopping-cart
-                            button.btn.btn-primary.btn-rounded Buy Now
-                            h3.box-title.mt-5 Key Highlights
-                            ul.list-unstyled
-                                li
-                                    i.fa.fa-check.text-success
-                                    | Sturdy structure
-                                li
-                                    i.fa.fa-check.text-success
-                                    | Designed to foster easy portability
-                                li
-                                    i.fa.fa-check.text-success
-                                    | Perfect furniture to flaunt your wonderful collectibles
-                        .col-lg-12.col-md-12.col-sm-12
-                            h3.box-title.mt-5 General Info
-                            .table-responsive
-                                table.table.table-striped.table-product
-                                    tbody
-                                        tr
-                                            td(width='390') Brand
-                                            td Stellar
-                                        tr
-                                            td Delivery Condition
-                                            td Knock Down
-                                        tr
-                                            td Seat Lock Included
-                                            td Yes
-                                        tr
-                                            td Type
-                                            td Office Chair
-                                        tr
-                                            td Style
-                                            td Contemporary&amp;Modern
-                                        tr
-                                            td Wheels Included
-                                            td Yes
-                                        tr
-                                            td Upholstery Included
-                                            td Yes
-                                        tr
-                                            td Upholstery Type
-                                            td Cushion
-                                        tr
-                                            td Head Support
-                                            td No
-                                        tr
-                                            td Suitable For
-                                            td Study&amp;Home Office
-                                        tr
-                                            td Adjustable Height
-                                            td Yes
-                                        tr
-                                            td Model Number
-                                            td F01020701-00HT744A06
-                                        tr
-                                            td Armrest Included
-                                            td Yes
-                                        tr
-                                            td Care Instructions
-                                            td Handle With Care,Keep In Dry Place,Do Not Apply Any Chemical For Cleaning.
-                                        tr
-                                            td Finish Type
-                                            td Matte
-        script(src='https://code.jquery.com/jquery-1.10.2.min.js')
-        script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js')
-        script(type='text/javascript').
+
+
+extends layout
+
+block content
+    link(rel='stylesheet' href='/css/user.css')
+    #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
+        Sidebar Start
+            aside.left-sidebar
+                // Sidebar scroll
+                div
+                    .brand-logo.d-flex.align-items-center.justify-content-between
+                        a.text-nowrap.logo-img(href='/stech.manager/home')
+                            img(src='/images/logos/logo.jpeg' width='180' alt='')
+                        #sidebarCollapse.close-btn.d-xl-none.d-block.sidebartoggler.cursor-pointer
+                            i.ti.ti-x.fs-8
+                    // Sidebar navigation
+                    nav.sidebar-nav.scroll-sidebar(data-simplebar='')
+                        ul#sidebarnav
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu Home
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/home' aria-expanded='false')
+                                    span
+                                        i.ti.ti-layout-dashboard
+                                    span.hide-menu Dashboard
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu Manager
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
+                                    span
+                                        i.ti.ti-brand-producthunt
+                                    span.hide-menu Product
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
+                                    span
+                                        i.ti.ti-category
+                                    span.hide-menu Category
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/cart' aria-expanded='false')
+                                    span
+                                        i.ti.ti-shopping-cart
+                                    span.hide-menu Cart
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/chat' aria-expanded='false')
+                                    span
+                                        i.ti.ti-message-chatbot
+                                    span.hide-menu Chat
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/notification' aria-expanded='false')
+                                    span
+                                        i.ti.ti-notification
+                                    span.hide-menu Notification
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
+                                    span
+                                        i.ti.ti-cards
+                                    span.hide-menu User
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/order' aria-expanded='false')
+                                    span
+                                        i.ti.ti-file-description
+                                    span.hide-menu Order
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu AUTH
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/login' aria-expanded='false')
+                                    span
+                                        i.ti.ti-login
+                                    span.hide-menu Login
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/register' aria-expanded='false')
+                                    span
+                                        i.ti.ti-user-plus
+
+        .body-wrapper
+            .container-fluid
+                .card
+                    .card-body
+                        a.page-link(href='#')
+                        .row
+                                if detailProduct
+                                .col-lg-5.col-md-5.col-sm-6
+                                    .white-box.text-center
+                                        //img.img-responsive(src=detailProduct.img_cover)
+                                        i.fas.fa-angle-left.fa-4x(onclick='prevImage()' style='outline: none;')
+                                        img.img-responsive(id='productImage', src=detailProduct.list_img[0] )
+                                        i.fas.fa-angle-right.fa-4x(onclick='nextImage()' style='outline: none;')
+
+                                .col-lg-7.col-md-7.col-sm-6
+                                    h4.box-title.mt-5 Product description
+                                    p
+                                        =detailProduct.description
+                                    h3.mt-5
+                                        | #{Intl.NumberFormat('vi-VN').format(detailProduct.price)} VND
+                                    button.btn.btn-dark.btn-rounded.mr-1(data-toggle='tooltip', title='', data-original-title='Add to cart' )(style="margin-right: 15px")
+                                        i.fa.fa-shopping-cart
+                                .col-lg-12.col-md-12.col-sm-12
+                                    h3.box-title.mt-5 General Info
+                                    .table-responsive
+                                        table.table.table-striped.table-product
+                                            tbody
+                                                tr
+                                                    th Loại
+                                                    th=detailProduct.category.title
+                                                tr
+                                                    td Tên sản phẩm
+                                                    td= detailProduct.title
+                                                tr
+                                                    td Màu
+                                                    td
+                                                        each colorCode in detailProduct.color
+                                                            i.list-inline-item(style=`background-color: ${colorCode}; width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%;`)
+                                                tr
+                                                    td Số lượng
+                                                    td= detailProduct.quantity
+                                                tr
+                                                    td Dung lượng
+                                                    td(style='flex-wrap: wrap; align-items: center;')
+                                                        each ramCode in detailProduct.ram_rom
+                                                            i.fas(style='font-size: 15px; color: #2d2d2d; margin-right: 15px')= ramCode
+                                                tr
+                                                    td Đã bán
+                                                    td= detailProduct.sold
+                                                tr
+                                                    td Date
+                                                    td= detailProduct.date
+                script(src='https://code.jquery.com/jquery-1.10.2.min.js')
+                script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js')
+                script(type='text/javascript').
+                    var images = !{JSON.stringify(detailProduct.list_img)};
+                    var currentImageIndex = 0;
+
+                    function showImage(index) {
+                        var productImage = document.getElementById('productImage');
+                        productImage.src = images[index];
+                    }
+
+                    function prevImage() {
+                        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+                        showImage(currentImageIndex);
+                    }
+
+                    function nextImage() {
+                        currentImageIndex = (currentImageIndex + 1) % images.length;
+                        showImage(currentImageIndex);
+                    }
+
