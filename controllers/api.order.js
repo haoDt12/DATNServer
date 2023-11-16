@@ -89,9 +89,10 @@ exports.editOrder = async (req, res) => {
     let orderId = req.body.orderId;
     let userId = req.body.userId;
     let product = req.body.product;
-    let address = req.body.address;
+    let addressId = req.body.addressId;
+    let status = req.body.status;
     try {
-        let order = new OrderModel.modelOrder.findById(orderId);
+        let order = await OrderModel.modelOrder.findById(orderId);
         if (userId !== null) {
             order.userId = userId;
         }
@@ -104,9 +105,14 @@ exports.editOrder = async (req, res) => {
             order.product = product;
             order.total = total;
         }
-        if (address !== null) {
-            product.addressId = address;
+        if (addressId !== null) {
+            order.addressId = addressId;
         }
+        if (status !== null) {
+            order.status = status;
+        }
+
+        console.log(order);
         await order.save();
         return res.send({message: "edit order success", code: 1});
     } catch (e) {
