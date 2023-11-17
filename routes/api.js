@@ -150,9 +150,10 @@ router.post(
   Middleware.authorizationToken,
   ApiCart.getCartByUserId
 );
-router.post("/addBanner",upload.single("file"),ApiBanner.addBanner);
-router.post("/editBanner",upload.single("file"),ApiBanner.editBanner);
-router.post("/deleteBanner",upload.single("file"),ApiBanner.deleteBanner);
-router.post("/getListBanner",upload.single("file"),ApiBanner.getLisBanner);
+router.post("/addBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.addBanner);
+router.post("/editBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.editBanner);
+router.post("/deleteBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.deleteBanner);
+router.post("/getListBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.getLisBanner);
 
+router.post("/addFCM",Middleware.authorizationToken,ApiUserController.addFCM)
 module.exports = router;
