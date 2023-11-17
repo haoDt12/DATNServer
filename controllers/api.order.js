@@ -30,21 +30,14 @@ exports.creatOrder = async (req, res) => {
             total: total,
             date_time: date_time,
         })
-        await order.save();
-        let cart = await Cart.cartModel.find({userId: userId});
+        let cart = await Cart.cartModel.findOne({userId: userId});
         if (cart) {
-            let currentProduct = cart[0].product;
-            let newProduct = [];
-            console.log(currentProduct);
-            await Promise.all(currentProduct.map(item => {
-                product.map(data => {
-                    if (item.productId.toString() !== data.productId.toString()) {
-                        newProduct.push(item)
-                    }
-                })
-            }));
-            cart[0].product = newProduct;
-            await cart[0].save();
+            let currentProduct = cart.product;
+            let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId === item1.productId));
+            console.log(newProduct)
+            cart.product = newProduct;
+            await cart.save();
+            await order.save();
         }
         return res.send({message: "create order success", code: 1});
     } catch (e) {
