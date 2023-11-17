@@ -252,7 +252,7 @@ exports.loginUser = async (req, res) => {
       const otp = Math.floor(100000 + Math.random() * 900000);
       const apiKey = process.env.API_KEY;
       const baseUrl = process.env.BASE_URL;
-      const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không cung cấp mã OTP cho bất kì ai`;
+      const text = `STECH xin chào bạn\nMã OTP của bạn là: ${otp}\nVui lòng không cung cấp mã OTP cho bất kì ai`;
       const to = formatPhoneNumber(username);
       const headers = {
         Authorization: `App ${apiKey}`,
