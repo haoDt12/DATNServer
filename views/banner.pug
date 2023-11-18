@@ -92,12 +92,7 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
-                            //- Add Category
-                            a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='#', id='openCategoryModal') Add Category
-                            //- script.
-
-                            //- End
-
+                            a#CreateBanner.btn.btn-outline-primary(data-bs-toggle='modal' data-bs-target='CreBannerModal') Create Banner
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -113,21 +108,16 @@ block content
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
-
-            // Header End
             .container-fluid
                 .row
-                    //- Item Category
-                    each cate in category
+                     each banner in banners
                         .col-sm-6.col-xl-3
                             .card.overflow-hidden.rounded-2
                                 .position-relative
                                     a(href='#')
-                                        img.card-img-top.rounded-0(src=cate.img alt='...' style='max-width: 100%; height: 180px;')
-                                    a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' id='addToCartButton' data-bs-toggle='modal' data-bs-target='#addToCartModal' data-bs-placement='top' data-bs-title='Add To Cart')
-                                        i.ti.ti-basket.fs-4
+                                        img.card-img-top.rounded-0(src=banner.img alt='...')
                                 .card-body.pt-3.p-4
-                                    h6.fw-semibold.fs-4= cate.title
+                                    //h6.fw-semibold.fs-4= banner.img
                                     ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
                                         li.nav-item.dropdown
                                             //- .nav-link
@@ -135,16 +125,10 @@ block content
                                                 button.btn.btn-secondary(type='button') Tuỳ chọn
                                                 .dropdown-menu.dropdown-menu-end.dropdown-menu-animate-up(aria-labelledby='drop2')
                                                     .message-body
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
-                                                            i.ti.ti-eye-off.fs-6
-                                                            p.mb-0.fs-3 Ẩn khỏi app
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item
-                                                            i.ti.ti-edit.fs-6
-                                                            p.mb-0.fs-3 Sửa thông tin
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item.delCate(data-id=cate._id data-bs-toggle="modal" data-bs-target="#confirmDeleteCate")
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item(class='DeleteBanner' data-id = banner._id data-bs-toggle="modal")
                                                             i.ti.ti-trash.fs-6
                                                             p.mb-0.fs-3 Xoá sản phẩm
-                                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block.updateCate(data-id=cate._id  data-bs-toggle="modal" data-bs-target="#updateCategoryModal") Updating..
+                                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='' class="UpdateBanner" data-id=banner._id data-bs-toggle='modal') Updating..
                 //- Start Pagination
                 nav(aria-label='Page navigation example')
                     ul.pagination.justify-content-end
@@ -159,110 +143,53 @@ block content
                         li.page-item
                             a.page-link(href='#') Next
                 //- End Pagination
-
                 .py-6.px-6.text-center
-                    p.mb-0.fs-4
-                        | Design and Developed by&nbsp;
+                    p.mb-0.fs-4 Design and Developed by&nbsp;
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
-
-            //- Modal Add Category
-            div#categoryModal.modal.fade
+            //Modal product
+            #CreBannerModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Thêm thể loại
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
+                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form(action="/", method="post")
-                                .mb-4
+                            form(action="/" method="post")
+                                .mb-3
                                     .form-group
-                                        label(for="imageCate") Hình ảnh
-                                        input#imageCate(type="file" name="image" accept="image/*" onchange='previewImage(event)')
-                                .mb-4
-                                    .form-group#imageForm(style='display: none;')
-                                        label(for="progressCate") Preview
-                                        br
-                                        img#imagePreview(src='' alt='Image Preview'  style='width:150px;height:100px;')
-                                .mb-4
-                                    .form-group(hidden)
-                                        label(for="progressCate") Tiến trình
-                                        p#progressCate
-                                .mb-4
+                                        label(for='img') &#x1EA2;nh n&#x1EC1;n
+                                        input#img(type='file', accept='image/*')
+                        .modal-footer
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                            button#ConfirmCreBanner.btn.btn-outline-dark-light(type='button') Lưu ảnh
+            #UpBannerModal.modal.fade
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
+                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                        .modal-body
+                            form(action="/" method="post")
+                                .mb-3
                                     .form-group
-                                        label(for="nameCate") Tên sản phẩm
-                                        input#nameCate(type="text", name="name", class="form-control", placeholder="", aria-describedby="helpId")
-                                .mb-4
+                                        label(for='idBanner') id
+                                        input#idBanner(type="text", name="idBanner", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                                .mb-3
                                     .form-group
-                                        label(for="dateCate") Date
-                                        input#dateCate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
+                                        label(for='img') &#x1EA2;nh n&#x1EC1;n
+                                        input#imgUp(type='file', accept='image/*')
                         .modal-footer
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button.btn.btn-primary(type='button', id='saveCategoryButton') Thêm
-
-            //- Modal Update Category
-            div#updateCategoryModal.modal.fade
+                            button#ConfirmUpBanner.btn.btn-primary(type='button') Cập nhật
+            #DelBannerModal.modal
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Sửa thông tin thể loại
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            h5.modal-title Xác nhận xóa !
+                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form(action="/", method="post")
-                                .mb-4
-                                    .form-group
-                                        label(for="dateCate") ID
-                                        input#idCate.idCate(type="text", name="idCate", class="form-control", placeholder="", aria-describedby="helpId" readonly)
-                                .mb-4
-                                    .form-group
-                                        label(for="imageCate") Hình ảnh 
-                                        input#imageCateUpdate(type="file" name="image" accept="image/*" onchange='previewImage(event)')
-                                .mb-4
-                                    .form-group#imageForm(style='display: block;')
-                                        label(for="progressCate") Preview
-                                        br
-                                        img#imageCateUpdatePreview.imageCateUpdatePreview(src='' alt='Image Preview'  style='width:150px;height:100px;')
-                                .mb-4
-                                    .form-group(hidden)
-                                        label(for="progressCate") Tiến trình
-                                        p#progressCate
-                                .mb-4
-                                    .form-group
-                                        label(for="nameCate") Tên sản phẩm
-                                        input#nameCateUpdate.nameCateUpdate(type="text", name="name", class="form-control", placeholder="", aria-describedby="helpId")
-                                .mb-4
-                                    .form-group
-                                        label(for="dateCate") Date
-                                        input#dateCateUpdate.dateCateUpdate(type="text", name="date", class="form-control", placeholder="", aria-describedby="helpId")
-                                
+                            p Bạn có chắc chắn muốn xoá sản phẩm này.
                         .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button.btn.btn-primary(type='button', id='updateCategoryButton') Cập nhật
-            
-            //- Modal Fake Add to Cart
-            div#addToCartModal.modal.fade
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Thêm vào giỏ hàng
-                            button.close(type='button', data-bs-dismiss='modal') &times;
-                        .modal-body
-                            p Sản phẩm đã được thêm vào giỏ hàng.
-                        .modal-footer
-                            button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Tiếp tục mua
-                            button.btn.btn-primary(type='button' data-bs-dismiss='modal' id='goMyCart') Đi tới giỏ hàng
-            
-            //- Modal Confirm Delete
-            #confirmDeleteCate.modal(tabindex='-1')
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Warning!
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                        .modal-body
-                            p Bạn có chắc chắn muốn xoá item này.
-                        .modal-footer
-                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
-    script(src='/js/category.js')
-
-
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                            button#ConfirmDelBanner.btn.btn-danger(type='button') Xác nhận
+    script(src="/js/banner.js")

@@ -1,5 +1,6 @@
 const BannerModel = require("../models/model.banner");
 const UploadFile = require("../models/uploadFile");
+const CategoryModel = require("../models/model.category");
 const match = [
     "image/jpeg",
     "image/*",
@@ -93,5 +94,18 @@ exports.getLisBanner = async (req, res) => {
     } catch (e) {
         console.log(e)
         return res.send({message: "get list banner fail", code: 0});
+    }
+}
+exports.getBannerById = async (req, res) => {
+    let bannerId = req.body.bannerId;
+    if (bannerId == null) {
+        return res.send({message: "banner id is required"})
+    }
+    try {
+        let banner = await BannerModel.bannerModel.findById(bannerId);
+        res.send({banner: banner, message: "get banner success", code: 1})
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "get banner fail", code: 0});
     }
 }

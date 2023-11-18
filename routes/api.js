@@ -154,5 +154,6 @@ router.post("/addBanner",upload.single("file"),ApiBanner.addBanner);
 router.post("/editBanner",upload.single("file"),ApiBanner.editBanner);
 router.post("/deleteBanner",upload.single("file"),ApiBanner.deleteBanner);
 router.post("/getListBanner",upload.single("file"),ApiBanner.getLisBanner);
+router.post("/getBannerById",upload.single("file"),ApiBanner.getBannerById);
 
 module.exports = router;
