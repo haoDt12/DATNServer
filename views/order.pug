@@ -183,6 +183,7 @@ block content
                                         h3.mb-0.font-size-18.text-center(style='font-size: 15px;')
                                             span.text-muted.me-2
                                                 | #{Intl.NumberFormat('vi-VN').format(order.allProductInfo[0].price)} VND
+                                            a.dropdown-item.d-none(id="btnGetAddress" data-status = order.addressId data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
                                     td
                                         .dropdown.text-center
                                             a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
@@ -231,6 +232,22 @@ block content
                             p Bạn có chắc chắn muốn thay đổi trạng thái?
                         .modal-footer
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='updateStatusOrder') Đồng ý
-            script(src='https://code.jquery.com/jquery-1.10.2.min.js')
-            script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js')
+                            button.btn.btn-danger(type='button' id = 'buttonConfirm' class='confirmUpdateStatusOrder') Đồng ý
+                        form(action="/", method="post").d-none
+                            .mb-4
+                                .form-group
+                                    label(for="inputOrderId") Tên sản phẩm
+                                    input(type="text", id = "inputOrderId", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+                            .mb-4
+                                .form-group
+                                    label(for="inputUserId") Tên sản phẩm
+                                    input(type="text", id = "inputUserId", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+                            .mb-4
+                                .form-group
+                                    label(for="inputAddressId") Tên sản phẩm
+                                    input(type="text", id = "inputAddressId", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+                            .mb-4
+                                .form-group
+                                    label(for="inputStatus") Tên sản phẩm
+                                    input(type="text",id = "inputStatus", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+    script(src='/js/order.js')
