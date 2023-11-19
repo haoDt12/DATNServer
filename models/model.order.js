@@ -1,5 +1,5 @@
 const db = require("./database");
-const status = "prepare goods";
+const status = "InTransit";
 const orderSchema = db.mongoose.Schema({
     userId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
     product: [{

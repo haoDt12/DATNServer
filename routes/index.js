@@ -2,10 +2,10 @@ var express = require("express");
 var router = express.Router();
 const ProductModel = require("./../models/model.product");
 const OrderModel = require("./../models/model.order");
-
-
 const CategoryModel = require("./../models/model.category");
 const UserModel = require("./../models/model.user");
+const BannerModel = require("./../models/model.banner");
+const {bannerModel} = require("../models/model.banner");
 
 /* GET home page. */
 router.get("/stech.manager/home", function (req, res, next) {
@@ -110,5 +110,14 @@ router.get("/stech.manager/cart", function (req, res, next) {
 });
 router.get("/stech.manager/notification", function (req, res, next) {
   res.render("notification");
+});
+router.get("/stech.manager/banner", async function (req, res, next) {
+    try {
+        let listbanner = await BannerModel.bannerModel.find();
+        res.render("banner", { banners: listbanner, message: "get list banner success", code: 1 });
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "banner not found", code: 0 })
+    }
 });
 module.exports = router;
