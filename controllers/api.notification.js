@@ -109,12 +109,12 @@ exports.editNotification = async (req, res) => {
         }
         if (notificationPublic) {
             if (title !== null) {
-                notification.titile = title;
+                notificationPublic.title = title;
             }
             if (content !== null) {
-                notification.content = content;
+                notificationPublic.content = content;
             }
-            await notification.save();
+            await notificationPublic.save();
             let user = await UserModel.userModel.find();
             await Promise.all(user.map(item => {
                 if (item.fcm != null) {
