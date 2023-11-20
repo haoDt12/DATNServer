@@ -21,6 +21,9 @@ exports.creatOrder = async (req, res) => {
         let total = 0;
         await Promise.all(product.map(async item => {
             let product = await ProductModel.productModel.findById(item.productId);
+            if(!product){
+                return res.send({message: "product not found", code: 0});
+            }
             total += product.price * item.quantity;
         }));
         let order = new OrderModel.modelOrder({
@@ -30,22 +33,16 @@ exports.creatOrder = async (req, res) => {
             total: total,
             date_time: date_time,
         })
-        await order.save();
-        let cart = await Cart.cartModel.find({userId: userId});
-        if (cart) {
-            let currentProduct = cart[0].product;
-            let newProduct = [];
-            console.log(currentProduct);
-            await Promise.all(currentProduct.map(item => {
-                product.map(data => {
-                    if (item.productId.toString() !== data.productId.toString()) {
-                        newProduct.push(item)
-                    }
-                })
-            }));
-            cart[0].product = newProduct;
-            await cart[0].save();
+        let cart = await Cart.cartModel.findOne({userId: userId});
+        if (!cart) {
+            return res.send({message: "cart not found", code: 0});
         }
+        let currentProduct = cart.product;
+        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId === item1.productId));
+        console.log(newProduct)
+        cart.product = newProduct;
+        await cart.save();
+        await order.save();
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -54,12 +51,14 @@ exports.creatOrder = async (req, res) => {
 }
 exports.getOrderByUserId = async (req, res) => {
     let userId = req.body.userId;
-    console.log(userId);
     if (userId === null) {
         return res.send({message: "userId is required", code: 0});
     }
     try {
         let listOrder = await OrderModel.modelOrder.find({userId: userId}).populate("product").populate("addressId");
+        if(!listOrder){
+            return res.send({message: "listOrder not found", code: 0});
+        }
         return res.send({listOrder: listOrder, message: "get list order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -73,6 +72,9 @@ exports.getOrderByOrderId = async (req, res) => {
     }
     try {
         let order = await OrderModel.modelOrder.findById(orderId).populate("product").populate("addressId");
+        if(!order){
+            return res.send({message: "order not found", code: 0});
+        }
         return res.send({order: order, message: "get order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -94,6 +96,10 @@ exports.deleteOrder = async (req, res) => {
         return res.send({message: "orderId is required", code: 0});
     }
     try {
+        let order = OrderModel.modelOrder.findById(orderId);
+        if(!order){
+            return res.send({message: "order not found", code: 0});
+        }
         await OrderModel.modelOrder.deleteOne({_id: orderId});
         return res.send({message: "delete order success", code: 1});
     } catch (e) {
@@ -109,6 +115,12 @@ exports.editOrder = async (req, res) => {
     let status = req.body.status;
     try {
         let order = await OrderModel.modelOrder.findById(orderId);
+        if(!order){
+            return res.send({message: "order not found", code: 0});
+        }
+        if(status !== null){
+            order.status = status;
+        }
         if (userId !== null) {
             order.userId = userId;
         }
@@ -116,6 +128,9 @@ exports.editOrder = async (req, res) => {
             let total = 0;
             await Promise.all(product.map(async item => {
                 let product = await ProductModel.productModel.findById(item.productId);
+                if(!product){
+                    return res.send({message: "product not found", code: 0});
+                }
                 total += product.price * item.quantity;
             }));
             order.product = product;

@@ -49,6 +49,9 @@ exports.editBanner = async (req, res) => {
     }
     try {
         let banner = await BannerModel.bannerModel.findById(bannerId);
+        if(!banner){
+            return res.send({message: "banner not found", code: 0});
+        }
         let pathDelete = banner.img.split("app");
         if (file !== null) {
             if (match.indexOf(file.mimetype) === -1) {
@@ -79,6 +82,9 @@ exports.deleteBanner = async (req, res) => {
     }
     try {
         let banner = await BannerModel.bannerModel.findById(bannerId);
+        if(!banner){
+            return res.send({message: "banner not found", code: 0});
+        }
         let pathDelete = banner.img.split("app")[1];
         UploadFile.deleteFile(res, pathDelete);
         await BannerModel.bannerModel.deleteOne({_id: bannerId});

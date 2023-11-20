@@ -10,6 +10,7 @@ const ApiOrder = require("../controllers/api.order");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ApiBanner = require("../controllers/api.banner");
+const  ApiNotification = require("../controllers/api.notification");
 /* GET api listing. */
 router.post("/registerUser",upload.single("file"), ApiUserController.addUser);
 router.post(
@@ -150,10 +151,16 @@ router.post(
   Middleware.authorizationToken,
   ApiCart.getCartByUserId
 );
-router.post("/addBanner",upload.single("file"),ApiBanner.addBanner);
-router.post("/editBanner",upload.single("file"),ApiBanner.editBanner);
-router.post("/deleteBanner",upload.single("file"),ApiBanner.deleteBanner);
-router.post("/getListBanner",upload.single("file"),ApiBanner.getLisBanner);
-router.post("/getBannerById",upload.single("file"),ApiBanner.getBannerById);
+router.post("/addBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.addBanner);
+router.post("/editBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.editBanner);
+router.post("/deleteBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.deleteBanner);
+router.post("/getListBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.getLisBanner);
 
+router.post("/addFCM",Middleware.authorizationToken,ApiUserController.addFCM);
+router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPublic);
+router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPrivate);
+router.post("/editNotification",Middleware.authorizationToken,ApiNotification.editNotification);
+router.post("/deleteNotification",Middleware.authorizationToken,ApiNotification.deleteNotification);
+router.post("/getPrivateNotification",Middleware.authorizationToken,ApiNotification.getPrivateNotification);
+router.post("/getPublicNotification",Middleware.authorizationToken,ApiNotification.getPublicNotification);
 module.exports = router;

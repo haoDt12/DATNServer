@@ -252,7 +252,7 @@ exports.loginUser = async (req, res) => {
       const otp = Math.floor(100000 + Math.random() * 900000);
       const apiKey = process.env.API_KEY;
       const baseUrl = process.env.BASE_URL;
-      const text = `STECH xin chào bạn \n Mã OTP của bạn là: ${otp} \n Vui lòng không cung cấp mã OTP cho bất kì ai`;
+      const text = `STECH xin chào bạn\nMã OTP của bạn là: ${otp}\nVui lòng không cung cấp mã OTP cho bất kì ai`;
       const to = formatPhoneNumber(username);
       const headers = {
         Authorization: `App ${apiKey}`,
@@ -400,3 +400,25 @@ exports.getUserById = async (req, res) => {
     return res.send({ message: "get user fail", code: 0 });
   }
 };
+exports.addFCM = async (req, res) => {
+  let userId = req.body.userId;
+  let fcm = req.body.fcm;
+  if (fcm == null) {
+    return res.send({message: "fcm is required", code: 0});
+  }
+  if (userId == null) {
+    return res.send({message: "user id is required", code: 0});
+  }
+  try {
+    let user = await UserModel.userModel.findById(userId);
+    if (!user) {
+      return res.send({message: "user not found", code: 0});
+    }
+    user.fcm = fcm;
+    await user.save();
+    return res.send({message: "add fcm success", code: 1});
+  } catch (e) {
+    console.log(e.message);
+    return res.send({message: "add FCM fail", code: 0})
+  }
+}

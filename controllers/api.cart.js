@@ -1,7 +1,5 @@
-const ProductModel = require("../models/model.product");
 const CartModel = require("../models/model.cart");
 const moment = require("moment/moment");
-const OrderModel = require("../models/model.order");
 exports.addCart = async (req, res) => {
   let userId = req.body.userId;
   let productId = req.body.productId;
@@ -16,7 +14,7 @@ exports.addCart = async (req, res) => {
   if (userId == null) {
     return res.send({ message: "userId is required", code: 0 });
   }
-  if (title == "") {
+  if (title == null) {
     return res.send({ message: "title is required", code: 0 });
   }
   if (imgCover == null) {
@@ -38,7 +36,7 @@ exports.addCart = async (req, res) => {
           id.ram_rom === ram_rom
       );
 
-      if (index == -1) {
+      if (index === -1) {
         myCart.product.push({
           productId: productId,
           quantity: quantity,
@@ -168,7 +166,7 @@ exports.editCart = async (req, res) => {
   if (caculation == null) {
     return res.send({ message: "cacaluation is required", code: 0 });
   }
-  if (caculation != "reduce" && caculation != "increase") {
+  if (caculation !== "reduce" && caculation !== "increase") {
     return res.send({ message: "cacaluation invalid", code: 0 });
   }
   try {
@@ -183,10 +181,10 @@ exports.editCart = async (req, res) => {
           code: 0,
         });
       } else {
-        if (caculation == "reduce") {
+        if (caculation === "reduce") {
           cart.product[index].quantity =
             Number(cart.product[index].quantity) - 1;
-          if (cart.product[index].quantity == 0) {
+          if (cart.product[index].quantity === 0) {
             cart.product.splice(index, 1);
             await cart.save();
             if (cart.product.length == 0) {
@@ -209,7 +207,7 @@ exports.editCart = async (req, res) => {
             message: "reduct quantity product in your  cart success",
             code: 1,
           });
-        } else if (caculation == "increase") {
+        } else if (caculation === "increase") {
           cart.product[index].quantity =
             Number(cart.product[index].quantity) + 1;
           await cart.save();
@@ -220,7 +218,6 @@ exports.editCart = async (req, res) => {
         }
       }
     } else {
-      console.log(e.message);
       return res.send({ message: "No found product in you cart ", code: 0 });
     }
   } catch (e) {
