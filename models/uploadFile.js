@@ -26,7 +26,6 @@ exports.deleteFile = (res, pathImgDelete) => {
     fs.unlink(path.join(__dirname, "../public" + pathImgDelete), (err) => {
         if (err) {
             console.log(err);
-            return res.send({message: "Delete file fail", code: 0});
         } else {
             console.log("delete success");
         }
