@@ -14,6 +14,7 @@ const userSchema = db.mongoose.Schema(
         date: {type: String, required: true},
         account_type: {type: String, default: account_type},
         otp: {type: String, required: false},
+        fcm: {type: String, required: false},
     },
     {
         collection: "User",

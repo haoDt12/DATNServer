@@ -35,9 +35,17 @@ exports.addProduct = async (req, res) => {
     let category = req.body.category;
     let title = req.body.title;
     let description = req.body.description;
-    let fileimg_cover = req.files["img_cover"];
-    let filelist_img = req.files["list_img"];
-    let filevideo = req.files["video"];
+    let fileimg_cover;
+    let filelist_img;
+    let filevideo;
+    try {
+        fileimg_cover = req.files["img_cover"];
+        filelist_img = req.files["list_img"];
+        filevideo = req.files["video"];
+    }catch (e) {
+        console.log(e.message);
+        return res.send({message:"error read fields"});
+    }
     let color = req.body.color;
     let price = req.body.price;
     let quantity = req.body.quantity;
@@ -159,7 +167,7 @@ exports.getListProduct = async (req, res) => {
         let listProduct = await ProductModel.productModel
             .find()
             .populate("category");
-        res.send({
+        return res.send({
             product: listProduct,
             message: "get list product success",
             code: 1,
@@ -179,7 +187,9 @@ exports.getProductById = async (req, res) => {
         let product = await ProductModel.productModel
             .findById(productId)
             .populate("category");
-
+        if(!product){
+            return res.send({message: "product not found", code: 0});
+        }
         console.log(product);
         if(!product){
             return res.send({message: "get product fail", code: 0});
@@ -244,9 +254,17 @@ exports.editProduct = async (req, res) => {
     let price = req.body.price;
     let quantity = req.body.quantity;
     let sold = req.body.sold;
-    let fileimg_cover = req.files["img_cover"];
-    let filelist_img = req.files["list_img"];
-    let filevideo = req.files["video"];
+    let fileimg_cover;
+    let filelist_img;
+    let filevideo;
+    try {
+        fileimg_cover = req.files["img_cover"];
+        filelist_img = req.files["list_img"];
+        filevideo = req.files["video"];
+    }catch (e) {
+        console.log(e.message);
+        return res.send({message:"error read fields"});
+    }
     let ram_rom = req.body.ram_rom;
     if (productId == null) {
         return res.send({message: "product not found", code: 0});

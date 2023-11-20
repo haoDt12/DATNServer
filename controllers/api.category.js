@@ -123,6 +123,9 @@ exports.getCategoryById = async (req, res) => {
     }
     try {
         let category = await CategoryModel.categoryModel.findById(categoryId);
+        if(!category){
+            return res.send({message: "category not found"})
+        }
         res.send({category: category, message: "get category success", code: 1})
     } catch (e) {
         console.log(e.message);
