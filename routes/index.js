@@ -5,7 +5,6 @@ const OrderModel = require("./../models/model.order");
 const CategoryModel = require("./../models/model.category");
 const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
-const {bannerModel} = require("../models/model.banner");
 
 /* GET home page. */
 router.get("/stech.manager/home", function (req, res, next) {
