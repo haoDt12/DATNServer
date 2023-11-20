@@ -81,7 +81,22 @@ block content
             // Header Start
             header.app-header
                 nav.navbar.navbar-expand-lg.navbar-light
-                    ul.navbar-nav
+                    form#searchForm(action='/search', method='GET')
+                        .input-group.mb-auto
+                            input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
+                            button#searchButton.btn.btn-outline-secondary(type='submit') Search
+                    ul.pagination.m-lg-2
+                        li.page-item(style='margin-right: 10px' id = 'getAllOrder')
+                            a.btn.btn-primary(href='#' class='status-button') All
+                        li.page-item(style='margin-right: 10px')
+                            a.btn.btn-primary(class='status-button' data-status = 'WaitConfirm') Chờ xác nhận
+                        li.page-item(style='margin-right: 10px')
+                            a.btn.btn-primary(class='status-button' data-status = 'WaitingGet') Chờ lấy hàng
+                        li.page-item(style='margin-right: 10px')
+                            a.btn.btn-primary(class='status-button' data-status = 'InTransit') Đang giao hàng
+                        li.page-item(style='margin-right: 10px')
+                            a.btn.btn-primary(class='status-button' data-status = 'PayComplete') Đã thanh toán
+                        ul.navbar-nav
                         li.nav-item.d-block.d-xl-none
                             a#headerCollapse.nav-link.sidebartoggler.nav-icon-hover(href='javascript:void(0)')
                                 i.ti.ti-menu-2
@@ -107,21 +122,6 @@ block content
 
             // Header End
             .container-fluid
-                form#searchForm(action='/search', method='GET')
-                    .input-group.mb-3
-                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
-                        button#searchButton.btn.btn-outline-secondary(type='submit') Search
-                ul.pagination.justify-content-center.mb-0
-                    li.page-item(style='margin-right: 10px' id = 'getAllOrder')
-                        a.btn.btn-primary(href='#' class='status-button') All
-                    li.page-item(style='margin-right: 10px')
-                        a.btn.btn-primary(class='status-button' data-status = 'WaitConfirm') Chờ xác nhận
-                    li.page-item(style='margin-right: 10px')
-                        a.btn.btn-primary(class='status-button' data-status = 'WaitingGet') Chờ lấy hàng
-                    li.page-item(style='margin-right: 10px')
-                        a.btn.btn-primary(class='status-button' data-status = 'InTransit') Đang giao hàng
-                    li.page-item(style='margin-right: 10px')
-                        a.btn.btn-primary(class='status-button' data-status = 'PayComplete') Đã thanh toán
                 .row
                     table.table.table-striped.align-middle.table-nowrap
                         thead

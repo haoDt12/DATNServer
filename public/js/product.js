@@ -168,55 +168,22 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append("color", listColor);
         formData.append("list_img", list_img);
         formData.append("ram_rom", ram_rom);
-        formData.append("category", category);
+        formData.append("category", "654a752e1ab38cd5dd0f7e17");
         //- Push data
         fetch('/api/addProduct', {
             headers: {
                 'Authorization': `${token}`
             },
             method: "POST",
-            body: formData,
-        })
-            .then(response => {
+            body: formData
+        }).then((response) => {
                 // location.reload();
-                console.log(response)
-            })
-            .catch((error) => {
+                console.log(response);
+            console.log(formData)
+            }).catch((error) => {
                 console.error("Error:", error);
             });
         CreProModal.hide();
-        // try {
-        //     await axios.post(`/api/addProduct`, {
-        //         category: category.value,
-        //         title:title.value,
-        //         description:description.value,
-        //         img_cover: img_cover.files[0],
-        //         price:price.value,
-        //         quantity:quantity.value,
-        //         sold:sold.value,
-        //         video:video.files[0],
-        //         color:"listColor",
-        //         list_img:list_img.files[0],
-        //         ram_rom:ram_rom.value
-        //     }, {
-        //         headers: {
-        //             'Authorization': `${token}`
-        //         }
-        //     }).then(response => {
-        //         console.log(response.data);
-        //         if (response.data.code === 1) {
-        //             utils.showMessage(response.data);
-        //             location.reload();
-        //         }else {
-        //             utils.showMessage(response.data.message);
-        //         }
-        //     }).catch(error => {
-        //         console.error(error);
-        //     });
-        // } catch (error) {
-        //     console.log(error);
-        // }
-        // CreProModal.hide();
     });
 
     DeletePro.forEach(function (DeleteProduct){
