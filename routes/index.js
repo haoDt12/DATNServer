@@ -5,6 +5,7 @@ const OrderModel = require("./../models/model.order");
 const CategoryModel = require("./../models/model.category");
 const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
+const NotificationPublicModel = require("./../models/model.notification.pulic");
 
 /* GET home page. */
 router.get("/stech.manager/home", function (req, res, next) {
@@ -101,14 +102,47 @@ router.get("/stech.manager/order", async function (req, res, next) {
     res.send({ message: "order not found", code: 0 })
 }
 });
+router.get("/stech.manager/detail_order", async function (req, res, next) {
+    try {
+        var encodedOrderId = req.query.orderId;
+        let orderId = Buffer.from(encodedOrderId, 'base64').toString('utf8');
+        //let productId = req.query.productId;
+        console.log("Received orderId from cookie:", orderId);
+
+        let order = await OrderModel.modelOrder.findById(orderId);
+        if (order) {
+            const allProductInfo = await order.getAllProductInfo();
+            const userInfo = await order.getUserInfo();
+            console.log('ProductInfo:', allProductInfo);
+            console.log('UserInfo:', userInfo);
+
+            res.render("detail_order", { detailOrder: { ...order.toObject(), allProductInfo, userInfo}, message: "get order details success", code: 1 });
+        } else {
+            res.send({ message: "Order not found", code: 0 });
+        }
+    } catch (e) {
+        console.error("Error fetching order details:", e.message);
+        res.send({ message: "Error fetching order details", code: 0 });
+    }
+});
 router.get("/stech.manager/invoice", function (req, res, next) {
   res.render("invoice");
 });
 router.get("/stech.manager/cart", function (req, res, next) {
   res.render("cart");
 });
-router.get("/stech.manager/notification", function (req, res, next) {
-  res.render("notification");
+router.get("/stech.manager/notification", async function (req, res, next) {
+    try {
+        let listNotification = await NotificationPublicModel.notificationPublicModel.find();
+        res.render("notification", {
+            notifications: listNotification,
+            message: "get list notification success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "user not found", code: 0});
+    }
 });
 router.get("/stech.manager/banner", async function (req, res, next) {
     try {

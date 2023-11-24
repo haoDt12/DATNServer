@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function(){
     const inputAddressId = document.getElementById('inputAddressId');
     const inputStatus = document.getElementById('inputStatus');
 
+    const openDetailOrder = document.querySelectorAll(".detailOrder");
+
     updateStatusButton.forEach(function (button) {
         button.addEventListener("click", async function () {
             modalUpdateStatusOrder.show();
@@ -79,5 +81,15 @@ document.addEventListener('DOMContentLoaded', function(){
             });
         });
         modalUpdateStatusOrder.hide();
+    });
+
+    openDetailOrder.forEach(function(detailLink) {
+        detailLink.addEventListener("click", function(event) {
+            event.preventDefault();
+            var orderId = this.getAttribute("data-id");
+            var encodedProductId = btoa(orderId);
+            console.log(encodedProductId); // Xuất mã hóa
+            window.location.href = "/stech.manager/detail_order?orderId=" + encodedProductId;
+        });
     });
 });

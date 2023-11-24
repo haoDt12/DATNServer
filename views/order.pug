@@ -134,8 +134,6 @@ block content
                                 th.text-center Ảnh
                                 th.text-center NameProduct
                                 th.text-center InfoUser
-                                th.text-center InfoProduct
-                                th.text-center Price
                                 th.text-center Action
                         tbody
                             each order in orders
@@ -157,39 +155,13 @@ block content
                                                 p.text-muted.mb-1.text-truncate.text-center
                                                     i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
                                                         = order.userInfo.phone_number
-                                    td(style='width: 180px;')
-                                        ul.list-inline.mb-0.text-muted.product-color
-                                            li
-                                                p.text-muted.mb-1.text-truncate.text-center
-                                                    i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Màu:
-                                                        i.list-inline-item(style=`background-color: ${order.product[0].color};width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
-                                            li
-                                                p.text-muted.mb-1.text-truncate.text-center
-                                                    i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Ram/Rom:
-                                                        = order.product[0].ram_rom
-                                            li
-                                                p.text-muted.mb-0.text-truncate.text-center
-                                                    i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Status:
-                                                        if order.status === 'WaitingGet'
-                                                            | Chờ lấy hàng
-                                                        else if order.status === 'InTransit'
-                                                            | Đang giao
-                                                        else if order.status === 'PayComplete'
-                                                            | Đã thanh toán
-                                                        else if order.status === 'WaitConfirm'
-                                                            | Chờ xác nhận
-
-                                    td(style='width: 220px;')
-                                        h3.mb-0.font-size-18.text-center(style='font-size: 15px;')
-                                            span.text-muted.me-2
-                                                | #{Intl.NumberFormat('vi-VN').format(order.allProductInfo[0].price)} VND
                                             a.dropdown-item.d-none(id="btnGetAddress" data-status = order.addressId data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
                                     td
                                         .dropdown.text-center
                                             a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
                                                 i.bx.text-center
                                             .dropdown-menu.dropdown-menu-end
-                                                a.dropdown-item(href='#') Xem chi tiết
+                                                a.dropdown-item( class='detailOrder' data-id=order._id) Xem chi tiết
                                                 if order.status === 'WaitConfirm'
                                                     a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Chờ lấy hàng
                                                 if order.status === 'WaitingGet'
