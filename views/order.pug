@@ -147,14 +147,22 @@ block content
                                                 a.text-dark(href='ecommerce-product-detail.html')= order.allProductInfo[0].title
                                     td
                                         ul.list-unstyled.ps-0.mb-0
-                                            li
-                                                p.text-muted.mb-1.text-truncate.text-center
-                                                    i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
-                                                        =  order.userInfo.full_name
-                                            li
-                                                p.text-muted.mb-1.text-truncate.text-center
-                                                    i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
-                                                        = order.userInfo.phone_number
+                                            if order.userInfo
+                                                li
+                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
+                                                            =  order.userInfo.full_name
+                                                li
+                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
+                                                            = order.userInfo.phone_number
+                                            if !order.userInfo
+                                                li
+                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name: Tên người dùng
+                                                li
+                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone: Số điện thoại
                                             a.dropdown-item.d-none(id="btnGetAddress" data-status = order.addressId data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
                                     td
                                         .dropdown.text-center
