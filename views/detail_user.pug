@@ -1,6 +1,8 @@
 extends layout
 
 block content
+    link(rel='stylesheet' href='/css/detail_product_style.css')
+    #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
         Sidebar Start
             aside.left-sidebar
                 // Sidebar scroll
@@ -82,8 +84,7 @@ block content
                             .col-lg-5.col-md-5.col-sm-6
                                 .white-box.text-center
                                     //img.img-responsive(src=detailProduct.img_cover)
-                                    img.img-responsive(id='avatar', src=detailUser.avatar )
-
+                                    img.img-responsive(id='avatar', src=detailUser.avatar)
 
                             .col-lg-12.col-md-12.col-sm-12
                                 h3.box-title.mt-5 User Info
@@ -106,6 +107,9 @@ block content
                                             tr
                                                 td role
                                                 td= detailUser.role
+                                            tr
+                                                td address
+                                                td= detailUser.address[0].city
 
                 script(src='https://code.jquery.com/jquery-1.10.2.min.js')
                 script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js')

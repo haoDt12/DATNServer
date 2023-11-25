@@ -226,11 +226,11 @@ block content
                             form(action="/", method="post")
                                 .mb-3
                                     .form-group
-                                        label(for='idUser') id
-                                        input#idUser(type="text", name="idUser", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                                        //label(for='idUser') id
+                                        input#idUser(type="text", name="idUser", class="form-control", placeholder="", aria-describedby="helpId" readonly style="display: none")
                                 .mb-3
                                     label.form-label(for='email') Email
-                                    input#emailUp.form-control(type='text' name="email" aria-describedby='textHelp')
+                                    input#emailUp.form-control(type='text' name="email" aria-describedby='textHelp' readonly)
                                 .mb-3
                                     label.form-label(for='password') Password
                                     input#passwordUp.form-control(type='text' name="password" aria-describedby='textHelp')

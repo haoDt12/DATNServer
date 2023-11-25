@@ -76,18 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(function (response) {
                 let jsonData = response.data.user
-                // if (jsonData && jsonData._id) {
-                //     id.value = jsonData._id
-                //     email.value = jsonData.email
-                //     password.value = jsonData.password
-                //     full_name.value = jsonData.full_name
-                //     phone_number.value = jsonData.phone_number
-                //     role.value = jsonData.role
-                //     avatar.src = jsonData.avatar
-                //     // Thực hiện các thao tác sử dụng yourObject._id
-                // } else {
-                //     console.error("Đối tượng không tồn tại hoặc không có thuộc tính '_id'.");
-                // }
                 id.value = jsonData._id
                 email.value = jsonData.email
                 password.value = jsonData.password
@@ -135,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             var userId = this.getAttribute("data-id");
             var encodedUserId = btoa(userId);
+            console.log(userId);
             console.log(encodedUserId); // Xuất mã hóa
             window.location.href = "/stech.manager/detail_user?userId=" + encodedUserId;
         });
