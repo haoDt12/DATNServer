@@ -62,6 +62,26 @@ router.get("/stech.manager/detail_product", async function (req, res, next) {
         res.send({ message: "Error fetching product details", code: 0 });
     }
 });
+router.get("/stech.manager/detail_user", async function (req, res, next) {
+    try {
+        var encodedUserId = req.query.userId;
+        let userId = Buffer.from(encodedUserId, 'base64').toString('utf8');
+        //let productId = req.query.productId;
+        console.log("Received userId from cookie:", userId);
+
+        let user = await UserModel.userModel.findById(userId).populate({path: 'address', select:'city'});
+
+        if (user) {
+            res.render("detail_user", { detailUser: user, message: "get user details success", code: 1 });
+            console.log(user)
+        } else {
+            res.send({ message: "user not found", code: 0 });
+        }
+    } catch (e) {
+        console.error("Error fetching user details:", e.message);
+        res.send({ message: "Error fetching user details", code: 0 });
+    }
+});
 
 router.get('/stech.manager/user',  async function (req, res, next) {
     try {
