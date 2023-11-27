@@ -14,14 +14,20 @@ document.addEventListener('DOMContentLoaded', function(){
     const inputUserId = document.getElementById('inputUserId');
     const inputAddressId = document.getElementById('inputAddressId');
     const inputStatus = document.getElementById('inputStatus');
+    const btnValueStatus = document.getElementById('updateOrderButton');
+
 
     const openDetailOrder = document.querySelectorAll(".detailOrder");
+    const loadListOrderByStatus = document.querySelectorAll(".statusButton");
 
     updateStatusButton.forEach(function (button) {
         button.addEventListener("click", async function () {
             modalUpdateStatusOrder.show();
             const orderId = this.getAttribute("data-id");
+            const valueStatus = this.getAttribute("data-status");
+            inputStatus.value = valueStatus;
             console.log("Hello " + orderId);
+            console.log("Hello " + valueStatus);
             const orderUpdateId = {
                 orderId: orderId
             };
@@ -32,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function(){
                 },
             }).then(function (response) {
                 let jsonData = response.data.order
-                inputStatus.value = jsonData.status;
                 inputOrderId.value = jsonData._id;
                 inputUserId.value = jsonData.userId;
                 // inputAddressId.value = jsonData.addressId;
@@ -46,17 +51,10 @@ document.addEventListener('DOMContentLoaded', function(){
     });
     confirmUpdateButton.forEach(function (button){
         button.addEventListener("click",async function () {
-            let valueStatus = inputStatus.value;
-            if (valueStatus === 'WaitConfirm'){
-                valueStatus = 'WaitingGet';
-            } else if (valueStatus === 'WaitingGet'){
-                valueStatus = 'InTransit';
-            } else if (valueStatus === 'InTransit'){
-                valueStatus = 'PayComplete';
-            }
             const valueId = inputOrderId.value;
             const valueUserId = inputUserId.value;
             const valueAddressId = btnGetAddress.getAttribute("data-status");
+            const valueStatus = inputStatus.value;
 
             console.log("Hello "+valueStatus);
             console.log("Hello "+valueUserId);
@@ -90,6 +88,22 @@ document.addEventListener('DOMContentLoaded', function(){
             var encodedProductId = btoa(orderId);
             console.log(encodedProductId); // Xuất mã hóa
             window.location.href = "/stech.manager/detail_order?orderId=" + encodedProductId;
+        });
+    });
+
+    function setCookie(name, value) {
+        document.cookie = `${name}=${value}; path=/`;
+    }
+
+    loadListOrderByStatus.forEach(function(detailLink) {
+        detailLink.addEventListener("click", function(event) {
+            event.preventDefault();
+            var valueStatus = this.getAttribute("data-status");
+            console.log(valueStatus)
+            var encodedValueStatus = btoa(valueStatus);
+            console.log(encodedValueStatus); // Xuất mã hóa
+            setCookie("status", encodedValueStatus)
+            window.location.href = "/stech.manager/order";
         });
     });
 });

@@ -92,15 +92,17 @@ block content
                             button#searchButton.btn.btn-outline-secondary(type='submit') Search
                     ul.pagination.m-lg-2
                         li.page-item(style='margin-right: 10px' id = 'getAllOrder')
-                            a.btn.btn-primary(href='#' class='status-button') All
+                            a.btn.btn-primary( href='/stech.manager/order') All
                         li.page-item(style='margin-right: 10px')
-                            a.btn.btn-primary(class='status-button' data-status = 'WaitConfirm') Chờ xác nhận
+                            a.btn.btn-primary(class='statusButton' data-status = 'WaitConfirm') Chờ xác nhận
                         li.page-item(style='margin-right: 10px')
-                            a.btn.btn-primary(class='status-button' data-status = 'WaitingGet') Chờ lấy hàng
+                            a.btn.btn-primary(class='statusButton' data-status = 'WaitingGet') Chờ lấy hàng
                         li.page-item(style='margin-right: 10px')
-                            a.btn.btn-primary(class='status-button' data-status = 'InTransit') Đang giao hàng
+                            a.btn.btn-primary(class='statusButton' data-status = 'InTransit') Đang giao hàng
                         li.page-item(style='margin-right: 10px')
-                            a.btn.btn-primary(class='status-button' data-status = 'PayComplete') Đã thanh toán
+                            a.btn.btn-primary(class='statusButton' data-status = 'PayComplete') Đã thanh toán
+                        li.page-item(style='margin-right: 10px')
+                            a.btn.btn-primary(class='statusButton' data-status = 'Cancel') Đơn đã hủy
                         ul.navbar-nav
                         li.nav-item.d-block.d-xl-none
                             a#headerCollapse.nav-link.sidebartoggler.nav-icon-hover(href='javascript:void(0)')
@@ -171,13 +173,13 @@ block content
                                             .dropdown-menu.dropdown-menu-end
                                                 a.dropdown-item( class='detailOrder' data-id=order._id) Xem chi tiết
                                                 if order.status === 'WaitConfirm'
-                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Chờ lấy hàng
+                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='WaitingGet' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Chờ lấy hàng
+                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status = 'Cancel' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Hủy đơn hàng
                                                 if order.status === 'WaitingGet'
-                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đang giao
+                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='InTransit' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đang giao
                                                 if order.status === 'InTransit'
-                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đă thanh toán
-                                                if order.status === 'PayComplete'
-                                                    a.dropdown-item.d-none(class='updateStatusOrder' id="updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
+                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='PayComplete' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đă thanh toán
+                                                a.dropdown-item.d-none(class='updateStatusOrder' id="updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
                 //- Start Pagination
                 .text-center.mt-3.mt-sm-3
                     ul.pagination.justify-content-center.mb-0
@@ -196,6 +198,17 @@ block content
                             a.page-link(href='#') 25
                         li.page-item
                             a.page-link(href='#') Next
+                //.text-center.mt-3.mt-sm-3
+                //    ul.pagination.justify-content-center.mb-0
+                //        if (currentPage > 1)
+                //            li.page-item
+                //                a.page-link(href=`/stech.manager/orders?page=${currentPage - 1}`) Prev
+                //            each page in Array.from({ length: totalPages }, (_, i) => i + 1)
+                //                li.page-item(class=currentPage === page ? 'active' : '')
+                //                    a.page-link(href=`/stech.manager/orders?page=${page}`) #{page}
+                //        if (currentPage < totalPages)
+                //            li.page-item
+                //                a.page-link(href=`/stech.manager/orders?page=${currentPage + 1}`) Next
                 //- End Pagination
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
