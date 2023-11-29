@@ -104,7 +104,6 @@ router.get("/stech.manager/verify", function (req, res, next) {
   res.render("verify");
 });
 router.get("/stech.manager/profile", async function (req, res, next) {
-
     const id = utils_1.getCookie(req, 'Uid');
     console.log(id);
     try {
