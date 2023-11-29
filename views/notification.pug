@@ -28,7 +28,7 @@ block content
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
                                 span
-                                    i.ti.ti-brand-producthunt
+                                    i.ti.ti-article
                                 span.hide-menu Product
                         li.sidebar-item
                             a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
@@ -60,11 +60,6 @@ block content
                                 span
                                     i.ti.ti-file-description
                                 span.hide-menu Order
-                        li.sidebar-item
-                            a.sidebar-link(href='/stech.manager/banner' aria-expanded='false')
-                                span
-                                    i.ti.ti-file-import
-                                span.hide-menu Banner
                         li.nav-small-cap
                             i.ti.ti-dots.nav-small-cap-icon.fs-4
                             span.hide-menu AUTH
@@ -74,10 +69,10 @@ block content
                                     i.ti.ti-login
                                 span.hide-menu Login
                         li.sidebar-item
-                            a.sidebar-link(href='/stech.manager/register' aria-expanded='false')
+                            a.sidebar-link(href='/stech.manager/add' aria-expanded='false')
                                 span
                                     i.ti.ti-user-plus
-                                span.hide-menu Register
+                                span.hide-menu Add Admin
                 // End Sidebar navigation
             // End Sidebar scroll
         // Sidebar End
@@ -92,6 +87,7 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
+                            a.btn.btn-outline-primary(data-bs-toggle='modal' id='openModalCreateNotifi') Create Notification
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -109,3 +105,104 @@ block content
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
             // Header End
             .container-fluid
+                form#searchForm(action='/search', method='GET')
+                    .input-group.mb-3
+                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
+                        button#searchButton.btn.btn-outline-secondary(type='submit') Search
+                .row
+                    table.table.table-striped.align-middle.table-nowrap
+                        thead
+                            tr
+                                th.text-center Title
+                                th.text-start Content
+                                th.text-center Date
+                        tbody
+                            each notification in notifications
+                                tr
+                                    td(style='width: 300px;')
+                                        div
+                                            h5.font-size-18.text-center(style='font-size: 20px;')
+                                                a.text-dark(href='ecommerce-product-detail.html')= notification.title
+                                    td(style='width: 550px;')
+                                        div
+                                            h5.font-size-18.text-start(style='font-size: 20px;')
+                                                a.text-dark(href='ecommerce-product-detail.html')= notification.content
+                                    td
+                                        div
+                                            h5.font-size-18.text-center(style='font-size: 20px;')
+                                                a.text-dark(href='ecommerce-product-detail.html')= notification.date
+
+                                    td
+                                        .dropdown.text-center
+                                            a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
+                                                i.bx.text-center
+                                            .dropdown-menu.dropdown-menu-end
+                                                a.dropdown-item( class = "openModalUpdateNotifi" data-id = notification._id data-title = notification.title data-content = notification.content data-bs-toggle="modal") Sửa thông báo
+                                                a.dropdown-item( class = "openModalDeleteNotifi" data-id = notification._id data-bs-toggle="modal") Xóa thông báo
+                //- Start Pagination
+                .text-center.mt-3.mt-sm-3
+                    ul.pagination.justify-content-center.mb-0
+                        li.page-item.disabled
+                            span.page-link Prev
+                        li.page-item.active(aria-current='page')
+                            span.page-link 1
+                            span.sr-only (current)
+                        li.page-item
+                            a.page-link(href='#') 2
+                        li.page-item
+                            a.page-link(href='#') 3
+                        li.page-item
+                            a.page-link(href='#') ...
+                        li.page-item
+                            a.page-link(href='#') 25
+                        li.page-item
+                            a.page-link(href='#') Next
+                //- End Pagination
+                .py-6.px-6.text-center
+                    p.mb-0.fs-4
+                        | Design and Developed by&nbsp;
+                        a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
+
+            #DeleteNotificationModal.modal(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Warning!
+                        .modal-body
+                            p Bạn có chắc chắn muốn xóa?
+                        .modal-footer
+                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                            button.btn.btn-danger(type='button' id = 'buttonConfirmDelete') Đồng ý
+            #CreateNotificationModal.modal.fade
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Tạo thông báo
+                        .modal-body
+                            form(action="/" method="post")
+                                .mb-3
+                                    label.form-label(for='title') Title
+                                    input#title.form-control(placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='content') Content
+                                    input#content.form-control(type='textarea', placeholder='Thể loại thông báo', name='type', aria-describedby='textHelp')
+                        .modal-footer
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                            button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmCreate') Lưu thông báo
+            #UpdateNotificationModal.modal.fade
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Cập nhật thông báo
+                        .modal-body
+                            form(action="/" method="post")
+                                .mb-3
+                                    label.form-label(for='upTitle') Title
+                                    input#upTitle.form-control(placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='upContent') Content
+                                    input#upContent.form-control(type='textarea', placeholder='Thể loại thông báo', name='type', aria-describedby='textHelp')
+                        .modal-footer
+                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                            button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmUpdate') Lưu thông báo
+    script(src='/js/notification.js')
