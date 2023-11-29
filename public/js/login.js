@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded",function () {
                 if (data.code === 1){
                     const Uid = data.id;
                     utils.PushCookie("Uid", Uid);
+                    localStorage.setItem("idUser", Uid);
                     utils.PushCookie("typeVerify", "login");
                     window.location.assign('/stech.manager/verify');
                 }else {
