@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const Uid = utils.GetCookie("userId");
     const token = utils.GetCookie("token");
     const checkboxes = document.querySelectorAll('.product-checkbox');
     const inputQuan = document.querySelectorAll('.quantity-checkbox');
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 let cartId = item.dataset.id;
                 // console.log(item.getAttribute("data-id"))
                 const formDataUp = new FormData();
+                formDataUp.append('userId', Uid)
                 formDataUp.append('cartId', cartId)
                 formDataUp.append('quantity', currentQuantity)
                 totalQuan.forEach(itemQuan =>{
