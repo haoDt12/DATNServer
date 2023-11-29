@@ -10,8 +10,9 @@ const cartSchema = database.mongoose.Schema(
     product: [
       {
         productId: {
-          type: String,
-          required: true,
+            type: database.mongoose.Schema.Types.ObjectId,
+            ref: "product",
+            required: true,
         },
         title: { type: String, require: true },
         color: { type: String, required: true },
@@ -28,5 +29,6 @@ const cartSchema = database.mongoose.Schema(
     collection: "Cart",
   }
 );
+
 const cartModel = database.mongoose.model("cart", cartSchema);
 module.exports = { cartModel };
