@@ -3,8 +3,13 @@ var router = express.Router();
 const ProductModel = require("./../models/model.product");
 const OrderModel = require("./../models/model.order");
 const CategoryModel = require("./../models/model.category");
+const CartModel = require("./../models/model.cart");
 const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
+const utils_1 = require('../public/js/ultils_1');
+const path = require("path");
+const mongoose = require('mongoose');
+// const {cartModel, CartModel} = require("../models/model.cart");
 const NotificationPublicModel = require("./../models/model.notification.pulic");
 
 /* GET home page. */
@@ -99,8 +104,23 @@ router.get('/stech.manager/user',  async function (req, res, next) {
 router.get("/stech.manager/verify", function (req, res, next) {
   res.render("verify");
 });
-router.get("/stech.manager/profile", function (req, res, next) {
-  res.render("profile");
+router.get("/stech.manager/profile", async function (req, res, next) {
+    const id = utils_1.getCookie(req, 'Uid');
+    console.log(id);
+    try {
+        let listprofile = await UserModel.userModel.findById(id).populate({path: 'address', select: 'city'});
+        res.render("profile", {
+            profiles: listprofile,
+            message: "get list profile success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "profile not found", code: 0});
+    }
+    //tìm cart theo userId
+    // res.render("profile");
+    // res.render("profile");
 });
 router.get("/stech.manager/chat", function (req, res, next) {
   res.render("chat");
@@ -166,8 +186,46 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
 router.get("/stech.manager/invoice", function (req, res, next) {
   res.render("invoice");
 });
-router.get("/stech.manager/cart", function (req, res, next) {
-  res.render("cart");
+router.get("/stech.manager/cart", async function (req, res, next) {
+    // const userId = req.query.userId;
+    // const userId = utils_1.getCookie(req, 'Uid');
+    const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
+    console.log("id",userId)
+    try {
+        let cartUser = await CartModel.cartModel.findOne({ userId }).populate('product.productId');
+        console.log(cartUser)
+        res.render("cart",{
+            carts: cartUser ? cartUser : [],
+            message: "get list profile success",
+            code: 1,
+        })
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "cart not found", code: 0})
+    }
+});
+router.post('/updateQuantity/:productId', async (req, res) => {
+    const productId = req.params.productId;
+    const newQuantity = req.body.quantity;
+
+    try {
+        // Tìm và cập nhật số lượng trong cơ sở dữ liệu
+        const updatedProduct = await CartModel.updateOne(
+            { 'product._id': productId },
+            { $set: { 'product.$.quantity': newQuantity } }
+        );
+
+        if (updatedProduct.nModified > 0) {
+            // Cập nhật thành công
+            res.json({ success: true, message: 'Quantity updated successfully' });
+        } else {
+            // Không có bản ghi nào được cập nhật (productId không tồn tại)
+            res.status(404).json({ success: false, message: 'Product not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error updating quantity' });
+    }
 });
 router.get("/stech.manager/notification", async function (req, res, next) {
     try {
