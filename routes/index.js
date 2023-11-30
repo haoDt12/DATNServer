@@ -193,7 +193,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
     const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
     console.log("id",userId)
     try {
-        let cartUser = await CartModel.cartModel.findOne({ userId }).populate('product.productId');
+        let cartUser = await CartModel.cartModel.findOne({ userId }).populate({path: 'product', select: 'productId quantity'});;
         console.log(cartUser)
         const productsInCart = cartUser ? cartUser.product : [];
 

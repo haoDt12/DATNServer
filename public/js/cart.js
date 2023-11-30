@@ -6,13 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalDisplay = document.getElementById('total-display');  // Thêm một phần tử để hiển thị tổng giá
     const totalQuan = document.querySelectorAll('.total-checkbox');
     const saveButtons = document.querySelectorAll('.save-btn');
-    const total = document.getElementById("total");
-    const quantityUp = document.getElementById("quantityUp");
-    const imgCoverUp = document.getElementById("imgCoverUp");
-    const titleUp = document.getElementById("titleUp");
-    const colorUp = document.getElementById("colorUp");
-    const priceUp = document.getElementById("priceUp");
-    const ram_romUp = document.getElementById("ram_romUp");
+    const deleteCCartPro = document.querySelectorAll('.deleteCartPro');
+    const DeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteCart"));
+    const confirmDelete =  document.getElementById("confirmDelete");
         // const inputQuan = document.getElementById('')
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', updateTotal);
@@ -23,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     saveButtons.forEach(saveBtn => {
         saveBtn.addEventListener('click', saveQuantity);
     });
+
     function updateTotal() {
         let total = 0;
 
@@ -37,7 +34,40 @@ document.addEventListener('DOMContentLoaded', function () {
         // Hiển thị tổng giá
         totalDisplay.innerText = `${total.toFixed(2)}$`;
     }
+    deleteCCartPro.forEach(function (DeleteProduct){
+        DeleteProduct.addEventListener("click", function() {
+            DeleteModal.show();
+            const cartId = this.dataset.id;
+            const productId = this.dataset.productid;
+            console.log(productId)
+            const id_product = this.getAttribute("data-id");
+            console.log(id_product);
+            confirmDelete.addEventListener("click", async function () {
+                console.log("da click")
 
+                const requestData = {
+                    userId: Uid,
+                    productId: productId,
+                    cartId: cartId,
+                };
+                const headers = {
+                    Authorization: token,
+                    'Content-Type': 'application/json',
+                };
+                await axios.post('/api/deleteCart', requestData, {headers})
+                    .then(response => {
+                        console.log(response.data)
+
+                    })
+                    .catch(error => {
+                        console.error('Error:', error.response ? error.response.data : error.message);
+                    });
+
+                // DeleteModal.hide();
+                window.location.reload();
+            });
+        });
+    });
     function updateTotalQuantity() {
         inputQuan.forEach(item => {
             item.addEventListener("click",  () =>{
@@ -55,51 +85,38 @@ document.addEventListener('DOMContentLoaded', function () {
             })
         });
     }
-    function saveQuantity() {
+    async function saveQuantity() {
         // console.log(document.cookie);
-        const cartId = this.dataset.id;
         const productId = this.dataset.productid;
         // const productId = document.querySelector(`.quantity-checkbox[data-id="${cartId}"]`).dataset.productId;
-        const newQuantity = parseInt(document.querySelector(`.quantity-checkbox[data-id="${cartId}"]`).value);
+
         // const userId = utils.GetCookie("userId");
         const caculation = parseInt(document.getElementById('caculation').value);
-
         const formDataUp = new FormData();
         formDataUp.append('userId', Uid);
-        formDataUp.append('cartId', cartId);
         formDataUp.append('productId', productId);
-        formDataUp.append('caculation', caculation);
+        formDataUp.append('quantity', caculation);
 
-        // So sánh giá trị của caculation và quantity
-        if (caculation < newQuantity) {
-            // Nếu caculation nhỏ hơn quantity, thực hiện reduce
-            formDataUp.append('caculation', 'reduce');
-        } else if (caculation > newQuantity) {
-            // Nếu caculation lớn hơn quantity, thực hiện increase
-            formDataUp.append('caculation', 'increase');
-        } else {
-            // Nếu giá trị bằng nhau, có thể xử lý theo cách khác tùy thuộc vào yêu cầu
-            formDataUp.append('caculation', 'equal');
-        }
+
         console.log('userId', Uid)
         console.log(productId)
-        fetch('/api/editCart', {
-            headers: {
-                'Authorization': `${token}`
-            },
-            method: "POST",
-            body: formDataUp,
-        })
+        const requestData = {
+            userId: Uid,
+            productId: productId,
+            quantity: caculation,
+        };
+        const headers = {
+            Authorization: token,
+            'Content-Type': 'application/json',
+        };
+        await axios.post('/api/editCartV2', requestData, {headers})
             .then(response => {
-                if (response.ok) {
-                    console.log("Request successful");
-                } else {
-                    console.error("Request failed");
-                }
+                console.log(response.data)
+                window.location.reload();
             })
-        .catch(error => {
-            console.error("Error:", error);
-        });
+            .catch(error => {
+                console.error('Error:', error.response ? error.response.data : error.message);
+            });
         console.log("Save button clicked");
     }
 
