@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     function saveQuantity() {
-        console.log(Uid)
         // console.log(document.cookie);
         const cartId = this.dataset.id;
         const productId = this.dataset.productid;

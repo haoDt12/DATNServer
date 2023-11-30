@@ -189,6 +189,7 @@ router.get("/stech.manager/invoice", function (req, res, next) {
 router.get("/stech.manager/cart", async function (req, res, next) {
     // const userId = req.query.userId;
     // const userId = utils_1.getCookie(req, 'Uid');
+
     const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
     console.log("id",userId)
     try {
