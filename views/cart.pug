@@ -149,8 +149,8 @@ block content
                                                                     = cartProduct.ram_rom
                                                     td#priceUp.text-right.font-weight-semibold.align-middle.p-4= cartProduct.price
                                                     td.align-middle.p-4
-                                                        input#quantityUp.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
-                                                        button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id) Lưu
+                                                        input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
+                                                        button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id data-productId=cartProduct.productId) Lưu
                                                     td#total.text-right.font-weight-semibold.align-middle.p-4(class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{cartProduct.quantity * cartProduct.price}
                                                     td.text-center.align-middle.px-0
                                                         a.shop-tooltip.close.float-none.text-danger(href='#' title='' data-original-title='Remove') &times;
