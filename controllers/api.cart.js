@@ -129,9 +129,10 @@ exports.deleteCart = async (req, res) => {
     }
     try {
         const objCart = await CartModel.cartModel.findOne({userId: userId});
+        console.log(objCart)
         if (objCart) {
             const index = objCart.product.findIndex(
-                (id) => id.productId === productId
+                (id) => id.productId.toString() === productId.toString()
             );
             if (index == -1) {
                 return res.send({message: "No product found in your cart", code: 0});
