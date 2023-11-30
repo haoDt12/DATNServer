@@ -142,6 +142,7 @@ router.post(
 router.post("/getCart", Middleware.authorizationToken, ApiCart.getCart);
 router.post("/deleteCart", Middleware.authorizationToken, ApiCart.deleteCart);
 router.post("/editCart", Middleware.authorizationToken, ApiCart.editCart);
+router.post("/editCartV2", Middleware.authorizationToken, ApiCart.editCartV2);
 router.post(
   "/getCartByCartId",
   Middleware.authorizationToken,
