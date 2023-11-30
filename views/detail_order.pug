@@ -1,0 +1,160 @@
+
+
+extends layout
+
+block content
+    link(rel='stylesheet' href='/css/user.css')
+    #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
+        Sidebar Start
+            aside.left-sidebar
+                // Sidebar scroll
+                div
+                    .brand-logo.d-flex.align-items-center.justify-content-between
+                        a.text-nowrap.logo-img(href='/stech.manager/home')
+                            img(src='/images/logos/logo.jpeg' width='180' alt='')
+                        #sidebarCollapse.close-btn.d-xl-none.d-block.sidebartoggler.cursor-pointer
+                            i.ti.ti-x.fs-8
+                    // Sidebar navigation
+                    nav.sidebar-nav.scroll-sidebar(data-simplebar='')
+                        ul#sidebarnav
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu Home
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/home' aria-expanded='false')
+                                    span
+                                        i.ti.ti-layout-dashboard
+                                    span.hide-menu Dashboard
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu Manager
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
+                                    span
+                                        i.ti.ti-brand-producthunt
+                                    span.hide-menu Product
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/category' aria-expanded='false')
+                                    span
+                                        i.ti.ti-category
+                                    span.hide-menu Category
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/cart' aria-expanded='false')
+                                    span
+                                        i.ti.ti-shopping-cart
+                                    span.hide-menu Cart
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/chat' aria-expanded='false')
+                                    span
+                                        i.ti.ti-message-chatbot
+                                    span.hide-menu Chat
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/notification' aria-expanded='false')
+                                    span
+                                        i.ti.ti-notification
+                                    span.hide-menu Notification
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/user' aria-expanded='false')
+                                    span
+                                        i.ti.ti-cards
+                                    span.hide-menu User
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/order' aria-expanded='false')
+                                    span
+                                        i.ti.ti-file-description
+                                    span.hide-menu Order
+                            li.nav-small-cap
+                                i.ti.ti-dots.nav-small-cap-icon.fs-4
+                                span.hide-menu AUTH
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/login' aria-expanded='false')
+                                    span
+                                        i.ti.ti-login
+                                    span.hide-menu Login
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/register' aria-expanded='false')
+                                    span
+                                        i.ti.ti-user-plus
+
+        .body-wrapper
+            .container-fluid
+                .card
+                    .card-body
+                        a.page-link(href='#')
+                        .row
+                            if detailOrder
+                            h3.box-title.mt-1.ms-5 User Info
+                                if detailOrder.userInfo
+                                    .col-lg-3.col-md-5.col-sm-6
+                                        .white-box
+                                            img.img-responsive.mt-2(src= detailOrder.userInfo.avatar, style='max-width: 200px; height: 200px;' )
+                                    .col-lg-7.col-md-7.col-sm-6
+                                        h3.mt-3 Name:
+                                            =detailOrder.userInfo.full_name
+                                        h5 Email:
+                                            =detailOrder.userInfo.email
+                                        h5 Phone:
+                                            =detailOrder.userInfo.phone_number
+                                if !detailOrder.userInfo
+                                    .col-lg-7.col-md-7.col-sm-6
+                                        h3.mt-3 Name: Tên người dùng
+                                        h5 Email: Email ngời dùng
+                                        h5 Phone: Số điện thoại người dùng
+                                h3.box-title.mt-5.ms-5 Product Info
+                                .table-responsive
+                                    table.table.table-striped.align-middle.table-nowrap
+                                        thead
+                                            tr
+                                                th.text-center Ảnh
+                                                th.text-center NameProduct
+                                                th.text-center InfoProduct
+                                                th.text-center Giá sản phẩm
+                                        tbody
+                                            each pro in detailOrder.allProductInfo
+                                                tr
+                                                    td(style='text-align: center;')
+                                                        .avatar-lg
+                                                            img.img-fluid.rounded(src=pro.img_cover,style='max-width: 100%; height: 100px;', alt='')
+                                                    td
+                                                        div
+                                                            h5.font-size-18.text-center(style='font-size: 20px;')
+                                                                a.text-dark(href='ecommerce-product-detail.html')= pro.title
+                                                    td
+                                                        ul.list-unstyled.ps-0.mb-0
+                                                            each item in detailOrder.product
+                                                                if (item.productId.toString() === pro._id.toString())
+                                                                li
+                                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Màu:
+                                                                            i.list-inline-item(style=`background-color: ${item.color};width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
+                                                                li
+                                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Ram/Rom:
+                                                                            =  item.ram_rom
+                                                                li
+                                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Số lượng:
+                                                                            =  item.quantity
+                                                    td
+                                                        div
+                                                            h5.font-size-18.text-center(style='font-size: 18px;')
+                                                                a.text-dark(href='ecommerce-product-detail.html') #{Intl.NumberFormat('vi-VN').format(pro.price)} VNĐ
+                            h3.box-title.mt-5.ms-5 Order Info
+                                .col-lg-7.col-md-7.col-sm-6.ms-3
+                                    h4.mt-3 Tổng giá đơn hàng:
+                                        span.ms-2 #{Intl.NumberFormat('vi-VN').format(detailOrder.total)} VNĐ
+                                    h4 Trạng thái đơn hàng:
+                                        span.ms-2
+                                            if detailOrder.status === 'WaitingGet'
+                                                | Chờ lấy hàng
+                                            else if detailOrder.status === 'InTransit'
+                                                | Đang giao
+                                            else if detailOrder.status === 'PayComplete'
+                                                | Đã thanh toán
+                                            else if detailOrder.status === 'WaitConfirm'
+                                                | Chờ xác nhận
+                                            else if detailOrder.status === 'Cancel'
+                                                | Đơn đã hủy
+
+                script(src='https://code.jquery.com/jquery-1.10.2.min.js')
+                script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js')
