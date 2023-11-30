@@ -11,6 +11,7 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ApiBanner = require("../controllers/api.banner");
 const  ApiNotification = require("../controllers/api.notification");
+const ApiVNP = require("../controllers/api.payvnpay");
 /* GET api listing. */
 router.post("/registerUser",upload.single("file"), ApiUserController.addUser);
 router.post(
@@ -141,6 +142,7 @@ router.post(
 router.post("/getCart", Middleware.authorizationToken, ApiCart.getCart);
 router.post("/deleteCart", Middleware.authorizationToken, ApiCart.deleteCart);
 router.post("/editCart", Middleware.authorizationToken, ApiCart.editCart);
+router.post("/editCartV2", Middleware.authorizationToken, ApiCart.editCartV2);
 router.post(
   "/getCartByCartId",
   Middleware.authorizationToken,
@@ -163,4 +165,9 @@ router.post("/editNotification",Middleware.authorizationToken,ApiNotification.ed
 router.post("/deleteNotification",Middleware.authorizationToken,ApiNotification.deleteNotification);
 router.post("/getPrivateNotification",Middleware.authorizationToken,ApiNotification.getPrivateNotification);
 router.post("/getPublicNotification",Middleware.authorizationToken,ApiNotification.getPublicNotification);
+
+router.post("/createPaymentUrl",ApiVNP.createPaymentUrl);
+router.get("/payFail",ApiVNP.payFail);
+router.get("/paySuccess",ApiVNP.paySuccess);
+router.get("/vnpayReturn",ApiVNP.vnpayReturn);
 module.exports = router;
