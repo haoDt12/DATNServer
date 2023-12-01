@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function(){
     //
     const updateStatusButton = document.querySelectorAll(".updateStatusOrder");
     const btnGetAddress = document.getElementById('btnGetAddress');
+    const btnGetImg = document.getElementById('btnGetImg');
     //
     const confirmUpdateButton = document.querySelectorAll(".confirmUpdateStatusOrder");
     const buttonConfirm = document.getElementById('buttonConfirm');
@@ -54,16 +55,50 @@ document.addEventListener('DOMContentLoaded', function(){
             const valueId = inputOrderId.value;
             const valueUserId = inputUserId.value;
             const valueAddressId = btnGetAddress.getAttribute("data-status");
+            const valueImg = btnGetImg.getAttribute("data-status");
             const valueStatus = inputStatus.value;
 
             console.log("Hello "+valueStatus);
             console.log("Hello "+valueUserId);
             console.log("Hello "+valueAddressId);
+            console.log("Hello "+valueImg);
             console.log("Hello "+token);
 
             // const formData = new FormData();
             // formData.append("orderId", valueId);
             // formData.append("status", valueStatus);
+
+            let status;
+            if (valueStatus == 'WaitingGet'){
+                status = 'Chờ lấy hàng';
+            } else if (valueStatus == 'InTransit'){
+                status = 'Đang giao'
+            } else if (valueStatus == 'PayComplete'){
+                status = 'Đã thanh toán'
+            } else if (valueStatus == 'WaitConfirm'){
+                status = 'Chờ xác nhận'
+            } else if (valueStatus == 'Cancel'){
+                status = 'Đã hủy'
+            }
+            const formData1 = new URLSearchParams();
+            formData1.append("title", "Trạng thái đơn hàng");
+            formData1.append("content", " Trạng thái của dơn hàng bạn: "+status);
+            formData1.append("userId", valueUserId);
+            formData1.append("img", valueImg);
+
+            fetch('/api/addNotificationPrivate', {
+                headers: {
+                    'Authorization': `${token}`,
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                method: "POST",
+                body: formData1,
+            }).then((response) => {
+                console.log(response)
+                console.log("Thanh cong")
+            }).catch((error) => {
+                console.error("Error:", error);
+            });
 
             const formData = {orderId: valueId, userId: valueUserId, addressId: valueAddressId, status: valueStatus};
 
