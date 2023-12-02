@@ -10,8 +10,10 @@ const ApiOrder = require("../controllers/api.order");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ApiBanner = require("../controllers/api.banner");
-const ApiNotification = require("../controllers/api.notification");
+
 const ApiFeedBack = require("../controllers/api.feedback");
+const  ApiNotification = require("../controllers/api.notification");
+const ApiVNP = require("../controllers/api.payvnpay");
 /* GET api listing. */
 router.post("/registerUser", upload.single("file"), ApiUserController.addUser);
 router.post(
@@ -142,6 +144,7 @@ router.post(
 router.post("/getCart", Middleware.authorizationToken, ApiCart.getCart);
 router.post("/deleteCart", Middleware.authorizationToken, ApiCart.deleteCart);
 router.post("/editCart", Middleware.authorizationToken, ApiCart.editCart);
+router.post("/editCartV2", Middleware.authorizationToken, ApiCart.editCartV2);
 router.post(
   "/getCartByCartId",
   Middleware.authorizationToken,
@@ -223,4 +226,17 @@ router.post(
   Middleware.authorizationToken,
   ApiFeedBack.getAllFeedBackByProductId
 );
+
+router.post("/addFCM",Middleware.authorizationToken,ApiUserController.addFCM);
+router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPublic);
+router.post("/addNotificationPrivate",Middleware.authorizationToken,ApiNotification.addNotificationPrivate);
+router.post("/editNotification",Middleware.authorizationToken,ApiNotification.editNotification);
+router.post("/deleteNotification",Middleware.authorizationToken,ApiNotification.deleteNotification);
+router.post("/getPrivateNotification",Middleware.authorizationToken,ApiNotification.getPrivateNotification);
+router.post("/getPublicNotification",Middleware.authorizationToken,ApiNotification.getPublicNotification);
+
+router.post("/createPaymentUrl",ApiVNP.createPaymentUrl);
+router.get("/payFail",ApiVNP.payFail);
+router.get("/paySuccess",ApiVNP.paySuccess);
+router.get("/vnpayReturn",ApiVNP.vnpayReturn);
 module.exports = router;

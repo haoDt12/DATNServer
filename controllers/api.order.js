@@ -6,6 +6,7 @@ exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
+    console.log(product);
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (userId == null) {
@@ -38,11 +39,13 @@ exports.creatOrder = async (req, res) => {
             return res.send({message: "cart not found", code: 0});
         }
         let currentProduct = cart.product;
-        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId === item1.productId));
+        console.log(currentProduct);
+        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString()));
         console.log(newProduct)
-        cart.product = newProduct;
-        await cart.save();
-        await order.save();
+        // cart.product = newProduct;
+        // await cart.save();
+        // await order.save();
+        // console.log(order);
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);

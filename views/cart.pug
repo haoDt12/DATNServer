@@ -98,7 +98,7 @@ block content
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
                                 .dropdown-menu.dropdown-menu-end.dropdown-menu-animate-up(aria-labelledby='drop2')
                                     .message-body
-                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='/stech.manager/profile')
                                             i.ti.ti-user.fs-6
                                             p.mb-0.fs-3 My Profile
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
@@ -119,6 +119,7 @@ block content
                                 table.table.table-bordered.m-0
                                     thead
                                         tr
+                                            th
                                             th.text-center.py-3.px-4(style='min-width: 400px;') Product
                                             th.text-right.py-3.px-4(style='width: 100px;') Price
                                             th.text-center.py-3.px-4(style='width: 120px;') Quantity
@@ -127,35 +128,45 @@ block content
                                                 a.shop-tooltip.float-none.text-light(href='#' title='' data-original-title='Clear cart')
                                                     i.ino.ion-md-trash
                                     tbody
-                                        tr
-                                            td.p-4
-                                                .media.align-items-center
-                                                    img.d-block.ui-w-40.ui-bordered.mr-4(src='https://bootdey.com/img/Content/avatar/avatar2.png' alt='')
-                                                    .media-body
-                                                        a.d-block.text-dark(href='#') Product 3
-                                                        small
-                                                            span.text-muted Color:
-                                                            span.ui-product-color.ui-product-color-sm.align-text-bottom(style='background:#e81e2c;')
-                                                            span.text-muted Option:
-                                                            |  32GB
-                                            td.text-right.font-weight-semibold.align-middle.p-4 $20.55
-                                            td.align-middle.p-4
-                                                input#quantity.form-control.text-center(type='number' name='quantity' min='1' value='1')
-                                            td.text-right.font-weight-semibold.align-middle.p-4 $20.55
-                                            td.text-center.align-middle.px-0
-                                                a.shop-tooltip.close.float-none.text-danger(href='#' title='' data-original-title='Remove') &times;
-                            .d-flex.flex-wrap.justify-content-between.align-items-center.pb-4
-                                .mt-4
-                                    label.text-muted.font-weight-normal Code
-                                    input.form-control(type='text' placeholder='Code')
-                                .d-flex
-                                    .text-right.mt-4.mr-5
-                                        label.text-muted.font-weight-normal.m-0 Discount
-                                        .text-large
-                                            strong $20
-                                    .text-right.mt-4
-                                        label.text-muted.font-weight-normal.m-0 Total
-                                        .text-large
-                                            strong $1164.65
+                                        if carts
+                                            each cartProduct in carts.product
+                                                //if itemcart.productId
+                                                tr
+                                                    td(style='text-align: center')
+                                                        input#quantity(type='checkbox' class='product-checkbox' data-price=cartProduct.price data-quantity=cartProduct.quantity)
+                                                    // Hiển thị thông tin sản phẩm trong giỏ hàng
+
+                                                    td.p-4
+
+                                                        .media.align-items-center
+                                                            img#imgCoverUp.d-block.ui-w-40.ui-bordered.mr-4(src=cartProduct.imgCover alt='')
+                                                            .media-body
+                                                                a#titleUp.d-block.text-dark= cartProduct.title
+                                                                small
+                                                                    span.text-muted Color:
+                                                                    i#colorUp.list-inline-item(style=`background-color: ${cartProduct.color}; width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%;`)
+                                                                    span#ram_romUp.text-muted Option:
+                                                                    = cartProduct.ram_rom
+                                                    td#priceUp.text-right.font-weight-semibold.align-middle.p-4= cartProduct.price
+                                                    td.align-middle.p-4
+                                                        input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
+                                                        button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id data-productId=cartProduct.productId) Lưu
+                                                    td#total.text-right.font-weight-semibold.align-middle.p-4(class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{cartProduct.quantity * cartProduct.price}
+                                                    td.text-center.align-middle.px-0
+                                                        a#deleteCart.shop-tooltip.close.float-none.text-danger.deleteCartPro(href='#' title='' data-id=cartProduct._id data-productId=cartProduct.productId  data-original-title='Remove'  data-bs-target="#confirmDeleteCate") &times;
+                                h4.mt-3 Tổng tiền:
+                                    span.ms-2#total-display
+                            #confirmDeleteCart.modal(tabindex='-1')
+                                .modal-dialog
+                                    .modal-content
+                                        .modal-header
+                                            h5.modal-title Warning!
+                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                        .modal-body
+                                            p Bạn có chắc chắn muốn xoá giỏ hàng này.
+                                        .modal-footer
+                                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                            button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
                             .float-end
                                 button.btn.btn-lg.btn.btn-success.mt-2(type='button') Oder
+        script(src='/js/cart.js')
