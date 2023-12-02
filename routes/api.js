@@ -160,7 +160,7 @@ router.post("/getListBanner", Middleware.authorizationToken, upload.single("file
 
 router.post("/addFCM",Middleware.authorizationToken,ApiUserController.addFCM);
 router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPublic);
-router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPrivate);
+router.post("/addNotificationPrivate",Middleware.authorizationToken,ApiNotification.addNotificationPrivate);
 router.post("/editNotification",Middleware.authorizationToken,ApiNotification.editNotification);
 router.post("/deleteNotification",Middleware.authorizationToken,ApiNotification.deleteNotification);
 router.post("/getPrivateNotification",Middleware.authorizationToken,ApiNotification.getPrivateNotification);

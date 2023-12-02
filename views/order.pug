@@ -166,6 +166,7 @@ block content
                                                     p.text-muted.mb-1.text-truncate.text-center
                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone: Số điện thoại
                                             a.dropdown-item.d-none(id="btnGetAddress" data-status = order.addressId data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
+                                            a.dropdown-item.d-none(id="btnGetImg" data-status = order.allProductInfo[0].img_cover data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
                                     td
                                         .dropdown.text-center
                                             a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
@@ -243,4 +244,8 @@ block content
                                 .form-group
                                     label(for="inputStatus") Tên sản phẩm
                                     input(type="text",id = "inputStatus", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+                            .mb-4
+                                .form-group
+                                    label(for="inputImg") Tên sản phẩm
+                                    input(type="text",id = "inputImg", name="name", class="form-control", placeholder="", aria-describedby="helpId")
     script(src='/js/order.js')
