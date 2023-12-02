@@ -158,8 +158,12 @@ exports.deleteNotification = async (req, res) => {
     }
 }
 exports.getPrivateNotification = async (req, res) => {
+    let userId = req.body.userId;
+    if (userId == null) {
+        return res.send({message: "userId is required", code: 0});
+    }
     try {
-        let notification = await NotificationPrivate.notificationPrivateModel.find();
+        let notification = await NotificationPrivate.notificationPrivateModel.find({userId:userId});
         return res.send({message: "get list notification success", code: 1, notification: notification});
 
     } catch (e) {
