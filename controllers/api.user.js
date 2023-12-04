@@ -60,6 +60,12 @@ exports.addUser = async (req, res) => {
       code: 0,
     });
   }
+  if (full_name == null){
+    return res.send({
+      message: "The full_name is required",
+      code: 0,
+    });
+  }
   try {
     let userPhone = await UserModel.userModel.findOne({
       phone_number: phone_number,
