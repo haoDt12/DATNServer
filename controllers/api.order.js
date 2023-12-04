@@ -42,10 +42,10 @@ exports.creatOrder = async (req, res) => {
         console.log(currentProduct);
         let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString()));
         console.log(newProduct)
-        // cart.product = newProduct;
-        // await cart.save();
-        // await order.save();
-        // console.log(order);
+        cart.product = newProduct;
+        await cart.save();
+        await order.save();
+        console.log(order);
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);
