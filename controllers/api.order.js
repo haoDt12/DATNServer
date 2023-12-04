@@ -116,6 +116,8 @@ exports.editOrder = async (req, res) => {
     let product = req.body.product;
     let addressId = req.body.addressId;
     let status = req.body.status;
+    let date = new Date();
+    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     try {
         let order = await OrderModel.modelOrder.findById(orderId);
         if(!order){
@@ -123,9 +125,11 @@ exports.editOrder = async (req, res) => {
         }
         if(status !== null){
             order.status = status;
+            order.date_time = date_time;
         }
         if (userId !== null) {
             order.userId = userId;
+            order.date_time = date_time;
         }
         if (product !== undefined) {
             let total = 0;
@@ -138,12 +142,15 @@ exports.editOrder = async (req, res) => {
             }));
             order.product = product;
             order.total = total;
+            order.date_time = date_time;
         }
         if (addressId !== null) {
+            order.date_time = date_time;
             order.addressId = addressId;
         }
         if (status !== null) {
             order.status = status;
+            order.date_time = date_time;
         }
 
         console.log(order);

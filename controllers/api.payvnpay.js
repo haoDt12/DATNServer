@@ -38,6 +38,7 @@ exports.createPaymentUrl = async (req, res) => {
             total += product.price * item.quantity;
         }));
         let createDate = moment(date).format('YYYYMMDDHHmmss');
+        let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
         let ipAddr = req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
@@ -48,7 +49,6 @@ exports.createPaymentUrl = async (req, res) => {
         let vnpUrl = process.env.VNP_URL;
         let returnUrl = process.env.VNP_RETURN_URL;
         let orderId = moment(date).format('DDHHmmss');
-        let amount = req.body.amount;
         let bankCode = req.body.bankCode;
         let locale = req.body.language;
         if (locale === null || locale === '') {
@@ -82,7 +82,8 @@ exports.createPaymentUrl = async (req, res) => {
         mUserId = userId;
         mProduct = product;
         mAddress = address;
-        mDate_time = date;
+        mDate_time = date_time;
+        console.log(mDate_time);
         console.log(vnpUrl)
         return res.send({message: "get url success", code: 1, url: vnpUrl});
     } catch (e) {
