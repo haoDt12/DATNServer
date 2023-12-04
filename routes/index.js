@@ -189,13 +189,23 @@ router.get("/stech.manager/invoice", function (req, res, next) {
 router.get("/stech.manager/cart", async function (req, res, next) {
     // const userId = req.query.userId;
     // const userId = utils_1.getCookie(req, 'Uid');
+
     const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
     console.log("id",userId)
     try {
-        let cartUser = await CartModel.cartModel.findOne({ userId }).populate('product.productId');
+        let cartUser = await CartModel.cartModel.findOne({ userId }).populate({path: 'product', select: 'productId quantity'});;
         console.log(cartUser)
+        const productsInCart = cartUser ? cartUser.product : [];
+
+        // Lặp qua từng sản phẩm và lấy productId
+        const productIds = productsInCart.map(product => {
+            // Lấy productId từ thông tin chi tiết sản phẩm
+            return product.productId._id;
+        });
+
         res.render("cart",{
             carts: cartUser ? cartUser : [],
+            productIds: productIds,
             message: "get list profile success",
             code: 1,
         })
