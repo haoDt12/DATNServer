@@ -1,6 +1,5 @@
 const BannerModel = require("../models/model.banner");
 const UploadFile = require("../models/uploadFile");
-const CategoryModel = require("../models/model.category");
 const match = [
     "image/jpeg",
     "image/*",

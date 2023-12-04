@@ -173,7 +173,7 @@ exports.editCart = async (req, res) => {
         let cart = await CartModel.cartModel.findOne({userId: userId});
         if (cart) {
             const index = cart.product.findIndex(
-                (idProduct) => idProduct.productId === productId
+                (idProduct) => idProduct.productId.toString() === productId
             );
             if (index == -1) {
                 return res.send({
