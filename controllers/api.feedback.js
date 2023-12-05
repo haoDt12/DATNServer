@@ -44,7 +44,7 @@ class FeedBackCtrl {
       }
     } catch (error) {
       console.log(error.message);
-      return res.send({ message: "Add FeedBack fail", code: 0 });
+      return res.send({ message: e.message.toString(), code: 0 });
     }
   }
   async getFeedBackByProductId(req, res) {
@@ -67,7 +67,7 @@ class FeedBackCtrl {
       }
     } catch (error) {
       console.log(error.message);
-      return res.send({ message: "Get FeedBack fail", code: 0 });
+      return res.send({ message: e.message.toString(), code: 0 });
     }
   }
   async getAllFeedBackByProductId(req, res) {
@@ -88,7 +88,7 @@ class FeedBackCtrl {
       }
     } catch (error) {
       console.log(error.message);
-      return res.send({ message: "Get FeedBack fail", code: 0 });
+      return res.send({ message: e.message.toString(), code: 0 });
     }
   }
 }

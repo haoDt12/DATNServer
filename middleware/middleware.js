@@ -1,7 +1,5 @@
-const UserModel = require("../models/model.user")
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const Otp = require("../models/otp");
 exports.authorizationToken = (req, res, next) => {
     const token = req.header('Authorization');
     if (!token) {

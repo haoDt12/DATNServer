@@ -72,7 +72,7 @@ exports.addCart = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "add cart fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.getCartByUserId = async (req, res) => {
@@ -91,7 +91,7 @@ exports.getCartByUserId = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list cart fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.getCartByCartId = async (req, res) => {
@@ -104,7 +104,7 @@ exports.getCartByCartId = async (req, res) => {
         return res.send({cart: cart, message: "get cart success", code: 1});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get cart fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.getCart = async (req, res) => {
@@ -117,7 +117,7 @@ exports.getCart = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list cart fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.deleteCart = async (req, res) => {
@@ -157,7 +157,7 @@ exports.deleteCart = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list cart fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.editCart = async (req, res) => {
@@ -223,7 +223,7 @@ exports.editCart = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "edit cart fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.editCartV2 = async (req, res) => {
@@ -246,6 +246,6 @@ exports.editCartV2 = async (req, res) => {
         return res.send({message: "edit cart success", code: 1});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "edit cart fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }

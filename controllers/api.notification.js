@@ -36,7 +36,7 @@ exports.addNotificationPublic = async (req, res) => {
         return res.send({message: "add notification success", code: 1});
     } catch (e) {
         console.log(e.message)
-        return res.send({message: "add notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.addNotificationPrivate = async (req, res) => {
@@ -77,7 +77,7 @@ exports.addNotificationPrivate = async (req, res) => {
         return res.send({message: "add notification success", code: 1});
     } catch (e) {
         console.log(e.message)
-        return res.send({message: "add notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.editNotification = async (req, res) => {
@@ -132,7 +132,7 @@ exports.editNotification = async (req, res) => {
         return res.send({message: "notification not found", code: 0});
     } catch (e) {
         console.log(e.message)
-        return res.send({message: "edit notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.deleteNotification = async (req, res) => {
@@ -154,7 +154,7 @@ exports.deleteNotification = async (req, res) => {
         return res.send({message: "notification not found", code: 0});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "delete notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.getPrivateNotification = async (req, res) => {
@@ -178,7 +178,7 @@ exports.getPublicNotification = async (req, res) => {
 
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 const sendMessage = (registrationToken, title, body) => {
