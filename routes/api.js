@@ -11,6 +11,7 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ApiBanner = require("../controllers/api.banner");
 const ApiVoucher = require("../controllers/api.voucher");
+const ApiAdmin = require("../controllers/api.admin");
 
 const ApiFeedBack = require("../controllers/api.feedback");
 const  ApiNotification = require("../controllers/api.notification");
@@ -241,10 +242,16 @@ router.get("/payFail",ApiVNP.payFail);
 router.get("/paySuccess",ApiVNP.paySuccess);
 router.get("/vnpayReturn",ApiVNP.vnpayReturn);
 
-router.post("/addVoucherForOneUser",ApiVoucher.addVoucherForOneUser);
-router.post("/addVoucherForAllUser",ApiVoucher.addVoucherForAllUser);
-router.post("/getVoucherByUserId",ApiVoucher.getVoucherByUserId);
-router.post("/deleteVoucher",ApiVoucher.deleteVoucher);
-router.post("/editVoucher",ApiVoucher.editVoucher);
-router.post("/getAllVoucher",ApiVoucher.getAllVoucher);
+router.post("/addVoucherForOneUser",Middleware.authorizationToken,ApiVoucher.addVoucherForOneUser);
+router.post("/addVoucherForAllUser",Middleware.authorizationToken,ApiVoucher.addVoucherForAllUser);
+router.post("/getVoucherByUserId",Middleware.authorizationToken,ApiVoucher.getVoucherByUserId);
+router.post("/deleteVoucher",Middleware.authorizationToken,ApiVoucher.deleteVoucher);
+router.post("/editVoucher",Middleware.authorizationToken,ApiVoucher.editVoucher);
+router.post("/getAllVoucher",Middleware.authorizationToken,ApiVoucher.getAllVoucher);
+
+router.post("/addAdmin", ApiAdmin.addAdmin);
+router.post("/loginAdmin", ApiAdmin.loginAdmin);
+router.post("/verifyOtpLoginAdmin", ApiAdmin.verifyOtpLogin);
+router.post("/editAdmin", Middleware.authorizationToken,upload.single("file"),ApiAdmin.editAdmin);
+router.post("/deleteAdmin", Middleware.authorizationToken,ApiAdmin.editAdmin);
 module.exports = router;

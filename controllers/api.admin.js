@@ -1,10 +1,9 @@
 const AdminModel = require("../models/model.admin");
 const UploadFile = require("../models/uploadFile");
 const moment = require("moment");
-const {sendOtpByEmail, sendOTPByEmail} = require("../models/otp");
+const {sendOTPByEmail} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-const {Admin} = require("mongodb");
 require("dotenv").config();
 const match = [
     "image/jpeg",
@@ -145,7 +144,7 @@ exports.editAdmin = async (req, res) => {
                     code: 0,
                 });
             }
-            if (admin.avatar.split("app")[1] === undefined) {
+            if (admin.avatar.split("3000")[1] === undefined) {
                 let statusCode = await UploadFile.uploadFile(
                     req,
                     admin._id.toString(),
@@ -159,7 +158,7 @@ exports.editAdmin = async (req, res) => {
                     admin.avatar = statusCode;
                 }
             } else {
-                UploadFile.deleteFile(res, admin.avatar.split("app")[1]);
+                UploadFile.deleteFile(res, admin.avatar.split("3000")[1]);
                 let statusCode = await UploadFile.uploadFile(
                     req,
                     admin._id.toString(),
@@ -185,16 +184,16 @@ exports.loginAdmin = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     if (!username) {
-        return res.send({ message: "user name is required", code: 0 });
+        return res.send({message: "user name is required", code: 0});
     }
     if (!password) {
-        return res.send({ message: "password is required", code: 0 });
+        return res.send({message: "password is required", code: 0});
     }
     try {
         let adminEmail = await AdminModel.adminModel
-            .findOne({ email: username, password: password })
+            .findOne({email: username, password: password})
         let adminPhone = await AdminModel.adminModel
-            .findOne({ phone_number: username, password: password })
+            .findOne({phone_number: username, password: password})
         if (!adminEmail && !adminPhone) {
             return res.send({
                 message: "Login fail please check your username and password",
@@ -215,7 +214,7 @@ exports.loginAdmin = async (req, res) => {
             const payload = {
                 messages: [
                     {
-                        destinations: [{ to }],
+                        destinations: [{to}],
                         text,
                     },
                 ],
@@ -223,7 +222,7 @@ exports.loginAdmin = async (req, res) => {
 
             // Gửi tin nhắn OTP bằng InfoBip REST API
             axios
-                .post(baseUrl, payload, { headers })
+                .post(baseUrl, payload, {headers})
                 .then(async () => {
                     adminPhone.otp = otp;
                     await adminPhone.save();
@@ -235,13 +234,13 @@ exports.loginAdmin = async (req, res) => {
                 })
                 .catch((error) => {
                     console.error(error.message);
-                    return res.send({ message: "Fail send code", code: 0 });
+                    return res.send({message: "Fail send code", code: 0});
                 });
         }
         if (adminEmail) {
             let index = sendOTPByEmail(adminEmail.email);
             if (index === 0) {
-                return res.send({ message: "Verify admin fail", code: 0 });
+                return res.send({message: "Verify admin fail", code: 0});
             } else {
                 adminEmail.otp = index;
                 await adminEmail.save();
@@ -254,7 +253,7 @@ exports.loginAdmin = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: e.message.toString(), code: 0 });
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 const formatPhoneNumber = (phoneNumber) => {
@@ -270,13 +269,16 @@ const formatPhoneNumber = (phoneNumber) => {
 exports.verifyOtpLogin = async (req, res) => {
     let adminId = req.body.adminId;
     let otp = req.body.otp;
+    if (adminId == null) {
+        return res.send({message: "adminId is required", code: 0});
+    }
     if (otp == null) {
-        return res.send({ message: "otp is required", code: 0 });
+        return res.send({message: "otp is required", code: 0});
     }
     let admin = await AdminModel.adminModel
-        .findOne({ _id: adminId, otp: otp })
+        .findOne({_id: adminId, otp: otp})
     if (admin) {
-        let token = jwt.sign({ admin: admin }, process.env.ACCESS_TOKEN_SECRET, {
+        let token = jwt.sign({admin: admin}, process.env.ACCESS_TOKEN_SECRET, {
             expiresIn: "3600s",
         });
         admin.otp = null;
@@ -288,6 +290,20 @@ exports.verifyOtpLogin = async (req, res) => {
             code: 1,
         });
     } else {
-        return res.send({ message: "otp wrong", code: 0 });
+        return res.send({message: "otp wrong", code: 0});
     }
 };
+exports.deleteAdmin = async (req, res) => {
+    let adminId = req.body.adminId;
+    try {
+        let admin = await AdminModel.adminModel.findById(adminId);
+        if (admin.avatar.split("3000")[1] !== undefined) {
+            UploadFile.deleteFile(res, admin.avatar.split("3000")[1]);
+        }
+        await AdminModel.adminModel.deleteOne({_id: adminId});
+        return res.send({message: "delete admin success", code: 0});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}

@@ -68,7 +68,7 @@ exports.editCategory = async (req, res) => {
             if (match.indexOf(file.mimetype) === -1) {
                 return res.send({ message: "The uploaded file is not in the correct format", code: 0 });
             }
-            const pathImgDelete = category.img.split("app");
+            const pathImgDelete = category.img.split("3000");
             UploadFile.deleteFile(res, pathImgDelete[1]);
             let statusCode = await UploadFile.uploadFile(req, category._id.toString(), "category", file, ".jpg");
             if (statusCode === 0) {
@@ -96,7 +96,7 @@ exports.deleteCategory = async (req, res) => {
             return res.send({ message: "category not found" });
         }
         const pathFolderDelete = category.img.split("/")[5];
-        const pathImgDelete = category.img.split("app")[1];
+        const pathImgDelete = category.img.split("3000")[1];
         fs.unlink(path.join(__dirname, "../public" + pathImgDelete), (err) => {
             if (err) {
                 console.log(err);

@@ -196,7 +196,7 @@ exports.editUser = async (req, res) => {
                     code: 0,
                 });
             }
-            if (user.avatar.split("app")[1] === undefined) {
+            if (user.avatar.split("3000")[1] === undefined) {
                 let statusCode = await UploadFile.uploadFile(
                     req,
                     user._id.toString(),
@@ -210,7 +210,7 @@ exports.editUser = async (req, res) => {
                     user.avatar = statusCode;
                 }
             } else {
-                UploadFile.deleteFile(res, user.avatar.split("app")[1]);
+                UploadFile.deleteFile(res, user.avatar.split("3000")[1]);
                 let statusCode = await UploadFile.uploadFile(
                     req,
                     user._id.toString(),
