@@ -45,7 +45,7 @@ exports.addCategory = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: "Add category fail", code: 0 })
+        return res.send({ message: e.message.toString(), code: 0 })
     }
 };
 
@@ -81,7 +81,7 @@ exports.editCategory = async (req, res) => {
         return res.send({ message: "Edit category success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: "category not found", code: 0 });
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.deleteCategory = async (req, res) => {
@@ -113,7 +113,7 @@ exports.deleteCategory = async (req, res) => {
         })
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: "delete category fail", code: 0 });
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.getCategoryById = async (req, res) => {
@@ -129,7 +129,7 @@ exports.getCategoryById = async (req, res) => {
         res.send({category: category, message: "get category success", code: 1})
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get category fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 
@@ -139,6 +139,6 @@ exports.getListCategory = async (req, res) => {
         return res.send({ category: listCategory, message: "get list category success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: "category not found", code: 0 })
+        return res.send({ message: e.message.toString(), code: 0 })
     }
 }

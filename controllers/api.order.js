@@ -25,6 +25,14 @@ exports.creatOrder = async (req, res) => {
             if(!product){
                 return res.send({message: "product not found", code: 0});
             }
+            let quantity = Number(product.quantity);
+            if(quantity !== 0){
+                newQuantity = quantity - 1;
+                product.quantity = newQuantity.toString();
+                await product.save();
+            }else {
+                return res.send({message: "product is out of stock ", code: 0});
+            }
             total += product.price * item.quantity;
         }));
         let order = new OrderModel.modelOrder({

@@ -88,7 +88,7 @@ exports.addAdmin = async (req, res) => {
             code: 1,
         });
     } catch (e) {
-        return res.send({message: "add admin success", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.editAdmin = async (req, res) => {
@@ -178,7 +178,7 @@ exports.editAdmin = async (req, res) => {
         return res.send({message: "Edit success", code: 1});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "admin not found", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.loginAdmin = async (req, res) => {
@@ -254,7 +254,7 @@ exports.loginAdmin = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: "admin not found", code: 0 });
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 const formatPhoneNumber = (phoneNumber) => {

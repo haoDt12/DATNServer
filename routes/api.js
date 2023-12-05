@@ -10,6 +10,7 @@ const ApiOrder = require("../controllers/api.order");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ApiBanner = require("../controllers/api.banner");
+const ApiVoucher = require("../controllers/api.voucher");
 
 const ApiFeedBack = require("../controllers/api.feedback");
 const  ApiNotification = require("../controllers/api.notification");
@@ -239,4 +240,11 @@ router.post("/createPaymentUrl",ApiVNP.createPaymentUrl);
 router.get("/payFail",ApiVNP.payFail);
 router.get("/paySuccess",ApiVNP.paySuccess);
 router.get("/vnpayReturn",ApiVNP.vnpayReturn);
+
+router.post("/addVoucherForOneUser",ApiVoucher.addVoucherForOneUser);
+router.post("/addVoucherForAllUser",ApiVoucher.addVoucherForAllUser);
+router.post("/getVoucherByUserId",ApiVoucher.getVoucherByUserId);
+router.post("/deleteVoucher",ApiVoucher.deleteVoucher);
+router.post("/editVoucher",ApiVoucher.editVoucher);
+router.post("/getAllVoucher",ApiVoucher.getAllVoucher);
 module.exports = router;

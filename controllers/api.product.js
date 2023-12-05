@@ -151,7 +151,7 @@ exports.addProduct = async (req, res) => {
         return res.send({message: "add product success", code: 1});
     } catch (e) {
         console.log(e);
-        return res.send({message: "add product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.getListProduct = async (req, res) => {
@@ -166,7 +166,7 @@ exports.getListProduct = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.getProductById = async (req, res) => {
@@ -189,7 +189,7 @@ exports.getProductById = async (req, res) => {
         res.send({product: product, message: "get product success", code: 1});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.deleteProduct = async (req, res) => {
@@ -234,7 +234,7 @@ exports.deleteProduct = async (req, res) => {
         );
     } catch (e) {
         console.log(e);
-        return res.send({message: "product not found", code: 0});
+        return res.send({message:e.message.toString(), code: 0});
     }
 };
 exports.editProduct = async (req, res) => {
@@ -337,6 +337,6 @@ exports.editProduct = async (req, res) => {
         return res.send({message: "Edit product success", code: 1});
     } catch (e) {
         console.log(e);
-        return res.send({message: "Edit product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
