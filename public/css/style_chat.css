@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@50&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&;display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&;display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@50&;display=swap'); */
 
 body {
     font-size: 14px;
@@ -55,8 +55,12 @@ html body a {
     margin-bottom: auto !important;
 }
 
-.btn.btn-light-light:not(:disabled):not(.disabled).active, .btn.btn-light-light:not(:disabled):not(.disabled):active, .btn.btn-light:not(:disabled):not(.disabled).active,
-.btn.btn-light:not(:disabled):not(.disabled):active, .show>.btn.btn-light-light.dropdown-toggle, .show>.btn.btn-light.dropdown-toggle {
+.btn.btn-light-light:not(:disabled):not(.disabled).active,
+.btn.btn-light-light:not(:disabled):not(.disabled):active,
+.btn.btn-light:not(:disabled):not(.disabled).active,
+.btn.btn-light:not(:disabled):not(.disabled):active,
+.show>.btn.btn-light-light.dropdown-toggle,
+.show>.btn.btn-light.dropdown-toggle {
     color: rgb(126, 130, 153);
     background-color: rgb(238, 240, 249);
     border-color: rgb(238, 240, 249);
@@ -80,7 +84,8 @@ html body a {
     font-weight: 300 !important;
 }
 
-.h6, h6 {
+.h6,
+h6 {
     font-size: 1.175rem;
 }
 
@@ -97,7 +102,8 @@ html body a {
     font-size: 1.35rem;
 }
 
-a.btn i, button.btn i {
+a.btn i,
+button.btn i {
     font-size: 1rem;
     vertical-align: middle;
 }
@@ -135,7 +141,8 @@ a.btn i, button.btn i {
     padding: 0px;
 }
 
-.btn-circle, .flag-circle {
+.btn-circle,
+.flag-circle {
     border-radius: 50% !important;
 }
 
@@ -143,7 +150,8 @@ a.btn i, button.btn i {
     box-shadow: rgba(50, 50, 93, 0.11) 0px 4px 6px, rgba(0, 0, 0, 0.08) 0px 1px 3px;
 }
 
-.btn-group-sm>.btn, .btn-sm {
+.btn-group-sm>.btn,
+.btn-sm {
     font-size: 0.725rem;
     line-height: 1.35;
     padding: 0.45rem 0.75rem;
@@ -179,7 +187,9 @@ a.btn i, button.btn i {
     background: rgb(238, 240, 249);
 }
 
-.form-control input, .form-group input, input {
+.form-control input,
+.form-group input,
+input {
     box-shadow: none;
     font-size: 0.9rem;
     font-weight: 300 !important;
@@ -200,7 +210,12 @@ a.btn i, button.btn i {
     background-color: rgb(228, 230, 239);
 }
 
-.btn.focus, .btn:focus, .form-control:focus, .form-group input:focus, .form-group:focus, input:focus {
+.btn.focus,
+.btn:focus,
+.form-control:focus,
+.form-group input:focus,
+.form-group:focus,
+input:focus {
     box-shadow: rgba(101, 118, 255, 0.1) 0px 0px 0px 3px;
     border-color: rgba(101, 118, 255, 0);
     outline: 0px;
@@ -245,12 +260,18 @@ a.btn i, button.btn i {
     padding-bottom: 0;
 }
 
-.input-group>.input-group-append>.btn, .input-group>.input-group-append>.input-group-text, .input-group>.input-group-prepend:first-child>.btn:not(:first-child), .input-group>.input-group-prepend:first-child>.input-group-text:not(:first-child), .input-group>.input-group-prepend:not(:first-child)>.btn, .input-group>.input-group-prepend:not(:first-child)>.input-group-text {
+.input-group>.input-group-append>.btn,
+.input-group>.input-group-append>.input-group-text,
+.input-group>.input-group-prepend:first-child>.btn:not(:first-child),
+.input-group>.input-group-prepend:first-child>.input-group-text:not(:first-child),
+.input-group>.input-group-prepend:not(:first-child)>.btn,
+.input-group>.input-group-prepend:not(:first-child)>.input-group-text {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
 
-.chat-search .input-group-text, .chat-search input {
+.chat-search .input-group-text,
+.chat-search input {
     font-size: 14px;
     box-shadow: unset !important;
     border-width: initial;
@@ -276,7 +297,8 @@ a.btn i, button.btn i {
     background-color: #eef0fc;
 }
 
-.pr-2, .px-2 {
+.pr-2,
+.px-2 {
     padding-right: 0.5rem !important;
 }
 
@@ -369,7 +391,8 @@ img.shadow {
     width: 18px;
 }
 
-.chat .chat-item.active, .chat .chat-item:hover {
+.chat .chat-item.active,
+.chat .chat-item:hover {
     background-color: #f5f8fa;
 }
 
@@ -452,7 +475,8 @@ img.shadow {
     font-size: 12px !important;
 }
 
-.chat.chat-panel .left-chat-message, .chat.chat-panel .right-chat-message {
+.chat.chat-panel .left-chat-message,
+.chat.chat-panel .right-chat-message {
     padding: 0.5rem 1rem;
     max-width: 47%;
 }
@@ -469,7 +493,8 @@ img.shadow {
     box-shadow: 0 4px 8px 0 rgb(34 41 47 / 3%);
 }
 
-.chat.chat-panel .message-arrow, .chat.chat-panel .message-time {
+.chat.chat-panel .message-arrow,
+.chat.chat-panel .message-time {
     position: absolute;
     right: 5px;
     bottom: 5px;
@@ -479,7 +504,8 @@ img.shadow {
     cursor: pointer;
 }
 
-.chat.chat-panel .message-arrow, .chat.chat-panel .message-time {
+.chat.chat-panel .message-arrow,
+.chat.chat-panel .message-time {
     position: absolute;
     right: 5px;
     bottom: 5px;
@@ -501,12 +527,14 @@ img.shadow {
     position: relative;
 }
 
-.chat.chat-panel .left-chat-message, .chat.chat-panel .right-chat-message {
+.chat.chat-panel .left-chat-message,
+.chat.chat-panel .right-chat-message {
     padding: 0.5rem 1rem;
     max-width: 47%;
 }
 
-.chat.chat-panel .left-chat-message, .chat.chat-panel .right-chat-message {
+.chat.chat-panel .left-chat-message,
+.chat.chat-panel .right-chat-message {
     padding: 0.5rem 1rem;
     max-width: 47%;
 }
@@ -524,7 +552,8 @@ img.shadow {
     box-shadow: 0 4px 8px 0 rgb(34 41 47 / 12%);
 }
 
-.chat.chat-panel .message-options.dark .message-arrow i, .chat.chat-panel .message-options.dark .message-time {
+.chat.chat-panel .message-options.dark .message-arrow i,
+.chat.chat-panel .message-options.dark .message-time {
     color: #fff !important;
 }
 
@@ -548,7 +577,8 @@ img.shadow {
     bottom: -50px;
 }
 
-.btn.btn-light-secondary.btn-blushing, .btn.btn-secondary.btn-blushing {
+.btn.btn-light-secondary.btn-blushing,
+.btn.btn-secondary.btn-blushing {
     box-shadow: 1px 1px 1px 1px rgb(117 106 208 / 40%);
 }
 
@@ -558,19 +588,23 @@ img.shadow {
     border: 0;
 }
 
-.btn.btn-danger.btn-blushing, .btn.btn-light-danger.btn-blushing {
+.btn.btn-danger.btn-blushing,
+.btn.btn-light-danger.btn-blushing {
     box-shadow: 1px 1px 1px 1px #fd397a5c;
 }
 
-.btn.btn-light-warning.btn-blushing, .btn.btn-warning.btn-blushing {
+.btn.btn-light-warning.btn-blushing,
+.btn.btn-warning.btn-blushing {
     box-shadow: 1px 1px 1px 1px rgb(255 184 34 / 40%);
 }
 
-.btn.btn-light-success.btn-blushing, .btn.btn-success.btn-blushing {
+.btn.btn-light-success.btn-blushing,
+.btn.btn-success.btn-blushing {
     box-shadow: 1px 1px 1px 1px rgb(10 187 135 / 40%);
 }
 
-.btn.btn-light-secondary.btn-blushing, .btn.btn-secondary.btn-blushing {
+.btn.btn-light-secondary.btn-blushing,
+.btn.btn-secondary.btn-blushing {
     box-shadow: 1px 1px 1px 1px rgb(117 106 208 / 40%);
 }
 
@@ -591,7 +625,8 @@ img.shadow {
     font-size: 19px !important;
 }
 
-.chat.chat-panel .left-chat-message, .chat.chat-panel .right-chat-message {
+.chat.chat-panel .left-chat-message,
+.chat.chat-panel .right-chat-message {
     padding: .5rem 1rem;
     max-width: 47%
 }
@@ -600,13 +635,15 @@ img.shadow {
     transform: scale(0);
 }
 
-.chat.chat-panel .left-chat-message:hover .message-time, .chat.chat-panel .right-chat-message:hover .message-time {
+.chat.chat-panel .left-chat-message:hover .message-time,
+.chat.chat-panel .right-chat-message:hover .message-time {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
     transform: scale(0);
 }
 
-.chat.chat-panel .left-chat-message:hover .message-arrow, .chat.chat-panel .right-chat-message:hover .message-arrow {
+.chat.chat-panel .left-chat-message:hover .message-arrow,
+.chat.chat-panel .right-chat-message:hover .message-arrow {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
     transform: scale(1);
@@ -638,25 +675,33 @@ img.shadow {
     width: 100%;
 }
 
-.btn.btn-light-skype.focus, .btn.btn-light-skype:focus, .btn.btn-light-skype:hover:not(:disabled):not(.disabled) {
+.btn.btn-light-skype.focus,
+.btn.btn-light-skype:focus,
+.btn.btn-light-skype:hover:not(:disabled):not(.disabled) {
     color: #fff !important;
     background-color: #00aff0;
     border-color: #00aff0;
 }
 
-.btn.btn-light-facebook.focus, .btn.btn-light-facebook:focus, .btn.btn-light-facebook:hover:not(:disabled):not(.disabled) {
+.btn.btn-light-facebook.focus,
+.btn.btn-light-facebook:focus,
+.btn.btn-light-facebook:hover:not(:disabled):not(.disabled) {
     color: #fff !important;
     background-color: #3b5998;
     border-color: #3b5998;
 }
 
-.btn.btn-light-twitter.focus, .btn.btn-light-twitter:focus, .btn.btn-light-twitter:hover:not(:disabled):not(.disabled) {
+.btn.btn-light-twitter.focus,
+.btn.btn-light-twitter:focus,
+.btn.btn-light-twitter:hover:not(:disabled):not(.disabled) {
     color: #fff !important;
     background-color: #1da1f2;
     border-color: #1da1f2;
 }
 
-.btn.btn-light-instagram.focus, .btn.btn-light-instagram:focus, .btn.btn-light-instagram:hover:not(:disabled):not(.disabled) {
+.btn.btn-light-instagram.focus,
+.btn.btn-light-instagram:focus,
+.btn.btn-light-instagram:hover:not(:disabled):not(.disabled) {
     color: #fff !important;
     background-color: #e1306c;
     border-color: #e1306c;
@@ -676,13 +721,15 @@ img.shadow {
     }
 }
 
-@media screen and (-ms-high-contrast:active), (-ms-high-contrast:none) {
+@media screen and (-ms-high-contrast:active),
+(-ms-high-contrast:none) {
     .ps-container {
         overflow: auto !important
     }
 }
 
-.ps-container.ps-active-x>.ps-scrollbar-x-rail, .ps-container.ps-active-y>.ps-scrollbar-y-rail {
+.ps-container.ps-active-x>.ps-scrollbar-x-rail,
+.ps-container.ps-active-y>.ps-scrollbar-y-rail {
     display: block;
     background-color: transparent
 }
@@ -773,7 +820,8 @@ img.shadow {
     background-color: #a2adb7
 }
 
-.ps-container:hover>.ps-scrollbar-x-rail, .ps-container:hover>.ps-scrollbar-y-rail {
+.ps-container:hover>.ps-scrollbar-x-rail,
+.ps-container:hover>.ps-scrollbar-y-rail {
     opacity: .6
 }
 

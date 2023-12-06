@@ -138,13 +138,13 @@ block content
                                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                                             i.ti.ti-eye-off.fs-6
                                                             p.mb-0.fs-3 Ẩn khỏi app
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                                             i.ti.ti-edit.fs-6
-                                                            p.mb-0.fs-3 Sửa thông tin
-                                                        a.d-flex.align-items-center.gap-2.dropdown-item.delCate(data-id=cate._id data-bs-toggle="modal" data-bs-target="#confirmDeleteCate")
+                                                            p.mb-0.fs-3(class="updateCate" data-id=cate._id  data-bs-toggle="modal" data-bs-target="#updateCategoryModal") Sửa thông tin
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                                             i.ti.ti-trash.fs-6
-                                                            p.mb-0.fs-3 Xoá sản phẩm
-                                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block.updateCate(data-id=cate._id  data-bs-toggle="modal" data-bs-target="#updateCategoryModal") Updating..
+                                                            p.mb-0.fs-3(class='delCate' data-id=cate._id data-bs-toggle="modal" data-bs-target="#confirmDeleteCate") Xoá sản phẩm
+                                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Updating..
                 //- Start Pagination
                 nav(aria-label='Page navigation example')
                     ul.pagination.justify-content-end

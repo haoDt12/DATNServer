@@ -11,6 +11,8 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ApiBanner = require("../controllers/api.banner");
 const  ApiNotification = require("../controllers/api.notification");
+const ApiConversation = require("../controllers/api.conversation")
+const ApiMessage = require("../controllers/api.message")
 /* GET api listing. */
 router.post("/registerUser",upload.single("file"), ApiUserController.addUser);
 router.post(
@@ -32,6 +34,7 @@ router.post(
 );
 router.post("/verifyOtpRegister", ApiUserController.verifyOtpRegister);
 router.post("/verifyOtpLogin", ApiUserController.verifyOtpLogin);
+router.post("/updateconversationID", ApiUserController.updateconversationID);
 
 router.post(
   "/addCategory",
@@ -163,4 +166,14 @@ router.post("/editNotification",Middleware.authorizationToken,ApiNotification.ed
 router.post("/deleteNotification",Middleware.authorizationToken,ApiNotification.deleteNotification);
 router.post("/getPrivateNotification",Middleware.authorizationToken,ApiNotification.getPrivateNotification);
 router.post("/getPublicNotification",Middleware.authorizationToken,ApiNotification.getPublicNotification);
+
+// API Conversation
+router.post("/createConversation",Middleware.authorizationToken,ApiConversation.createConversation);
+router.post("/deleteConversation",Middleware.authorizationToken,ApiConversation.deleteConversation);
+router.post("/editConversation",Middleware.authorizationToken,ApiConversation.editConversation);
+router.post("/getConversationByID",Middleware.authorizationToken,ApiConversation.getConversationByID);
+router.post("/getConversation",Middleware.authorizationToken,ApiConversation.getConversation);
+
+// API MESSAGE
+router.post("/addMessage",Middleware.authorizationToken,ApiMessage.addMessage);
 module.exports = router;
