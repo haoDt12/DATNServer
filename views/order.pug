@@ -165,22 +165,23 @@ block content
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone: Số điện thoại
-                                            a.dropdown-item.d-none(id="btnGetAddress" data-status = order.addressId data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
-                                            a.dropdown-item.d-none(id="btnGetImg" data-status = order.allProductInfo[0].img_cover data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
+                                            a.dropdown-item.d-none(id="btnGetAddress" data-status = order.addressId)
+                                            a.dropdown-item.d-none(id="btnGetImg" data-status = order.allProductInfo[0].img_cover)
+                                            a.dropdown-item.d-none(id="btnGetTitle" data-status = order.allProductInfo[0].title)
                                     td
                                         .dropdown.text-center
-                                            a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
-                                                i.bx.text-center
-                                            .dropdown-menu.dropdown-menu-end
-                                                a.dropdown-item( class='detailOrder' data-id=order._id) Xem chi tiết
-                                                if order.status === 'WaitConfirm'
-                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='WaitingGet' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Chờ lấy hàng
-                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status = 'Cancel' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Hủy đơn hàng
-                                                if order.status === 'WaitingGet'
-                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='InTransit' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đang giao
-                                                if order.status === 'InTransit'
-                                                    a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='PayComplete' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đă thanh toán
-                                                a.dropdown-item.d-none(class='updateStatusOrder' id="updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
+                                                a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
+                                                    i.bx.text-center
+                                                .dropdown-menu.dropdown-menu-end
+                                                    a.dropdown-item( class='detailOrder' data-id=order._id) Xem chi tiết
+                                                    if order.status === 'WaitConfirm'
+                                                        a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='WaitingGet' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Chờ lấy hàng
+                                                        a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status = 'Cancel' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Hủy đơn hàng
+                                                    if order.status === 'WaitingGet'
+                                                        a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='InTransit' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đang giao
+                                                    if order.status === 'InTransit'
+                                                        a.dropdown-item(class='updateStatusOrder' id = "updateOrderButton" data-id = order._id data-status='PayComplete' data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal") Đă thanh toán
+                                                    a.dropdown-item.d-none(class='updateStatusOrder' id="updateOrderButton" data-id = order._id data-bs-toggle="modal" data-bs-target="#UpdateStatusOrderModal")
                 //- Start Pagination
                 .text-center.mt-3.mt-sm-3
                     ul.pagination.justify-content-center.mb-0
