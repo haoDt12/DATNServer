@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const updateStatusButton = document.querySelectorAll(".updateStatusOrder");
     const btnGetAddress = document.getElementById('btnGetAddress');
     const btnGetImg = document.getElementById('btnGetImg');
+    const btnGetTitle = document.getElementById('btnGetTitle');
     //
     const confirmUpdateButton = document.querySelectorAll(".confirmUpdateStatusOrder");
     const buttonConfirm = document.getElementById('buttonConfirm');
@@ -56,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function(){
             const valueUserId = inputUserId.value;
             const valueAddressId = btnGetAddress.getAttribute("data-status");
             const valueImg = btnGetImg.getAttribute("data-status");
+            const valueFirstTitle = btnGetTitle.getAttribute("data-status");
             const valueStatus = inputStatus.value;
 
             console.log("Hello "+valueStatus);
@@ -80,9 +82,11 @@ document.addEventListener('DOMContentLoaded', function(){
             } else if (valueStatus == 'Cancel'){
                 status = 'Đã hủy'
             }
+            var encodedValueIdOrder = btoa(valueId);
+
             const formData1 = new URLSearchParams();
             formData1.append("title", "Trạng thái đơn hàng");
-            formData1.append("content", " Trạng thái của dơn hàng bạn: "+status);
+            formData1.append("content", "Đơn hàng "+encodedValueIdOrder+" "+valueFirstTitle+" của bạn: "+status);
             formData1.append("userId", valueUserId);
             formData1.append("img", valueImg);
 
