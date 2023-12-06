@@ -422,3 +422,26 @@ exports.addFCM = async (req, res) => {
     return res.send({message: "add FCM fail", code: 0})
   }
 }
+
+exports.updateconversationID = async (req, res) => {
+  let userId = req.body.userId;
+  let conversationID = req.body.conversationId;
+  if (conversationID == null) {
+    return res.send({message: "conversationID is required", code: 0});
+  }
+  if (userId == null) {
+    return res.send({message: "user id is required", code: 0});
+  }
+  try {
+    let user = await UserModel.userModel.findById(userId);
+    if (!user) {
+      return res.send({message: "user not found", code: 0});
+    }
+    user.fcm = conversationID;
+    await user.save();
+    return res.send({message: "update conversationID success", code: 1});
+  } catch (e) {
+    console.log(e.message);
+    return res.send({message: "update conversationID fail", code: 0})
+  }
+}
