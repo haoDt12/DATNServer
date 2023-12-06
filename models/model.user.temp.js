@@ -13,7 +13,8 @@ const userTempSchema = db.mongoose.Schema(
         address: [{type: db.mongoose.Schema.Types.ObjectId, ref: 'address', required: false}],
         date: {type: String, required: true},
         account_type: {type: String, default: account_type},
-        otp: {type: String, required: true}
+        otp: {type: String, required: true},
+        link: {type: String, required: false}
     },
     {
         collection: "UserTemp",

@@ -2,7 +2,7 @@ const UserModel = require("../models/model.user");
 const UserTempModel = require("../models/model.user.temp");
 const UploadFile = require("../models/uploadFile");
 const moment = require("moment");
-const {sendOTPByEmail} = require("../models/otp");
+const {sendOTPByEmail, sendOTPByEmailGetPass} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 require("dotenv").config();
@@ -433,3 +433,154 @@ exports.addFCM = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0})
     }
 }
+exports.editPassword = async (req, res) => {
+    let userId = req.body.userId;
+    let currentPass = req.body.currentPass;
+    let newPass = req.body.newPass;
+    if (currentPass == null) {
+        return res.send({message: "currentPass id is required", code: 0});
+    }
+    if (userId == null) {
+        return res.send({message: "user id is required", code: 0});
+    }
+    if (newPass == null) {
+        return res.send({message: "newPass id is required", code: 0});
+    }
+    if (!passwordRegex.test(password)) {
+        return res.send({
+            message:
+                "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
+            code: 0,
+        });
+    }
+    try {
+        let user = await UserModel.userModel.findOne({_id: userId, password: currentPass});
+        if (!user) {
+            return res.send({message: "user not found", code: 0});
+        }
+        let index = sendOTPByEmail(userEmail.email);
+        if (index === 0) {
+            return res.send({message: "Verify user fail", code: 0});
+        } else {
+            user.otp = index;
+            await user.save();
+            return res.send({
+                message: "Please verify your account",
+                id: user._id,
+                code: 1,
+            });
+        }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0})
+    }
+}
+exports.verifyOtpEditPass = async (req, res) => {
+    let userId = req.body.userId;
+    let otp = req.body.otp;
+    if (otp == null) {
+        return res.send({message: "otp is required", code: 0});
+    }
+    try {
+        let user = await UserModel.userModel.findOne({_id: userId, otp: otp})
+        if (user) {
+            user.otp = null;
+            await user.save();
+            return res.send({
+                message: "edit pass success", code: 1,
+            });
+        } else {
+            return res.send({message: "otp wrong", code: 0});
+        }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+exports.getPassWord = async (req, res) => {
+    //todo
+    let username = req.body.username;
+    let ipAddress = process.env.IP_ADDRESS;
+    const randomEndLink = generateRandomPassword(12);
+    const link = `http://${ipAddress}:3000/api/resetPassword?key=${randomEndLink}`;
+    const text = `STECH xin chào bạn\n Ấn vào đây để khôi phục lại mật khẩu: ${link}`;
+    if (username == null) {
+        return res.send({message: "username is required", code: 0});
+    }
+    if (!phoneNumberRegex.test(username) || !emailRegex.test(username)) {
+        return res.send({
+            message: "user is a email or a number phone",
+            code: 0,
+        });
+    }
+    if (phoneNumberRegex.test(username)) {
+        const apiKey = process.env.API_KEY;
+        const baseUrl = process.env.BASE_URL;
+        const to = formatPhoneNumber(username);
+        const headers = {
+            Authorization: `App ${apiKey}`,
+            "Content-Type": "application/json",
+        };
+
+        const payload = {
+            messages: [
+                {
+                    destinations: [{to}],
+                    text,
+                },
+            ],
+        };
+
+        // Gửi tin nhắn OTP bằng InfoBip REST API
+        axios
+            .post(baseUrl, payload, {headers})
+            .then(async () => {
+                userPhone.link = generateRandomPassword(12);
+                await userPhone.save();
+                return res.send({
+                    message: "Please verify your account",
+                    code: 1,
+                });
+            })
+            .catch((error) => {
+                console.error(error.message);
+                return res.send({message: "Fail send code", code: 0});
+            });
+    }
+    if (emailRegex.test(username)) {
+        let index = sendOTPByEmailGetPass(username, link);
+        if (index === 0) {
+            return res.send({message: "Verify user fail", code: 0});
+        } else {
+            user.link = link;
+            await user.save();
+            return res.send({
+                message: "Please verify your account",
+                code: 1,
+            });
+        }
+    }
+}
+exports.resetPassword = async (req,res)=>{
+    //todo
+    const key = req.query.key;
+    if(key == null){
+        return res.send({message: "username is required", code: 0});
+    }
+    try {
+
+    }catch (e) {
+
+    }
+}
+function generateRandomPassword(length) {
+    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset.charAt(randomIndex);
+    }
+    return password;
+}
+
+

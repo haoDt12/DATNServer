@@ -26,4 +26,20 @@ const sendOTPByEmail = (email) => {
     });
     return index;
 };
-module.exports = {sendOTPByEmail};
+const sendOTPByEmailGetPass = (email,text) => {
+    let index = 1;
+    const mailOptions = {
+        from: process.env.USERNAME_EMAIL,
+        to: email,
+        subject: 'STECH Xin Chào Bạn',
+        text: text,
+    };
+
+    transporter.sendMail(mailOptions, (error) => {
+        if (error) {
+            index = 0;
+        }
+    });
+    return index;
+};
+module.exports = {sendOTPByEmail,sendOTPByEmailGetPass};
