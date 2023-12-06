@@ -1,14 +1,18 @@
 var createError = require("http-errors");
 var express = require("express");
+
+var socketIO = require('socket.io');
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiRouter = require("./routes/api");
 var app = express();
-
+var http = require('http')
+var httpPlus = require('http').Server(app);
+var server = http.createServer(app);
+var io = socketIO(server);
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -37,7 +41,22 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-app.listen(3000, (req, res) => {
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Xử lý sự kiện khi client gửi tin nhắn
+  socket.on('chat message', (msg) => {
+    // Xử lý tin nhắn và gửi lại cho tất cả client
+    io.emit('chat message', msg);
+  });
+
+  // Các sự kiện khác có thể được xử lý ở đây
+  // Đóng kết nối
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+httpPlus.listen(3000, (req, res) => {
   console.log("connect to port 3000");
 });
 module.exports = app;
