@@ -1,6 +1,5 @@
 const BannerModel = require("../models/model.banner");
 const UploadFile = require("../models/uploadFile");
-const CategoryModel = require("../models/model.category");
 const match = [
     "image/jpeg",
     "image/*",
@@ -38,7 +37,7 @@ exports.addBanner = async (req, res) => {
         return res.send({message: "Add banner success", code: 1});
     } catch (e) {
         console.log(e);
-        return res.send({message: "Add banner fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.editBanner = async (req, res) => {
@@ -72,7 +71,7 @@ exports.editBanner = async (req, res) => {
         return res.send({message: "Edit banner success", code: 1});
     } catch (e) {
         console.log(e);
-        return res.send({message: "Edit banner fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.deleteBanner = async (req, res) => {
@@ -90,7 +89,7 @@ exports.deleteBanner = async (req, res) => {
         await BannerModel.bannerModel.deleteOne({_id: bannerId});
         return res.send({message: "delete banner success", code: 1});
     } catch (e) {
-        return res.send({message: "delete banner fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.getLisBanner = async (req, res) => {
@@ -99,7 +98,7 @@ exports.getLisBanner = async (req, res) => {
         return res.send({message: "get list banner success", code: 1, banner: banner});
     } catch (e) {
         console.log(e)
-        return res.send({message: "get list banner fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.getBannerById = async (req, res) => {
@@ -112,6 +111,6 @@ exports.getBannerById = async (req, res) => {
         res.send({banner: banner, message: "get banner success", code: 1})
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get banner fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }

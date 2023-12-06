@@ -36,7 +36,7 @@ exports.addNotificationPublic = async (req, res) => {
         return res.send({message: "add notification success", code: 1});
     } catch (e) {
         console.log(e.message)
-        return res.send({message: "add notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.addNotificationPrivate = async (req, res) => {
@@ -45,6 +45,7 @@ exports.addNotificationPrivate = async (req, res) => {
     let title = req.body.title;
     let content = req.body.content;
     let userId = req.body.userId;
+    let img = req.body.img;
     if (userId == null) {
         return res.send({message: "userId is required", code: 0});
     }
@@ -53,6 +54,9 @@ exports.addNotificationPrivate = async (req, res) => {
     }
     if (content == null) {
         return res.send({message: "content is required", code: 0});
+    }
+    if (img == null) {
+        return res.send({message: "img is required", code: 0});
     }
     try {
         let user = await UserModel.userModel.findById(userId);
@@ -67,12 +71,13 @@ exports.addNotificationPrivate = async (req, res) => {
             content: content,
             date: date_time,
             userId: userId,
+            img: img,
         })
         await notification.save();
         return res.send({message: "add notification success", code: 1});
     } catch (e) {
         console.log(e.message)
-        return res.send({message: "add notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.editNotification = async (req, res) => {
@@ -127,7 +132,7 @@ exports.editNotification = async (req, res) => {
         return res.send({message: "notification not found", code: 0});
     } catch (e) {
         console.log(e.message)
-        return res.send({message: "edit notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.deleteNotification = async (req, res) => {
@@ -149,12 +154,16 @@ exports.deleteNotification = async (req, res) => {
         return res.send({message: "notification not found", code: 0});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "delete notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.getPrivateNotification = async (req, res) => {
+    let userId = req.body.userId;
+    if (userId == null) {
+        return res.send({message: "userId is required", code: 0});
+    }
     try {
-        let notification = await NotificationPrivate.notificationPrivateModel.find();
+        let notification = await NotificationPrivate.notificationPrivateModel.find({userId:userId});
         return res.send({message: "get list notification success", code: 1, notification: notification});
 
     } catch (e) {
@@ -169,7 +178,7 @@ exports.getPublicNotification = async (req, res) => {
 
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list notification fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
 const sendMessage = (registrationToken, title, body) => {

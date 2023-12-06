@@ -10,11 +10,15 @@ const ApiOrder = require("../controllers/api.order");
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const ApiBanner = require("../controllers/api.banner");
+const ApiVoucher = require("../controllers/api.voucher");
+
+const ApiFeedBack = require("../controllers/api.feedback");
 const  ApiNotification = require("../controllers/api.notification");
 const ApiConversation = require("../controllers/api.conversation")
 const ApiMessage = require("../controllers/api.message")
+const ApiVNP = require("../controllers/api.payvnpay");
 /* GET api listing. */
-router.post("/registerUser",upload.single("file"), ApiUserController.addUser);
+router.post("/registerUser", upload.single("file"), ApiUserController.addUser);
 router.post(
   "/editUser",
   Middleware.authorizationToken,
@@ -144,6 +148,7 @@ router.post(
 router.post("/getCart", Middleware.authorizationToken, ApiCart.getCart);
 router.post("/deleteCart", Middleware.authorizationToken, ApiCart.deleteCart);
 router.post("/editCart", Middleware.authorizationToken, ApiCart.editCart);
+router.post("/editCartV2", Middleware.authorizationToken, ApiCart.editCartV2);
 router.post(
   "/getCartByCartId",
   Middleware.authorizationToken,
@@ -154,14 +159,81 @@ router.post(
   Middleware.authorizationToken,
   ApiCart.getCartByUserId
 );
-router.post("/addBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.addBanner);
-router.post("/editBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.editBanner);
-router.post("/deleteBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.deleteBanner);
-router.post("/getListBanner", Middleware.authorizationToken, upload.single("file"), ApiBanner.getLisBanner);
+router.post(
+  "/addBanner",
+  Middleware.authorizationToken,
+  upload.single("file"),
+  ApiBanner.addBanner
+);
+router.post(
+  "/editBanner",
+  Middleware.authorizationToken,
+  upload.single("file"),
+  ApiBanner.editBanner
+);
+router.post(
+  "/deleteBanner",
+  Middleware.authorizationToken,
+  upload.single("file"),
+  ApiBanner.deleteBanner
+);
+router.post(
+  "/getListBanner",
+  Middleware.authorizationToken,
+  upload.single("file"),
+  ApiBanner.getLisBanner
+);
+
+router.post("/addFCM", Middleware.authorizationToken, ApiUserController.addFCM);
+router.post(
+  "/addNotificationPublic",
+  Middleware.authorizationToken,
+  ApiNotification.addNotificationPublic
+);
+router.post(
+  "/addNotificationPublic",
+  Middleware.authorizationToken,
+  ApiNotification.addNotificationPrivate
+);
+router.post(
+  "/editNotification",
+  Middleware.authorizationToken,
+  ApiNotification.editNotification
+);
+router.post(
+  "/deleteNotification",
+  Middleware.authorizationToken,
+  ApiNotification.deleteNotification
+);
+router.post(
+  "/getPrivateNotification",
+  Middleware.authorizationToken,
+  ApiNotification.getPrivateNotification
+);
+router.post(
+  "/getPublicNotification",
+  Middleware.authorizationToken,
+  ApiNotification.getPublicNotification
+);
+router.post(
+  "/addFeedBack",
+  Middleware.authorizationToken,
+  ApiFeedBack.addFeedBack
+);
+router.post(
+  "/getFeedBackByProductId",
+  Middleware.authorizationToken,
+  ApiFeedBack.getFeedBackByProductId
+);
+router.post(
+  "/getAllFeedBackByProductId",
+  Middleware.authorizationToken,
+  ApiFeedBack.getAllFeedBackByProductId
+);
 
 router.post("/addFCM",Middleware.authorizationToken,ApiUserController.addFCM);
 router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPublic);
-router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPrivate);
+router.post("/addNotificationPrivate",Middleware.authorizationToken,ApiNotification.addNotificationPrivate);
 router.post("/editNotification",Middleware.authorizationToken,ApiNotification.editNotification);
 router.post("/deleteNotification",Middleware.authorizationToken,ApiNotification.deleteNotification);
 router.post("/getPrivateNotification",Middleware.authorizationToken,ApiNotification.getPrivateNotification);
@@ -176,4 +248,16 @@ router.post("/getConversation",Middleware.authorizationToken,ApiConversation.get
 
 // API MESSAGE
 router.post("/addMessage",Middleware.authorizationToken,ApiMessage.addMessage);
+router.post("/createPaymentUrl",ApiVNP.createPaymentUrl);
+router.get("/payFail",ApiVNP.payFail);
+router.get("/paySuccess",ApiVNP.paySuccess);
+router.get("/vnpayReturn",ApiVNP.vnpayReturn);
+
+router.post("/addVoucherForOneUser",ApiVoucher.addVoucherForOneUser);
+router.post("/addVoucherForAllUser",ApiVoucher.addVoucherForAllUser);
+router.post("/getVoucherByUserId",ApiVoucher.getVoucherByUserId);
+router.post("/deleteVoucher",ApiVoucher.deleteVoucher);
+router.post("/editVoucher",ApiVoucher.editVoucher);
+router.post("/getAllVoucher",ApiVoucher.getAllVoucher);
+
 module.exports = router;

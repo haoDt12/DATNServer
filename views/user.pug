@@ -103,7 +103,7 @@ block content
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
                                 .dropdown-menu.dropdown-menu-end.dropdown-menu-animate-up(aria-labelledby='drop2')
                                     .message-body
-                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
+                                        a.d-flex.align-items-center.gap-2.dropdown-item(href='/stech.manager/profile')
                                             i.ti.ti-user.fs-6
                                             p.mb-0.fs-3 My Profile
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
@@ -152,10 +152,10 @@ block content
                                         td
                                             ul.list-unstyled.mb-0.d-flex
                                                 li
-                                                    a.text-primary(href='#', data-toggle='tooltip', title='', data-original-title='View')
+                                                    a#Detail.text-primary.DetailUser( data-toggle='tooltip', title='', data-original-title='View' data-id=user._id)
                                                         i.far.fa-eye
                                                 li
-                                                    a.text-info(class="updateUs" id="updateUserBtn" data-id=user._id  data-bs-toggle="modal" data-bs-target="#updateUserModal")
+                                                    a.text-info(class="updateUs" id="updateUserBtn" data-id=user._id  data-bs-toggle="modal" data-bs-target="#UpdateUserModal")
                                                         i.fas.fa-pencil-alt
                                                 li
                                                     a.text-danger(class="deleteUs" id="deleteUserBtn" data-id=user._id  data-bs-toggle="modal" data-bs-target="#deleteUserModal")
@@ -216,6 +216,44 @@ block content
                         .modal-footer
                             button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
                             button.btn.btn-primary#addUser(type="button") Add User
+            div#UpdateUserModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="userModalLabel", aria-hidden="true")
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Sửa Người Dùng
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            form(action="/", method="post")
+                                .mb-3
+                                    .form-group
+                                        //label(for='idUser') id
+                                        input#idUser(type="text", name="idUser", class="form-control", placeholder="", aria-describedby="helpId" readonly style="display: none")
+                                .mb-3
+                                    label.form-label(for='email') Email
+                                    input#emailUp.form-control(type='text' name="email" aria-describedby='textHelp' readonly)
+                                .mb-3
+                                    label.form-label(for='password') Password
+                                    input#passwordUp.form-control(type='text' name="password" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='full_name') Name
+                                    input#full_nameUp.form-control(type='text' name="full_name"  aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='phone') Phone
+                                    input#phone_numberUp.form-control(type='text' name="phone" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='role') Role
+                                        input#roleUp.form-check-input(type='radio' name='role' value='user' checked)
+                                        label.form-check-label(for='role') User
+
+                                        //input#role.form-check-input(type='radio' name='role' value='admin')
+                                        //label.form-check-label(for='role') Admin
+                                .mb-3
+                                    .form-group
+                                        label(for="avatar") Hình ảnh
+                                        input#avatarUp(type="file", name="avatar", accept="image/*")
+                        .modal-footer
+                            button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
+                            button.btn.btn-primary#UpdateUser(type="button") Update User
 
             #deleteUserModal.modal(tabindex='-1')
                 .modal-dialog

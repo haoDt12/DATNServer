@@ -48,7 +48,7 @@ exports.addAddress = async (req, res, next) => {
         return res.send({message: "add address success", code: 1});
     } catch (e) {
         console.log(e.message);
-        res.send({message: "add address fail", code: 0});
+        res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.editAddress = async (req, res, next) => {
@@ -85,7 +85,7 @@ exports.editAddress = async (req, res, next) => {
         return res.send({message: "edit address success", code: 1});
     } catch (e) {
         console.log(e.message);
-        res.send({message: "edit address fail", code: 0});
+        res.send({message: e.message.toString(), code: 0});
     }
 }
 exports.deleteAddress = async (req, res, next) => {
@@ -109,6 +109,6 @@ exports.deleteAddress = async (req, res, next) => {
         return res.send({message: "delete address success", code: 1});
     } catch (e) {
         console.log(e.message);
-        res.send({message: "delete address fail", code: 0});
+        res.send({message: e.message.toString(), code: 0});
     }
 }

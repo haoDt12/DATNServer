@@ -1,11 +1,8 @@
 const ProductModel = require("../models/model.product");
 const fs = require("fs");
 const path = require("path");
-const CategoryModel = require("../models/model.category");
 const UploadFile = require("../models/uploadFile");
-
 const moment = require('moment');
-const {get} = require("http");
 const matchImg = [
     "image/jpeg",
     "image/png",
@@ -38,19 +35,18 @@ exports.addProduct = async (req, res) => {
     let fileimg_cover;
     let filelist_img;
     let filevideo;
+    let option = req.body.option;
     try {
         fileimg_cover = req.files["img_cover"];
         filelist_img = req.files["list_img"];
         filevideo = req.files["video"];
-    }catch (e) {
+    } catch (e) {
         console.log(e.message);
-        return res.send({message:"error read fields"});
+        return res.send({message: "error read fields"});
     }
-    let color = req.body.color;
     let price = req.body.price;
     let quantity = req.body.quantity;
     let sold = req.body.sold;
-    let ram_rom = req.body.ram_rom;
     let date = new Date();
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
     if (category == null) {
@@ -70,9 +66,6 @@ exports.addProduct = async (req, res) => {
     }
     if (filevideo === undefined) {
         return res.send({message: "video des is required", code: 0});
-    }
-    if (color === undefined) {
-        return res.send({message: "color is required", code: 0});
     }
     if (price == null) {
         return res.send({message: "price is required", code: 0});
@@ -114,12 +107,11 @@ exports.addProduct = async (req, res) => {
         category: category,
         title: title,
         description: description,
-        color: color,
         price: price,
         quantity: quantity,
         sold: sold,
         date: date_time,
-        ram_rom: ram_rom,
+        option: option,
     });
     try {
         let img_cover = await UploadFile.uploadFile(
@@ -159,7 +151,7 @@ exports.addProduct = async (req, res) => {
         return res.send({message: "add product success", code: 1});
     } catch (e) {
         console.log(e);
-        return res.send({message: "add product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.getListProduct = async (req, res) => {
@@ -174,7 +166,7 @@ exports.getListProduct = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.getProductById = async (req, res) => {
@@ -187,17 +179,17 @@ exports.getProductById = async (req, res) => {
         let product = await ProductModel.productModel
             .findById(productId)
             .populate("category");
-        if(!product){
+        if (!product) {
             return res.send({message: "product not found", code: 0});
         }
         console.log(product);
-        if(!product){
+        if (!product) {
             return res.send({message: "get product fail", code: 0});
         }
         res.send({product: product, message: "get product success", code: 1});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.deleteProduct = async (req, res) => {
@@ -242,7 +234,7 @@ exports.deleteProduct = async (req, res) => {
         );
     } catch (e) {
         console.log(e);
-        return res.send({message: "product not found", code: 0});
+        return res.send({message:e.message.toString(), code: 0});
     }
 };
 exports.editProduct = async (req, res) => {
@@ -250,22 +242,21 @@ exports.editProduct = async (req, res) => {
     let category = req.body.category;
     let title = req.body.title;
     let description = req.body.description;
-    let color = req.body.color;
     let price = req.body.price;
     let quantity = req.body.quantity;
     let sold = req.body.sold;
     let fileimg_cover;
     let filelist_img;
     let filevideo;
+    let option = req.body.option;
     try {
         fileimg_cover = req.files["img_cover"];
         filelist_img = req.files["list_img"];
         filevideo = req.files["video"];
-    }catch (e) {
+    } catch (e) {
         console.log(e.message);
-        return res.send({message:"error read fields"});
+        return res.send({message: "error read fields"});
     }
-    let ram_rom = req.body.ram_rom;
     if (productId == null) {
         return res.send({message: "product not found", code: 0});
     }
@@ -283,9 +274,6 @@ exports.editProduct = async (req, res) => {
         if (description !== undefined) {
             product.description = description;
         }
-        if (color !== undefined) {
-            product.color = color;
-        }
         if (price !== undefined) {
             product.price = price;
         }
@@ -295,8 +283,8 @@ exports.editProduct = async (req, res) => {
         if (sold !== undefined) {
             product.sold = sold;
         }
-        if (ram_rom !== undefined) {
-            product.ram_rom = ram_rom;
+        if (option !== undefined) {
+            product.option = option;
         }
         if (fileimg_cover !== undefined) {
             console.log(fileimg_cover[0].mimetype);
@@ -349,6 +337,6 @@ exports.editProduct = async (req, res) => {
         return res.send({message: "Edit product success", code: 1});
     } catch (e) {
         console.log(e);
-        return res.send({message: "Edit product fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
 }

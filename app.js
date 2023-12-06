@@ -13,6 +13,9 @@ var http = require('http')
 var httpPlus = require('http').Server(app);
 var server = http.createServer(app);
 var io = socketIO(server);
+
+const session = require('express-session');
+const sessionConfig = require('./models/session.config');
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -22,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(session(sessionConfig));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
