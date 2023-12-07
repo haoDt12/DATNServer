@@ -89,6 +89,11 @@ router.post(
   ApiProduct.getProductById
 );
 router.post(
+  "/getProductByIdCate",
+  Middleware.authorizationToken,
+  ApiProduct.getProductByIdCate
+);
+router.post(
   "/deleteProduct",
   Middleware.authorizationToken,
   ApiProduct.deleteProduct
@@ -248,6 +253,8 @@ router.post("/getConversation",Middleware.authorizationToken,ApiConversation.get
 
 // API MESSAGE
 router.post("/addMessage",Middleware.authorizationToken,ApiMessage.addMessage);
+
+
 router.post("/createPaymentUrl",ApiVNP.createPaymentUrl);
 router.get("/payFail",ApiVNP.payFail);
 router.get("/paySuccess",ApiVNP.paySuccess);

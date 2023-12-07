@@ -192,6 +192,29 @@ exports.getProductById = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 };
+
+exports.getProductByIdCate = async (req, res) => {
+    let categoryId = req.body.categoryId;
+    if (categoryId == null) {
+        return res.send({message: "category id is required"});
+    }
+    try {
+        let product = await ProductModel.productModel
+            .find({category: categoryId})
+            .populate("category");
+        if (!product) {
+            return res.send({message: "product not found", code: 0});
+        }
+        if (!product) {
+            return res.send({message: "get product by id cate fail", code: 0});
+        }
+        res.send({product: product, message: "get product by id cate success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+};
+
 exports.deleteProduct = async (req, res) => {
     let productId = req.body.productId;
     if (productId == null) {
