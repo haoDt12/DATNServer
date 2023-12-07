@@ -145,9 +145,9 @@ document.addEventListener("DOMContentLoaded", function () {
     openCategoryModalButton.addEventListener("click", function () {
         categoryModal.show();
     });
-    openEditCategoryModal.addEventListener("click", function () {
-        updateCategoryModal.show();
-    });
+    // openEditCategoryModal.addEventListener("click", function () {
+    //     updateCategoryModal.show();
+    // });
 });
 
 function previewImage(event) {
