@@ -157,17 +157,6 @@ router.get("/stech.manager/chat", async function (req, res, next) {
 });
 router.get("/stech.manager/order", async function (req, res, next) {
   try {
-    let orders = await OrderModel.modelOrder.find();
-    console.log('Orders:', orders);
-    const ordersWithProductInfo = await Promise.all(orders.map(async order => {
-      const allProductInfo = await order.getAllProductInfo();
-      const userInfo = await order.getUserInfo();
-      console.log('ProductInfo:', allProductInfo);
-      console.log('UserInfo:', userInfo);
-      return { ...order.toObject(), allProductInfo, userInfo };
-    }));
-    res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
-
     var encodedValueStatus = req.cookies.status;
 
     if (encodedValueStatus === undefined) {
@@ -236,17 +225,9 @@ router.get("/stech.manager/cart", async function (req, res, next) {
   try {
     let cartUser = await CartModel.cartModel.findOne({ userId }).populate({ path: 'product', select: 'productId quantity' });;
     console.log(cartUser)
-    const productsInCart = cartUser ? cartUser.product : [];
-
-    // Lặp qua từng sản phẩm và lấy productId
-    const productIds = productsInCart.map(product => {
-      // Lấy productId từ thông tin chi tiết sản phẩm
-      return product.productId._id;
-    });
 
     res.render("cart", {
-      carts: cartUser ? cartUser : [],
-      productIds: productIds,
+      carts: cartUser,
       message: "get list profile success",
       code: 1,
     })

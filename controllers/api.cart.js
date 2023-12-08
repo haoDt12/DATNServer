@@ -4,12 +4,11 @@ exports.addCart = async (req, res) => {
     let userId = req.body.userId;
     let productId = req.body.productId;
     let quantity = req.body.quantity;
-    let color = req.body.color;
     let price = req.body.price;
     let imgCover = req.body.imgCover;
     let title = req.body.title;
-    let ram_rom = req.body.ram_rom;
     let date = new Date();
+    let option = req.body.option;
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
     if (userId == null) {
         return res.send({message: "userId is required", code: 0});
@@ -23,26 +22,20 @@ exports.addCart = async (req, res) => {
     if (price == null) {
         return res.send({message: "price is required", code: 0});
     }
-    // if (product === undefined) {
-    //   return res.send({ message: "cart is empty", code: 0 });
-    // }
     try {
         let myCart = await CartModel.cartModel.findOne({userId: userId});
         if (myCart) {
             const index = myCart.product.findIndex(
                 (id) =>
-                    id.productId === productId &&
-                    id.color === color &&
-                    id.ram_rom === ram_rom
+                    id.productId.toString() === productId && arraysEqual(option,id.option)
             );
 
             if (index === -1) {
                 myCart.product.push({
                     productId: productId,
                     quantity: quantity,
-                    color: color,
+                    option: option,
                     title: title,
-                    ram_rom: ram_rom,
                     price: price,
                     imgCover: imgCover,
                 });
@@ -60,9 +53,8 @@ exports.addCart = async (req, res) => {
             objCart.product.push({
                 productId: productId,
                 quantity: quantity,
-                color: color,
+                option: option,
                 title: title,
-                ram_rom: ram_rom,
                 price: price,
                 imgCover: imgCover,
             });
@@ -248,4 +240,20 @@ exports.editCartV2 = async (req, res) => {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
     }
+}
+const arraysEqual = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+        const obj1 = arr1[i];
+        const obj2 = arr2[i];
+
+        if (obj1.type !== obj2.type || obj1.title !== obj2.title|| obj1.content !== obj2.content) {
+            return false;
+        }
+    }
+
+    return true;
 }

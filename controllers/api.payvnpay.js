@@ -35,7 +35,24 @@ exports.createPaymentUrl = async (req, res) => {
             if (!product) {
                 return res.send({message: "product not found", code: 0});
             }
-            total += product.price * item.quantity;
+            let quantity = Number(product.quantity);
+            let sold = Number(product.sold);
+            if (quantity !== 0) {
+                newQuantity = quantity - 1;
+                newShold = sold + 1;
+                product.quantity = newQuantity.toString();
+                product.sold = newShold.toString();
+                await product.save();
+            } else {
+                return res.send({message: "product is out of stock ", code: 0});
+            }
+            let feesArise = 0;
+            item.option.map(item => {
+                if(item.feesArise){
+                    feesArise += Number(item.feesArise);
+                }
+            })
+            total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
         let createDate = moment(date).format('YYYYMMDDHHmmss');
         let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
@@ -116,20 +133,18 @@ exports.vnpayReturn = async (req, res) => {
         let code = vnp_Params['vnp_ResponseCode'];
         if (code === "00") {
             try {
-                let total = 0;
                 await Promise.all(mProduct.map(async item => {
                     let product = await ProductModel.productModel.findById(item.productId);
                     if (!product) {
                         return res.redirect(`http://${ipAddress}:3000/api/payFail`);
                     }
-                    total += product.price * item.quantity;
                 }));
                 let order = new OrderModel.modelOrder({
                     userId: mUserId,
                     product: mProduct,
                     addressId: mAddress,
                     total: 0,
-                    date: mDate_time,
+                    date_time: mDate_time,
                 })
                 let cart = await Cart.cartModel.findOne({userId: mUserId});
                 if (!cart) {

@@ -154,6 +154,12 @@ block content
                                                     td#total.text-right.font-weight-semibold.align-middle.p-4(class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{cartProduct.quantity * cartProduct.price}
                                                     td.text-center.align-middle.px-0
                                                         a#deleteCart.shop-tooltip.close.float-none.text-danger.deleteCartPro(href='#' title='' data-id=cartProduct._id data-productId=cartProduct.productId  data-original-title='Remove'  data-bs-target="#confirmDeleteCate") &times;
+                                        else
+                                            tr
+                                                td(style='text-align: center')
+                                            h4.text-center Giỏ hàng của bạn trống
+
+
                                 h4.mt-3 Tổng tiền:
                                     span.ms-2#total-display
                             #confirmDeleteCart.modal(tabindex='-1')
@@ -168,5 +174,5 @@ block content
                                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                                             button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
                             .float-end
-                                button.btn.btn-lg.btn.btn-success.mt-2(type='button' href='/stech.manager/pay') Oder
+                                button.btn.btn-lg.btn.btn-success.mt-2(type='button') Order
         script(src='/js/cart.js')
