@@ -128,45 +128,55 @@ block content
                                                 a.shop-tooltip.float-none.text-light(href='#' title='' data-original-title='Clear cart')
                                                     i.ino.ion-md-trash
                                     tbody
-                                        if carts
-                                            each cartProduct in carts.product
-                                                //if itemcart.productId
-                                                tr
-                                                    td(style='text-align: center')
-                                                        input#quantity(type='checkbox' class='product-checkbox' data-price=cartProduct.price data-quantity=cartProduct.quantity)
-                                                    // Hiển thị thông tin sản phẩm trong giỏ hàng
-
-                                                    td.p-4
-
-                                                        .media.align-items-center
-                                                            img#imgCoverUp.d-block.ui-w-40.ui-bordered.mr-4(src=cartProduct.imgCover alt='')
-                                                            .media-body
-                                                                a#titleUp.d-block.text-dark= cartProduct.title
-                                                                small
-                                                                    span.text-muted Color:
-                                                                    i#colorUp.list-inline-item(style=`background-color: ${cartProduct.color}; width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%;`)
-                                                                    span#ram_romUp.text-muted Option:
-                                                                    = cartProduct.ram_rom
-                                                    td#priceUp.text-right.font-weight-semibold.align-middle.p-4= cartProduct.price
-                                                    td.align-middle.p-4
-                                                        input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
-                                                        button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id data-productId=cartProduct.productId) Lưu
-                                                    td#total.text-right.font-weight-semibold.align-middle.p-4(class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{cartProduct.quantity * cartProduct.price}
-                                                    td.text-center.align-middle.px-0
-                                                        a#deleteCart.shop-tooltip.close.float-none.text-danger.deleteCartPro(href='#' title='' data-id=cartProduct._id data-productId=cartProduct.productId  data-original-title='Remove'  data-bs-target="#confirmDeleteCate") &times;
+                                        //if carts
+                                        //    each cartProduct in carts.product
+                                        //        //if itemcart.productId
+                                        //        tr
+                                        //            td(style='text-align: center')
+                                        //                input#quantity(type='checkbox' class='product-checkbox' data-price=cartProduct.price data-quantity=cartProduct.quantity)
+                                        //            // Hiển thị thông tin sản phẩm trong giỏ hàng
+                                        //
+                                        //            td.p-4
+                                        //
+                                        //                .media.align-items-center
+                                        //                    img#imgCoverUp.d-block.ui-w-40.ui-bordered.mr-4(src=cartProduct.imgCover alt='')
+                                        //                    .media-body
+                                        //                        a#titleUp.d-block.text-dark= cartProduct.title
+                                        //                        small
+                                        //                            span.text-muted Color:
+                                        //                            i#colorUp.list-inline-item(style=`background-color: ${cartProduct.color}; width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%;`)
+                                        //                            span#ram_romUp.text-muted Option:
+                                        //                            = cartProduct.ram_rom
+                                        //            td#priceUp.text-right.font-weight-semibold.align-middle.p-4= cartProduct.price
+                                        //            td.align-middle.p-4
+                                        //                input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
+                                        //                button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id data-productId=cartProduct.productId) Lưu
+                                        //            td#total.text-right.font-weight-semibold.align-middle.p-4(class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{cartProduct.quantity * cartProduct.price}
+                                        //            td.text-center.align-middle.px-0
+                                        //                a#deleteCart.shop-tooltip.close.float-none.text-danger.deleteCartPro(href='#' title='' data-id=cartProduct._id data-productId=cartProduct.productId  data-original-title='Remove'  data-bs-target="#confirmDeleteCate") &times;
+                                .mb-3
+                                    label.form-label(for='full_name') Tên khách hàng
+                                    input#full_name.form-control(placeholder='Nhập tên khách hàng', type='text', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='phone_number') Số điện thoại
+                                    input#phone_number.form-control(placeholder='Nhập số điện thoại', type='number', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='adress') Đia chỉ
+                                    input#adress.form-control(placeholder='Nhập địa chỉ', type='text', aria-describedby='textHelp')
                                 h4.mt-3 Tổng tiền:
-                                    span.ms-2#total-display
-                            #confirmDeleteCart.modal(tabindex='-1')
-                                .modal-dialog
-                                    .modal-content
-                                        .modal-header
-                                            h5.modal-title Warning!
-                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                                        .modal-body
-                                            p Bạn có chắc chắn muốn xoá giỏ hàng này.
-                                        .modal-footer
-                                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                                            button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
+                                    span.ms-2 20000000000
+                            //#confirmDeleteCart.modal(tabindex='-1')
+                            //    .modal-dialog
+                            //        .modal-content
+                            //            .modal-header
+                            //                h5.modal-title Warning!
+                            //                button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            //            .modal-body
+                            //                p Bạn có chắc chắn muốn xoá giỏ hàng này.
+                            //            .modal-footer
+                            //                button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                            //                button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
+
                             .float-end
-                                button.btn.btn-lg.btn.btn-success.mt-2(type='button' href='/stech.manager/pay') Oder
+                                button.btn.btn-lg.btn.btn-success.mt-2(type='button') Thanh toán
         script(src='/js/cart.js')

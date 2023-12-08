@@ -300,4 +300,7 @@ router.get("/stech.manager/banner", async function (req, res, next) {
     res.send({ message: "banner not found", code: 0 })
   }
 });
+router.get("/stech.manager/pay", function (req, res, next) {
+  res.render("pay");
+});
 module.exports = router;

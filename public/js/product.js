@@ -7,15 +7,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const CreProModal = new bootstrap.Modal(document.getElementById('CreProModal'));
     const UpProModal = new bootstrap.Modal(document.getElementById('UpProModal'));
     const DelProModal = new bootstrap.Modal(document.getElementById('DelProModal'));
+    const AddCartModal = new bootstrap.Modal(document.getElementById('AddCartModal'));
     // Button call api
     const ConfirmCrePro = document.getElementById("ConfirmCrePro");
     const ConfirmUpdate = document.getElementById("ConfirmUpPro");
     const ConfirmDelPro = document.getElementById("ConfirmDelPro");
+    const ConfirmAddCartPro = document.getElementById("ConfirmAddCartPro");
     // Button call modal
     const DeletePro = document.querySelectorAll(".DeletePro");
     const CreateProduct = document.getElementById("CreateProduct");
     const UpdatePro = document.querySelectorAll(".UpdatePro");
-
+    const AddCartPro = document.querySelectorAll(".AddCartPro");
+    AddCartPro.addEventListener("click", function (e){
+        console.log("12344")
+        AddCartModal.show();
+    });
     async function createProduct(category, title, description, img_cover, price,
                                  quantity, sold, video, color, list_img, ram_rom) {
         try {
@@ -157,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
     CreateProduct.addEventListener("click", function (e){
         CreProModal.show();
     });
+
     ConfirmCrePro.addEventListener("click", function () {
         console.log(title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
         createProduct("654a752e1ab38cd5dd0f7e17", title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value).then(data => {
