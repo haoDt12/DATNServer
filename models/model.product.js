@@ -17,7 +17,8 @@ const productSchema = database.mongoose.Schema({
     option: [{
         type: {type: String, required: false},
         title: {type: String, required: false},
-        content: {type: String, required: false}
+        content: {type: String, required: false},
+        feesArise:{type: String, required: false},
     }],
 }, {
     collection: "Product"
