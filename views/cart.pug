@@ -144,9 +144,20 @@ block content
                                                                 a#titleUp.d-block.text-dark= cartProduct.title
                                                                 small
                                                                     span.text-muted Color:
-                                                                    i#colorUp.list-inline-item(style=`background-color: ${cartProduct.color}; width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%;`)
-                                                                    span#ram_romUp.text-muted Option:
-                                                                    = cartProduct.ram_rom
+                                                                        each optionColor in cartProduct.option
+                                                                            case optionColor.type
+                                                                                when "Color"
+                                                                                    i#colorUp.list-inline-item.me-2(style=`background-color: ${optionColor.content}; border: 2px solid #C0C0C0; width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
+
+                                                                        -var hasRam = false
+                                                                            each optionColor in cartProduct.option
+                                                                                case optionColor.type
+                                                                                    when "Ram"
+                                                                                        -hasRam = true
+                                                                                            ='Ram/Rom: '+ optionColor.content + '/'
+                                                                                    when "Rom"
+                                                                                        -hasRam = true
+                                                                                        = optionColor.content
                                                     td#priceUp.text-right.font-weight-semibold.align-middle.p-4= cartProduct.price
                                                     td.align-middle.p-4
                                                         input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
@@ -174,5 +185,5 @@ block content
                                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                                             button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
                             .float-end
-                                button.btn.btn-lg.btn.btn-success.mt-2(type='button') Order
+                                a.btn.btn-lg.btn.btn-success.mt-2(type='button', href='/stech.manager/pay') Order
         script(src='/js/cart.js')
