@@ -68,7 +68,8 @@ exports.addMessage = async (req, res) => {
 
     try {
         await message.save()
-        return res.send({ message: "add message success", code: 1 });
+        // console.log(`message: ${message}`);
+        return res.send({ dataMessage: message, message: "add message success", code: 1 });
     } catch (e) {
         console.log(e);
         return res.send({ message: "add message fail", code: 0 });

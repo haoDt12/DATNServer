@@ -1,9 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("chat.js");
-    const socket = io({
-        // Socket.IO options
-    });
-
 
     const detailUser = document.getElementById('detail-user')
     const textUserName = document.getElementById('username')
