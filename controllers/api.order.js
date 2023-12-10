@@ -91,7 +91,7 @@ exports.getOrderByOrderId = async (req, res) => {
         return res.send({message: "orderId is required", code: 0});
     }
     try {
-        let order = await OrderModel.modelOrder.findById(orderId).populate("product").populate("addressId");
+        let order = await OrderModel.modelOrder.findById(orderId).populate("product.productId").populate("addressId");
         if (!order) {
             return res.send({message: "order not found", code: 0});
         }
