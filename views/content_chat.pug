@@ -25,8 +25,14 @@ block content
                                                 | {username}
                                 |
                                 a(href='!#')
+                                    p.fw-400.mb-0.text-dark-75(style="display: none; ", id='idConversation')
+                                        if idConversation
+                                            | #{idConversation}
+                                |
+                                a(href='!#')
                                     p.fw-400.mb-0.text-dark-75(style="display: none; ", id='idUserSelected')
-                                        | id
+                                        if dataHeaderMsg[0]._id
+                                            | #{dataHeaderMsg[0]._id}
                                 |
                                 p.sub-caption.text-muted.text-small.mb-0
                                     i.la.la-clock.mr-1

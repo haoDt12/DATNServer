@@ -192,7 +192,7 @@ router.get("/stech.manager/chat", async function (req, res, next) {
     // Check login
     let idUserLoged = req.cookies.Uid
     if (idUserLoged == null || idUserLoged.length <= 0) {
-      res.redirect('/stech.manager/login')
+      return res.redirect('/stech.manager/login')
     }
 
     let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({ path: 'address', select: 'city' });
@@ -278,7 +278,7 @@ router.get("/stech.manager/chat", async function (req, res, next) {
 
 
   } catch (e) {
-    console.log(e.message);
+    console.log(`eror get chat: ${e.message}`);
     res.send({ message: "conversation not found", code: 0 });
   }
 });

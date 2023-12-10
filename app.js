@@ -74,6 +74,10 @@ io.on("connection", (socket) => {
   socket.on("disconnect", (reason) => {
     console.log(`disconnect ${socket.id} due to ${reason}`);
   });
+
+  socket.on('on-chat', data => {
+    io.emit('user-chat', data)
+  })
 });
 
 var host = process.env.HOST || '0.0.0.0';
