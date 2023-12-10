@@ -61,6 +61,11 @@ block content
                                     i.ti.ti-file-description
                                 span.hide-menu Order
                         li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/voucher' aria-expanded='false')
+                                span
+                                    i.ti.ti-file-description
+                                span.hide-menu Voucher
+                        li.sidebar-item
                             a.sidebar-link(href='/stech.manager/banner' aria-expanded='false')
                                 span
                                     i.ti.ti-file-import
@@ -92,7 +97,7 @@ block content
                             button#searchButton.btn.btn-outline-secondary(type='submit') Search
                     ul.pagination.m-lg-2
                         li.page-item(style='margin-right: 10px' id = 'getAllOrder')
-                            a.btn.btn-primary( href='/stech.manager/order') All
+                            a.btn.btn-primary( href='/stech.manager/order' class='statusButton' data-status = 'All') All
                         li.page-item(style='margin-right: 10px')
                             a.btn.btn-primary(class='statusButton' data-status = 'WaitConfirm') Chờ xác nhận
                         li.page-item(style='margin-right: 10px')

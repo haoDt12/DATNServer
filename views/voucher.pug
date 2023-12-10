@@ -97,7 +97,7 @@ block content
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
-                            a.btn.btn-outline-primary(data-bs-toggle='modal' id='openModalCreateNotifi') Create Notification
+                            a.btn.btn-outline-primary(data-bs-toggle='modal' id='openModalCreateVoucher') Create Voucher
                             li.nav-item.dropdown
                                 a#drop2.nav-link.nav-icon-hover(href='javascript:void(0)' data-bs-toggle='dropdown' aria-expanded='false')
                                     img.rounded-circle(src='/images/logos/logo.jpeg' alt='' width='35' height='35')
@@ -125,30 +125,39 @@ block content
                             tr
                                 th.text-center Title
                                 th.text-start Content
-                                th.text-center Date
+                                th.text-center Price
+                                th.text-center FromDate - ToDate
+                                th.text-center Action
                         tbody
-                            each notification in notifications
+                            each voucher in vouchers
                                 tr
                                     td(style='width: 300px;')
                                         div
                                             h5.font-size-15.text-center(style='font-size: 14px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= notification.title
+                                                a.text-dark(href='ecommerce-product-detail.html')= voucher.title
                                     td(style='width: 550px;')
                                         div
                                             h5.font-size-18.text-start(style='font-size: 14px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= notification.content
-                                    td
+                                                a.text-dark(href='ecommerce-product-detail.html')= voucher.content
+                                    td(style='width: 200px')
                                         div
-                                            h5.font-size-18.text-center(style='font-size: 14px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= notification.date
+                                            h5.text-center(style='font-size: 14px;')
+                                                a.text-dark(href='ecommerce-product-detail.html')= voucher.price
+                                    td(style='width: 500px')
+                                        p.text-muted.mb-1.text-truncate.text-center
+                                            i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 From:
+                                                =  voucher.fromDate
+                                        p.text-muted.mb-1.text-truncate.text-center
+                                            i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 To:
+                                                = voucher.toDate
 
                                     td
                                         .dropdown.text-center
                                             a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
                                                 i.bx.text-center
                                             .dropdown-menu.dropdown-menu-end
-                                                a.dropdown-item( class = "openModalUpdateNotifi" data-id = notification._id data-title = notification.title data-content = notification.content data-bs-toggle="modal") Sửa thông báo
-                                                a.dropdown-item( class = "openModalDeleteNotifi" data-id = notification._id data-bs-toggle="modal") Xóa thông báo
+                                                a.dropdown-item( class = "openModalUpdateVoucher" data-id = voucher._id data-title = voucher.title data-content = voucher.content data-price = voucher.price data-fromDate = voucher.fromDate data-toDate = voucher.toDate data-bs-toggle="modal") Sửa mã giảm giá
+                                                a.dropdown-item( class = "openModalDeleteVoucher" data-id = voucher._id data-bs-toggle="modal") Xóa mã giảm giá
                 //- Start Pagination
                 .text-center.mt-3.mt-sm-3
                     ul.pagination.justify-content-center.mb-0
@@ -173,7 +182,7 @@ block content
                         | Design and Developed by&nbsp;
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
 
-            #DeleteNotificationModal.modal(tabindex='-1')
+            #DeleteVoucherModal.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content
                         .modal-header
@@ -183,36 +192,54 @@ block content
                         .modal-footer
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                             button.btn.btn-danger(type='button' id = 'buttonConfirmDelete') Đồng ý
-            #CreateNotificationModal.modal.fade
+            #CreateVoucherModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Tạo thông báo
+                            h5.modal-title Tạo Mã Giảm Giá
                         .modal-body
                             form(action="/" method="post")
                                 .mb-3
                                     label.form-label(for='title') Title
-                                    input#title.form-control(placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp')
+                                    input#title.form-control(placeholder='Nhập Title Mã giảm giá', type='text', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='content') Content
-                                    input#content.form-control(type='textarea', placeholder='Thể loại thông báo', name='type', aria-describedby='textHelp')
+                                    input#content.form-control(type='textarea', placeholder='Nhập Content Mã giảm giá', name='type', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='content') Price
+                                    input#price.form-control(type='number', placeholder='Nhập Giá trị Mã giảm giá', name='type', aria-describedby='textHelp')
+                                .form-group
+                                    label.form-label(for="fromDate") From Date
+                                    input#fromDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
+                                .form-group
+                                    label.form-label(for="toDate") To Date
+                                    input#toDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
                         .modal-footer
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
                             button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmCreate') Lưu thông báo
-            #UpdateNotificationModal.modal.fade
+            #UpdateVoucherModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Cập nhật thông báo
+                            h5.modal-title Cập nhật Mã giảm giá
                         .modal-body
                             form(action="/" method="post")
                                 .mb-3
                                     label.form-label(for='upTitle') Title
-                                    input#upTitle.form-control(placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp')
+                                    input#upTitle.form-control(placeholder='Nội Mã giảm giá', type='text', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='upContent') Content
-                                    input#upContent.form-control(type='textarea', placeholder='Thể loại thông báo', name='type', aria-describedby='textHelp')
+                                    input#upContent.form-control(type='textarea', placeholder='Nội dung Mã giảm giá', name='type', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='upContent') Price
+                                    input#upPrice.form-control(type='number', placeholder='Giá trị Voucher', name='type', aria-describedby='textHelp')
+                                .form-group.mb-3
+                                    label.form-label(for="upFromDate") FromDate
+                                    input#upFromDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
+                                .form-group
+                                    label.form-label(for="upToDate") ToDate
+                                    input#upToDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
                         .modal-footer
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
                             button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmUpdate') Lưu thông báo
-    script(src='/js/notification.js')
+    script(src='/js/voucher.js')

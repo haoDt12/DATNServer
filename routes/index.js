@@ -8,6 +8,7 @@ const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
+const VoucherModel = require("./../models/model.voucher");
 
 const utils_1 = require('../public/js/ultils_1');
 const path = require("path");
@@ -272,6 +273,19 @@ router.get("/stech.manager/notification", async function (req, res, next) {
     console.log(e.message);
     res.send({ message: "user not found", code: 0 });
   }
+});
+router.get("/stech.manager/voucher", async function (req, res, next) {
+    try {
+        let listVoucher = await VoucherModel.voucherModel.find();
+        res.render("voucher", {
+            vouchers: listVoucher,
+            message: "get list voucher success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "user not found", code: 0 });
+    }
 });
 router.get("/stech.manager/banner", async function (req, res, next) {
   try {
