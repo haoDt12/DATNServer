@@ -22,6 +22,7 @@ router.get("/stech.manager/home", function (req, res, next) {
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
+    console.log(listProduct[1].option[1].title)
     res.render("product", {
       products: listProduct,
       message: "get list product success",
@@ -221,11 +222,11 @@ router.get("/stech.manager/cart", async function (req, res, next) {
   // const userId = utils_1.getCookie(req, 'Uid');
 
   const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
+
   console.log("id", userId)
   try {
     let cartUser = await CartModel.cartModel.findOne({ userId }).populate({ path: 'product', select: 'productId quantity' });;
     console.log(cartUser)
-
     res.render("cart", {
       carts: cartUser,
       message: "get list profile success",
@@ -280,5 +281,8 @@ router.get("/stech.manager/banner", async function (req, res, next) {
     console.log(e.message);
     res.send({ message: "banner not found", code: 0 })
   }
+});
+router.get("/stech.manager/pay", function (req, res, next) {
+  res.render("pay");
 });
 module.exports = router;
