@@ -37,7 +37,7 @@ exports.createConversation = async (req, res) => {
 
         let conversation = new ConversationModel.conversationModel({
             name: name,
-            user: [idUserLoged, idUserSelected],
+            user: [idUserLoged, ...idUserSelected],
             timestamp: timestamp,
         })
         await conversation.save();
