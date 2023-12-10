@@ -124,6 +124,7 @@ block content
                         .row
                             .col-md-4.col-12.card-stacked
                                 .card.shadow-line.mb-3.chat
+                                    //- Start Detail
                                     .chat-user-detail
                                         .p-3.chat-header
                                             .w-100
@@ -139,7 +140,6 @@ block content
                                                     |
                                                     div
                                         |
-
                                         .p-3.chat-user-info
                                             .card-body.text-center
                                                 a(href='#!')
@@ -163,10 +163,11 @@ block content
                                                         a.btn.btn-light-instagram.btn-icon.btn-circle.btn-sm.btn-shadow.mr-2(href='#')
                                                             i.bx.bxl-instagram
                                     |
+                                    //- End Detail
                                     .p-3.chat-header
                                         .d-flex
                                             .w-100.d-flex.pl-0.align-items-center
-                                                img.user-detail-trigger.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(src=`${userLoged.avatar}`)
+                                                img.user-detail-trigger.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(src=`${userLoged.avatar}` id="ava")
                                                 a.ml-3 #{userLoged.full_name}
                                             |
                                             .flex-shrink-0.margin-auto
@@ -211,205 +212,87 @@ block content
                                                 div
                                     |
                                     .chat-user-panel
-                                        .pb-3.d-flex.flex-column.navigation-mobile.pagination-scrool.chat-user-scroll(style="max-height: 400px;")
+                                        .pb-3.d-flex.flex-column.navigation-mobile.pagination-scrool.chat-user-scroll(style="max-height: 400px; min-height: 200px;")
                                             //- list conversation
                                             each conversation in conversations
-                                                .chat-item.d-flex.pl-3.pr-0.pt-3.pb-3(class="conversation" data-id=conversation._id)
-                                                    .w-100
-                                                        .d-flex.pl-0
-                                                            img.rounded-circle.shadow.avatar-sm.mr-3(src=`${conversation.user[1].avatar}`)
-                                                            |
-                                                            div
-                                                                p.margin-auto.fw-400.text-dark-75
-                                                                    | #{conversation.user[1].full_name}
-                                                                .d-flex.flex-row.mt-1
-                                                                    span
-                                                                        .svg15.double-check
-                                                                    |
-                                                                    //- each user in conversation.user
-                                                                    span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
-                                                                        | I&apos;m
-                                                                        | #{conversation.user[1].full_name}
-                                                    |
-                                                    .flex-shrink-0.margin-auto.pl-2.pr-3
-                                                        .d-flex.flex-column
-                                                            p.text-muted.text-right.fs-13.mb-2
-                                                                | 08:55
-                                                            |
-                                                            .text-right.d-flex.flex-row
-                                                                span
-                                                                    .svg18.pinned
+                                                each user in conversation.user
+                                                    if user._id + "" == userLoged._id + ""
+                                                        a.text-decoration-none(href=`/stech.manager/chat/c/${conversation._id}/`)
+                                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-1(class="conversation" data-id=conversation._id data-id-msg=conversation.idMsg data-id-selected=idConversation)
+                                                                .w-100
+                                                                    - var dataSize = conversation.user.length;
+                                                                        if dataSize <= 2
+                                                                            .d-flex.pl-0
+                                                                                img.rounded-circle.shadow.avatar-sm.mr-3(src=`${conversation.user[1].avatar}`)
+                                                                                |
+                                                                                div
+                                                                                    p.margin-auto.fw-400.text-dark-75
+                                                                                        | #{conversation.user[1].full_name}
+                                                                                        if typeof(conversation.lastmessage) !== 'undefined'
+                                                                                            .d-flex.flex-row.mt-1
+                                                                                                span
+                                                                                                    .svg15.double-check
+                                                                                                |
+                                                                                                if userLoged._id + "" === conversation.lastSender + ""
+                                                                                
+                                                                                                    span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" class="content-msg" data-status=conversation.status)
+                                                                                                        | Bạn: #{conversation.lastmessage}
+                                                                                                else 
+                                                                                                    span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-status=conversation.status)
+                                                                                                        | #{conversation.lastmessage}
+                                                                                        else
+                                                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
+                                                                                                | 
+                                                                                        
+                                                                        else 
+                                                                            .d-flex.pl-0
+                                                                                img.rounded-circle.shadow.avatar-sm.mr-3(src='/images/logos/group-chat.png')
+                                                                                |
+                                                                                div
+                                                                                    p.margin-auto.fw-400.text-dark-75
+                                                                                        | #{conversation.name}
+                                                                                    .d-flex.flex-row.mt-1
+                                                                                        //- span
+                                                                                        //-     .svg15.double-check
+                                                                                        //- |
+                                                                                        if userLoged._id + "" === conversation.lastSender + ""
+                                                                                            //- .fw-bold
+                                                                                            span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-status=conversation.status)
+                                                                                                | Bạn: #{conversation.lastmessage}
+                                                                                        else 
+                                                                                            span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-status=conversation.status)
+                                                                                                | #{conversation.lastmessage}
                                                                 |
-                                                                i.text-muted.la.la-angle-down.ml-1.fs-15
-                                                |
+                                                                if typeof(conversation.lasttime) !== 'undefined'
+                                                                    .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                                        .d-flex.flex-column
+                                                                            p.text-muted.text-right.fs-13.mb-2
+                                                                                | #{conversation.lasttime.slice(conversation.lasttime.length-8, conversation.lasttime.length-3)}
+                                                                            |
+                                                                            .text-right.d-flex.flex-row
+                                                                                //- Tin nhắm ghim
+                                                                                //- span
+                                                                                //-     .svg18.pinned
+                                                                                //- |
+                                                                                //- i.text-muted.la.la-angle-down.ml-1.fs-15
+                                                                else
+                                                                    .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                                        .d-flex.flex-column
+                                                                            p.text-muted.text-right.fs-13.mb-2
+                                                                                | 
+                                                                            |
+                                                                            .text-right.d-flex.flex-row
+                                                                                //- Tin nhắm ghim
+                                                                                //- span
+                                                                                //-     .svg18.pinned
+                                                                                //- |
+                                                                                //- i.text-muted.la.la-angle-down.ml-1.fs-15
+                                                                    
+                                                            |
                                             
                             |
-                            
-                            .col-md-8.col-12.card-stacked(href='#', style="display: none; ", id='openConversation')
-                                .card.shadow-line.mb-3.chat.chat-panel
-                                    .p-3.chat-header
-                                        .d-flex
-                                            .w-100.d-flex.pl-0
-                                                img.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(id='avatar')
-                                                |
-                                                .mr-3
-                                                    a(href='!#')
-                                                        p.fw-400.mb-0.text-dark-75(id='username')
-                                                            | username
-                                                    |
-                                                    a(href='!#')
-                                                        p.fw-400.mb-0.text-dark-75(style="display: block; ", id='idUserSelected')
-                                                            | id
-                                                    |
-                                                    p.sub-caption.text-muted.text-small.mb-0
-                                                        i.la.la-clock.mr-1
-                                                        | last seen today at
-                                                        | 09:16 PM
-                                            |
-                                            //- top icon
-                                            .flex-shrink-0.margin-auto
-                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
-                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
-                                                        circle(cx='12', cy='12', r='10')
-                                                        |
-                                                        line(x1='12', y1='16', x2='12', y2='12')
-                                                        |
-                                                        line(x1='12', y1='8', x2='12.01', y2='8')
-                                                |
-                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
-                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
-                                                        polygon(points='23 7 16 12 23 17 23 7')
-                                                        |
-                                                        rect(x='1', y='5', width='15', height='14', rx='2', ry='2')
-                                                |
-                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
-                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
-                                                        circle(cx='11', cy='11', r='8')
-                                                        |
-                                                        line(x1='21', y1='21', x2='16.65', y2='16.65')
-                                                |
-                                                a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
-                                                    svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
-                                                        circle(cx='12', cy='12', r='1')
-                                                        |
-                                                        circle(cx='12', cy='5', r='1')
-                                                        |
-                                                        circle(cx='12', cy='19', r='1')
-                                    |
-                                    //- 
-                                    
-                                    //- content message
-                                    .d-flex.flex-row.mb-3.navigation-mobile.scrollable-chat-panel.chat-panel-scroll(id='areaMessage')
-                                        .w-100.p-3(style="height: 450px;")
-                                            .svg36.loader-animate3.horizontal-margin-auto.mb-2
-                                            |
-                                            .text-center.letter-space.drop-shadow.text-uppercase.fs-12.w-100.mb-3
-                                                | Today
-                                            |
-                                            //- CHAT
-                                            - for (var i = 0; i < conversations.length; ++i) {
-                                                - var conversation = conversations[i]
-                                                //- - var idUserSelected = $("p#idUserSelected").text()
-                                                - var idUserSelected = "65355a1058bae97dfefa0cc3"
-                                                //- - var idUserSelected = document.getElementById('idUserSelected').textContent;
-                                                //- - var idUserSelected = data("p#idUserSelected").text()
-                                                if conversation.user[0]._id + "" === userLoged.id + ""
-                                                    each message in dataMessage
-                                                        //- p.mb-0.mr-3.pr-4 #{message.message}
-                                                        //- p.mb-0.mr-3.pr-4 #{message.conversation}
-                                                        //- p.mb-0.mr-3.pr-4 #{message.senderId}
-                                                        //- p.mb-0.mr-3.pr-4 #{message.receiverId}
-                                                        //- p.mb-0.mr-3.pr-4 #{message.timestamp}
-                                                        if message.senderId === idUserSelected || message.receiverId === idUserSelected
-                                                            if message.senderId != userLoged._id
-                                                                .left-chat-message.fs-13.mb-2
-                                                                    p.mb-0.mr-3.pr-4 #{message.message}
-                                                                    |
-                                                                    .message-options
-                                                                        .message-time #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
-                                                                        |
-                                                                        .message-arrow
-                                                                            i.text-muted.la.la-angle-down.fs-17
-                                                                |
-                                                            else
-                                                                .d-flex.flex-row-reverse.mb-2
-                                                                    .right-chat-message.fs-13.mb-2
-                                                                        .mb-0.mr-3.pr-4
-                                                                            .d-flex.flex-row
-                                                                                .pr-2 #{message.message}
-                                                                                |
-                                                                                .pr-4
-                                                                        |
-                                                                        .message-options.dark
-                                                                            .message-time
-                                                                                .d-flex.flex-row
-                                                                                    .mr-2 #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
-                                                                                    |
-                                                                                    .svg15.double-check
-                                                                            |
-                                                                            .message-arrow
-                                                                                i.text-muted.la.la-angle-down.fs-17
-                                                                |
-                                                    - break
-                                            - }
-                                    |
-                                    .chat-search.pl-3.pr-3
-                                        .input-group
-                                            input.form-control(type='text', placeholder='Write a message', id='textMessage')
-                                            |
-                                            .input-group-append.prepend-white
-                                                span.input-group-text.pl-2.pr-2
-                                                    i.chat-upload-trigger.fs-19.bi.bi-file-earmark-plus.ml-2.mr-2
-                                                    |
-                                                    i.fs-19.bi.bi-emoji-smile.ml-2.mr-2
-                                                    |
-                                                    i.fs-19.bi.bi-camera.ml-2.mr-2
-                                                    |
-                                                    i.fs-19.bi.bi-cursor.ml-2.mr-2(id='btnSend')
-                                                    |
-                                                    .chat-upload
-                                                        .d-flex.flex-column
-                                                            .p-2
-                                                                button.btn.btn-secondary.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
-                                                                    i.fs-15.bi.bi-camera
-                                                            |
-                                                            .p-2
-                                                                button.btn.btn-success.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
-                                                                    i.fs-15.bi.bi-file-earmark-plus
-                                                            |
-                                                            .p-2
-                                                                button.btn.btn-warning.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
-                                                                    i.fs-15.bi.bi-person
-                                                            |
-                                                            .p-2
-                                                                button.btn.btn-danger.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
-                                                                    i.fs-15.bi.bi-card-image
+                            include content_chat.pug
     script(src=`https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js`)
-    script(src=`https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.7/js/min/perfect-scrollbar.jquery.min.js`)
-    script(src='https://cdn.socket.io/4.3.2/socket.io.js')
-    script(src='https://code.jquery.com/jquery-3.6.0.min.js')
     script(src='/js/chat.js') 
-    script.
-        (function ($) {
-            let myId = $("p#idUserSelected").text()
-            console.log(myId)
-        })(jQuery);
-    script.
-        (function ($) {
-            "use strict";
-            $('.scrollable-chat-panel').perfectScrollbar();
-            var position = $(".chat-search").last().position().top;
-            $('.scrollable-chat-panel').scrollTop(position);
-            $('.scrollable-chat-panel').perfectScrollbar('update');
-            $('.pagination-scrool').perfectScrollbar();
-
-            $('.chat-upload-trigger').on('click', function (e) {
-                $(this).parent().find('.chat-upload').toggleClass("active");
-            });
-            $('.user-detail-trigger').on('click', function (e) {
-                $(this).closest('.chat').find('.chat-user-detail').toggleClass("active");
-            });
-            $('.user-undetail-trigger').on('click', function (e) {
-                $(this).closest('.chat').find('.chat-user-detail').toggleClass("active");
-            });
-        })(jQuery);
+    script(src='/js/message.js') 
+    script(src='/js/socket.io.js')

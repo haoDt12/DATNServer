@@ -14,7 +14,7 @@ const ApiVoucher = require("../controllers/api.voucher");
 const ApiAdmin = require("../controllers/api.admin");
 
 const ApiFeedBack = require("../controllers/api.feedback");
-const  ApiNotification = require("../controllers/api.notification");
+const ApiNotification = require("../controllers/api.notification");
 const ApiConversation = require("../controllers/api.conversation")
 const ApiMessage = require("../controllers/api.message")
 const ApiVNP = require("../controllers/api.payvnpay");
@@ -241,29 +241,33 @@ router.post(
   ApiFeedBack.getAllFeedBackByProductId
 );
 
-router.post("/addFCM",Middleware.authorizationToken,ApiUserController.addFCM);
-router.post("/addNotificationPublic",Middleware.authorizationToken,ApiNotification.addNotificationPublic);
-router.post("/addNotificationPrivate",Middleware.authorizationToken,ApiNotification.addNotificationPrivate);
-router.post("/editNotification",Middleware.authorizationToken,ApiNotification.editNotification);
-router.post("/deleteNotification",Middleware.authorizationToken,ApiNotification.deleteNotification);
-router.post("/getPrivateNotification",Middleware.authorizationToken,ApiNotification.getPrivateNotification);
-router.post("/getPublicNotification",Middleware.authorizationToken,ApiNotification.getPublicNotification);
+router.post("/addFCM", Middleware.authorizationToken, ApiUserController.addFCM);
+router.post("/addNotificationPublic", Middleware.authorizationToken, ApiNotification.addNotificationPublic);
+router.post("/addNotificationPrivate", Middleware.authorizationToken, ApiNotification.addNotificationPrivate);
+router.post("/editNotification", Middleware.authorizationToken, ApiNotification.editNotification);
+router.post("/deleteNotification", Middleware.authorizationToken, ApiNotification.deleteNotification);
+router.post("/getPrivateNotification", Middleware.authorizationToken, ApiNotification.getPrivateNotification);
+router.post("/getPublicNotification", Middleware.authorizationToken, ApiNotification.getPublicNotification);
 
 // API Conversation
-router.post("/createConversation",Middleware.authorizationToken,ApiConversation.createConversation);
-router.post("/deleteConversation",Middleware.authorizationToken,ApiConversation.deleteConversation);
-router.post("/editConversation",Middleware.authorizationToken,ApiConversation.editConversation);
-router.post("/getConversationByID",Middleware.authorizationToken,ApiConversation.getConversationByID);
-router.post("/getConversation",Middleware.authorizationToken,ApiConversation.getConversation);
+router.post("/createConversation",
+  Middleware.authorizationToken,
+  ApiConversation.createConversation
+);
+router.post("/deleteConversation", Middleware.authorizationToken, ApiConversation.deleteConversation);
+router.post("/editConversation", Middleware.authorizationToken, ApiConversation.editConversation);
+router.post("/getConversationByID", Middleware.authorizationToken, ApiConversation.getConversationByID);
+router.post("/getConversation", Middleware.authorizationToken, ApiConversation.getConversation);
 
 // API MESSAGE
-router.post("/addMessage",Middleware.authorizationToken,ApiMessage.addMessage);
+router.post("/addMessage", Middleware.authorizationToken, ApiMessage.addMessage);
+router.post("/updateStatusMessage", Middleware.authorizationToken, ApiMessage.updateStatusMessage);
 
 
-router.post("/createPaymentUrl",ApiVNP.createPaymentUrl);
-router.get("/payFail",ApiVNP.payFail);
-router.get("/paySuccess",ApiVNP.paySuccess);
-router.get("/vnpayReturn",ApiVNP.vnpayReturn);
+router.post("/createPaymentUrl", ApiVNP.createPaymentUrl);
+router.get("/payFail", ApiVNP.payFail);
+router.get("/paySuccess", ApiVNP.paySuccess);
+router.get("/vnpayReturn", ApiVNP.vnpayReturn);
 
 router.post("/addVoucherForOneUser", Middleware.authorizationToken, ApiVoucher.addVoucherForOneUser);
 router.post("/addVoucherForAllUser", Middleware.authorizationToken, ApiVoucher.addVoucherForAllUser);

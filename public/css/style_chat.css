@@ -1,13 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&;display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&;display=swap');
-/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@50&;display=swap'); */
-
+@import url('https://fonts.googleapis.com/css2?family=Inter&family=Roboto:wght@400&display=swap');
 body {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 300;
     color: rgb(58, 65, 111);
     background-image: linear-gradient(to right, rgba(238, 240, 248, 0.5), rgb(238, 240, 248), rgba(238, 240, 248, 0.5));
-    font-family: Poppins !important;
+    /* font-family: 'Roboto', sans-serif; */
+    font-family: 'Inter', sans-serif;
     margin: 0px;
 }
 
