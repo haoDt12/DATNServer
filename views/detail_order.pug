@@ -63,6 +63,16 @@ block content
                                     span
                                         i.ti.ti-file-description
                                     span.hide-menu Order
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/voucher' aria-expanded='false')
+                                    span
+                                        i.ti.ti-file-description
+                                    span.hide-menu Voucher
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/banner' aria-expanded='false')
+                                    span
+                                        i.ti.ti-file-import
+                                    span.hide-menu Banner
                             li.nav-small-cap
                                 i.ti.ti-dots.nav-small-cap-icon.fs-4
                                 span.hide-menu AUTH
@@ -126,11 +136,19 @@ block content
                                                                 li
                                                                     p.text-muted.mb-1.text-truncate.text-center
                                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Màu:
-                                                                            i.list-inline-item(style=`background-color: ${item.color};width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
+                                                                            each optionColor in item.option
+                                                                                case optionColor.type
+                                                                                    when "Color"
+                                                                                        i.list-inline-item(style=`background-color: ${optionColor.content};width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
                                                                 li
                                                                     p.text-muted.mb-1.text-truncate.text-center
                                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Ram/Rom:
-                                                                            =  item.ram_rom
+                                                                            each optionColor in item.option
+                                                                                case optionColor.type
+                                                                                    when "Ram"
+                                                                                        = optionColor.content +'/'
+                                                                                    when "Rom"
+                                                                                        = optionColor.content
                                                                 li
                                                                     p.text-muted.mb-1.text-truncate.text-center
                                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Số lượng:

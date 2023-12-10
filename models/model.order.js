@@ -4,8 +4,12 @@ const orderSchema = db.mongoose.Schema({
     userId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'user', required: true},
     product: [{
         productId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'product', required: true},
-        color: {type: String, required: true},
-        ram_rom: {type: String, required: false},
+        option: [{
+            type: {type: String, required: false},
+            title: {type: String, required: false},
+            content: {type: String, required: false},
+            feesArise:{type: String, required: false},
+        }],
         quantity: {type: Number, required: true}
     }],
     addressId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'address', required: true},

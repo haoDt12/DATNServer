@@ -41,7 +41,9 @@ router.post("/verifyOtpRegister", ApiUserController.verifyOtpRegister);
 router.post("/verifyOtpLogin", ApiUserController.verifyOtpLogin);
 router.post("/editPassword", Middleware.authorizationToken, ApiUserController.editPassword);
 router.post("/verifyOtpEditPass", Middleware.authorizationToken, ApiUserController.verifyOtpEditPass);
-router.post("/updateconversationID", ApiUserController.updateconversationID);
+router.post("/getPassWord", Middleware.authorizationToken, ApiUserController.getPassWord);
+router.get("/resetPassword", Middleware.authorizationToken, ApiUserController.resetPassword);
+router.post("/updateconversationID", ApiConversation.updateconversationID);
 
 router.post(
   "/addCategory",

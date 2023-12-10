@@ -22,18 +22,27 @@ exports.creatOrder = async (req, res) => {
         let total = 0;
         await Promise.all(product.map(async item => {
             let product = await ProductModel.productModel.findById(item.productId);
-            if(!product){
+            if (!product) {
                 return res.send({message: "product not found", code: 0});
             }
             let quantity = Number(product.quantity);
-            if(quantity !== 0){
+            let sold = Number(product.sold);
+            if (quantity !== 0) {
                 newQuantity = quantity - 1;
+                newShold = sold + 1;
                 product.quantity = newQuantity.toString();
+                product.sold = newShold.toString();
                 await product.save();
-            }else {
+            } else {
                 return res.send({message: "product is out of stock ", code: 0});
             }
-            total += product.price * item.quantity;
+            let feesArise = 0;
+            item.option.map(item => {
+                if(item.feesArise){
+                feesArise += Number(item.feesArise);
+                }
+            })
+            total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
         let order = new OrderModel.modelOrder({
             userId: userId,
@@ -67,7 +76,7 @@ exports.getOrderByUserId = async (req, res) => {
     }
     try {
         let listOrder = await OrderModel.modelOrder.find({userId: userId}).populate("product").populate("addressId");
-        if(!listOrder){
+        if (!listOrder) {
             return res.send({message: "listOrder not found", code: 0});
         }
         return res.send({listOrder: listOrder, message: "get list order success", code: 1});
@@ -82,8 +91,8 @@ exports.getOrderByOrderId = async (req, res) => {
         return res.send({message: "orderId is required", code: 0});
     }
     try {
-        let order = await OrderModel.modelOrder.findById(orderId).populate("product").populate("addressId");
-        if(!order){
+        let order = await OrderModel.modelOrder.findById(orderId).populate("product.productId").populate("addressId");
+        if (!order) {
             return res.send({message: "order not found", code: 0});
         }
         return res.send({order: order, message: "get order success", code: 1});
@@ -108,7 +117,7 @@ exports.deleteOrder = async (req, res) => {
     }
     try {
         let order = OrderModel.modelOrder.findById(orderId);
-        if(!order){
+        if (!order) {
             return res.send({message: "order not found", code: 0});
         }
         await OrderModel.modelOrder.deleteOne({_id: orderId});
@@ -128,10 +137,10 @@ exports.editOrder = async (req, res) => {
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     try {
         let order = await OrderModel.modelOrder.findById(orderId);
-        if(!order){
+        if (!order) {
             return res.send({message: "order not found", code: 0});
         }
-        if(status !== null){
+        if (status !== null) {
             order.status = status;
             order.date_time = date_time;
         }
@@ -143,7 +152,7 @@ exports.editOrder = async (req, res) => {
             let total = 0;
             await Promise.all(product.map(async item => {
                 let product = await ProductModel.productModel.findById(item.productId);
-                if(!product){
+                if (!product) {
                     return res.send({message: "product not found", code: 0});
                 }
                 total += product.price * item.quantity;

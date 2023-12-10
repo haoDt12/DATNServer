@@ -61,6 +61,16 @@ block content
                                     span
                                         i.ti.ti-file-description
                                     span.hide-menu Order
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/voucher' aria-expanded='false')
+                                    span
+                                        i.ti.ti-file-description
+                                    span.hide-menu Voucher
+                            li.sidebar-item
+                                a.sidebar-link(href='/stech.manager/banner' aria-expanded='false')
+                                    span
+                                        i.ti.ti-file-import
+                                    span.hide-menu Banner
                             li.nav-small-cap
                                 i.ti.ti-dots.nav-small-cap-icon.fs-4
                                 span.hide-menu AUTH
@@ -106,21 +116,48 @@ block content
                                                     td Tên sản phẩm
                                                     td= detailProduct.title
                                                 tr
-                                                    td Màu
-                                                    td
-                                                        each colorCode in detailProduct.color
-                                                            i.list-inline-item(style=`background-color: ${colorCode}; width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%;`)
-                                                tr
                                                     td Số lượng
                                                     td= detailProduct.quantity
                                                 tr
-                                                    td Dung lượng
-                                                    td(style='flex-wrap: wrap; align-items: center;')
-                                                        each ramCode in detailProduct.ram_rom
-                                                            i.fas(style='font-size: 15px; color: #2d2d2d; margin-right: 15px')= ramCode
-                                                tr
                                                     td Đã bán
                                                     td= detailProduct.sold
+
+                                                tr
+                                                    td Màu
+                                                    td
+                                                        -var hasColor = false
+                                                        each option in detailProduct.option
+                                                            case option.type
+                                                                when "Color"
+                                                                    -hasColor = true
+                                                                    i.list-inline-item(style=`background-color: ${option.content}; border: 2px solid #C0C0C0;  width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%; `)
+                                                        unless hasColor
+                                                            | Không có
+
+                                                tr
+                                                    td Ram
+                                                    td
+                                                        -var hasRam = false
+                                                        each option in detailProduct.option
+                                                            case option.type
+                                                                when "Ram"
+                                                                    -hasRam=true
+                                                                    i(style='margin-right: 15px')= option.content
+                                                        unless hasRam
+                                                            | Không có
+                                                tr
+                                                    td Rom
+                                                    td
+                                                        -var hasRom = false
+                                                        each option in detailProduct.option
+                                                            case option.type
+                                                                when "Rom"
+                                                                    -hasRom=true
+                                                                    i(style='margin-right: 15px')= option.content
+                                                        unless hasRom
+                                                            | Không có
+
+
                                                 tr
                                                     td Date
                                                     td= detailProduct.date

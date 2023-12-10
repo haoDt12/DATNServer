@@ -61,6 +61,11 @@ block content
                                     i.ti.ti-file-description
                                 span.hide-menu Order
                         li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/voucher' aria-expanded='false')
+                                span
+                                    i.ti.ti-file-description
+                                span.hide-menu Voucher
+                        li.sidebar-item
                             a.sidebar-link(href='/stech.manager/banner' aria-expanded='false')
                                 span
                                     i.ti.ti-file-import
@@ -116,6 +121,10 @@ block content
 
             // Header End
             .container-fluid
+                form#searchForm(action='javascript:void(0)', onsubmit='return false;')
+                    .input-group.m-3
+                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...' oninput='searchCategory()')
+                        button#searchButton.btn.btn-outline-secondary(type='button') Search
                 .row
                     //- Item Category
                     each cate in category
@@ -264,5 +273,24 @@ block content
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                             button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
     script(src='/js/category.js')
+    script.
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+        function searchCategory() {
+            const query = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
+            const candidateRows = document.querySelectorAll('.col-sm-6.col-xl-3');
+
+            candidateRows.forEach(function (row) {
+                const cateName = removeDiacritics(row.querySelector('.card-body.pt-3.p-4 h6').innerText.toLowerCase());
+
+                // Nếu không có thông tin tìm kiếm hoặc tìm thấy kết quả, hiển thị lại dòng
+                if (!query || cateName.includes(query)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
 
 

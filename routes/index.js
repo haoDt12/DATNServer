@@ -8,6 +8,7 @@ const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
+const VoucherModel = require("./../models/model.voucher");
 
 const utils_1 = require('../public/js/ultils_1');
 const path = require("path");
@@ -22,6 +23,7 @@ router.get("/stech.manager/home", function (req, res, next) {
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
+    console.log(listProduct[1].option[1].title)
     res.render("product", {
       products: listProduct,
       message: "get list product success",
@@ -282,17 +284,6 @@ router.get("/stech.manager/chat", async function (req, res, next) {
 });
 router.get("/stech.manager/order", async function (req, res, next) {
   try {
-    let orders = await OrderModel.modelOrder.find();
-    console.log('Orders:', orders);
-    const ordersWithProductInfo = await Promise.all(orders.map(async order => {
-      const allProductInfo = await order.getAllProductInfo();
-      const userInfo = await order.getUserInfo();
-      console.log('ProductInfo:', allProductInfo);
-      console.log('UserInfo:', userInfo);
-      return { ...order.toObject(), allProductInfo, userInfo };
-    }));
-    res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
-
     var encodedValueStatus = req.cookies.status;
 
     if (encodedValueStatus === undefined) {
@@ -357,21 +348,13 @@ router.get("/stech.manager/cart", async function (req, res, next) {
   // const userId = utils_1.getCookie(req, 'Uid');
 
   const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
+
   console.log("id", userId)
   try {
     let cartUser = await CartModel.cartModel.findOne({ userId }).populate({ path: 'product', select: 'productId quantity' });;
     console.log(cartUser)
-    const productsInCart = cartUser ? cartUser.product : [];
-
-    // Lặp qua từng sản phẩm và lấy productId
-    const productIds = productsInCart.map(product => {
-      // Lấy productId từ thông tin chi tiết sản phẩm
-      return product.productId._id;
-    });
-
     res.render("cart", {
-      carts: cartUser ? cartUser : [],
-      productIds: productIds,
+      carts: cartUser,
       message: "get list profile success",
       code: 1,
     })
@@ -416,6 +399,19 @@ router.get("/stech.manager/notification", async function (req, res, next) {
     res.send({ message: "user not found", code: 0 });
   }
 });
+router.get("/stech.manager/voucher", async function (req, res, next) {
+    try {
+        let listVoucher = await VoucherModel.voucherModel.find();
+        res.render("voucher", {
+            vouchers: listVoucher,
+            message: "get list voucher success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "user not found", code: 0 });
+    }
+});
 router.get("/stech.manager/banner", async function (req, res, next) {
   try {
     let listbanner = await BannerModel.bannerModel.find();
@@ -424,5 +420,8 @@ router.get("/stech.manager/banner", async function (req, res, next) {
     console.log(e.message);
     res.send({ message: "banner not found", code: 0 })
   }
+});
+router.get("/stech.manager/pay", function (req, res, next) {
+  res.render("pay");
 });
 module.exports = router;

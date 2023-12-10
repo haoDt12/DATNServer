@@ -60,6 +60,16 @@ block content
                                 span
                                     i.ti.ti-file-description
                                 span.hide-menu Order
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/voucher' aria-expanded='false')
+                                span
+                                    i.ti.ti-file-description
+                                span.hide-menu Voucher
+                        li.sidebar-item
+                            a.sidebar-link(href='/stech.manager/banner' aria-expanded='false')
+                                span
+                                    i.ti.ti-file-import
+                                span.hide-menu Banner
                         li.nav-small-cap
                             i.ti.ti-dots.nav-small-cap-icon.fs-4
                             span.hide-menu AUTH
@@ -105,10 +115,10 @@ block content
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
             // Header End
             .container-fluid
-                form#searchForm(action='/search', method='GET')
-                    .input-group.mb-3
-                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
-                        button#searchButton.btn.btn-outline-secondary(type='submit') Search
+                form#searchForm(action='javascript:void(0)', onsubmit='return false;')
+                    .input-group.m-3
+                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...' oninput='searchNotifications()')
+                        button#searchButton.btn.btn-outline-secondary(type='button') Search
                 .row
                     table.table.table-striped.align-middle.table-nowrap
                         thead
@@ -121,15 +131,15 @@ block content
                                 tr
                                     td(style='width: 300px;')
                                         div
-                                            h5.font-size-18.text-center(style='font-size: 20px;')
+                                            h5.font-size-15.text-center(style='font-size: 14px;')
                                                 a.text-dark(href='ecommerce-product-detail.html')= notification.title
                                     td(style='width: 550px;')
                                         div
-                                            h5.font-size-18.text-start(style='font-size: 20px;')
+                                            h5.font-size-18.text-start(style='font-size: 14px;')
                                                 a.text-dark(href='ecommerce-product-detail.html')= notification.content
                                     td
                                         div
-                                            h5.font-size-18.text-center(style='font-size: 20px;')
+                                            h5.font-size-18.text-center(style='font-size: 14px;')
                                                 a.text-dark(href='ecommerce-product-detail.html')= notification.date
 
                                     td
@@ -206,3 +216,24 @@ block content
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
                             button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmUpdate') Lưu thông báo
     script(src='/js/notification.js')
+    script.
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function searchNotifications() {
+            const query = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
+            const notificationRows = document.querySelectorAll('tbody tr');
+
+            notificationRows.forEach(function (row) {
+                const notificationTitle = removeDiacritics(row.querySelector('td:first-child a').innerText.toLowerCase());
+                const notificationContent = removeDiacritics(row.querySelector('td:nth-child(2) a').innerText.toLowerCase());
+
+                // Nếu không có thông tin tìm kiếm hoặc tìm thấy kết quả, hiển thị lại dòng
+                if (!query || notificationTitle.includes(query) || notificationContent.includes(query)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
