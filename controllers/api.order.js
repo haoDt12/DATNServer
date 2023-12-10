@@ -75,7 +75,7 @@ exports.getOrderByUserId = async (req, res) => {
         return res.send({message: "userId is required", code: 0});
     }
     try {
-        let listOrder = await OrderModel.modelOrder.find({userId: userId}).populate("product.productId").populate("addressId");
+        let listOrder = await OrderModel.modelOrder.find({userId: userId}).populate("product").populate("addressId");
         if (!listOrder) {
             return res.send({message: "listOrder not found", code: 0});
         }
@@ -103,7 +103,7 @@ exports.getOrderByOrderId = async (req, res) => {
 }
 exports.getOrder = async (req, res) => {
     try {
-        let listOrder = await OrderModel.modelOrder.find().populate("product.productId").populate("addressId");
+        let listOrder = await OrderModel.modelOrder.find().populate("product").populate("addressId");
         return res.send({listOrder: listOrder, message: "get list order success", code: 1});
     } catch (e) {
         console.log(e.message);
