@@ -37,7 +37,7 @@ exports.addMessage = async (req, res) => {
     let contentMessage = req.body.message;
     let date = new Date();
     let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
-    
+
     if (conversation == null) {
         return res.send({ message: "conversation is required", code: 0 });
     }
@@ -61,6 +61,8 @@ exports.addMessage = async (req, res) => {
         senderId: senderId,
         receiverId: receiverId,
         message: contentMessage,
+        status: "unseen",
+        deleted: false,
         timestamp: timestamp
     });
 
@@ -82,6 +84,28 @@ exports.getMessageById = async (req, res) => {
 };
 exports.deleteMessage = async (req, res) => {
 
+};
+
+exports.updateStatusMessage = async (req, res) => {
+    let idMessage = req.body.idMsg;
+    let status = req.body.status;
+    if (idMessage == null || idMessage.length <= 0) {
+        return res.send({ message: "idMessage is required" })
+    }
+    if (status == null || status.length <= 0) {
+        return res.send({ message: "status is required" })
+    }
+
+    try {
+        let message = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { status: status });
+        if (!message) {
+            return res.send({ message: "message not found" })
+        }
+        res.send({ message: "update status message success", code: 1 })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
 };
 exports.editMessage = async (req, res) => {
 
