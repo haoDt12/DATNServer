@@ -20,6 +20,9 @@ const NotificationPublicModel = require("./../models/model.notification.pulic");
 router.get("/stech.manager/home", function (req, res, next) {
   res.render("index");
 });
+router.get("/stech.manager/product_action", function (req, res, next) {
+  res.render("product_action");
+});
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
