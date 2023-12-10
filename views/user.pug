@@ -97,10 +97,10 @@ block content
                             a#headerCollapse.nav-link.sidebartoggler.nav-icon-hover(href='javascript:void(0)')
                                 i.ti.ti-menu-2
                     #navbarNav.navbar-collapse.justify-content-end.px-0
-                        form#searchForm(action='/search', method='GET')
+                        form#searchForm(action='javascript:void(0)', onsubmit='return false;')
                             .input-group.m-lg-auto
-                                input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
-                                button#searchButton.btn.btn-outline-secondary(type='submit') Search
+                                input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...' oninput='searchUsers()')
+                                button#searchButton.btn.btn-outline-secondary(type='button') Search
                         a#openUserModal.btn.btn-outline-primary.m-lg-2(data-bs-toggle='modal' data-bs-target='UserModal') Add user
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
                             li.nav-item.dropdown
@@ -272,3 +272,23 @@ block content
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                             button.btn.btn-danger(type='button' id='deleteUser') Đồng ý
     script(src='/js/user.js')
+    script.
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+        function searchUsers() {
+            const query = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
+            const candidateRows = document.querySelectorAll('.candidates-list');
+
+            candidateRows.forEach(function (row) {
+                const userFullName = removeDiacritics(row.querySelector('.candidate-list-title a').innerText.toLowerCase());
+                const userEmail = removeDiacritics(row.querySelector('.candidate-list-option span').innerText.toLowerCase());
+
+                // Nếu không có thông tin tìm kiếm hoặc tìm thấy kết quả, hiển thị lại dòng
+                if (!query || userFullName.includes(query) || userEmail.includes(query)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }

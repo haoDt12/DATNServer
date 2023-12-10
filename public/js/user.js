@@ -6,12 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var myModal = new bootstrap.Modal(document.getElementById('UserModal'));
     var myModalUp = new bootstrap.Modal(document.getElementById('UpdateUserModal'));
     var myModalDe = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+    const addUserButton = document.getElementById("addUserButton");
 
 
     const deleteProButtons = document.querySelectorAll(".deleteUs");
     const editUserButton = document.querySelectorAll(".updateUs");
-    const detailLinks = document.querySelectorAll(".DetailUser");
 
+    const detailLinks = document.querySelectorAll(".DetailUser");
+    const detailLink = document.getElementById("Detail");
 
     const confirmUpdateButton = document.getElementById("UpdateUser");
     const confirmDeleteButton = document.getElementById("deleteUser");
@@ -23,31 +25,79 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('deleteUserBtn').addEventListener('click', function () {
         myModalDe.show();
     });
-    document.getElementById('addUser').addEventListener('click', function () {
+
+    // create function
+    async function addUser(email, password,full_name, phone_number,file) {
+        try {
+            const response = await axios.post('/api/registerUser', {
+                full_name: full_name,
+                phone_number: phone_number,
+                email: email,
+                password: password,
+                file:file
+            });
+            myModal.hide();
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function validFormAdd(email,password,full_name, phone_number) {
+        const phonePatternAdd = /^(0|\+84)[3789][0-9]{8}$/;
+        const emailPatternAdd = /^[A-Za-z0-9+_.-]+@(.+)$/;
+
+        const patternEmail = new RegExp(emailPatternAdd);
+        const patternPhone = new RegExp(phonePatternAdd);
+
+        const isEmail = patternEmail.test(email);
+        const isPhone = patternPhone.test(phone_number);
+
+        if (full_name.trim().length === 0) {
+            alert('Please enter name');
+            return false;
+        }
+        if (password.trim().length === 0) {
+            alert('Please enter password');
+            return false;
+        }
+        if (!isPhone) {
+            alert('Wrong  phone number');
+            return false;
+        }
+        if (!isEmail) {
+            alert('Wrong email');
+            return false;
+        }
+        return true;
+    }
+
+
+    addUserButton.addEventListener("click",function () {
+        const full_name = document.getElementById("full_name").value;
+        const phone_number = document.getElementById("phone").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        const full_name = document.getElementById("full_name").value;
-        const phone = document.getElementById("phone").value;
-        const role = document.getElementById("role").value;
         const avatar = document.getElementById("avatar").files[0];
 
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("avatar", avatar);
-        formData.append("name", password);
-        formData.append("full_name", full_name);
-        formData.append("phone", phone);
-        formData.append("role", role);
-
-        axios.post('/api/registerUser', formData)
-            .then((response) => {
-                location.reload();
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            })
-        myModal.hide();
+        if (validFormAdd(email, password, full_name, phone_number)) {
+            addUser(email, password, full_name, phone_number,avatar).then(data => {
+                if (data.code === 1){
+                    const Uid = data.id;
+                    document.cookie = "Uid=" + encodeURIComponent(Uid);
+                    utils.PushCookie("Uid", Uid);
+                    utils.PushCookie("typeVerify", "signup");
+                    window.location.assign('/stech.manager/verify');
+                }else {
+                    utils.showMessage(data.message);
+                }
+            }).catch(error => {
+                console.error('Login error:', error);
+            });
+        }
     });
+
+    //
     editUserButton.forEach(function (button){
         button.addEventListener("click", function (){
             myModalUp.show();
