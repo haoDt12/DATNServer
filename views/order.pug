@@ -3,6 +3,7 @@ extends layout
 block content
     #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
         // Sidebar Start
+
         aside.left-sidebar
             // Sidebar scroll
             div
@@ -86,10 +87,10 @@ block content
             // Header Start
             header.app-header
                 nav.navbar.navbar-expand-lg.navbar-light
-                    form#searchForm(action='/search', method='GET')
-                        .input-group.mb-auto
-                            input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
-                            button#searchButton.btn.btn-outline-secondary(type='submit') Search
+                    form#searchForm(action='javascript:void(0)', onsubmit='return false;')
+                        .input-group.m-lg-auto
+                            input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...' oninput='searchOrder()')
+                            button#searchButton.btn.btn-outline-secondary(type='button') Search
                     ul.pagination.m-lg-2
                         li.page-item(style='margin-right: 10px' id = 'getAllOrder')
                             a.btn.btn-primary( href='/stech.manager/order') All
@@ -143,7 +144,7 @@ block content
                                     td(style='text-align: center;')
                                         .avatar-lg.me-4
                                             img.img-fluid.rounded(src=order.allProductInfo[0].img_cover,style='max-width: 70%; height: 90px;', alt='')
-                                    td
+                                    td.list-unstyled.ps-0.mb-0
                                         div
                                             h5.font-size-18.text-center(style='font-size: 20px;')
                                                 a.text-dark(href='ecommerce-product-detail.html')= order.allProductInfo[0].title
@@ -250,3 +251,24 @@ block content
                                     label(for="inputImg") Tên sản phẩm
                                     input(type="text",id = "inputImg", name="name", class="form-control", placeholder="", aria-describedby="helpId")
     script(src='/js/order.js')
+
+    script.
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+        function searchOrder() {
+            const query = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
+            const orderRows = document.querySelectorAll('tbody tr');
+
+            orderRows.forEach(function (row) {
+                const productTitle = removeDiacritics(row.querySelector('.list-unstyled.ps-0.mb-0 a').innerText.toLowerCase());
+                const userName = removeDiacritics(row.querySelector('.list-unstyled.ps-0.mb-0 i').innerText.toLowerCase());
+
+                // Nếu không có thông tin tìm kiếm hoặc tìm thấy kết quả, hiển thị lại dòng
+                if (!query || productTitle.includes(query) || userName.includes(query)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }

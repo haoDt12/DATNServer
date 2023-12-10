@@ -110,6 +110,10 @@ block content
                                             p.mb-0.fs-3 My Task
                                         a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
             .container-fluid
+                form#searchForm(action='javascript:void(0)', onsubmit='return false;')
+                    .input-group.m-3
+                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...' oninput='searchProducts()')
+                        button#searchButton.btn.btn-outline-secondary(type='button') Search
                 .row
                     //- Item Category
                     each product in products
@@ -266,3 +270,22 @@ block content
                             button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
                             button#ConfirmDelPro.btn.btn-danger(type='button') Xác nhận
     script(src="/js/product.js")
+    script.
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+        function searchProducts() {
+            const query = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
+            const candidateRows = document.querySelectorAll('.col-sm-6.col-xl-3');
+
+            candidateRows.forEach(function (row) {
+                const productName = removeDiacritics(row.querySelector('.card-body.pt-3.p-4 h6').innerText.toLowerCase());
+
+                // Nếu không có thông tin tìm kiếm hoặc tìm thấy kết quả, hiển thị lại dòng
+                if (!query || productName.includes(query)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
