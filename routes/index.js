@@ -170,7 +170,18 @@ router.get("/stech.manager/order", async function (req, res, next) {
         return { ...order.toObject(), allProductInfo, userInfo };
       }));
       res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
-    } else {
+    } else if(Buffer.from(encodedValueStatus, 'base64').toString('utf8') == 'All'){
+      let orders = await OrderModel.modelOrder.find();
+      console.log('Orders:', orders);
+      const ordersWithProductInfo = await Promise.all(orders.map(async order => {
+        const allProductInfo = await order.getAllProductInfo();
+        const userInfo = await order.getUserInfo();
+        console.log('ProductInfo:', allProductInfo);
+        console.log('UserInfo:', userInfo);
+        return { ...order.toObject(), allProductInfo, userInfo };
+      }));
+      res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
+    }else {
       let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
       let orders = await OrderModel.modelOrder.find({ status: valueStatus });
       console.log('Orders:', orders);
