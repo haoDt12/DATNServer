@@ -20,6 +20,26 @@ const NotificationPublicModel = require("./../models/model.notification.pulic");
 router.get("/stech.manager/home", function (req, res, next) {
   res.render("index");
 });
+router.get("/stech.manager/product_action", async function (req, res, next) {
+  const token = req.cookies.token
+  console.log(token)
+  try {
+    let listProduct = await ProductModel.productModel.find();
+    let listCategory = await CategoryModel.categoryModel.find();
+
+    console.log(listProduct[1].option[1].title)
+    res.render("product_action", {
+      products: listProduct,
+      categories:listCategory,
+      message: "get list product success",
+      token:token,
+      code: 1
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.send({message: "product not found", code: 0})
+  }
+});
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
@@ -127,33 +147,158 @@ router.get("/stech.manager/profile", async function (req, res, next) {
   // res.render("profile");
   // res.render("profile");
 });
-router.get("/stech.manager/chat", async function (req, res, next) {
+
+router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
   try {
+
     // Check login
     let idUserLoged = req.cookies.Uid
     if (idUserLoged == null || idUserLoged.length <= 0) {
       res.redirect('/stech.manager/login')
     }
+    let ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET
 
+    let encodedConversation = req.params.id
+    let idConversation = req.params.id
+    // let idConversation = Buffer.from(encodedConversation, 'base64').toString('utf8');
     let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
     let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({ path: 'address', select: 'city' });
-    let dataMessage = await MessageModel.messageModel.find().populate({ path: 'conversation' });
-    let selectedConversationId = req.query.selectedConversationId
-    if (selectedConversationId) {
-      dataMessage = dataMessage.filter(element => element.conversation._id == selectedConversationId);
+    let dataMessage = await MessageModel.messageModel.find({ conversation: idConversation }).populate({ path: 'conversation' });
+    let conversationNoMessage = []
+    if (dataMessage.length <= 0) {
+      conversationNoMessage = await ConversationModel.conversationModel.find({ _id: idConversation }).populate({ path: 'user' });
     }
-    console.log(listConversation);
+
+    let listUserIDInChat = []
+    await Promise.all(dataMessage.map((message) => {
+      if (!listUserIDInChat.includes(message.senderId)) {
+        listUserIDInChat.push(message.senderId);
+      }
+      if (!listUserIDInChat.includes(message.receiverId)) {
+        listUserIDInChat.push(message.receiverId);
+      }
+    }));
+
+    let dataOtherUser = []
+    await Promise.all(listUserIDInChat.map(async (userID) => {
+      if (userID != dataUserLoged[0]._id) {
+        const userData = await UserModel.userModel.find({ _id: userID }).populate({ path: 'address', select: 'city' });
+        dataOtherUser = userData
+      }
+    }));
+
+    // console.log(conversationNoMessage);
+    // console.log("====================");
+    // console.log(dataOtherUser);
     res.render("chat", {
       conversations: listConversation.length > 0 ? listConversation : [],
       userLoged: dataUserLoged[0],
       dataMessage: dataMessage,
+      dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
+      idConversation: idConversation,
+      isOpenChat: true,
+      message: "get data chat success",
+      code: 1,
+    });
+
+  }
+  catch (e) {
+    console.log(e.message);
+    res.send({ message: "conversation not found", code: 0 });
+  }
+});
+router.get("/stech.manager/chat", async function (req, res, next) {
+  try {
+    // Check login
+    let idUserLoged = req.cookies.Uid
+    if (idUserLoged == null || idUserLoged.length <= 0) {
+      return res.redirect('/stech.manager/login')
+    }
+
+    let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({ path: 'address', select: 'city' });
+    let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
+    let dataMessage = await MessageModel.messageModel.find().populate({ path: 'conversation' });
+
+    let dataLastMessage = []
+    let latestMessages = {};
+    listConversation.map((con) => {
+      dataMessage.map((msg) => {
+        if (con._id + "" == msg.conversation._id + "") {
+          if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
+            latestMessages[con._id] = {
+              id: msg._id,
+              conversationID: con._id,
+              senderID: msg.senderId,
+              status: msg.status,
+              message: msg.message,
+              timestamp: msg.timestamp
+            };
+          }
+        }
+      })
+    })
+
+    for (let conversationID in latestMessages) {
+      dataLastMessage.push(latestMessages[conversationID]);
+    }
+
+    let dataConversation = []
+    listConversation.map((con) => {
+      dataLastMessage.map((msg) => {
+        if (con._id + "" == msg.conversationID + "") {
+          let idMessage = msg.id
+          let message = msg.message
+          let time = msg.timestamp
+          let senderID = msg.senderID
+          let status = msg.status
+
+          dataConversation.push({
+            _id: con._id,
+            idMsg: idMessage,
+            name: con.name,
+            user: con.user,
+            timestamp: con.timestamp,
+            lastmessage: message,
+            lastSender: senderID,
+            status: status,
+            lasttime: time
+          })
+        }
+      })
+    })
+
+    const conversationNoMessage = listConversation.filter(obj1 =>
+      !dataConversation.some(obj2 => obj1._id === obj2._id)
+    );
+
+    conversationNoMessage.map((con) => {
+      dataConversation.push({
+        _id: con._id,
+        idMessage: "",
+        name: con.name,
+        user: con.user,
+        timestamp: con.timestamp,
+        lastmessage: "",
+        lastSender: "",
+        status: "",
+        lasttime: ""
+      })
+    })
+
+    res.render("chat", {
+      conversations: dataConversation.length > 0 ? dataConversation : [],
+      userLoged: dataUserLoged[0],
+      dataMessage: {},
+      dataLastMessage: dataLastMessage.length > 0 ? dataLastMessage : [],
+      isOpenChat: false,
+      idConversation: "",
       message: "get data chat success",
       code: 1,
     });
 
 
   } catch (e) {
-    console.log(e.message);
+    console.log(`eror get chat: ${e.message}`);
     res.send({ message: "conversation not found", code: 0 });
   }
 });
@@ -161,7 +306,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
   try {
     var encodedValueStatus = req.cookies.status;
 
-    if (encodedValueStatus === undefined) {
+    if (encodedValueStatus === undefined || Buffer.from(encodedValueStatus, 'base64').toString('utf8') == 'All') {
       let orders = await OrderModel.modelOrder.find();
       console.log('Orders:', orders);
       const ordersWithProductInfo = await Promise.all(orders.map(async order => {
@@ -216,7 +361,29 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
   }
 });
 router.get("/stech.manager/invoice", function (req, res, next) {
-  res.render("invoice");
+
+  function getCookie(name) {
+    const match = req.headers.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    if (match) return match[2];
+  }
+
+  const orderDataCookie = getCookie('dataToInvoice');
+
+  if (orderDataCookie) {
+    // Giải mã cookie để có được dữ liệu đặt hàng
+    const orderData = JSON.parse(decodeURIComponent(orderDataCookie));
+
+    // Truyền dữ liệu vào layout "invoice.pug"
+    res.render("invoice", {
+      guestName: orderData.guestName,
+      guestPhone: orderData.guestPhone,
+      guestAddress: orderData.guestAddress,
+      products: orderData.product,
+    });
+  } else {
+    // Xử lý khi không có giá trị cookie
+    res.send({ message: "No order data found in the cookie", code: 0 });
+  }
 });
 router.get("/stech.manager/cart", async function (req, res, next) {
   // const userId = req.query.userId;
@@ -297,6 +464,15 @@ router.get("/stech.manager/banner", async function (req, res, next) {
   }
 });
 router.get("/stech.manager/pay", function (req, res, next) {
-  res.render("pay");
+  try {
+    var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)selectedProducts\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    var listProduct = JSON.parse(decodeURIComponent(cookieValue));
+
+    return res.render("pay",{products: listProduct})
+
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "pay not found", code: 0 })
+  }
 });
 module.exports = router;

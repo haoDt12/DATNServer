@@ -89,3 +89,8 @@ body{
 #container {
     background-color: #dcdcdc;
 }
+@media print {
+    .print-button {
+        display: none !important;
+    }
+}

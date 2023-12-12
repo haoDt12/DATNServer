@@ -1,0 +1,173 @@
+extends layout
+
+block content
+    if isOpenChat
+        .col-md-8.col-12.card-stacked(href='#', id='content-chat')
+            .card.shadow-line.mb-3.chat.chat-panel
+                .p-3.chat-header
+                    .d-flex
+                        .w-100.d-flex.pl-0
+                            if dataHeaderMsg[0].avatar
+                                img.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(id='avatar' src=`${dataHeaderMsg[0].avatar}`)
+                                |
+                            else 
+                                img.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(id='avatar' src=`${dataHeaderMsg[0].user[0].avatar}`)
+                                |
+                            .mr-3
+                                a.text-decoration-none(href='!#')
+                                    p.fw-400.mb-0.text-dark-75(id='username')
+                                        if dataHeaderMsg[0].name
+                                            | #{dataHeaderMsg[0].name}
+                                        else
+                                            if dataHeaderMsg[0].full_name
+                                                | #{dataHeaderMsg[0].full_name}
+                                            else
+                                                | {username}
+                                |
+                                a(href='!#')
+                                    p.fw-400.mb-0.text-dark-75(style="display: none; ", id='idConversation')
+                                        if idConversation
+                                            | #{idConversation}
+                                |
+                                a(href='!#')
+                                    p.fw-400.mb-0.text-dark-75(style="display: none; ", id='idUserSelected')
+                                        if dataHeaderMsg[0]._id
+                                            | #{dataHeaderMsg[0]._id}
+                                |
+                                p.sub-caption.text-muted.text-small.mb-0
+                                    i.la.la-clock.mr-1
+                                    | last seen today at
+                                    | {time} {A || PM}
+                        |
+                        //- top icon
+                        .flex-shrink-0.margin-auto
+                            a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                    circle(cx='12', cy='12', r='10')
+                                    |
+                                    line(x1='12', y1='16', x2='12', y2='12')
+                                    |
+                                    line(x1='12', y1='8', x2='12.01', y2='8')
+                            |
+                            a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                    polygon(points='23 7 16 12 23 17 23 7')
+                                    |
+                                    rect(x='1', y='5', width='15', height='14', rx='2', ry='2')
+                            |
+                            a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                    circle(cx='11', cy='11', r='8')
+                                    |
+                                    line(x1='21', y1='21', x2='16.65', y2='16.65')
+                            |
+                            a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
+                                svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
+                                    circle(cx='12', cy='12', r='1')
+                                    |
+                                    circle(cx='12', cy='5', r='1')
+                                    |
+                                    circle(cx='12', cy='19', r='1')
+                |
+                //- 
+                
+                //- content message
+                .d-flex.flex-row.mb-3.navigation-mobile.scrollable-chat-panel.chat-panel-scroll(id='areaMessage')
+                    .w-100.p-3(style="max-height: 400px; min-height: 400px;")
+                        .svg36.loader-animate3.horizontal-margin-auto.mb-2
+                        |
+                        .text-center.letter-space.drop-shadow.text-uppercase.fs-12.w-100.mb-3
+                            | Today
+                        |
+                        //- MESSAGE
+                        //- if dataMessage.length > 0
+                        - var dataSize = dataMessage.length;
+                            if  dataSize > 0
+                                each message in dataMessage
+                                    if message.senderId != userLoged._id
+                                            .left-chat-message.fs-13.mb-2
+                                                p.mb-0.mr-3.pr-4 #{message.message}
+                                                |
+                                                .message-options
+                                                    .message-time #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                            |
+                                    else
+                                        .d-flex.flex-row-reverse.mb-2
+                                            .right-chat-message.fs-13.mb-2
+                                                .mb-0.mr-3.pr-4
+                                                    .d-flex.flex-row
+                                                        .pr-2 #{message.message}
+                                                        |
+                                                        .pr-4
+                                                |
+                                                .message-options.dark
+                                                    .message-time
+                                                        .d-flex.flex-row
+                                                            .mr-2 #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
+                                                            |
+                                                            .svg15.double-check
+                                                    |
+                                                    .message-arrow
+                                                        i.text-muted.la.la-angle-down.fs-17
+                                        |
+
+                |
+                .chat-search.pl-3.pr-3
+                    .input-group
+                        input.form-control(type='text', placeholder='Write a message', id='textMessage')
+                        |
+                        .input-group-append.prepend-white
+                            span.input-group-text.pl-2.pr-2
+                                i.chat-upload-trigger.fs-19.bi.bi-file-earmark-plus.ml-2.mr-2
+                                |
+                                i.fs-19.bi.bi-emoji-smile.ml-2.mr-2
+                                |
+                                i.fs-19.bi.bi-camera.ml-2.mr-2
+                                |
+                                i.fs-19.bi.bi-cursor.ml-2.mr-2(id='btnSend')
+                                |
+                                .chat-upload
+                                    .d-flex.flex-column
+                                        .p-2
+                                            button.btn.btn-secondary.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                                i.fs-15.bi.bi-camera
+                                        |
+                                        .p-2
+                                            button.btn.btn-success.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                                i.fs-15.bi.bi-file-earmark-plus
+                                        |
+                                        .p-2
+                                            button.btn.btn-warning.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                                i.fs-15.bi.bi-person
+                                        |
+                                        .p-2
+                                            button.btn.btn-danger.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                                i.fs-15.bi.bi-card-image
+    
+    script(src=`https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js`)
+    script(src=`https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.7/js/min/perfect-scrollbar.jquery.min.js`)
+    //- script(src='/js/message.js') 
+    script(src='/js/socket.io.js') 
+
+    script.
+        (function ($) {
+            "use strict";
+            $('.scrollable-chat-panel').perfectScrollbar();
+            var position = $(".chat-search").last().position().top;
+            $('.scrollable-chat-panel').scrollTop(position);
+            $('.scrollable-chat-panel').perfectScrollbar('update');
+            $('.pagination-scrool').perfectScrollbar();
+
+            $('.chat-upload-trigger').on('click', function (e) {
+                $(this).parent().find('.chat-upload').toggleClass("active");
+            });
+            $('.user-detail-trigger').on('click', function (e) {
+                $(this).closest('.chat').find('.chat-user-detail').toggleClass("active");
+            });
+            $('.user-undetail-trigger').on('click', function (e) {
+                $(this).closest('.chat').find('.chat-user-detail').toggleClass("active");
+            });
+        })(jQuery);

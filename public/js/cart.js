@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteCCartPro = document.querySelectorAll('.deleteCartPro');
     const DeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteCart"));
     const confirmDelete =  document.getElementById("confirmDelete");
-        // const inputQuan = document.getElementById('')
+    const detailLink =  document.getElementById("goOrder");
+    // const inputQuan = document.getElementById('')
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', updateTotal);
     });
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // Hiển thị tổng giá
-        totalDisplay.innerText = `${total.toFixed(2)}$`;
+        totalDisplay.innerText = `${Intl.NumberFormat('vi-VN').format(total)} VND`;
     }
     deleteCCartPro.forEach(function (DeleteProduct){
         DeleteProduct.addEventListener("click", function() {
@@ -119,5 +120,22 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         console.log("Save button clicked");
     }
+
+    function setCookie(name, value) {
+        document.cookie = `${name}=${value}; path=/`;
+    }
+
+    document.getElementById('goOrder').addEventListener('click', function (){
+        var selectedProducts = [];
+        checkboxes.forEach(function (checkbox){
+            if (checkbox.checked){
+                var productData = JSON.parse(checkbox.getAttribute('data-product'));
+                selectedProducts.push(productData);
+            }
+        })
+
+        document.cookie = 'selectedProducts=' + encodeURIComponent(JSON.stringify(selectedProducts));
+        window.location.href = '/stech.manager/pay';
+    })
 
 })

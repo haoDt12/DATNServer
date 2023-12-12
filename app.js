@@ -9,17 +9,35 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var apiRouter = require("./routes/api");
 var app = express();
+var cors = require('cors');
 var http = require('http')
-var httpPlus = require('http').Server(app);
-var server = http.createServer(app);
-var io = socketIO(server);
+const server = http.createServer(app)
+const { Server } = require('socket.io')
+const { readFileSync } = require("fs");
+const { createServer } = require("http");
+const httpServer = createServer((req, res) => {
+  if (req.url !== "/") {
+    res.writeHead(404);
+    res.end("Not found");
+    return;
+  }
+  // reload the file every time
+  const content = readFileSync(__dirname + "/views/chat.pug");
+  const length = Buffer.byteLength(content);
 
+  res.writeHead(200, {
+    "Content-Type": "text/html",
+    "Content-Length": length,
+  });
+  res.end(content);
+});
 const session = require('express-session');
 const sessionConfig = require('./models/session.config');
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -45,22 +63,27 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-io.on('connection', (socket) => {
-  console.log('A user connected');
 
-  // Xử lý sự kiện khi client gửi tin nhắn
-  socket.on('chat message', (msg) => {
-    // Xử lý tin nhắn và gửi lại cho tất cả client
-    io.emit('chat message', msg);
-  });
 
-  // Các sự kiện khác có thể được xử lý ở đây
-  // Đóng kết nối
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
+const io = new Server(server, {
+  // Socket.IO options
 });
-httpPlus.listen(3000, (req, res) => {
+io.on("connection", (socket) => {
+  console.log(`connect ${socket.id}`);
+
+  socket.on("disconnect", (reason) => {
+    console.log(`disconnect ${socket.id} due to ${reason}`);
+  });
+
+  socket.on('on-chat', data => {
+    io.emit('user-chat', data)
+  })
+});
+
+var host = process.env.HOST || '0.0.0.0';
+var post = process.env.PORT || 3000;
+// httpServer.listen(3333);
+server.listen(post, (req, res) => {
   console.log("connect to port 3000");
 });
-module.exports = app;
+module.exports = server;
