@@ -1,68 +1,60 @@
 document.addEventListener('DOMContentLoaded', function (){
     const save_btn = document.getElementById('save');
     const cancel_btn = document.getElementById('cancel');
+
+    const tableBody = document.querySelector("#TableOption");
+    const product_avatar = document.getElementById('product_avatar');
+
+    const video_product = document.getElementById('video_product');
+    const imageList = document.getElementById('imageList');
+
+    const OptionType = document.getElementById('OptionType');
+    const name = document.getElementById('name');
+    const myModal = new bootstrap.Modal(document.getElementById('OptionModal'));
+    //
     const title = document.getElementById('title');
     const price = document.getElementById('price');
     const quantity = document.getElementById('quantity');
     const description = document.getElementById('description');
+    const sold = document.getElementById('sold');
     const img_cover = document.getElementById('img_cover');
-    const tableBody = document.querySelector("#TableOption");
-    const product_avatar = document.getElementById('product_avatar');
     const video = document.getElementById('video');
-    const video_product = document.getElementById('video_product');
-    const imageList = document.getElementById('imageList');
     const list_img = document.getElementById('list_img');
-    const OptionType = document.getElementById('OptionType');
-    const name = document.getElementById('name');
+    //
+    const color = document.getElementById('color');
     const content = document.getElementById('content');
-    const update_option = document.getElementById('update_option');
+    const lableColor = document.getElementById('lableColor');
+    const lableContent = document.getElementById('lableContent');
 
-    let category_select = {
-        id: {type: String},
-        title: {type: String}
-    };
-    let option_select = {
-        type: {type: String},
-        title: {type: String},
-        content: {type: String},
-        feesArise: {type: String}
-    };
-    async function createProduct(category, title, description, img_cover, price,
-                                 quantity, sold, video, color, list_img, ram_rom) {
-        try {
-            const response = await axios.post(`/api/addProduct`, {
-                category: category,
-                title: title,
-                description: description,
-                img_cover: img_cover,
-                list_img: list_img,
-                price: price,
-                quantity: quantity,
-                sold: sold,
-                video: video,
-                color: color,
-                ram_rom: ram_rom
-            }, {
-                headers: {
-                    'Authorization': `${token}`
-                }
-            });
-            console.log("data:" + response.data);
-            return response.data;
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
-    async function getListCategory() {
-        try {
-            const response = await axios.post("/api/getListCategory", {
-            });
-            return response.data;
-        } catch (e) {
-            console.log(e)
-        }
-    }
+    const categorykey = document.getElementById('keyword');
+
+    const categoryDropdown = document.getElementById('categoryDropdown');
+    const dropdown = document.querySelectorAll('.dropdown_item');
+    dropdown.forEach(function (itemDropDown){
+        itemDropDown.addEventListener('click',function () {
+            let cateId = itemDropDown.getAttribute('data-id')
+            categorykey.value = cateId;
+            categoryDropdown.style.display = 'none';
+        })
+    })
+    let token = document.getElementById('textToken').textContent+"";
+
+    //
+    let myArray=[];
+
+
+    document.getElementById('openAddProductModal').addEventListener('click', function () {
+        myModal.show();
+    });
+
+    //<--->Hiển thị dropdown category
+    categorykey.addEventListener('click', function () {
+        categoryDropdown.style.display = 'block';
+    });
+
+
+
     img_cover.addEventListener("change", function (event) {
         product_avatar.src = URL.createObjectURL(event.target.files[0]);
         product_avatar.onload = function () {
@@ -101,52 +93,197 @@ document.addEventListener('DOMContentLoaded', function (){
         });
     });
 
-    let myArray = [
-        ['Color', 'Trắng', 'ffffff',0],
-        ['Ram', 'Trắng', 'ffffff',""],
-        ['Color', 'Trắng', 'ffffff', "12233243"],
-        ['Rom', 'Trắng', 'ffffff',0],
-        ['Color', 'Trắng', 'ffffff', "12233243"]
-    ];
 
-    // Duyệt qua các phần tử trong mảng
-    for (let i = 0; i < myArray.length; i++) {
-        let index = i;
-        let subArray = myArray[i];
+    //<---->Thêm-Xóa option
+    content.style.display = 'none';
+    lableContent.style.display='none'
+    OptionType.addEventListener('change', function() {
+        let selectedOption = OptionType.value;
 
-        // Tạo một hàng mới trong tbody
-        let row = document.createElement("tr");
+        // Ẩn tất cả các trường
+        color.style.display = 'none';
+        content.style.display = 'none';
 
-        // Tạo ô dữ liệu cho index
-        let indexCell = document.createElement("td");
-        indexCell.textContent = index;
-        row.appendChild(indexCell);
+        // Nếu Option là 'Color', hiển thị trường màu
+        if (selectedOption === 'Color') {
+            lableColor.style.display='block'
+            lableContent.style.display='none'
+            color.style.display = 'block';
+        } else {
+            // Nếu Option là 'Ram' hoặc 'Rom', hiển thị trường content
+            lableColor.style.display='none'
+            lableContent.style.display='block'
+            content.style.display = 'block';
+        }
+    });
+    document.getElementById('add_option').addEventListener('click', function() {
 
-        // Duyệt qua các phần tử trong mảng con
-        for (let j = 0; j < subArray.length; j++) {
-            let value = subArray[j];
+        // Lấy giá trị từ các trường input
+        let type = document.getElementById('OptionType').value;
+        let title = document.getElementById('name').value;
+        //let content = document.getElementById('content').value;
+        let contentValue;
 
-            // Tạo các ô dữ liệu cho type và color
-            let dataCell = document.createElement("td");
-            dataCell.textContent = value;
-            row.appendChild(dataCell);
+        if (type === 'Color') {
+            contentValue = color.value;
+        } else {
+            contentValue = content.value;
         }
 
-        // Tạo ô dữ liệu cho action (nút xóa)
-        let actionCell = document.createElement("td");
-        let deleteButton = document.createElement("button");
-        deleteButton.textContent = "Xóa";
-        deleteButton.addEventListener("click", function() {
-            // Xử lý sự kiện xóa tại đây
-            // Ví dụ: Xóa hàng tương ứng với nút xóa được nhấp
-            let row = this.parentNode.parentNode;
-            tableBody.removeChild(row);
-            console.log(index)
-        });
-        actionCell.appendChild(deleteButton);
-        row.appendChild(actionCell);
 
-        // Thêm hàng vào tbody
-        tableBody.appendChild(row);
+        // Kiểm tra xem các trường có giá trị không
+        if (type && name && content) {
+            // Tạo một hàng mới trong mảng
+            let newOption = {type, title,content: contentValue };
+            console.log(newOption)
+
+            // Thêm hàng mới vào mảng
+            myArray.push(newOption);
+
+            updateTable();
+
+            myModal.hide();
+        } else {
+            // Hiển thị thông báo hoặc thực hiện xử lý khi có lỗi
+            alert('Vui lòng điền đầy đủ thông tin.');
+        }
+    });
+
+    function updateTable() {
+        tableBody.innerHTML = '';
+
+        // Duyệt qua mảng và thêm các dòng mới vào bảng
+        for (let i = 0; i < myArray.length; i++) {
+            let option = myArray[i];
+
+            // Tạo một hàng mới trong tbody
+            let row = document.createElement("tr");
+
+            // Tạo ô dữ liệu cho index
+            let indexCell = document.createElement("td");
+            indexCell.textContent = i;
+            row.appendChild(indexCell);
+
+            // Duyệt qua các trường của đối tượng option
+            for (let key in option) {
+                let value = option[key];
+
+                // Tạo các ô dữ liệu cho từng trường
+                let dataCell = document.createElement("td");
+                dataCell.textContent = value;
+                row.appendChild(dataCell);
+            }
+
+            // Tạo ô dữ liệu cho action (nút xóa)
+            let actionCell = document.createElement("td");
+            let deleteButton = document.createElement("button");
+            deleteButton.textContent = "Xóa";
+            deleteButton.addEventListener("click", function () {
+                // Xử lý sự kiện xóa tại đây
+                // Ví dụ: Xóa hàng tương ứng với nút xóa được nhấp
+                let row = this.parentNode.parentNode;
+                let rowIndex = row.id.split('-')[1]; // Lấy index từ ID
+                deleteRow(rowIndex); // Gọi hàm xóa hàng
+            });
+            actionCell.appendChild(deleteButton);
+            row.appendChild(actionCell);
+
+            // Thêm hàng vào tbody
+            tableBody.appendChild(row);
+        }
     }
+    function deleteRow(index) {
+        // Xóa hàng khỏi mảng
+        myArray.splice(index, 1);
+
+        // Gọi hàm để cập nhật bảng
+        updateTable();
+    }
+    //<----->
+
+
+    //
+
+    //<-----> AddProduct
+    async function createProduct(category, title, description, img_cover, price,
+                                 quantity, sold, video,list_img,option) {
+        try {
+            var json_option = JSON.stringify(option);
+            var formData = new FormData();
+            formData.append("img_cover",img_cover)
+            formData.append("category",category)
+            formData.append("title",title)
+            formData.append("description",description)
+            formData.append("price",price)
+            formData.append("quantity",quantity)
+            formData.append("sold",sold)
+            formData.append("list_img",list_img)
+            formData.append("video",video)
+            formData.append("option",json_option)
+
+
+            const response = await axios.post("/api/addProduct",formData,{
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log("data:" + JSON.stringify(response.data));
+            return response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    save_btn.addEventListener("click", function () {
+        if(title.value.length <=0){
+            alert("Chưa chọn title");
+            return;
+        }
+        if(price.value.length <=0){
+            alert("Chưa chọn giá");
+            return;
+        }
+        if(quantity.value.length <=0){
+            alert("Chưa chọn quantity");
+            return;
+        }
+        if(description.value.length <=0){
+            alert("Chưa chọn description");
+            return;
+        }
+        if(categorykey.value.length <= 0){
+            alert("Chưa chọn loại");
+            return;
+        }
+        if(!img_cover){
+            alert("Chưa chọn ảnh");
+            return;
+        }
+        if(myArray.length <= 0){
+            alert("chưa chọn option");
+            return;
+        }
+        if(!video){
+            alert("Chưa chọn video");
+            return;
+        }
+        if(!list_img){
+            alert("Chưa chọn list_img");
+            return;
+        }
+        createProduct(categorykey.value, title.value, description.value, img_cover.files[0], price.value, quantity.value, "0", video.files[0],list_img.files[0], myArray)
+            .then(data => {
+                console.log(data);
+                if (data.code == 1) {
+                    location.reload();
+                } else if (data.code == 0) {
+                    if (data.message == "wrong token") {
+                        window.location.href = "/stech.manager/login/";
+                    }
+                }
+            }).catch(error => {
+                console.error('Login error:', error);
+            });
+    });
+    //<------->
 });

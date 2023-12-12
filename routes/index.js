@@ -20,8 +20,25 @@ const NotificationPublicModel = require("./../models/model.notification.pulic");
 router.get("/stech.manager/home", function (req, res, next) {
   res.render("index");
 });
-router.get("/stech.manager/product_action", function (req, res, next) {
-  res.render("product_action");
+router.get("/stech.manager/product_action", async function (req, res, next) {
+  const token = req.cookies.token
+  console.log(token)
+  try {
+    let listProduct = await ProductModel.productModel.find();
+    let listCategory = await CategoryModel.categoryModel.find();
+
+    console.log(listProduct[1].option[1].title)
+    res.render("product_action", {
+      products: listProduct,
+      categories:listCategory,
+      message: "get list product success",
+      token:token,
+      code: 1
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.send({message: "product not found", code: 0})
+  }
 });
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
