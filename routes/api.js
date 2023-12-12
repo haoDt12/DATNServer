@@ -75,7 +75,7 @@ router.post(
 
 router.post(
   "/addProduct",
-  // Middleware.authorizationToken,
+   Middleware.authorizationToken,
   upload.fields([
     { name: "img_cover", maxCount: 1 },
     { name: "list_img", maxCount: 10 },

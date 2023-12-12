@@ -141,9 +141,9 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(selectedColor)
     });
 
-    CreateProduct.addEventListener("click", function (e){
-        CreProModal.show();
-    });
+    // CreateProduct.addEventListener("click", function (e){
+    //     CreProModal.show();
+    // });
 
     ConfirmCrePro.addEventListener("click", function () {
         console.log(title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)

@@ -111,7 +111,7 @@ exports.addProduct = async (req, res) => {
         quantity: quantity,
         sold: sold,
         date: date_time,
-        option: option,
+        option: JSON.parse(option),
     });
     try {
         let img_cover = await UploadFile.uploadFile(
@@ -150,7 +150,7 @@ exports.addProduct = async (req, res) => {
         await product.save();
         return res.send({message: "add product success", code: 1});
     } catch (e) {
-        console.log(e);
+        console.log("sai"+e);
         return res.send({message: e.message.toString(), code: 0});
     }
 };
