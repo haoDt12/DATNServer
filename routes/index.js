@@ -144,37 +144,111 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
     let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
     let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({ path: 'address', select: 'city' });
     let dataMessage = await MessageModel.messageModel.find({ conversation: idConversation }).populate({ path: 'conversation' });
-    let conversationNoMessage = []
-    if (dataMessage.length <= 0) {
-      conversationNoMessage = await ConversationModel.conversationModel.find({ _id: idConversation }).populate({ path: 'user' });
+
+    let dataLastMessage = []
+    let latestMessages = {};
+    listConversation.map((con) => {
+      dataMessage.map((msg) => {
+        if (con._id + "" == msg.conversation._id + "") {
+          if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
+            latestMessages[con._id] = {
+              id: msg._id,
+              conversationID: con._id,
+              senderID: msg.senderId,
+              status: msg.status,
+              message: msg.message,
+              timestamp: msg.timestamp
+            };
+          }
+        }
+      })
+    })
+
+    for (let conversationID in latestMessages) {
+      dataLastMessage.push(latestMessages[conversationID]);
     }
 
+    let dataConversation = []
+    listConversation.map((con) => {
+      dataLastMessage.map((msg) => {
+        if (con._id + "" == msg.conversationID + "") {
+          let idMessage = msg.id
+          let message = msg.message
+          let time = msg.timestamp
+          let senderID = msg.senderID
+          let status = msg.status
+
+          dataConversation.push({
+            _id: con._id,
+            idMsg: idMessage,
+            name: con.name,
+            user: con.user,
+            timestamp: con.timestamp,
+            lastmessage: message,
+            lastSender: senderID,
+            status: status,
+            lasttime: time
+          })
+        }
+      })
+    })
+
+    const conversationNoMessageContent = listConversation.filter(obj1 =>
+      !dataConversation.some(obj2 => obj1._id === obj2._id)
+    );
+
+    conversationNoMessageContent.map((con) => {
+      dataConversation.push({
+        _id: con._id,
+        idMessage: "",
+        name: con.name,
+        user: con.user,
+        timestamp: con.timestamp,
+        lastmessage: "",
+        lastSender: "",
+        status: "",
+        lasttime: ""
+      })
+    })
+
+    let conversationNoMessage = []
     let listUserIDInChat = []
-    await Promise.all(dataMessage.map((message) => {
-      if (!listUserIDInChat.includes(message.senderId)) {
-        listUserIDInChat.push(message.senderId);
-      }
-      if (!listUserIDInChat.includes(message.receiverId)) {
-        listUserIDInChat.push(message.receiverId);
-      }
-    }));
+
+    if (dataMessage.length <= 0) {
+      conversationNoMessage = await ConversationModel.conversationModel.find({ _id: idConversation }).populate({ path: 'user' });
+      conversationNoMessage.map((item) => {
+        item.user.map((user) => {
+          if (!listUserIDInChat.includes(user._id)) {
+            listUserIDInChat.push(user._id);
+          }
+        })
+      })
+    }
+    else {
+      await Promise.all(dataMessage.map((message) => {
+        if (!listUserIDInChat.includes(message.senderId)) {
+          listUserIDInChat.push(message.senderId);
+        }
+        if (!listUserIDInChat.includes(message.receiverId)) {
+          listUserIDInChat.push(message.receiverId);
+        }
+      }));
+    }
 
     let dataOtherUser = []
     await Promise.all(listUserIDInChat.map(async (userID) => {
-      if (userID != dataUserLoged[0]._id) {
+      if (userID != idUserLoged) {
         const userData = await UserModel.userModel.find({ _id: userID }).populate({ path: 'address', select: 'city' });
         dataOtherUser = userData
       }
     }));
 
-    // console.log(conversationNoMessage);
-    // console.log("====================");
-    // console.log(dataOtherUser);
     res.render("chat", {
-      conversations: listConversation.length > 0 ? listConversation : [],
+      conversations: dataConversation.length > 0 ? dataConversation : [],
       userLoged: dataUserLoged[0],
       dataMessage: dataMessage,
-      dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
+      // dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
+      dataHeaderMsg: dataOtherUser,
       idConversation: idConversation,
       isOpenChat: true,
       message: "get data chat success",
@@ -265,6 +339,9 @@ router.get("/stech.manager/chat", async function (req, res, next) {
       })
     })
 
+    console.log(dataConversation);
+    console.log("==================");
+    console.log(dataLastMessage);
     res.render("chat", {
       conversations: dataConversation.length > 0 ? dataConversation : [],
       userLoged: dataUserLoged[0],
@@ -400,17 +477,17 @@ router.get("/stech.manager/notification", async function (req, res, next) {
   }
 });
 router.get("/stech.manager/voucher", async function (req, res, next) {
-    try {
-        let listVoucher = await VoucherModel.voucherModel.find();
-        res.render("voucher", {
-            vouchers: listVoucher,
-            message: "get list voucher success",
-            code: 1,
-        });
-    } catch (e) {
-        console.log(e.message);
-        res.send({ message: "user not found", code: 0 });
-    }
+  try {
+    let listVoucher = await VoucherModel.voucherModel.find();
+    res.render("voucher", {
+      vouchers: listVoucher,
+      message: "get list voucher success",
+      code: 1,
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "user not found", code: 0 });
+  }
 });
 router.get("/stech.manager/banner", async function (req, res, next) {
   try {

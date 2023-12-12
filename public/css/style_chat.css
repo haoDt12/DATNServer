@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter&family=Roboto:wght@400&display=swap');
+
 body {
     font-size: 15px;
     font-weight: 300;
@@ -300,6 +301,10 @@ input:focus {
     padding-right: 0.5rem !important;
 }
 
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
 .input-group-text {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -559,7 +564,18 @@ img.shadow {
     position: relative;
 }
 
+.chat.chat-panel .chat-emoji-trigger {
+    position: relative;
+}
+
 .chat.chat-panel .chat-upload.active {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(1);
+    bottom: 50px;
+}
+
+.chat.chat-panel .chat-emoji.active {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
     transform: scale(1);
@@ -573,6 +589,76 @@ img.shadow {
     position: absolute;
     left: -5px;
     bottom: -50px;
+}
+
+.chat.chat-panel .chat-emoji {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(0);
+    position: absolute;
+    left: -5px;
+    bottom: -50px;
+}
+
+#area-upload {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+#area-upload>div {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+
+#emoji-container {
+    transform: translateX(-125px);
+    background-color: white;
+    border-radius: 5px;
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+#emoji-table {
+    display: grid;
+    padding: 5px;
+    grid-template-columns: repeat(6, 1fr);
+    /* Điều chỉnh số cột */
+    gap: 5px;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+#emoji-table span:hover {
+    transform: scale(1.2);
+    /* Phóng to emoji khi rê chuột qua */
+}
+
+#emoji-table span {
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    display: inline-block;
+    margin: 0;
+
+    /* animation: bounce 0.5s infinite;  */
+    /* dont open */
 }
 
 .btn.btn-light-secondary.btn-blushing,
