@@ -217,7 +217,9 @@ document.addEventListener('DOMContentLoaded', function (){
             formData.append("price",price)
             formData.append("quantity",quantity)
             formData.append("sold",sold)
-            formData.append("list_img",list_img)
+            list_img.forEach((file) => {
+                formData.append("list_img", file);
+            });
             formData.append("video",video)
             formData.append("option",json_option)
 
@@ -271,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function (){
             alert("Chưa chọn list_img");
             return;
         }
-        createProduct(categorykey.value, title.value, description.value, img_cover.files[0], price.value, quantity.value, "0", video.files[0],list_img.files[0], myArray)
+        createProduct(categorykey.value, title.value, description.value, img_cover.files[0], price.value, quantity.value, "0", video.files[0],Array.from(list_img.files), myArray)
             .then(data => {
                 console.log(data);
                 if (data.code == 1) {
