@@ -151,7 +151,7 @@ exports.vnpayReturn = async (req, res) => {
                     return res.redirect(`http://${ipAddress}:3000/api/payFail`);
                 }
                 let currentProduct = cart.product;
-                let newProduct = currentProduct.filter(item1 => !mProduct.some(item2 => item2.productId.toString() === item1.productId.toString()));
+                let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
                 console.log(newProduct)
                 cart.product = newProduct;
                 await cart.save();
@@ -183,4 +183,20 @@ function sortObject(obj) {
         sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
     }
     return sorted;
+}
+const arraysEqual = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+        const obj1 = arr1[i];
+        const obj2 = arr2[i];
+
+        if (obj1.type !== obj2.type || obj1.title !== obj2.title|| obj1.content !== obj2.content) {
+            return false;
+        }
+    }
+
+    return true;
 }
