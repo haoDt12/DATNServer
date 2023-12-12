@@ -138,7 +138,7 @@ block content
                                                 //if itemcart.productId
                                                 tr
                                                     td(style='text-align: center')
-                                                        input#quantity(type='checkbox' class='product-checkbox' data-price=cartProduct.price data-quantity=cartProduct.quantity)
+                                                        input#quantity(type='checkbox' class='product-checkbox' data-product = cartProduct data-price=cartProduct.price data-quantity=cartProduct.quantity)
                                                     // Hiển thị thông tin sản phẩm trong giỏ hàng
 
                                                     td.p-4
@@ -163,11 +163,11 @@ block content
                                                                                     when "Rom"
                                                                                         -hasRam = true
                                                                                         = optionColor.content
-                                                    td#priceUp.text-right.font-weight-semibold.align-middle.p-4= cartProduct.price
+                                                    td#priceUp.text-right.font-weight-semibold.align-middle.p-4(style='width: 180px') #{Intl.NumberFormat('vi-VN').format(cartProduct.price)} VND
                                                     td.align-middle.p-4
                                                         input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
                                                         button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id data-productId=cartProduct.productId) Lưu
-                                                    td#total.text-right.font-weight-semibold.align-middle.p-4(class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{cartProduct.quantity * cartProduct.price}
+                                                    td#total.text-right.font-weight-semibold.align-middle.p-4( style='width: 180px' class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{Intl.NumberFormat('vi-VN').format(cartProduct.quantity * cartProduct.price)} VND
                                                     td.text-center.align-middle.px-0
                                                         a#deleteCart.shop-tooltip.close.float-none.text-danger.deleteCartPro(href='#' title='' data-id=cartProduct._id data-productId=cartProduct.productId  data-original-title='Remove'  data-bs-target="#confirmDeleteCate") &times;
                                         else
@@ -190,5 +190,5 @@ block content
                                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                                             button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
                             .float-end
-                                a.btn.btn-lg.btn.btn-success.mt-2(type='button', href='/stech.manager/pay') Order
+                                a.btn.btn-lg.btn.btn-success.mt-2(type='button', id='goOrder') Order
         script(src='/js/cart.js')

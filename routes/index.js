@@ -161,7 +161,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
   try {
     var encodedValueStatus = req.cookies.status;
 
-    if (encodedValueStatus === undefined) {
+    if (encodedValueStatus === undefined || Buffer.from(encodedValueStatus, 'base64').toString('utf8') == 'All') {
       let orders = await OrderModel.modelOrder.find();
       console.log('Orders:', orders);
       const ordersWithProductInfo = await Promise.all(orders.map(async order => {
@@ -216,7 +216,29 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
   }
 });
 router.get("/stech.manager/invoice", function (req, res, next) {
-  res.render("invoice");
+
+  function getCookie(name) {
+    const match = req.headers.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    if (match) return match[2];
+  }
+
+  const orderDataCookie = getCookie('dataToInvoice');
+
+  if (orderDataCookie) {
+    // Giải mã cookie để có được dữ liệu đặt hàng
+    const orderData = JSON.parse(decodeURIComponent(orderDataCookie));
+
+    // Truyền dữ liệu vào layout "invoice.pug"
+    res.render("invoice", {
+      guestName: orderData.guestName,
+      guestPhone: orderData.guestPhone,
+      guestAddress: orderData.guestAddress,
+      products: orderData.product,
+    });
+  } else {
+    // Xử lý khi không có giá trị cookie
+    res.send({ message: "No order data found in the cookie", code: 0 });
+  }
 });
 router.get("/stech.manager/cart", async function (req, res, next) {
   // const userId = req.query.userId;
@@ -297,6 +319,15 @@ router.get("/stech.manager/banner", async function (req, res, next) {
   }
 });
 router.get("/stech.manager/pay", function (req, res, next) {
-  res.render("pay");
+  try {
+    var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)selectedProducts\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    var listProduct = JSON.parse(decodeURIComponent(cookieValue));
+
+    return res.render("pay",{products: listProduct})
+
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "pay not found", code: 0 })
+  }
 });
 module.exports = router;
