@@ -1,5 +1,6 @@
 const VoucherModel = require("../models/model.voucher")
 const UserModel = require("../models/model.user");
+const moment = require('moment');
 exports.addVoucherForOneUser = async (req, res) => {
     let userId = req.body.userId;
     let title = req.body.title;
@@ -26,6 +27,10 @@ exports.addVoucherForOneUser = async (req, res) => {
         return res.send({message: "userId is required", code: 0});
     }
     try {
+        let user = await UserModel.userModel.findById(userId);
+        if(!user){
+            return res.send({message: "user not found", code: 0});
+        }
         let voucher = new VoucherModel.voucherModel({
             userId: userId,
             title: title,
@@ -66,7 +71,7 @@ exports.addVoucherForAllUser = async (req, res) => {
         let listUser = await UserModel.userModel.find();
         await Promise.all(listUser.map(async item => {
             let voucher = new VoucherModel.voucherModel({
-                _id: voucherNew._id.toString(),
+                idAll: voucherNew._id.toString(),
                 userId: item._id.toString(),
                 title: title,
                 content: content,
@@ -89,7 +94,8 @@ exports.getVoucherByUserId = async (req, res) => {
     }
     try {
         let listVoucher = await VoucherModel.voucherModel.find({userId: userId});
-        return res.send({message: "get list voucher success", listVoucher: listVoucher, code: 1});
+        let listVoucherFill = filterNotificationsForUser(listVoucher)
+        return res.send({message: "get list voucher success", listVoucher: listVoucherFill, code: 1});
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
@@ -119,7 +125,7 @@ exports.editVoucher = async (req, res) => {
         return res.send({message: "voucherId is required", code: 0});
     }
     try {
-        let voucher = await VoucherModel.voucherModel.findOne({_id: voucherId});
+        let voucher = await VoucherModel.voucherModel.findOne({idAll: voucherId});
         let newVoucher = {
             title: voucher.title,
             content: voucher.content,
@@ -142,7 +148,7 @@ exports.editVoucher = async (req, res) => {
         if (fromDate !== null) {
             newVoucher.fromDate = fromDate;
         }
-        await VoucherModel.voucherModel.updateMany({_id: voucherId}, {$set: newVoucher});
+        await VoucherModel.voucherModel.updateMany({idAll: voucherId}, {$set: newVoucher});
         return res.send({message: "edit voucher success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -152,9 +158,23 @@ exports.editVoucher = async (req, res) => {
 exports.getAllVoucher = async (req, res) => {
     try {
         let listVoucher = await VoucherModel.voucherModel.find();
-        return res.send({message: "get list voucher success", listVoucher: listVoucher, code: 1});
+        let listVoucherFill = filterNotificationsForUser(listVoucher)
+        return res.send({message: "get list voucher success", listVoucher: listVoucherFill, code: 1});
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+function filterNotificationsForUser(listVoucher) {
+    const currentDate = moment();
+    return listVoucher.filter(notification => {
+        const fromDate = moment(notification.fromDate);
+        const toDate = moment(notification.toDate);
+        return (
+            (currentDate.isBetween(fromDate, toDate) ||
+                currentDate.isSame(fromDate) ||
+                currentDate.isSame(toDate))
+        );
+    });
+}
+

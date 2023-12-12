@@ -38,8 +38,8 @@ exports.creatOrder = async (req, res) => {
             }
             let feesArise = 0;
             item.option.map(item => {
-                if(item.feesArise){
-                feesArise += Number(item.feesArise);
+                if (item.feesArise) {
+                    feesArise += Number(item.feesArise);
                 }
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
@@ -57,12 +57,82 @@ exports.creatOrder = async (req, res) => {
         }
         let currentProduct = cart.product;
         console.log(currentProduct);
-        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString()));
+        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         console.log(newProduct)
         cart.product = newProduct;
         await cart.save();
         await order.save();
         console.log(order);
+        return res.send({message: "create order success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "create order fail", code: 0});
+    }
+}
+exports.creatOrderGuest = async (req, res) => {
+    let guestName = req.body.guestName;
+    let guestPhone = req.body.guestPhone;
+    let guestAddress = req.body.guestAddress;
+    let product = req.body.product;
+    let status = req.body.status;
+
+    // console.log(product);
+    let date = new Date();
+    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    if (guestPhone == null) {
+        return res.send({message: "guestPhone is required", code: 0});
+    }
+    if (guestName == null) {
+        return res.send({message: "guestName is required", code: 0});
+    }
+    if (guestAddress == null) {
+        return res.send({message: "guestAddress is required", code: 0});
+    }
+    if (status == null) {
+        return res.send({message: "status is required", code: 0});
+    }
+    if (product === undefined) {
+        return res.send({message: "product is required", code: 0});
+    }
+
+
+    try {
+        let total = 0;
+        let listProduct = JSON.parse(product)
+        await Promise.all(listProduct.map(async item => {
+            let product = await ProductModel.productModel.findById(item.productId);
+            if (!product) {
+                return res.send({message: "product not found", code: 0});
+            }
+            let quantity = Number(product.quantity);
+            let sold = Number(product.sold);
+            if (quantity !== 0) {
+                newQuantity = quantity - 1;
+                newShold = sold + 1;
+                product.quantity = newQuantity.toString();
+                product.sold = newShold.toString();
+                await product.save();
+            } else {
+                return res.send({message: "product is out of stock ", code: 0});
+            }
+            let feesArise = 0;
+            item.option.map(item => {
+                if(item.feesArise){
+                    feesArise += Number(item.feesArise);
+                }
+            })
+            total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
+        }));
+        let order = new OrderModel.modelOrder({
+            guestName: guestName,
+            product: listProduct,
+            guestPhone: guestPhone,
+            guestAddress: guestAddress,
+            total: total,
+            date_time: date_time,
+            status: status
+        })
+        await order.save();
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -177,4 +247,20 @@ exports.editOrder = async (req, res) => {
         console.log(e.message);
         return res.send({message: "edit order fail", code: 0});
     }
+}
+const arraysEqual = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+        const obj1 = arr1[i];
+        const obj2 = arr2[i];
+
+        if (obj1.type !== obj2.type || obj1.title !== obj2.title || obj1.content !== obj2.content) {
+            return false;
+        }
+    }
+
+    return true;
 }

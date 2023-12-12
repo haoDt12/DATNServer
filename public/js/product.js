@@ -73,32 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    async function updateProduct(productId, category, title, description, img_cover, price, quantity, sold, video, color, list_img, ram_rom) {
-        try {
-            const response = await axios.post("/api/editProduct", {
-                productId: productId,
-                category: category,
-                title: title,
-                description: description,
-                img_cover: img_cover,
-                list_img: list_img,
-                price: price,
-                quantity: quantity,
-                sold: sold,
-                video: video,
-                color: color,
-                ram_rom: ram_rom
-            }, {
-                headers: {
-                    'Authorization': `${token}`
-                }
-            });
-            console.log("data:" + response.data);
-            return response.data;
-        } catch (error) {
-            console.log(error);
-        }
-    }
     async function deleteProduct(productId) {
         try {
             const response = await axios.post("/api/deleteProduct", {
@@ -112,15 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.data;
         } catch (e) {
             console.log(e);
-        }
-    }
-    async function getListCategory() {
-        try {
-            const response = await axios.post("/api/getListCategory", {
-            });
-            return response.data;
-        } catch (e) {
-            console.log(e)
         }
     }
     async function getProduct(productId) {
@@ -139,18 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // async function getListProduct() {
-    //     try {
-    //         const response = await axios.get("/api/getListProduct", {
-    //             headers: {
-    //                 'Authorization': `${token}`
-    //             }
-    //         });
-    //         return response.data;
-    //     } catch (e) {
-    //         console.log(e)
-    //     }
-    // }
     const category = document.getElementById("category");
     const title = document.getElementById("title");
     const description = document.getElementById("description");
@@ -188,9 +141,9 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(selectedColor)
     });
 
-    CreateProduct.addEventListener("click", function (e){
-        CreProModal.show();
-    });
+    // CreateProduct.addEventListener("click", function (e){
+    //     CreProModal.show();
+    // });
 
     ConfirmCrePro.addEventListener("click", function () {
         console.log(title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
@@ -225,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
     AddCartPro.forEach(function (AddToCart){
         AddToCart.addEventListener("click", function (){
             let Id_product = this.getAttribute("data-id");
@@ -357,7 +311,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Login error:', error);
             });
         })
-    })
+    });
+
     ConfirmAddCartPro.addEventListener("click", async function () {
         if (Object.keys(optionRamRequest).length){
             optionRequest.push(optionRamRequest);
@@ -401,7 +356,8 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.log(error)
         }
-    })
+    });
+
     UpdatePro.forEach(function (UpdateProduct){
         UpdateProduct.addEventListener("click", function (){
             let Id_product = this.getAttribute("data-id");

@@ -42,7 +42,7 @@ router.post("/verifyOtpLogin", ApiUserController.verifyOtpLogin);
 router.post("/editPassword", Middleware.authorizationToken, ApiUserController.editPassword);
 router.post("/verifyOtpEditPass", Middleware.authorizationToken, ApiUserController.verifyOtpEditPass);
 router.post("/getPassWord", Middleware.authorizationToken, ApiUserController.getPassWord);
-router.get("/resetPassword", Middleware.authorizationToken, ApiUserController.resetPassword);
+router.get("/resetPassword", ApiUserController.resetPassword);
 router.post("/updateconversationID", ApiConversation.updateconversationID);
 
 router.post(
@@ -75,7 +75,7 @@ router.post(
 
 router.post(
   "/addProduct",
-  // Middleware.authorizationToken,
+   Middleware.authorizationToken,
   upload.fields([
     { name: "img_cover", maxCount: 1 },
     { name: "list_img", maxCount: 10 },
@@ -131,6 +131,7 @@ router.post(
 );
 
 router.post("/createOrder", Middleware.authorizationToken, ApiOrder.creatOrder);
+router.post("/creatOrderGuest", Middleware.authorizationToken, ApiOrder.creatOrderGuest);
 router.post(
   "/getOrderByUserId",
   Middleware.authorizationToken,

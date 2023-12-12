@@ -68,8 +68,10 @@ exports.editCategory = async (req, res) => {
             if (match.indexOf(file.mimetype) === -1) {
                 return res.send({ message: "The uploaded file is not in the correct format", code: 0 });
             }
-            const pathImgDelete = category.img.split("3000");
-            UploadFile.deleteFile(res, pathImgDelete[1]);
+            const pathImgDelete = category.img.split("3000")[1];
+            if(pathImgDelete !== undefined){
+                UploadFile.deleteFile(res, pathImgDelete);
+            }
             let statusCode = await UploadFile.uploadFile(req, category._id.toString(), "category", file, ".jpg");
             if (statusCode === 0) {
                 return res.send({ message: "Upload file fail", code: 0 });
@@ -97,20 +99,22 @@ exports.deleteCategory = async (req, res) => {
         }
         const pathFolderDelete = category.img.split("/")[5];
         const pathImgDelete = category.img.split("3000")[1];
-        fs.unlink(path.join(__dirname, "../public" + pathImgDelete), (err) => {
-            if (err) {
-                console.log(err);
-            } else {
-                fs.rmdir(path.join(__dirname, "../public/images/category/" + pathFolderDelete), async (err) => {
-                    if (err) {
-                        console.log(err.message);
-                    } else {
-                        await CategoryModel.categoryModel.deleteOne({ _id: categoryId });
-                        return res.send({ message: "Delete category success", code: 1 });
-                    }
-                });
-            }
-        })
+        if(pathImgDelete !== undefined && pathFolderDelete !== undefined){
+            fs.unlink(path.join(__dirname, "../public" + pathImgDelete), (err) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    fs.rmdir(path.join(__dirname, "../public/images/category/" + pathFolderDelete), async (err) => {
+                        if (err) {
+                            console.log(err.message);
+                        } else {
+                            await CategoryModel.categoryModel.deleteOne({ _id: categoryId });
+                            return res.send({ message: "Delete category success", code: 1 });
+                        }
+                    });
+                }
+            })
+        }
     } catch (e) {
         console.log(e.message);
         return res.send({ message: e.message.toString(), code: 0 });

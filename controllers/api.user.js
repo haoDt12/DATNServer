@@ -446,7 +446,7 @@ exports.editPassword = async (req, res) => {
     if (newPass == null) {
         return res.send({message: "newPass id is required", code: 0});
     }
-    if (!passwordRegex.test(password)) {
+    if (!passwordRegex.test(newPass)) {
         return res.send({
             message:
                 "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
@@ -458,10 +458,11 @@ exports.editPassword = async (req, res) => {
         if (!user) {
             return res.send({message: "user not found", code: 0});
         }
-        let index = sendOTPByEmail(userEmail.email);
+        let index = sendOTPByEmail(user.email);
         if (index === 0) {
-            return res.send({message: "Verify user fail", code: 0});
+            return res.send({message: "send otp fail", code: 0});
         } else {
+            user.newPassword = newPass;
             user.otp = index;
             await user.save();
             return res.send({
@@ -484,7 +485,12 @@ exports.verifyOtpEditPass = async (req, res) => {
     try {
         let user = await UserModel.userModel.findOne({_id: userId, otp: otp})
         if (user) {
+            if(user.newPassword === null){
+                return res.send({message: "Verify user fail", code: 0});
+            }
             user.otp = null;
+            user.password = user.newPassword;
+            user.newPassword = null;
             await user.save();
             return res.send({
                 message: "edit pass success", code: 1,
@@ -506,13 +512,17 @@ exports.getPassWord = async (req, res) => {
     if (username == null) {
         return res.send({message: "username is required", code: 0});
     }
-    if (!phoneNumberRegex.test(username) || !emailRegex.test(username)) {
-        return res.send({
-            message: "user is a email or a number phone",
-            code: 0,
-        });
+    if(!phoneNumberRegex.test(username) && isNumeric(username)){
+        return res.send({message: "The phone number is not in the correct format", code: 0});
+    }
+    if(!emailRegex.test(username) && !isNumeric(username)){
+        return res.send({message: "The email is not in the correct format", code: 0});
     }
     if (phoneNumberRegex.test(username)) {
+        let user = await UserModel.userModel.findOne({phone_number:username});
+        if(!user){
+            return res.send({message: "user not found", code: 0});
+        }
         const apiKey = process.env.API_KEY;
         const baseUrl = process.env.BASE_URL;
         const to = formatPhoneNumber(username);
@@ -534,8 +544,8 @@ exports.getPassWord = async (req, res) => {
         axios
             .post(baseUrl, payload, {headers})
             .then(async () => {
-                userPhone.link = link;
-                await userPhone.save();
+                user.link = link;
+                await user.save();
                 return res.send({
                     message: "Please verify your account",
                     code: 1,
@@ -547,28 +557,39 @@ exports.getPassWord = async (req, res) => {
             });
     }
     if (emailRegex.test(username)) {
-        let index = sendOTPByEmailGetPass(username, link);
-        if (index === 0) {
-            return res.send({message: "Verify user fail", code: 0});
-        } else {
-            user.link = link;
-            await user.save();
+        try {
+            let user = await UserModel.userModel.findOne({email:username});
+            let index = sendOTPByEmailGetPass(username, text);
+            if (index === 0) {
+                return res.send({message: "Verify user fail", code: 0});
+            } else {
+                user.link = link;
+                await user.save();
+                return res.send({
+                    message: "Please verify your account",
+                    code: 1,
+                });
+            }
+        }catch (e) {
+            console.log(e.message)
             return res.send({
-                message: "Please verify your account",
-                code: 1,
+                message: e.message.toString(),
+                code: 0,
             });
         }
     }
 }
 exports.resetPassword = async (req, res) => {
     const key = req.query.key;
+    let ipAddress = process.env.IP_ADDRESS;
     const newPass = generateRandomPassword(6);
     const text = `STECH xin chào bạn\nmật khẩu mới của bạn là: ${newPass}`;
     if (key == null) {
         return res.send({message: "key is required", code: 0});
     }
+    const link = `http://${ipAddress}:3000/api/resetPassword?key=${key}`
     try {
-        let user = await UserModel.userModel.findOne({link: key});
+        let user = await UserModel.userModel.findOne({link: link});
         let index = sendNewPassByEmailGetPass(user.email, text);
         if (index === 0) {
             return res.send({message: "Verify user fail", code: 0});
@@ -593,5 +614,10 @@ function generateRandomPassword(length) {
         password += charset.charAt(randomIndex);
     }
     return password;
+}
+function isNumeric(str) {
+    if (typeof str != "string") return false // we only process strings!
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+        !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
 
