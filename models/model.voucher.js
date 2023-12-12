@@ -7,7 +7,8 @@ const voucherSchema = db.mongoose.Schema({
     fromDate: {type: String, required: true},
     toDate: {type: String, required: true},
     userId: {type: db.mongoose.Schema.Types.ObjectId, required: true},
-    status: {type: String, default: status, required: true}
+    status: {type: String, default: status, required: true},
+    idAll: {type: String, required: false},
 }, {
     collection: "Voucher"
 });

@@ -232,29 +232,38 @@ exports.deleteProduct = async (req, res) => {
         let pathFolderDelete = img_cover.split("/")[5];
         let isRemove = true;
         list_img.map((item) => {
-            fs.unlink(
-                path.join(__dirname, "../public" + item.split("3000")[1]),
-                (err) => {
-                    if (err) {
-                        isRemove = false;
+            if(item.split("3000")[1] !== undefined){
+                fs.unlink(
+                    path.join(__dirname, "../public" + item.split("3000")[1]),
+                    (err) => {
+                        if (err) {
+                            console.log(err.message);
+                            isRemove = false;
+                        }
                     }
-                }
-            );
+                );
+            }
         });
         if (isRemove === false) {
             return res.send({message: "delete product fail", code: 0});
         }
-        fs.rmdir(
-            path.join(__dirname, "../public/images/product/" + pathFolderDelete),
-            async (err) => {
-                if (err) {
-                    console.log(err.message);
-                } else {
-                    await ProductModel.productModel.deleteOne({_id: productId});
-                    return res.send({message: "Delete product success", code: 1});
+        if(pathFolderDelete !== undefined){
+            fs.rmdir(
+                path.join(__dirname, "../public/images/product/" + pathFolderDelete),
+                async (err) => {
+                    if (err) {
+                        isRemove = false;
+                        console.log(err.message);
+                    } else {
+                        await ProductModel.productModel.deleteOne({_id: productId});
+                        return res.send({message: "Delete product success", code: 1});
+                    }
                 }
-            }
-        );
+            );
+        }
+        if(isRemove === false){
+            return res.send({message: "delete product fail", code: 0});
+        }
     } catch (e) {
         console.log(e);
         return res.send({message:e.message.toString(), code: 0});
@@ -315,7 +324,9 @@ exports.editProduct = async (req, res) => {
                 console.log(fileimg_cover[0].mimetype);
                 return res.send({message: "The uploaded file is not in the correct format 1", code: 0});
             }
-            UploadFile.deleteFile(res, product.img_cover.split("3000")[1]);
+            if(product.img_cover.split("3000")[1]!== undefined){
+                UploadFile.deleteFile(res, product.img_cover.split("3000")[1]);
+            }
             let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
             if (img_cover === 0) {
                 return res.send({message: "upload file fail", code: 0});
@@ -335,7 +346,9 @@ exports.editProduct = async (req, res) => {
                 return res.send({message: "The uploaded file is not in the correct format 2", code: 0});
             }
             product.list_img.map((item) => {
-                UploadFile.deleteFile(res, item.split("3000")[1]);
+                if(item.split("3000")[1] !== undefined){
+                    UploadFile.deleteFile(res, item.split("3000")[1]);
+                }
             })
             let list_img = await UploadFile.uploadFiles(req, product._id.toString(), "product", filelist_img, ".jpg");
             if (list_img === 0) {
@@ -349,7 +362,9 @@ exports.editProduct = async (req, res) => {
                 console.log(filevideo[0].mimetype)
                 return res.send({message: "The uploaded file is not in the correct format 3", code: 0});
             }
-            UploadFile.deleteFile(res, product.video.split("3000")[1]);
+            if(product.video.split("3000")[1] !== undefined){
+                UploadFile.deleteFile(res, product.video.split("3000")[1]);
+            }
             let video = await UploadFile.uploadFile(req, product._id.toString(), "product", filevideo[0], ".mp4");
             if (video === 0) {
                 return res.send({message: "upload file fail", code: 0});
