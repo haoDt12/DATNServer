@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter&family=Roboto:wght@400&display=swap');
+
 body {
     font-size: 15px;
     font-weight: 300;
@@ -300,6 +301,10 @@ input:focus {
     padding-right: 0.5rem !important;
 }
 
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
 .input-group-text {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -525,18 +530,6 @@ img.shadow {
     position: relative;
 }
 
-.chat.chat-panel .left-chat-message,
-.chat.chat-panel .right-chat-message {
-    padding: 0.5rem 1rem;
-    max-width: 47%;
-}
-
-.chat.chat-panel .left-chat-message,
-.chat.chat-panel .right-chat-message {
-    padding: 0.5rem 1rem;
-    max-width: 47%;
-}
-
 .right-chat-message {
     position: relative;
     margin: 0 10px 0 0;
@@ -550,16 +543,77 @@ img.shadow {
     box-shadow: 0 4px 8px 0 rgb(34 41 47 / 12%);
 }
 
+.right-chat-message-deleted {
+    border: solid 1px #bcc0c4;
+    border-radius: 5px;
+    padding-right: 16px;
+    padding-left: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: #bcc0c4;
+}
+
 .chat.chat-panel .message-options.dark .message-arrow i,
 .chat.chat-panel .message-options.dark .message-time {
     color: #fff !important;
+}
+
+.chat-action-right a:hover {
+    background-color: #f2f2f2;
+    border-radius: 8px;
+}
+
+.chat-action-left a:hover {
+    background-color: #f2f2f2;
+    border-radius: 8px;
 }
 
 .chat.chat-panel .chat-upload-trigger {
     position: relative;
 }
 
+.chat.chat-panel .chat-action-right-trigger {
+    position: relative;
+}
+
+.chat.chat-panel .chat-action-left-trigger {
+    position: relative;
+}
+
+.chat.chat-panel .chat-emoji-trigger {
+    position: relative;
+}
+
 .chat.chat-panel .chat-upload.active {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(1);
+    bottom: 50px;
+}
+
+.chat.chat-panel .chat-action-right.active {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(1);
+    transform: translateX(-45px);
+    bottom: 90px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.chat.chat-panel .chat-action-left.active {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(1);
+    /* transform: translateX(-45px); */
+    bottom: 70px;
+    background-color: ghostwhite;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.chat.chat-panel .chat-emoji.active {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
     transform: scale(1);
@@ -573,6 +627,98 @@ img.shadow {
     position: absolute;
     left: -5px;
     bottom: -50px;
+}
+
+.chat.chat-panel .chat-action-right {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(0);
+    position: absolute;
+    left: -5px;
+    bottom: -50px;
+}
+
+.chat.chat-panel .chat-action-left {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(0);
+    position: absolute;
+    left: -5px;
+    bottom: -50px;
+}
+
+.chat.chat-panel .chat-emoji {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(0);
+    position: absolute;
+    left: -5px;
+    bottom: -50px;
+}
+
+#area-upload {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+#area-upload>div {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.sidebar-nav ul li a {
+    text-decoration: none;
+}
+
+
+#emoji-container {
+    transform: translateX(-125px);
+    background-color: white;
+    border-radius: 5px;
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+}
+
+#emoji-table {
+    display: grid;
+    padding: 5px;
+    grid-template-columns: repeat(6, 1fr);
+    /* Điều chỉnh số cột */
+    gap: 5px;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+#emoji-table span:hover {
+    transform: scale(1.2);
+    /* Phóng to emoji khi rê chuột qua */
+}
+
+#emoji-table span {
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    display: inline-block;
+    margin: 0;
+
+    /* animation: bounce 0.5s infinite;  */
+    /* dont open */
 }
 
 .btn.btn-light-secondary.btn-blushing,
@@ -645,6 +791,28 @@ img.shadow {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
     transform: scale(1);
+}
+
+.active-message-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.active-message-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.active-message-left i {
+    cursor: pointer;
+}
+
+.active-message-right i {
+    cursor: pointer;
 }
 
 .chat .chat-user-detail {

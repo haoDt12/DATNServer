@@ -131,6 +131,8 @@ router.post(
 );
 
 router.post("/createOrder", Middleware.authorizationToken, ApiOrder.creatOrder);
+router.post("/getPriceZaloPay", Middleware.authorizationToken, ApiOrder.getPriceZaloPay);
+router.post("/creatOrderZaloPay", Middleware.authorizationToken, ApiOrder.creatOrderZaloPay);
 router.post("/creatOrderGuest", Middleware.authorizationToken, ApiOrder.creatOrderGuest);
 router.post(
   "/getOrderByUserId",
@@ -261,8 +263,17 @@ router.post("/getConversationByID", Middleware.authorizationToken, ApiConversati
 router.post("/getConversation", Middleware.authorizationToken, ApiConversation.getConversation);
 
 // API MESSAGE
-router.post("/addMessage", Middleware.authorizationToken, ApiMessage.addMessage);
+router.post("/addMessage",
+  // Middleware.authorizationToken,
+  upload.fields([
+    { name: "filess", maxCount: 3 },
+    { name: "images", maxCount: 3 },
+    { name: "video", maxCount: 1 },
+  ]),
+  ApiMessage.addMessage
+);
 router.post("/updateStatusMessage", Middleware.authorizationToken, ApiMessage.updateStatusMessage);
+router.post("/deleteMessage", Middleware.authorizationToken, ApiMessage.deleteMessage);
 
 
 router.post("/createPaymentUrl", ApiVNP.createPaymentUrl);

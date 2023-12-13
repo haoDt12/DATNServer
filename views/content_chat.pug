@@ -9,25 +9,26 @@ block content
                         .w-100.d-flex.pl-0
                             if dataHeaderMsg[0].avatar
                                 img.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(id='avatar' src=`${dataHeaderMsg[0].avatar}`)
-                                |
                             else 
-                                img.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(id='avatar' src=`${dataHeaderMsg[0].user[0].avatar}`)
-                                |
+                                img.rounded-circle.shadow.avatar-sm.mr-3.chat-profile-picture(id='avatar' src='/images/profile/avatar-default.jpg')
+                            |
                             .mr-3
                                 a.text-decoration-none(href='!#')
                                     p.fw-400.mb-0.text-dark-75(id='username')
-                                        if dataHeaderMsg[0].name
-                                            | #{dataHeaderMsg[0].name}
+                                        if dataHeaderMsg[0].full_name
+                                            | #{dataHeaderMsg[0].full_name}
                                         else
-                                            if dataHeaderMsg[0].full_name
-                                                | #{dataHeaderMsg[0].full_name}
-                                            else
-                                                | {username}
+                                            | {username}
                                 |
                                 a(href='!#')
                                     p.fw-400.mb-0.text-dark-75(style="display: none; ", id='idConversation')
                                         if idConversation
                                             | #{idConversation}
+                                |
+                                a(href='!#')
+                                    p.fw-400.mb-0.text-dark-75(style="display: none; ", id='number-chat')
+                                        if dataMessage.length
+                                            | #{dataMessage.length}
                                 |
                                 a(href='!#')
                                     p.fw-400.mb-0.text-dark-75(style="display: none; ", id='idUserSelected')
@@ -85,71 +86,123 @@ block content
                             if  dataSize > 0
                                 each message in dataMessage
                                     if message.senderId != userLoged._id
-                                            .left-chat-message.fs-13.mb-2
-                                                p.mb-0.mr-3.pr-4 #{message.message}
-                                                |
-                                                .message-options
-                                                    .message-time #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
-                                                    |
-                                                    .message-arrow
-                                                        i.text-muted.la.la-angle-down.fs-17
+                                            .left-chat-message.fs-13.mb-2.pb-2
+                                                .d-flex.flex-row.mb-2
+                                                    if message.deleted
+                                                        p.mb-0.mr-3.pr-4 Đã gỡ 1 tin nhắn.
+                                                    else
+                                                        if message.message.length > 0
+                                                            p.mb-0.mr-3.pr-4 #{message.message}
+                                                        else
+                                                            if message.video.length > 0
+                                                                video.mb-0.mr-3.pr-6(src=`${message.video}`  width='200' type='video/mp4'  controls='' style='border-radius: 8px;')
+                                                            else
+                                                                - var dataSizeImage = message.images.length;
+                                                                if dataSizeImage == 1
+                                                                    img.mb-0.mr-1.mt-1.pr-4(src=`${message.images[0]}` width='150' height='100' style='border-radius: 8px;')
+                                                                else
+                                                                    each image in message.images
+                                                                        img.mb-0.mr-1.mt-1.pr-1(src=`${image}` width='80' height='70' style='border-radius: 8px;')
+                                                        |
+                                                        .message-options.mt-3
+                                                            .message-time #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
+                                                            |
+                                                            .message-arrow
+                                                                i.text-muted.la.la-angle-down.fs-17
+                                                                |
+                                                        .active-message-left.ml-10
+                                                            .fs-6
+                                                                i.chat-action-left-trigger.bx.bx-dots-vertical-rounded(id='chat-trigger' class='chat-trigger')
+                                                                |
+                                                                .chat-action-left(id='chat-action-left' class='chat-action-left')
+                                                                    .d-flex.flex-column
+                                                                        a#remove-msg.px-4.py-2.fs-3(class='remove-msg', data-id=message._id) Remove
+                                                                        a#forward-msg.px-4.py-2.fs-3(class='forward-msg', data-id=message._id) Forward
                                             |
                                     else
                                         .d-flex.flex-row-reverse.mb-2
-                                            .right-chat-message.fs-13.mb-2
-                                                .mb-0.mr-3.pr-4
-                                                    .d-flex.flex-row
-                                                        .pr-2 #{message.message}
-                                                        |
-                                                        .pr-4
-                                                |
-                                                .message-options.dark
-                                                    .message-time
+                                            if message.deleted
+                                                .right-chat-message-deleted.fs-13.mr-3
+                                                    pr-2 Đã gỡ 1 tin nhắn.
+                                            else 
+                                                .right-chat-message.fs-13
+                                                    .mb-0.mr-3.pr-4.pb-2
                                                         .d-flex.flex-row
-                                                            .mr-2 #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
-                                                            |
-                                                            .svg15.double-check
+                                                            if message.deleted
+                                                                .pr-2 Đã gỡ 1 tin nhắn.
+                                                            else
+                                                                if message.message.length > 0
+                                                                    .pr-2 #{message.message}
+                                                                else
+                                                                    if message.video.length > 0
+                                                                        video.pr-6.mb-2(src=`${message.video}`  width='200' type='video/mp4'  controls='' style='border-radius: 8px;')
+                                                                    else
+                                                                        - var dataSizeImage = message.images.length;
+                                                                        if dataSizeImage == 1
+                                                                            img.pr-6.mb-2(src=`${message.images[0]}` width='150' height='100' style='border-radius: 8px;')
+                                                                        else
+                                                                            each image in message.images
+                                                                                img.pr-1.mb-2(src=`${image}` width='80' height='70' style='border-radius: 8px;')
+                                                                |
                                                     |
-                                                    .message-arrow
-                                                        i.text-muted.la.la-angle-down.fs-17
+                                                    .message-options.dark.mt-3
+                                                        .message-time
+                                                            .d-flex.flex-row
+                                                                .mr-2 #{message.timestamp.slice(message.timestamp.length-8, message.timestamp.length-3)}
+                                                                |
+                                                                .svg15.double-check
+                                                        |
+                                                        .message-arrow
+                                                            i.text-muted.la.la-angle-down.fs-17
+                                                .active-message-right
+                                                    .mb-0.mr-2.pr-1
+                                                        .d-flex.flex-row.fs-6
+                                                            i.chat-action-right-trigger.bx.bx-dots-vertical-rounded(id='chat-trigger' class='chat-trigger')
+                                                            |
+                                                            .chat-action-right(id='chat-action-right' class='chat-action-right')
+                                                                .d-flex.flex-column
+                                                                    a#remove-msg.px-4.py-2.fs-3(class='remove-msg', data-id=message._id) Remove
+                                                                    a#forward-msg.px-4.py-2.fs-3(class='forward-msg', data-id=message._id) Forward
                                         |
 
                 |
                 .chat-search.pl-3.pr-3
+                    //- preview file upload
+                    div(id='area-upload' style='display: flex; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; max-width: 100%;')
+                    |
+
                     .input-group
-                        input.form-control(type='text', placeholder='Write a message', id='textMessage')
+                        textarea.form-control.w-50(rows="1",style="resize: none; ", placeholder='Write a message', id='textMessage')
                         |
                         .input-group-append.prepend-white
                             span.input-group-text.pl-2.pr-2
-                                i.chat-upload-trigger.fs-19.bi.bi-file-earmark-plus.ml-2.mr-2
+                                i.chat-upload-trigger.fs-19.bi.bi-file-earmark-plus.ml-2.mr-2(id='upload-trigger')
                                 |
-                                i.fs-19.bi.bi-emoji-smile.ml-2.mr-2
+                                i.chat-emoji-trigger.fs-19.bi.bi-emoji-smile.ml-2.mr-2(id='emoji-trigger')
                                 |
-                                i.fs-19.bi.bi-camera.ml-2.mr-2
-                                |
+                                //- i.fs-19.bi.bi-camera.ml-2.mr-2
+                                //- |
                                 i.fs-19.bi.bi-cursor.ml-2.mr-2(id='btnSend')
                                 |
-                                .chat-upload
+                                .chat-emoji(id='area-emoji')
+                                    .d-flex.flex-column
+                                        div#emoji-container
+                                            div#emoji-table
+                                |
+                                .chat-upload(id='area-upload')
                                     .d-flex.flex-column
                                         .p-2
-                                            button.btn.btn-secondary.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
-                                                i.fs-15.bi.bi-camera
-                                        |
-                                        .p-2
-                                            button.btn.btn-success.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                            button.btn.btn-success.btn-md.btn-icon.btn-circle.btn-blushing(type='button' id='open-file')
                                                 i.fs-15.bi.bi-file-earmark-plus
+                                                input.input-video(type="file" id='input-video' name="video"  accept="video/*" style="display: none;" onchange='handleVideoUpload(event)')                                                    
                                         |
                                         .p-2
-                                            button.btn.btn-warning.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
-                                                i.fs-15.bi.bi-person
-                                        |
-                                        .p-2
-                                            button.btn.btn-danger.btn-md.btn-icon.btn-circle.btn-blushing(type='button')
+                                            button.btn.btn-danger.btn-md.btn-icon.btn-circle.btn-blushing(type='button' id='open-image')
                                                 i.fs-15.bi.bi-card-image
+                                                input.input-image(type="file" id='input-image' name="image" multiple='multiple' accept="image/*" style="display: none;" onchange='handleImageUpload(event)')                                                    
     
     script(src=`https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js`)
     script(src=`https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.7/js/min/perfect-scrollbar.jquery.min.js`)
-    //- script(src='/js/message.js') 
     script(src='/js/socket.io.js') 
 
     script.
@@ -163,6 +216,24 @@ block content
 
             $('.chat-upload-trigger').on('click', function (e) {
                 $(this).parent().find('.chat-upload').toggleClass("active");
+            });
+            $('.chat-emoji-trigger').on('click', function (e) {
+                $(this).parent().find('.chat-emoji').toggleClass("active");
+            });
+            $('.chat-action-right-trigger').on('click', function (e) {
+                $(this).parent().find('.chat-action-right').toggleClass("active");
+            });
+            $('.chat-action-left-trigger').on('click', function (e) {
+                $(this).parent().find('.chat-action-left').toggleClass("active");
+            });
+
+            $('#input-image').on('click', function (e) {
+                e.stopPropagation(); 
+                $('.chat-upload').removeClass("active"); 
+            });
+            $('#input-video').on('click', function (e) {
+                e.stopPropagation(); 
+                $('.chat-upload').removeClass("active"); 
             });
             $('.user-detail-trigger').on('click', function (e) {
                 $(this).closest('.chat').find('.chat-user-detail').toggleClass("active");

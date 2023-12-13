@@ -1,7 +1,7 @@
 var createError = require("http-errors");
 var express = require("express");
-
-var socketIO = require('socket.io');
+require('dotenv').config();
+const crypto = require('crypto');
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -22,7 +22,7 @@ const httpServer = createServer((req, res) => {
     return;
   }
   // reload the file every time
-  const content = readFileSync(__dirname + "/views/chat.pug");
+  const content = readFileSync(__dirname + "views");
   const length = Buffer.byteLength(content);
 
   res.writeHead(200, {
@@ -64,7 +64,8 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-
+const ENCRYPTION_KEY = process.env.API_KEY;
+const algorithm = process.env.ALGORITHM;
 const io = new Server(server, {
   // Socket.IO options
 });
@@ -76,9 +77,46 @@ io.on("connection", (socket) => {
   });
 
   socket.on('on-chat', data => {
-    io.emit('user-chat', data)
+    const { message } = data.message
+    // decrypt message
+    let messageDecrypted = message;
+    if (message.length <= 0) {
+      messageDecrypted = message;
+    }
+    else {
+      const hash = crypto.createHash("sha1");
+      hash.update(ENCRYPTION_KEY)
+      const digestResult = hash.digest();
+      // Chuyển đổi kết quả digest thành Uint8Array
+      const uint8Array = new Uint8Array(digestResult);
+      // Sử dụng slice từ Uint8Array.prototype
+      const keyUint8Array = uint8Array.slice(0, 16);
+      // Chuyển đổi kết quả Uint8Array về Buffer nếu cần
+      const keyBuffer = Buffer.from(keyUint8Array);
+      let textParts = message.split(':');
+      let iv = Buffer.from(textParts.shift(), 'hex');
+      let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+      let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+      let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+      decrypted += decipher.final('utf8');
+
+      messageDecrypted = decrypted
+    }
+
+    let newData = { ...data.message, message: messageDecrypted };
+    io.emit('user-chat', newData)
+  })
+
+  socket.on('update-chat', data => {
+    console.log(`update-chat: ${data}`);
+    io.emit('user-update-chat', data)
   })
 });
+
+process.on('warning', (warning) => {
+  console.log(warning.stack);
+});
+
 
 var host = process.env.HOST || '0.0.0.0';
 var post = process.env.PORT || 3000;
