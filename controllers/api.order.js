@@ -38,8 +38,8 @@ exports.creatOrder = async (req, res) => {
             }
             let feesArise = 0;
             item.option.map(item => {
-                if(item.feesArise){
-                feesArise += Number(item.feesArise);
+                if (item.feesArise) {
+                    feesArise += Number(item.feesArise);
                 }
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
@@ -57,7 +57,7 @@ exports.creatOrder = async (req, res) => {
         }
         let currentProduct = cart.product;
         console.log(currentProduct);
-        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString()));
+        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         console.log(newProduct)
         cart.product = newProduct;
         await cart.save();
@@ -247,4 +247,20 @@ exports.editOrder = async (req, res) => {
         console.log(e.message);
         return res.send({message: "edit order fail", code: 0});
     }
+}
+const arraysEqual = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    for (let i = 0; i < arr1.length; i++) {
+        const obj1 = arr1[i];
+        const obj2 = arr2[i];
+
+        if (obj1.type !== obj2.type || obj1.title !== obj2.title || obj1.content !== obj2.content) {
+            return false;
+        }
+    }
+
+    return true;
 }
