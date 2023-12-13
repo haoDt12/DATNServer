@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', function (){
     const OptionType = document.getElementById('OptionType');
     const name = document.getElementById('name');
     const myModal = new bootstrap.Modal(document.getElementById('OptionModal'));
-    //
+    const save_option = document.getElementById('save_option');
+//
     const title = document.getElementById('title');
     const price = document.getElementById('price');
     const quantity = document.getElementById('quantity');
@@ -44,7 +45,10 @@ document.addEventListener('DOMContentLoaded', function (){
     let myArray=[];
 
 
+
+
     document.getElementById('openAddProductModal').addEventListener('click', function () {
+        save_option.style.display='none'
         myModal.show();
     });
 
@@ -121,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function (){
         // Lấy giá trị từ các trường input
         let type = document.getElementById('OptionType').value;
         let title = document.getElementById('name').value;
+        let feesArise = document.getElementById('feesArise').value;
         //let content = document.getElementById('content').value;
         let contentValue;
 
@@ -134,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function (){
         // Kiểm tra xem các trường có giá trị không
         if (type && name && content) {
             // Tạo một hàng mới trong mảng
-            let newOption = {type, title,content: contentValue };
+            let newOption = {type, title,content: contentValue,feesArise};
             console.log(newOption)
 
             // Thêm hàng mới vào mảng
@@ -161,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function (){
 
             // Tạo ô dữ liệu cho index
             let indexCell = document.createElement("td");
-            indexCell.textContent = i;
+            indexCell.textContent = i+1;
             row.appendChild(indexCell);
 
             // Duyệt qua các trường của đối tượng option
@@ -176,15 +181,25 @@ document.addEventListener('DOMContentLoaded', function (){
 
             // Tạo ô dữ liệu cho action (nút xóa)
             let actionCell = document.createElement("td");
+            let editButton = document.createElement("button");
             let deleteButton = document.createElement("button");
+
             deleteButton.textContent = "Xóa";
+            editButton.textContent = "Sửa";
+
+            row.dataset.index = i;
             deleteButton.addEventListener("click", function () {
                 // Xử lý sự kiện xóa tại đây
                 // Ví dụ: Xóa hàng tương ứng với nút xóa được nhấp
-                let row = this.parentNode.parentNode;
-                let rowIndex = row.id.split('-')[1]; // Lấy index từ ID
+                let rowIndex = parseInt(row.dataset.index);
                 deleteRow(rowIndex); // Gọi hàm xóa hàng
             });
+            editButton.addEventListener("click", function () {
+                let rowIndex = parseInt(row.dataset.index);
+                editRow(rowIndex); // Gọi hàm sửa hàng
+            });
+
+            actionCell.appendChild(editButton);
             actionCell.appendChild(deleteButton);
             row.appendChild(actionCell);
 
@@ -200,7 +215,63 @@ document.addEventListener('DOMContentLoaded', function (){
         updateTable();
     }
     //<----->
+    function editRow(index) {
+        // Lấy dữ liệu từ mảng tại chỉ mục index
+        let editedOption = myArray[index];
 
+        // Hiển thị dữ liệu cần sửa trong modal hoặc nơi khác
+        // Ví dụ: gán giá trị cho các trường input trong modal
+        document.getElementById('OptionType').value = editedOption.type;
+        document.getElementById('name').value = editedOption.title;
+      //  document.getElementById('feeArise').value = editedOption.feesArise;
+
+        // Kiểm tra và hiển thị nội dung hoặc màu sắc tùy thuộc vào loại
+        if (editedOption.type === 'Color') {
+            // Hiển thị nội dung màu
+            document.getElementById('color').value = editedOption.content;
+            // Ẩn và hiển thị các trường tương ứng
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('color').style.display = 'block';
+            document.getElementById('lableColor').style.display = 'block';
+            document.getElementById('lableContent').style.display = 'none';
+        } else {
+            // Hiển thị nội dung khác
+            document.getElementById('content').value = editedOption.content;
+            // Ẩn và hiển thị các trường tương ứng
+            document.getElementById('color').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('lableColor').style.display = 'none';
+            document.getElementById('lableContent').style.display = 'block';
+        }
+        save_option.style.display = 'block'
+        document.getElementById('add_option').style.display = 'none'
+        save_option.dataset.index = index;
+        myModal.show();
+        save_option.removeEventListener('click', saveButtonClickHandler);
+        save_option.addEventListener('click', saveButtonClickHandler);
+
+        function saveButtonClickHandler() {
+            let index = parseInt(save_option.dataset.index);
+            let type = document.getElementById('OptionType').value;
+            let title = document.getElementById('name').value;
+            let feesArise = document.getElementById('feesArise').value;
+            let contentValue;
+
+            if (type === 'Color') {
+                contentValue = document.getElementById('color').value;
+            } else {
+                contentValue = document.getElementById('content').value;
+            }
+
+            if (type && title && contentValue && feesArise) {
+                myArray[index] = { type, title, content: contentValue,feesArise:fe};
+                updateTable();
+                myModal.hide();
+            } else {
+                alert('Vui lòng điền đầy đủ thông tin.');
+            }
+        }
+    }
 
     //
 

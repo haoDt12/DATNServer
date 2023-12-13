@@ -46,6 +46,7 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
+
     console.log(listProduct[1].option[1].title)
     res.render("product", {
       products: listProduct,
@@ -55,6 +56,20 @@ router.get('/stech.manager/product', async function (req, res, next) {
   } catch (e) {
     console.log(e.message);
     res.send({ message: "product not found", code: 0 })
+  }
+
+  try {
+    let listProduct = await ProductModel.productModel.find();
+
+    console.log(listProduct[1].option[1].title)
+    res.render("product_action", {
+      products: listProduct,
+      message: "get list product success",
+      code: 1
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.send({message: "product not found", code: 0})
   }
 });
 router.get("/stech.manager/category", async function (req, res, next) {
@@ -648,16 +663,20 @@ router.get("/stech.manager/pay", function (req, res, next) {
 router.get("/stech.manager/edit_product_action", async function (req, res, next) {
   var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)productId\s*=\s*([^;]*).*$)|^.*$/, "$1");
   var productId = JSON.parse(decodeURIComponent(cookieValue));
+  const token = req.cookies.token
   try {
+
     let productSelected = await ProductModel.productModel.findById(productId);
     let listCategory = await CategoryModel.categoryModel.find();
 
-    return res.render("edit_product_action",
+     res.render("edit_product_action",
         {
           products: productSelected,
-          categories: listCategory
+          categories: listCategory,
+          message: "get list product success",
+          token:token,
+          code:1
         })
-
   } catch (e) {
     console.log(e.message);
     res.send({message: "product not found", code: 0})
