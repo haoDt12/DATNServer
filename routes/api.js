@@ -273,6 +273,7 @@ router.post("/addMessage",
   ApiMessage.addMessage
 );
 router.post("/updateStatusMessage", Middleware.authorizationToken, ApiMessage.updateStatusMessage);
+router.post("/deleteMessage", Middleware.authorizationToken, ApiMessage.deleteMessage);
 
 
 router.post("/createPaymentUrl", ApiVNP.createPaymentUrl);

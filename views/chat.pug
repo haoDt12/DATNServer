@@ -45,8 +45,8 @@ block content
                                 span
                                     i.ti.ti-shopping-cart
                                 span.hide-menu Cart
-                        li.sidebar-item
-                            a.sidebar-link(href='/stech.manager/chat' aria-expanded='false')
+                        li.sidebar-item(id='li-chat')
+                            a.sidebar-link(href='/stech.manager/chat' aria-expanded='false' id='a-chat')
                                 span
                                     i.ti.ti-message-chatbot
                                 span.hide-menu Chat
@@ -243,10 +243,10 @@ block content
                                                                                                         .svg15.double-check
                                                                                                     |
                                                                                                     if userLoged._id + "" === conversation.lastSender + ""
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" class="content-msg" data-status=conversation.status)
+                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" data-id=conversation._id class="content-msg" data-status=conversation.status)
                                                                                                             | Bạn: #{conversation.lastmessage}
                                                                                                     else 
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-status=conversation.status)
+                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-id=conversation._id data-status=conversation.status)
                                                                                                             | #{conversation.lastmessage}
                                                                                             else
                                                                                                 span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
@@ -264,10 +264,10 @@ block content
                                                                                                         .svg15.double-check
                                                                                                     |
                                                                                                     if userLoged._id + "" === conversation.lastSender + ""
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" class="content-msg" data-status=conversation.status)
+                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" data-id=conversation._id class="content-msg" data-status=conversation.status)
                                                                                                             | Bạn: #{conversation.lastmessage}
                                                                                                     else 
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-status=conversation.status)
+                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-id=conversation._id data-status=conversation.status)
                                                                                                             | #{conversation.lastmessage}
                                                                                             else
                                                                                                 span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4

@@ -530,18 +530,6 @@ img.shadow {
     position: relative;
 }
 
-.chat.chat-panel .left-chat-message,
-.chat.chat-panel .right-chat-message {
-    padding: 0.5rem 1rem;
-    max-width: 47%;
-}
-
-.chat.chat-panel .left-chat-message,
-.chat.chat-panel .right-chat-message {
-    padding: 0.5rem 1rem;
-    max-width: 47%;
-}
-
 .right-chat-message {
     position: relative;
     margin: 0 10px 0 0;
@@ -555,12 +543,40 @@ img.shadow {
     box-shadow: 0 4px 8px 0 rgb(34 41 47 / 12%);
 }
 
+.right-chat-message-deleted {
+    border: solid 1px #bcc0c4;
+    border-radius: 5px;
+    padding-right: 16px;
+    padding-left: 16px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: #bcc0c4;
+}
+
 .chat.chat-panel .message-options.dark .message-arrow i,
 .chat.chat-panel .message-options.dark .message-time {
     color: #fff !important;
 }
 
+.chat-action-right a:hover {
+    background-color: #f2f2f2;
+    border-radius: 8px;
+}
+
+.chat-action-left a:hover {
+    background-color: #f2f2f2;
+    border-radius: 8px;
+}
+
 .chat.chat-panel .chat-upload-trigger {
+    position: relative;
+}
+
+.chat.chat-panel .chat-action-right-trigger {
+    position: relative;
+}
+
+.chat.chat-panel .chat-action-left-trigger {
     position: relative;
 }
 
@@ -575,6 +591,28 @@ img.shadow {
     bottom: 50px;
 }
 
+.chat.chat-panel .chat-action-right.active {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(1);
+    transform: translateX(-45px);
+    bottom: 90px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.chat.chat-panel .chat-action-left.active {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(1);
+    /* transform: translateX(-45px); */
+    bottom: 70px;
+    background-color: ghostwhite;
+    border-radius: 8px;
+    padding: 5px;
+}
+
 .chat.chat-panel .chat-emoji.active {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
@@ -583,6 +621,24 @@ img.shadow {
 }
 
 .chat.chat-panel .chat-upload {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(0);
+    position: absolute;
+    left: -5px;
+    bottom: -50px;
+}
+
+.chat.chat-panel .chat-action-right {
+    -webkit-transition: all .25s ease 0s;
+    transition: all .25s ease 0s;
+    transform: scale(0);
+    position: absolute;
+    left: -5px;
+    bottom: -50px;
+}
+
+.chat.chat-panel .chat-action-left {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
     transform: scale(0);
@@ -611,6 +667,10 @@ img.shadow {
 #area-upload>div {
     display: inline-block;
     margin-right: 10px;
+}
+
+.sidebar-nav ul li a {
+    text-decoration: none;
 }
 
 
@@ -731,6 +791,28 @@ img.shadow {
     -webkit-transition: all .25s ease 0s;
     transition: all .25s ease 0s;
     transform: scale(1);
+}
+
+.active-message-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.active-message-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.active-message-left i {
+    cursor: pointer;
+}
+
+.active-message-right i {
+    cursor: pointer;
 }
 
 .chat .chat-user-detail {

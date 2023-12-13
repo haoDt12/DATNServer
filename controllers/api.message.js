@@ -5,6 +5,10 @@ const path = require("path");
 const UploadFile = require("../models/uploadFile");
 const moment = require('moment');
 const { get } = require("http");
+
+const crypto = require("crypto");
+require("dotenv").config();
+
 const matchImg = [
     "image/jpeg",
     "image/png",
@@ -31,6 +35,8 @@ const matchVideo = [
     "video/mpeg",
 ];
 exports.addMessage = async (req, res) => {
+
+
     let date = new Date();
     let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
 
@@ -43,24 +49,20 @@ exports.addMessage = async (req, res) => {
     let videoUpload;
 
     try {
-        // if (req.files["filess"]) {
-        fileUpload = req.files["filess"];
-        // }
-        // if (req.files["images"]) {
-        console.log("+++++++++++++++");
-        imageUpload = req.files["images"];
-        // }
-        // if (req.files["video"]) {
-        videoUpload = req.files["video"];
-        // }
+        if (req.files["filess"]) {
+            fileUpload = req.files["filess"];
+        }
+        if (req.files["images"]) {
+            imageUpload = req.files["images"];
+        }
+        if (req.files["video"]) {
+            videoUpload = req.files["video"];
+        }
 
     } catch (e) {
         console.log(`api.message: ${e.message} at ${timestamp}`);
-        return res.send({ message: "error read fields file upload", code: 0 });
+        return res.send({ message: "error read fields file upload", code: 0, time: timestamp });
     }
-
-    console.log("============");
-    console.log(imageUpload);
 
     let isSendFile = false;
     let isSendImage = false;
@@ -93,7 +95,7 @@ exports.addMessage = async (req, res) => {
         if (!isSendFile && !isSendImage && !isSendVideo) {
             console.log("send message or file or image or video");
             console.log(isSendFile, isSendImage, isSendVideo);
-            return res.send({ message: "send message or file or image or video", code: 0 });
+            return res.send({ message: "send message or file or image or video", code: 0, time: timestamp });
         }
         else {
             console.log("anony erorr api message");
@@ -124,19 +126,38 @@ exports.addMessage = async (req, res) => {
         });
     }
 
+    let messageEncrypted = ''
+    const algorithm = 'aes-128-cbc';
+    const IV_LENGTH = 16;
+    const ENCRYPTION_KEY = process.env.API_KEY;
+    const hash = crypto.createHash("sha1");
+    hash.update(ENCRYPTION_KEY)
+    const digestResult = hash.digest();
+    // Chuyển đổi kết quả digest thành Uint8Array
+    const uint8Array = new Uint8Array(digestResult);
+    // Sử dụng slice từ Uint8Array.prototype
+    const keyUint8Array = uint8Array.slice(0, 16);
+    // Chuyển đổi kết quả Uint8Array về Buffer nếu cần
+    const keyBuffer = Buffer.from(keyUint8Array);
+
+    let iv = crypto.randomBytes(IV_LENGTH);
+    let cipher = crypto.createCipheriv(algorithm, keyBuffer, iv);
+    let encrypted = cipher.update(contentMessage, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    messageEncrypted = iv.toString('hex') + ':' + encrypted;
 
 
     let message = new MessageModel.messageModel({
         conversation: conversation,
         senderId: senderId,
         receiverId: receiverId,
-        message: contentMessage,
+        message: messageEncrypted,
         status: "unseen",
         deleted: false,
         video: "",
         timestamp: timestamp
     });
-    console.log(isSendFile, isSendImage, isSendVideo);
+    // console.log(isSendFile, isSendImage, isSendVideo);
     if (!isSendFile && !isSendImage && !isSendVideo) {
         // send no message
     }
@@ -151,12 +172,12 @@ exports.addMessage = async (req, res) => {
                     ".json"
                 );
                 if (list_file === 0) {
-                    return res.send({ message: "upload file fail", code: 0 });
+                    return res.send({ message: "upload file fail", code: 0, time: timestamp });
                 }
                 message.filess = list_file;
             } catch (e) {
                 console.log(e);
-                return res.send({ message: e.message.toString(), code: 0 });
+                return res.send({ message: e.message.toString(), code: 0, time: timestamp });
             }
         }
         if (isSendImage) {
@@ -169,12 +190,12 @@ exports.addMessage = async (req, res) => {
                     ".jpg"
                 );
                 if (list_img === 0) {
-                    return res.send({ message: "upload image fail", code: 0 });
+                    return res.send({ message: "upload image fail", code: 0, time: timestamp });
                 }
                 message.images = list_img;
             } catch (e) {
                 console.log(e);
-                return res.send({ message: e.message.toString(), code: 0 });
+                return res.send({ message: e.message.toString(), code: 0, time: timestamp });
             }
         }
         if (isSendVideo) {
@@ -187,12 +208,12 @@ exports.addMessage = async (req, res) => {
                     ".mp4"
                 );
                 if (video === 0) {
-                    return res.send({ message: "upload video fail", code: 0 });
+                    return res.send({ message: "upload video fail", code: 0, time: timestamp });
                 }
                 message.video = video;
             } catch (e) {
                 console.log(e);
-                return res.send({ message: e.message.toString(), code: 0 });
+                return res.send({ message: e.message.toString(), code: 0, time: timestamp });
             }
         }
     }
@@ -200,12 +221,11 @@ exports.addMessage = async (req, res) => {
     try {
         await message.save()
         // console.log(`message: ${message}`);
-        return res.send({ dataMessage: message, message: "add message success", code: 1 });
+        return res.send({ dataMessage: message, message: "add message success", code: 1, time: timestamp });
     } catch (e) {
         console.log(e);
-        return res.send({ message: "add message fail", code: 0 });
+        return res.send({ message: "add message fail", code: 0, time: timestamp });
     }
-
 
 };
 exports.getListMessage = async (req, res) => {
@@ -215,10 +235,71 @@ exports.getMessageById = async (req, res) => {
 
 };
 exports.deleteMessage = async (req, res) => {
+    let date = new Date();
+    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
 
+    let idMessage = req.body.idMsg;
+    if (idMessage == null || idMessage.length <= 0) {
+        return res.send({ message: "idMessage is required" })
+    }
+
+    try {
+        let message = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { deleted: true });
+        if (!message) {
+            return res.send({ message: "message not found" })
+        }
+        let filess = message.filess;
+        let images = message.images;
+        let video = message.video;
+
+        let pathFolderDelete = images.split("/")[5];
+        let isRemove = true;
+        images.map((item) => {
+            if (item.split("3000")[1] !== undefined) {
+                fs.unlink(
+                    path.join(__dirname, "../public" + item.split("3000")[1]),
+                    (err) => {
+                        if (err) {
+                            console.log(err.message);
+                            isRemove = false;
+                        }
+                    }
+                );
+            }
+        });
+
+        if (isRemove === false) {
+            return res.send({ message: "delete product fail", code: 0 });
+        }
+
+        if (pathFolderDelete !== undefined) {
+            fs.rmdir(
+                path.join(__dirname, "../public/images/images/" + pathFolderDelete),
+                async (err) => {
+                    if (err) {
+                        isRemove = false;
+                        console.log(err.message);
+                    } else {
+                        await MessageModel.messageModel.deleteOne({ _id: idMessage });
+                        return res.send({ message: "Delete messages success", code: 1, time: timestamp });
+                    }
+                }
+            );
+        }
+        if (isRemove === false) {
+            return res.send({ message: "delete product fail", code: 0, time: timestamp });
+        }
+
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0, time: timestamp });
+    }
 };
 
 exports.updateStatusMessage = async (req, res) => {
+    let date = new Date();
+    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
     let idMessage = req.body.idMsg;
     let status = req.body.status;
     if (idMessage == null || idMessage.length <= 0) {
@@ -229,14 +310,14 @@ exports.updateStatusMessage = async (req, res) => {
     }
 
     try {
-        let message = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { status: status });
-        if (!message) {
+        let messageUpdate = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { status: status });
+        if (!messageUpdate) {
             return res.send({ message: "message not found" })
         }
-        res.send({ message: "update status message success", code: 1 })
+        return res.send({ message: "update status message success", code: 1, time: timestamp })
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: e.message.toString(), code: 0 });
+        return res.send({ dataMessage: messageUpdate, message: e.message.toString(), code: 0, time: timestamp });
     }
 };
 exports.editMessage = async (req, res) => {
