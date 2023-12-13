@@ -6,6 +6,7 @@ exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
+    let check = 1;
     console.log(product);
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
@@ -34,7 +35,7 @@ exports.creatOrder = async (req, res) => {
                 product.sold = newShold.toString();
                 await product.save();
             } else {
-                return res.send({message: "product is out of stock ", code: 0});
+                check = 0;
             }
             let feesArise = 0;
             item.option.map(item => {
@@ -44,6 +45,9 @@ exports.creatOrder = async (req, res) => {
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
+        if(check === 0){
+            return res.send({message: "product is out of stock ", code: 0});
+        }
         let order = new OrderModel.modelOrder({
             userId: userId,
             product: product,
@@ -112,16 +116,16 @@ exports.creatOrderGuest = async (req, res) => {
                 product.quantity = newQuantity.toString();
                 product.sold = newShold.toString();
                 await product.save();
+                let feesArise = 0;
+                item.option.map(item => {
+                    if(item.feesArise){
+                        feesArise += Number(item.feesArise);
+                    }
+                })
+                total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
             } else {
                 return res.send({message: "product is out of stock ", code: 0});
             }
-            let feesArise = 0;
-            item.option.map(item => {
-                if(item.feesArise){
-                    feesArise += Number(item.feesArise);
-                }
-            })
-            total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
         let order = new OrderModel.modelOrder({
             guestName: guestName,
@@ -263,4 +267,120 @@ const arraysEqual = (arr1, arr2) => {
     }
 
     return true;
+}
+exports.getPriceZaloPay = async (req, res) => {
+    let userId = req.body.userId;
+    let product = req.body.product;
+    let address = req.body.address;
+    let check = 1;
+    console.log(product);
+    if (userId == null) {
+        return res.send({message: "userId is required", code: 0});
+    }
+    if (product === undefined) {
+        return res.send({message: "product is required", code: 0});
+    }
+    if (address == null) {
+        return res.send({message: "address is required", code: 0});
+    }
+    try {
+        let total = 0;
+        await Promise.all(product.map(async item => {
+            let product = await ProductModel.productModel.findById(item.productId);
+            if (!product) {
+                return res.send({message: "product not found", code: 0});
+            }
+            let quantity = Number(product.quantity);
+            let sold = Number(product.sold);
+            if (quantity !== 0) {
+                let feesArise = 0;
+                item.option.map(item => {
+                    if (item.feesArise) {
+                        feesArise += Number(item.feesArise);
+                    }
+                })
+                total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
+            } else {
+                check = 0;
+            }
+        }));
+        if (check === 0) {
+            return res.send({message: "product is out of stock ", code: 0});
+        }
+        return res.send({message: "get price order success", price: total, code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "create order fail", code: 0});
+    }
+}
+exports.creatOrderZaloPay = async (req, res) => {
+    let userId = req.body.userId;
+    let product = req.body.product;
+    let address = req.body.address;
+    let check = 1;
+    console.log(product);
+    let date = new Date();
+    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    if (userId == null) {
+        return res.send({message: "userId is required", code: 0});
+    }
+    if (product === undefined) {
+        return res.send({message: "product is required", code: 0});
+    }
+    if (address == null) {
+        return res.send({message: "address is required", code: 0});
+    }
+    try {
+        let total = 0;
+        await Promise.all(product.map(async item => {
+            let product = await ProductModel.productModel.findById(item.productId);
+            if (!product) {
+                return res.send({message: "product not found", code: 0});
+            }
+            let quantity = Number(product.quantity);
+            let sold = Number(product.sold);
+            if (quantity !== 0) {
+                newQuantity = quantity - 1;
+                newShold = sold + 1;
+                product.quantity = newQuantity.toString();
+                product.sold = newShold.toString();
+                await product.save();
+            } else {
+                check = 0;
+            }
+            let feesArise = 0;
+            item.option.map(item => {
+                if (item.feesArise) {
+                    feesArise += Number(item.feesArise);
+                }
+            })
+            total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
+        }));
+        if(check === 0){
+            return res.send({message: "product is out of stock ", code: 0});
+        }
+        let order = new OrderModel.modelOrder({
+            userId: userId,
+            product: product,
+            addressId: address,
+            total: 0,
+            date_time: date_time,
+        })
+        let cart = await Cart.cartModel.findOne({userId: userId});
+        if (!cart) {
+            return res.send({message: "cart not found", code: 0});
+        }
+        let currentProduct = cart.product;
+        console.log(currentProduct);
+        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
+        console.log(newProduct)
+        cart.product = newProduct;
+        await cart.save();
+        await order.save();
+        console.log(order);
+        return res.send({message: "create order success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: "create order fail", code: 0});
+    }
 }

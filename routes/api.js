@@ -131,6 +131,8 @@ router.post(
 );
 
 router.post("/createOrder", Middleware.authorizationToken, ApiOrder.creatOrder);
+router.post("/getPriceZaloPay", Middleware.authorizationToken, ApiOrder.getPriceZaloPay);
+router.post("/creatOrderZaloPay", Middleware.authorizationToken, ApiOrder.creatOrderZaloPay);
 router.post("/creatOrderGuest", Middleware.authorizationToken, ApiOrder.creatOrderGuest);
 router.post(
   "/getOrderByUserId",
