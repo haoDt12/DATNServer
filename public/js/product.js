@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const CreateProduct = document.getElementById("CreateProduct");
     const UpdatePro = document.querySelectorAll(".UpdatePro");
     const AddCartPro = document.querySelectorAll(".AddCartPro");
+    const OpenUpdateProduct = document.querySelectorAll(".OpenUpdateProduct");
     const userId = Uid;
     let productId;
     let quantityRequest ;
@@ -406,5 +407,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         });
     });
+
+    OpenUpdateProduct.forEach(function (button){
+        button.addEventListener('click', function (event){
+            event.preventDefault();
+            var  productId = this.getAttribute("data-id");
+            document.cookie = 'productId=' + encodeURIComponent(JSON.stringify(productId));
+            window.location.href = "/stech.manager/edit_product_action";
+        })
+    })
+
 
 });

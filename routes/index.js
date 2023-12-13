@@ -645,4 +645,22 @@ router.get("/stech.manager/pay", function (req, res, next) {
     res.send({ message: "pay not found", code: 0 })
   }
 });
+router.get("/stech.manager/edit_product_action", async function (req, res, next) {
+  var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)productId\s*=\s*([^;]*).*$)|^.*$/, "$1");
+  var productId = JSON.parse(decodeURIComponent(cookieValue));
+  try {
+    let productSelected = await ProductModel.productModel.findById(productId);
+    let listCategory = await CategoryModel.categoryModel.find();
+
+    return res.render("edit_product_action",
+        {
+          products: productSelected,
+          categories: listCategory
+        })
+
+  } catch (e) {
+    console.log(e.message);
+    res.send({message: "product not found", code: 0})
+  }
+});
 module.exports = router;
