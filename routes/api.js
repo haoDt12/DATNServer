@@ -263,7 +263,15 @@ router.post("/getConversationByID", Middleware.authorizationToken, ApiConversati
 router.post("/getConversation", Middleware.authorizationToken, ApiConversation.getConversation);
 
 // API MESSAGE
-router.post("/addMessage", Middleware.authorizationToken, ApiMessage.addMessage);
+router.post("/addMessage",
+  // Middleware.authorizationToken,
+  upload.fields([
+    { name: "filess", maxCount: 3 },
+    { name: "images", maxCount: 3 },
+    { name: "video", maxCount: 1 },
+  ]),
+  ApiMessage.addMessage
+);
 router.post("/updateStatusMessage", Middleware.authorizationToken, ApiMessage.updateStatusMessage);
 
 
