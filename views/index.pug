@@ -123,11 +123,9 @@ block content
                                     .mb-3.mb-sm-0
                                         h5.card-title.fw-semibold Sales Overview
                                     div
-                                        select.form-select
-                                            option(value='1') March 2023
-                                            option(value='2') April 2023
-                                            option(value='3') May 2023
-                                            option(value='4') June 2023
+                                        select#select_year.form-select
+                                            option(value='2023') 2023
+                                            option(value='2024') 2024
                                 #chart
                     .col-lg-4
                         .row
@@ -186,6 +184,14 @@ block content
                                             label.form-label To
                                             input#to_input.form-control(type='date' placeholder='Enter end hear...')
                                     a#save.btn.btn-outline-success() Tính
+                .row
+                    .col-lg-12.d-flex.align-items-strech
+                        .card.w-100
+                            .card-body
+                                .d-sm-flex.d-block.align-items-center.justify-content-between.mb-9
+                                    .mb-3.mb-sm-0
+                                        h5.card-title.fw-semibold Overview
+                                #chart_custom
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
                         | Design and Developed by
