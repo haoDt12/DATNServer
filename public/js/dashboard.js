@@ -1,8 +1,65 @@
 document.addEventListener("DOMContentLoaded", function() {
-  var chartData = {
+  const txt_year = document.getElementById("revenue_year");
+  const txt_month = document.getElementById("revenue_month");
+  const date = new Date();
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear().toString();
+  const formattedDate = `${day}/${month}`;
+  const options = {month: 'numeric', day: 'numeric' };
+  let data_date = [];
+  const previousWeek = new Date(date);
+  previousWeek.setDate(previousWeek.getDate() - 6);
+  for (let i = 0; i < 7; i++) {
+    const currentDate = new Date(previousWeek);
+    currentDate.setDate(currentDate.getDate() + i);
+    const formattedDate = currentDate.toLocaleDateString('en-US', options);
+    data_date.push(formattedDate);
+  }
+  let data_chart_earn = [355, 390, 300, 350, 390, 180, 355];
+  let data_chart_earn_month = [280, 250, 325, 215, 250, 310, 280];
+  function findMaxNumber(arr) {
+    let maxNumber = arr[0]; // Giả sử phần tử đầu tiên là số lớn nhất
+
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i] > maxNumber) {
+        maxNumber = arr[i]; // Cập nhật số lớn nhất nếu tìm thấy số lớn hơn
+      }
+    }
+
+    return maxNumber;
+  }
+  function calculateSum(arr) {
+    let sum = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+      sum += arr[i];
+    }
+
+    return sum;
+  }
+
+// Ví dụ sử dụng:
+  const numbers = [2500000, 660000, 200000, 4000000, 1200000, 580000, 200000];
+  const result = calculateSum(numbers);
+  const formattedAmount = result.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'VND'
+  });
+  txt_month.innerText = formattedAmount.toString();
+  const numbers_2 = [38, 40, 25];
+  const result_2 = calculateSum(numbers_2);
+  const formattedAmount2 = result_2.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'VND'
+  });
+  txt_year.innerText = formattedAmount2.toString();
+// Ví dụ sử dụng:
+  const max = findMaxNumber(data_chart_earn);
+  let chartData = {
     series: [
-      { name: "Earnings this month:", data: [355, 390, 300, 350, 390, 180, 355, 390] },
-      { name: "Expense this month:", data: [280, 250, 325, 215, 250, 310, 280, 250] },
+      { name: "Earnings this day:", data: data_chart_earn },
+      { name: "Expense this week:", data:  data_chart_earn_month},
     ],
     chart: {
       type: "bar",
@@ -41,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     xaxis: {
       type: "category",
-      categories: ["16/08", "17/08", "18/08", "19/08", "20/08", "21/08", "22/08", "23/08"],
+      categories: data_date,
       labels: {
         style: { cssClass: "grey--text lighten-2--text fill-color" },
       },
@@ -49,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
     yaxis: {
       show: true,
       min: 0,
-      max: 400,
+      max: max+50,
       tickAmount: 4,
       labels: {
         style: {
@@ -78,12 +135,12 @@ document.addEventListener("DOMContentLoaded", function() {
     ]
   };
 
-  var chart = new ApexCharts(document.querySelector("#chart"), chartData);
-  chart.render();
+  let chart = new ApexCharts(document.querySelector("#chart"), chartData);
+  chart.render().then(r => {});
 
-  var breakupData = {
+  let breakupData = {
     color: "#adb5bd",
-    series: [38, 40, 25],
+    series: numbers_2,
     labels: ["2022", "2021", "2020"],
     chart: {
       width: 180,
@@ -126,10 +183,10 @@ document.addEventListener("DOMContentLoaded", function() {
     },
   };
 
-  var breakupChart = new ApexCharts(document.querySelector("#breakup"), breakupData);
-  breakupChart.render();
+  let breakupChart = new ApexCharts(document.querySelector("#breakup"), breakupData);
+  breakupChart.render().then(r => {});
 
-  var earningData = {
+  let earningData = {
     chart: {
       id: "sparkline3",
       type: "area",
@@ -145,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
       {
         name: "Earnings",
         color: "#49BEFF",
-        data: [25, 66, 20, 40, 12, 58, 20],
+        data: numbers,
       },
     ],
     stroke: {
@@ -172,6 +229,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 
-    var earningChart = new ApexCharts(document.querySelector("#earning"), earningData);
-    earningChart.render();
+    let earningChart = new ApexCharts(document.querySelector("#earning"), earningData);
+    earningChart.render().then(r => {});
   });
