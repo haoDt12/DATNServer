@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const token = utils.GetCookie("token");
     const detailLinks = document.querySelectorAll(".DetailPro");
     const detailLink = document.getElementById("Detail");
+
+    //
+
     // Modal
     const CreProModal = new bootstrap.Modal(document.getElementById('CreProModal'));
     const UpProModal = new bootstrap.Modal(document.getElementById('UpProModal'));
@@ -17,9 +20,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const ConfirmAddCartPro = document.getElementById("ConfirmAddCartPro");
     // Button call modal
     const DeletePro = document.querySelectorAll(".DeletePro");
+
+    const OpenUpdate = document.querySelectorAll(".UpdatePro");
+
     const CreateProduct = document.getElementById("CreateProduct");
     const UpdatePro = document.querySelectorAll(".UpdatePro");
     const AddCartPro = document.querySelectorAll(".AddCartPro");
+    const OpenUpdateProduct = document.querySelectorAll(".OpenUpdateProduct");
     const userId = Uid;
     let productId;
     let quantityRequest ;
@@ -406,5 +413,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         });
     });
+
+    OpenUpdateProduct.forEach(function (button){
+        button.addEventListener('click', function (event){
+            event.preventDefault();
+            var  productId = this.getAttribute("data-id");
+            document.cookie = 'productId=' + encodeURIComponent(JSON.stringify(productId));
+            window.location.href = "/stech.manager/edit_product_action";
+        })
+    })
+
+
 
 });

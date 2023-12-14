@@ -12,7 +12,7 @@ head
             h2.h5.mb-3.mb-lg-0
                 a.text-muted(href='../../pages/admin/customers.html')
                     i.bi.bi-arrow-left-square.me-2
-                |           Create new product
+                |           Update Product
             .hstack.gap-3
                 a#cancel.btn.btn-outline-dark(href='/stech.manager/product') Cancel
                 a#save.btn.btn-outline-success() Save
@@ -21,31 +21,32 @@ head
             .col-lg-8
                 .card.mb-4
                     .card-body
-                        h3.h6.mb-4 Basic information
+                        h3.h6.mb-4 Basic Information
                         .row
                             .col-lg-6
                                 .mb-3
                                     label.form-label Product name
-                                    input#title.form-control(type='text' placeholder='Enter product name hear...')
+                                    input#title.form-control(type='text' placeholder='Enter product name hear...' value = products.title)
                             .col-lg-6
                                 .mb-3
                                     label.form-label Price
-                                    input#price.form-control(type='number' placeholder='Enter price hear...' min='0' value='0')
+                                    input#price.form-control(type='number' placeholder='Enter price hear...' min='0' value = products.price)
                         .row
                             .col-lg-6
                                 .mb-3
                                     label.form-label Quantity
-                                    input#quantity.form-control(type='number' min='0' value='0' placeholder='Enter quantity hear...')
+                                    input#quantity.form-control(type='number' min='0' placeholder='Enter quantity hear...' value = products.quantity)
                                 .mb-3
                                     a.form-control(id='textToken', style="display: none; " ) #{token}
-
-
+                                .mb-3
+                                    a.form-control(id='idProduct', style="display: none; " ) #{products._id}
                 .card.mb-4
                     .card-body
                         h3.h6.mb-4 Details Product
                         .mb-3
                             label.form-label Description
                             textarea#description.form-control(placeholder='Enter description hear...' rows='4')
+                                | #{products.description}
                 .card.mb-4
                     .card-body
                         h3.h6.mb-4 Product Option
@@ -57,14 +58,17 @@ head
                                     th(scope='col') Type
                                     th(scope='col') Title
                                     th(scope='col') Content
-                                    th(scope='col') feesArise
+                                    th(scope='col') FeeArise
                                     th(scope='col') Action
                             tbody#TableOption
+
+
+                        input.d-none.form-control(id= 'valueOption' value=products.option)
             .col-lg-4
                 .card.mb-4
                     .card-body
                         h3.h6 Category
-                        input#keyword.form-control(placeholder='Search and select category hear...' autocomplete='off' required='' type='text')
+                        input#keyword.form-control(placeholder='Search and select category hear...' value=products.category autocomplete='off' required='' type='text')
                         div#categoryDropdown.dropdown-content(style='display: none')
                             each cate in categories
                                 div.dropdown-item(class="dropdown_item" data-id=cate._id  data-id-cate=cate_id)
@@ -116,8 +120,8 @@ head
                                 input#content.content.form-control(type='text' name='content' placeholder='' aria-describedby='helpId')
                         .mb-4
                             .form-group
-                                label#lablefeesArise feesArise
-                                input#feesArise.content.form-control(type='text' name='content' placeholder='' aria-describedby='helpId')
+                                label#lableFeeArise FeesArise
+                                input#feeArise.content.form-control(type='number' name='content' placeholder='' aria-describedby='helpId')
 
 
                 .modal-footer
@@ -126,5 +130,5 @@ head
                     button#save_option.btn.btn-primary(type='button') sửa
     script(src='https://code.jquery.com/jquery-1.10.2.min.js')
     script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js')
-    script(src='/js/product_action.js')
+    script(src='/js/edit_product_action.js')
     script(src=`https://unpkg.com/axios/dist/axios.min.js`)

@@ -16,6 +16,9 @@ const mongoose = require('mongoose');
 // const {cartModel, CartModel} = require("../models/model.cart");
 const NotificationPublicModel = require("./../models/model.notification.pulic");
 
+const crypto = require("crypto");
+require("dotenv").config();
+
 /* GET home page. */
 router.get("/stech.manager/home", function (req, res, next) {
   res.render("index");
@@ -30,19 +33,20 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
     console.log(listProduct[1].option[1].title)
     res.render("product_action", {
       products: listProduct,
-      categories:listCategory,
+      categories: listCategory,
       message: "get list product success",
-      token:token,
+      token: token,
       code: 1
     });
   } catch (e) {
     console.log(e.message);
-    res.send({message: "product not found", code: 0})
+    res.send({ message: "product not found", code: 0 })
   }
 });
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
+
     console.log(listProduct[1].option[1].title)
     res.render("product", {
       products: listProduct,
@@ -52,6 +56,20 @@ router.get('/stech.manager/product', async function (req, res, next) {
   } catch (e) {
     console.log(e.message);
     res.send({ message: "product not found", code: 0 })
+  }
+
+  try {
+    let listProduct = await ProductModel.productModel.find();
+
+    console.log(listProduct[1].option[1].title)
+    res.render("product_action", {
+      products: listProduct,
+      message: "get list product success",
+      code: 1
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.send({message: "product not found", code: 0})
   }
 });
 router.get("/stech.manager/category", async function (req, res, next) {
@@ -151,12 +169,12 @@ router.get("/stech.manager/profile", async function (req, res, next) {
 router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
   try {
 
+
     // Check login
     let idUserLoged = req.cookies.Uid
     if (idUserLoged == null || idUserLoged.length <= 0) {
       res.redirect('/stech.manager/login')
     }
-    let ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET
 
     let encodedConversation = req.params.id
     let idConversation = req.params.id
@@ -164,6 +182,53 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
     let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
     let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({ path: 'address', select: 'city' });
     let dataMessage = await MessageModel.messageModel.find({ conversation: idConversation }).populate({ path: 'conversation' });
+
+
+    // console.log("=======================");
+    // console.log(dataMessage);
+    let newDataMessage = []
+    dataMessage.map((msg) => {
+
+      let message = ''
+      if (msg.message.length <= 0) {
+        return msg.message
+      }
+
+      const algorithm = process.env.ALGORITHM;
+      const ENCRYPTION_KEY = process.env.API_KEY;
+      const hash = crypto.createHash("sha1");
+      hash.update(ENCRYPTION_KEY)
+      const digestResult = hash.digest();
+      const uint8Array = new Uint8Array(digestResult);
+      const keyUint8Array = uint8Array.slice(0, 16);
+      const keyBuffer = Buffer.from(keyUint8Array);
+      let textParts = msg.message.split(':');
+      let iv = Buffer.from(textParts.shift(), 'hex');
+      let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+      let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+      let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+      decrypted += decipher.final('utf8');
+
+      message = decrypted;
+
+      let itemMsg = {
+        _id: msg._id,
+        conversation: msg.conversation,
+        senderId: msg.senderId,
+        receiverId: msg.receiverId,
+        message: message,
+        filess: msg.filess,
+        images: msg.images,
+        video: msg.video,
+        status: msg.status,
+        deleted: msg.deleted,
+        timestamp: msg.timestamp
+      }
+      newDataMessage.push(itemMsg);
+    })
+
+    // console.log("+++++++++++++++++");
+    // console.log(newDataMessage);
 
     let dataLastMessage = []
     let latestMessages = {};
@@ -193,7 +258,27 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
       dataLastMessage.map((msg) => {
         if (con._id + "" == msg.conversationID + "") {
           let idMessage = msg.id
-          let message = msg.message
+          let message = ''
+          if (msg.message.length <= 0) {
+            return msg.message
+          }
+          const algorithm = process.env.ALGORITHM;
+          const ENCRYPTION_KEY = process.env.API_KEY;
+          const hash = crypto.createHash("sha1");
+          hash.update(ENCRYPTION_KEY)
+          const digestResult = hash.digest();
+          const uint8Array = new Uint8Array(digestResult);
+          const keyUint8Array = uint8Array.slice(0, 16);
+          const keyBuffer = Buffer.from(keyUint8Array);
+          let textParts = msg.message.split(':');
+          let iv = Buffer.from(textParts.shift(), 'hex');
+          let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+          let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+          let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+          decrypted += decipher.final('utf8');
+
+          message = decrypted
+
           let time = msg.timestamp
           let senderID = msg.senderID
           let status = msg.status
@@ -266,7 +351,7 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
     res.render("chat", {
       conversations: dataConversation.length > 0 ? dataConversation : [],
       userLoged: dataUserLoged[0],
-      dataMessage: dataMessage,
+      dataMessage: newDataMessage,
       // dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
       dataHeaderMsg: dataOtherUser,
       idConversation: idConversation,
@@ -299,12 +384,34 @@ router.get("/stech.manager/chat", async function (req, res, next) {
       dataMessage.map((msg) => {
         if (con._id + "" == msg.conversation._id + "") {
           if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
+            let message = ''
+            if (msg.message.length <= 0) {
+              return msg.message
+            }
+            const ENCRYPTION_KEY = process.env.API_KEY;
+            const algorithm = process.env.ALGORITHM;
+            const hash = crypto.createHash("sha1");
+            hash.update(ENCRYPTION_KEY)
+            const digestResult = hash.digest();
+            const uint8Array = new Uint8Array(digestResult);
+            const keyUint8Array = uint8Array.slice(0, 16);
+            const keyBuffer = Buffer.from(keyUint8Array);
+            let textParts = msg.message.split(':');
+            let iv = Buffer.from(textParts.shift(), 'hex');
+            let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+            let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+            let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+            decrypted += decipher.final('utf8');
+
+            message = decrypted;
             latestMessages[con._id] = {
               id: msg._id,
               conversationID: con._id,
               senderID: msg.senderId,
               status: msg.status,
-              message: msg.message,
+              message: message,
+              images: msg.images,
+              video: msg.video,
               timestamp: msg.timestamp
             };
           }
@@ -321,7 +428,7 @@ router.get("/stech.manager/chat", async function (req, res, next) {
       dataLastMessage.map((msg) => {
         if (con._id + "" == msg.conversationID + "") {
           let idMessage = msg.id
-          let message = msg.message
+          let message = msg.deleted ? " đã gỡ 1 tin nhắn" : msg.message.length > 0 ? msg.message : msg.images.length > 0 ? ` đã gửi ${msg.images.length} ảnh` : msg.video.length > 0 ? `Bạn đã gửi 1 video` : ''
           let time = msg.timestamp
           let senderID = msg.senderID
           let status = msg.status
@@ -359,10 +466,11 @@ router.get("/stech.manager/chat", async function (req, res, next) {
       })
     })
 
-    console.log(dataConversation);
-    console.log("==================");
-    console.log(dataLastMessage);
-    res.render("chat", {
+    // console.log(dataConversation);
+    // console.log("==================");
+    // console.log(dataLastMessage);
+
+    return res.render("chat", {
       conversations: dataConversation.length > 0 ? dataConversation : [],
       userLoged: dataUserLoged[0],
       dataMessage: {},
@@ -375,8 +483,8 @@ router.get("/stech.manager/chat", async function (req, res, next) {
 
 
   } catch (e) {
-    console.log(`eror get chat: ${e.message}`);
-    res.send({ message: "conversation not found", code: 0 });
+    console.log(`error get chat: ${e.message}`);
+    return res.send({ message: "conversation not found", code: 0 });
   }
 });
 router.get("/stech.manager/order", async function (req, res, next) {
@@ -545,11 +653,33 @@ router.get("/stech.manager/pay", function (req, res, next) {
     var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)selectedProducts\s*=\s*([^;]*).*$)|^.*$/, "$1");
     var listProduct = JSON.parse(decodeURIComponent(cookieValue));
 
-    return res.render("pay",{products: listProduct})
+    return res.render("pay", { products: listProduct })
 
   } catch (e) {
     console.log(e.message);
     res.send({ message: "pay not found", code: 0 })
+  }
+});
+router.get("/stech.manager/edit_product_action", async function (req, res, next) {
+  var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)productId\s*=\s*([^;]*).*$)|^.*$/, "$1");
+  var productId = JSON.parse(decodeURIComponent(cookieValue));
+  const token = req.cookies.token
+  try {
+
+    let productSelected = await ProductModel.productModel.findById(productId);
+    let listCategory = await CategoryModel.categoryModel.find();
+
+     res.render("edit_product_action",
+        {
+          products: productSelected,
+          categories: listCategory,
+          message: "get list product success",
+          token:token,
+          code:1
+        })
+  } catch (e) {
+    console.log(e.message);
+    res.send({message: "product not found", code: 0})
   }
 });
 module.exports = router;

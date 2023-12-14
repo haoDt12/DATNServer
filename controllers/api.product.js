@@ -281,6 +281,7 @@ exports.editProduct = async (req, res) => {
     let filelist_img;
     let filevideo;
     let option = req.body.option;
+    let op = JSON.parse(req.body.option);
     try {
         fileimg_cover = req.files["img_cover"];
         filelist_img = req.files["list_img"];
@@ -316,7 +317,7 @@ exports.editProduct = async (req, res) => {
             product.sold = sold;
         }
         if (option !== undefined) {
-            product.option = option;
+            product.option = op;
         }
         if (fileimg_cover !== undefined) {
             console.log(fileimg_cover[0].mimetype);
