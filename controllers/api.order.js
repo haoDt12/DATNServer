@@ -45,7 +45,7 @@ exports.creatOrder = async (req, res) => {
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
-        if(check === 0){
+        if (check === 0) {
             return res.send({message: "product is out of stock ", code: 0});
         }
         let order = new OrderModel.modelOrder({
@@ -118,7 +118,7 @@ exports.creatOrderGuest = async (req, res) => {
                 await product.save();
                 let feesArise = 0;
                 item.option.map(item => {
-                    if(item.feesArise){
+                    if (item.feesArise) {
                         feesArise += Number(item.feesArise);
                     }
                 })
@@ -356,7 +356,7 @@ exports.creatOrderZaloPay = async (req, res) => {
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
-        if(check === 0){
+        if (check === 0) {
             return res.send({message: "product is out of stock ", code: 0});
         }
         let order = new OrderModel.modelOrder({
@@ -381,6 +381,103 @@ exports.creatOrderZaloPay = async (req, res) => {
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "create order fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
+}
+exports.getOrderTop10 = async (req, res) => {
+    try {
+        let order = await OrderModel.modelOrder.find({status: "PayComplete"});
+        let arrIdProduct = [];
+        let data = []
+        order.map(item => {
+            item.product.map(data => {
+                arrIdProduct.push(data.productId);
+            });
+        })
+        let top10Product = getTop10Frequencies(arrIdProduct);
+        await Promise.all(top10Product.map(async item => {
+            let product = await ProductModel.productModel.findById(item.productId);
+            data.push({
+                productId: item.productId,
+                img: product.img_cover,
+                count: item.count
+            })
+        }));
+        return res.send({
+            message: "get top 10 success",
+            code: 1,
+            name: "top10Product",
+            data: data
+        })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+exports.getOrderFromDateToDate = async (req, res) => {
+    let fromDate = req.body.fromDate;
+    let toDate = req.body.toDate;
+    if(fromDate === null){
+        return res.send({message: "from date is required", code: 1});
+    }
+    if(toDate === null){
+        return res.send({message: "to date is required", code: 1});
+    }
+    try {
+        let dataOrder = [];
+        let dataGetFromDateToDate = [];
+        let data = [];
+        let order = await OrderModel.modelOrder.find({status: "PayComplete"});
+        order.map(item=>{
+            const formattedDate = moment(item.date_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
+            dataOrder.push({date: formattedDate,total: item.total})
+        })
+        dataGetFromDateToDate = calculateTotalByDate(dataOrder,fromDate,toDate);
+        dataGetFromDateToDate.map(item=>{
+            data.push(item.total)
+        })
+        return res.send({
+            message: "get order from date to date success",
+            code: 1,
+            name: "OrderFromDateToDate",
+            data: data
+        })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+
+function getTop10Frequencies(array) {
+    const frequencies = {};
+    array.forEach(item => {
+        frequencies[item] = (frequencies[item] || 0) + 1;
+    });
+    const frequencyArray = Object.entries(frequencies);
+    frequencyArray.sort((a, b) => b[1] - a[1]);
+    const top10 = frequencyArray.slice(0, 10).map(entry => ({
+        productId: entry[0],
+        count: entry[1],
+    }));
+    return top10;
+}
+function calculateTotalByDate(data, fromDate, toDate) {
+    const totalsByDate = {};
+    const filteredData = data.filter(item => {
+        const currentDate = new Date(item.date);
+        return currentDate >= new Date(fromDate) && currentDate <= new Date(toDate);
+    });
+    filteredData.forEach(item => {
+        const date = item.date;
+        const total = item.total;
+
+        if (!totalsByDate[date]) {
+            totalsByDate[date] = 0;
+        }
+        totalsByDate[date] += total;
+    });
+    return Object.entries(totalsByDate).map(([date, total]) => ({
+        date,
+        total,
+    }));
 }

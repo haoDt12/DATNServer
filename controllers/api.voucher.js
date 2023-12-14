@@ -165,6 +165,15 @@ exports.getAllVoucher = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+exports.getAllVoucherNoFill = async (req, res) => {
+    try {
+        let listVoucher = await VoucherModel.voucherModel.find();
+        return res.send({message: "get list voucher success", listVoucher: listVoucher, code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
 function filterNotificationsForUser(listVoucher) {
     const currentDate = moment();
     return listVoucher.filter(notification => {
@@ -173,8 +182,23 @@ function filterNotificationsForUser(listVoucher) {
         return (
             (currentDate.isBetween(fromDate, toDate) ||
                 currentDate.isSame(fromDate) ||
-                currentDate.isSame(toDate))
+                currentDate.isSame(toDate)) && notification.status === "unused"
         );
     });
 }
-
+exports.getVoucherById = async (req,res)=>{
+    let voucherId = req.body.voucherId;
+    if(voucherId === null){
+        return res.send({message:"voucher id is required", code: 0 })
+    }
+    try {
+        let voucher = await VoucherModel.voucherModel.findById(voucherId);
+        if(!voucher){
+            return res.send({message:"voucher not found", code: 0 })
+        }
+        return res.send({message: "get list voucher success", listVoucher: voucher, code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
