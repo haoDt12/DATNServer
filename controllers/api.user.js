@@ -620,4 +620,17 @@ function isNumeric(str) {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
+exports.checkToken = (req,res) =>{
+    const token = req.header('Authorization');
+    if (!token) {
+        return res.send({message: "wrong token", code: 0});
+    }
+    try {
+        req.data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        return res.send({message: "token ok", code: 1})
+    } catch (e) {
+        return res.send({message: "wrong token", code: 0});
+    }
+}
+
 
