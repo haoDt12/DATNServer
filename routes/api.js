@@ -153,6 +153,8 @@ router.post(
   ApiOrder.deleteOrder
 );
 router.post("/editOrder", Middleware.authorizationToken, ApiOrder.editOrder);
+router.post("/getOrderTop10", Middleware.authorizationToken, ApiOrder.getOrderTop10);
+router.post("/getOrderFromDateToDate", Middleware.authorizationToken, ApiOrder.getOrderFromDateToDate);
 
 router.post("/addCart", Middleware.authorizationToken, ApiCart.addCart);
 router.post(

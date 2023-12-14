@@ -414,6 +414,39 @@ exports.getOrderTop10 = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+exports.getOrderFromDateToDate = async (req, res) => {
+    let fromDate = req.body.fromDate;
+    let toDate = req.body.toDate;
+    if(fromDate === null){
+        return res.send({message: "from date is required", code: 1});
+    }
+    if(toDate === null){
+        return res.send({message: "to date is required", code: 1});
+    }
+    try {
+        let dataOrder = [];
+        let dataGetFromDateToDate = [];
+        let data = [];
+        let order = await OrderModel.modelOrder.find({status: "PayComplete"});
+        order.map(item=>{
+            const formattedDate = moment(item.date_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
+            dataOrder.push({date: formattedDate,total: item.total})
+        })
+        dataGetFromDateToDate = calculateTotalByDate(dataOrder,fromDate,toDate);
+        dataGetFromDateToDate.map(item=>{
+            data.push(item.total)
+        })
+        return res.send({
+            message: "get order from date to date success",
+            code: 1,
+            name: "OrderFromDateToDate",
+            data: data
+        })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
 
 function getTop10Frequencies(array) {
     const frequencies = {};
@@ -427,4 +460,24 @@ function getTop10Frequencies(array) {
         count: entry[1],
     }));
     return top10;
+}
+function calculateTotalByDate(data, fromDate, toDate) {
+    const totalsByDate = {};
+    const filteredData = data.filter(item => {
+        const currentDate = new Date(item.date);
+        return currentDate >= new Date(fromDate) && currentDate <= new Date(toDate);
+    });
+    filteredData.forEach(item => {
+        const date = item.date;
+        const total = item.total;
+
+        if (!totalsByDate[date]) {
+            totalsByDate[date] = 0;
+        }
+        totalsByDate[date] += total;
+    });
+    return Object.entries(totalsByDate).map(([date, total]) => ({
+        date,
+        total,
+    }));
 }
