@@ -370,7 +370,7 @@ exports.verifyOtpLogin = async (req, res) => {
             .populate("address");
         if (user) {
             let token = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: "3600s",
+                expiresIn: "86400s",
             });
             user.otp = null;
             await user.save();

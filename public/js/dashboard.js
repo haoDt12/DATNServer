@@ -7,13 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
   const select_year = document.getElementById("select_year");
   const token = utils.GetCookie("token");
   const date = new Date();
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear().toString();
-  const formattedDate = `${year}-${month}-${day}`;
-
-
-  let data_chart_earn = [];
+  
+  let data_chart = [];
   async function GetStatisticsCusTom(from_date,to_date) {
     try {
       const response = await axios.post(`/api/getOrderFromDateToDate`, {
@@ -24,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function() {
           'Authorization': `${token}`
         }
       });
-      console.log("data:" + response.data);
       return response.data;
     } catch (error) {
       console.log(error);
@@ -38,20 +32,19 @@ document.addEventListener("DOMContentLoaded", function() {
           'Authorization': `${token}`
         }
       });
-      console.log("data:" + response.data);
       return response.data;
     } catch (error) {
       console.log(error);
     }
   }
-  function findMaxNumber(arr) {
-    let maxNumber = arr[0]; // Giả sử phần tử đầu tiên là số lớn nhất
+  function findMax(arr) {
+    let max = arr[0];
     for (let i = 1; i < arr.length; i++) {
-      if (arr[i] > maxNumber) {
-        maxNumber = arr[i]; // Cập nhật số lớn nhất nếu tìm thấy số lớn hơn
+      if (arr[i] > max) {
+        max = arr[i];
       }
     }
-    return maxNumber;
+    return max;
   }
   function calculateSum(arr) {
     let sum = 0;
@@ -73,20 +66,16 @@ document.addEventListener("DOMContentLoaded", function() {
   let year_selected = "2023";
   select_year.addEventListener('change', function (){
       year_selected = select_year.value;
-      console.log(year_selected);
   });
 
-  // Ví dụ sử dụng:
-  // const formattedAmount = result.toLocaleString('en-US', {
-  //   style: 'currency',
-  //   currency: 'VND'
-  // });
+
   // txt_month.innerText = formattedAmount.toString();
 
   // txt_year.innerText = formattedAmount2.toString();
 // Ví dụ sử dụng:
   let chartCustom;
   const options = {month: 'numeric', day: 'numeric'};
+  const options_full = {year: 'numeric', month: 'numeric', day: 'numeric'};
   let data_date = [];
   const previousWeek = new Date(date);
   previousWeek.setDate(previousWeek.getDate() - 6);
@@ -162,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function() {
         yaxis: {
           show: true,
           min: 0,
-          max: findMaxNumber(data.data)+50,
+          max: findMax(data.data)+50,
           tickAmount: 4,
           labels: {
             style: {
@@ -190,10 +179,10 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         ]
       };
-  });
-    let chart_custom = new ApexCharts(document.querySelector("#chart_custom"), chartCustom);
-    // chart_custom.render().then(r =>{});
-    reloadChart(chart_custom);
+      let chart_custom = new ApexCharts(document.querySelector("#chart_custom"), chartCustom);
+      // chart_custom.render().then(r =>{});
+      reloadChart(chart_custom);
+    });
   });
 
   function reloadChart(chart) {
@@ -201,13 +190,11 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   GetStatisticsCusTom(first_date, last_date).then(data =>{
     if (data.code === 1){
-      data_chart_earn = data.data;
-      console.log(data.data);
+      data_chart = data.data;
 
       let chartData = {
         series: [
-          { name: "Earnings this day:", data: data_chart_earn},
-          // { name: "Expense this week:", data:  data_chart_earn_month},
+          { name: "Earnings this day:", data: data_chart},
         ],
         chart: {
           type: "bar",
@@ -254,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function() {
         yaxis: {
           show: true,
           min: 0,
-          max: findMaxNumber(data_chart_earn),
+          max: findMax(data_chart),
           tickAmount: 4,
           labels: {
             style: {
@@ -290,6 +277,25 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
   });
+
+  function getOneYearTime() {
+    const currentDate = new Date();
+    const endDate = new Date(currentDate.getFullYear() + 1, 0, 0);
+
+    const dates = [];
+    let currentDateCopy = new Date(currentDate);
+
+    while (currentDateCopy <= endDate) {
+      dates.push(new Date(currentDateCopy));
+      currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+    }
+
+    return dates;
+  }
+
+  const oneYearTime = getOneYearTime();
+  const formattedYear = oneYearTime.map(date => date.toLocaleDateString('en-US', options_full));
+  console.log(formattedYear)
 
   let breakupData = {
     color: "#adb5bd",
@@ -339,49 +345,80 @@ document.addEventListener("DOMContentLoaded", function() {
   let breakupChart = new ApexCharts(document.querySelector("#breakup"), breakupData);
   breakupChart.render().then(r => {});
 
-  let earningData = {
-    chart: {
-      id: "sparkline3",
-      type: "area",
-      height: 60,
-      sparkline: {
-        enabled: true,
-      },
-      group: "sparklines",
-      fontFamily: "Plus Jakarta Sans', sans-serif",
-      foreColor: "#adb0bb",
-    },
-    series: [
-      {
-        name: "Earnings",
-        color: "#49BEFF",
-        data: [],
-      },
-    ],
-    stroke: {
-      curve: "smooth",
-      width: 2,
-    },
-    fill: {
-      colors: ["#f3feff"],
-      type: "solid",
-      opacity: 0.05,
-    },
-    markers: {
-      size: 0,
-    },
-    tooltip: {
-      theme: "dark",
-      fixed: {
-        enabled: true,
-        position: "right",
-      },
-      x: {
-        show: false,
-      },
-    }
-  };
+  function getOneMonthTime() {
+    const currentDate = new Date();
+    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-    let earningChart = new ApexCharts(document.querySelector("#earning"), earningData);
-    earningChart.render().then(r => {});
+    const dates = [];
+    let currentDateCopy = new Date(currentDate);
+
+    while (currentDateCopy <= endDate) {
+      dates.push(new Date(currentDateCopy));
+      currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+    }
+
+    return dates;
+  }
+
+  const oneMonthTime = getOneMonthTime();
+  const formattedDates = oneMonthTime.map(date => date.toLocaleDateString('en-US', options_full));
+  let data_month = [];
+  GetStatisticsCusTom(formattedDates[0], formattedDates[formattedDates.length - 1]).then(data =>{
+    if (data.code === 1){
+      data_month = data.data;
+      let total = calculateSum(data_month);
+      const formatted = total.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'VND'
+      });
+      txt_month.innerText = formatted.toString();
+      let earningData = {
+        chart: {
+          id: "sparkline3",
+          type: "area",
+          height: 60,
+          sparkline: {
+            enabled: true,
+          },
+          group: "sparklines",
+          fontFamily: "Plus Jakarta Sans', sans-serif",
+          foreColor: "#adb0bb",
+        },
+        series: [
+          {
+            name: "Earnings",
+            color: "#49BEFF",
+            data: data_month,
+          },
+        ],
+        stroke: {
+          curve: "smooth",
+          width: 2,
+        },
+        fill: {
+          colors: ["#f3feff"],
+          type: "solid",
+          opacity: 0.05,
+        },
+        markers: {
+          size: 0,
+        },
+        tooltip: {
+          theme: "dark",
+          fixed: {
+            enabled: true,
+            position: "right",
+          },
+          x: {
+            show: false,
+          },
+        }
+      };
+
+      let earningChart = new ApexCharts(document.querySelector("#earning"), earningData);
+      earningChart.render();
+    }else {
+      console.log(data.message);
+    }
+    });
   });
