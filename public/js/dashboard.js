@@ -278,23 +278,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
   });
 
-  function getOneYearTime() {
-    const currentDate = new Date();
-    const endDate = new Date(currentDate.getFullYear() + 1, 0, 0);
+  function getYearTime(year) {
+    const startDate = new Date(year, 0, 1);
+    const endDate = new Date(year, 11, 31);
 
-    const dates = [];
-    let currentDateCopy = new Date(currentDate);
+    const days = [];
+    let currentDateCopy = new Date(startDate);
 
     while (currentDateCopy <= endDate) {
-      dates.push(new Date(currentDateCopy));
+      days.push(new Date(currentDateCopy));
       currentDateCopy.setDate(currentDateCopy.getDate() + 1);
     }
 
-    return dates;
+    return days;
   }
 
-  const oneYearTime = getOneYearTime();
-  const formattedYear = oneYearTime.map(date => date.toLocaleDateString('en-US', options_full));
+// Ví dụ sử dụng:
+  const currentYear = new Date().getFullYear();
+  const yearTime = getYearTime(currentYear);
+// Ví dụ sử dụng:
+  const formattedYear = yearTime.map(date => date.toLocaleDateString('en-US', options_full));
   console.log(formattedYear)
 
   let breakupData = {
@@ -345,12 +348,13 @@ document.addEventListener("DOMContentLoaded", function() {
   let breakupChart = new ApexCharts(document.querySelector("#breakup"), breakupData);
   breakupChart.render().then(r => {});
 
-  function getOneMonthTime() {
+  function getCurrentMonthTime() {
     const currentDate = new Date();
+    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
     const dates = [];
-    let currentDateCopy = new Date(currentDate);
+    let currentDateCopy = new Date(startDate);
 
     while (currentDateCopy <= endDate) {
       dates.push(new Date(currentDateCopy));
@@ -360,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function() {
     return dates;
   }
 
-  const oneMonthTime = getOneMonthTime();
+  const oneMonthTime = getCurrentMonthTime();
   const formattedDates = oneMonthTime.map(date => date.toLocaleDateString('en-US', options_full));
   let data_month = [];
   GetStatisticsCusTom(formattedDates[0], formattedDates[formattedDates.length - 1]).then(data =>{
