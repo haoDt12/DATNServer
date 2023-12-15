@@ -8,7 +8,7 @@ const orderSchema = db.mongoose.Schema({
             type: {type: String, required: false},
             title: {type: String, required: false},
             content: {type: String, required: false},
-            feesArise:{type: String, required: false},
+            feesArise: {type: String, required: false},
         }],
         quantity: {type: Number, required: true}
     }],
@@ -22,7 +22,7 @@ const orderSchema = db.mongoose.Schema({
 }, {
     collection: "Order"
 });
-orderSchema.methods.getAllProductInfo = async function(){
+orderSchema.methods.getAllProductInfo = async function () {
     const productInfoPromises = this.product.map(async (product) => {
         const productId = product.productId;
 
@@ -42,12 +42,12 @@ orderSchema.methods.getAllProductInfo = async function(){
 
     return allProductInfo;
 };
-orderSchema.methods.getUserInfo = async function(){
+orderSchema.methods.getUserInfo = async function () {
     const userId = this.userId;
     if (userId) {
         // Sử dụng Mongoose populate để lấy dữ liệu từ bảng product
         const userInfo = await db.mongoose.model('user').findById(userId);
-        
+
         // Trả về toàn bộ thông tin của sản phẩm
         return userInfo;
     } else {
