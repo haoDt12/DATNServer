@@ -1,13 +1,14 @@
 const OrderModel = require("../models/model.order");
 const ProductModel = require("../models/model.product");
 const Cart = require("../models/model.cart");
+let Voucher = require("../models/model.voucher");
 const moment = require("moment/moment");
 exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
+    let voucherId = req.body.voucherId;
     let check = 1;
-    console.log(product);
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (userId == null) {
@@ -33,7 +34,7 @@ exports.creatOrder = async (req, res) => {
                 newShold = sold + 1;
                 product.quantity = newQuantity.toString();
                 product.sold = newShold.toString();
-                await product.save();
+                // await product.save();
             } else {
                 check = 0;
             }
@@ -45,8 +46,20 @@ exports.creatOrder = async (req, res) => {
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
-        if(check === 0){
+        if (check === 0) {
             return res.send({message: "product is out of stock ", code: 0});
+        }
+        let voucherPrice = 0;
+        if (voucherId != null) {
+            let voucher = await Voucher.voucherModel.findById(voucherId);
+            if (voucher) {
+                voucherPrice = Number(voucher.price);
+                total = total - voucherPrice;
+                voucher.status = "used";
+                await voucher.save();
+            } else {
+                return res.send({message: "voucher not found", code: 0});
+            }
         }
         let order = new OrderModel.modelOrder({
             userId: userId,
@@ -57,16 +70,16 @@ exports.creatOrder = async (req, res) => {
         })
         let cart = await Cart.cartModel.findOne({userId: userId});
         if (!cart) {
-            return res.send({message: "cart not found", code: 0});
+            await order.save();
+            return res.send({message: "create order success", code: 1});
         }
         let currentProduct = cart.product;
-        console.log(currentProduct);
-        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
-        console.log(newProduct)
-        cart.product = newProduct;
+        console.log(product)
+        console.log(total)
+        console.log({currentProduct : currentProduct[0].option})
+        cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         await cart.save();
         await order.save();
-        console.log(order);
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -79,8 +92,6 @@ exports.creatOrderGuest = async (req, res) => {
     let guestAddress = req.body.guestAddress;
     let product = req.body.product;
     let status = req.body.status;
-
-    // console.log(product);
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (guestPhone == null) {
@@ -118,7 +129,7 @@ exports.creatOrderGuest = async (req, res) => {
                 await product.save();
                 let feesArise = 0;
                 item.option.map(item => {
-                    if(item.feesArise){
+                    if (item.feesArise) {
                         feesArise += Number(item.feesArise);
                     }
                 })
@@ -272,8 +283,8 @@ exports.getPriceZaloPay = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
+    let voucherId = req.body.voucherId;
     let check = 1;
-    console.log(product);
     if (userId == null) {
         return res.send({message: "userId is required", code: 0});
     }
@@ -291,7 +302,6 @@ exports.getPriceZaloPay = async (req, res) => {
                 return res.send({message: "product not found", code: 0});
             }
             let quantity = Number(product.quantity);
-            let sold = Number(product.sold);
             if (quantity !== 0) {
                 let feesArise = 0;
                 item.option.map(item => {
@@ -307,6 +317,16 @@ exports.getPriceZaloPay = async (req, res) => {
         if (check === 0) {
             return res.send({message: "product is out of stock ", code: 0});
         }
+        let voucherPrice = 0;
+        if (voucherId != null) {
+            let voucher = await Voucher.voucherModel.findById(voucherId);
+            if (voucher) {
+                voucherPrice = Number(voucher.price);
+                total = total - voucherPrice;
+            } else {
+                return res.send({message: "voucher not found", code: 0});
+            }
+        }
         return res.send({message: "get price order success", price: total, code: 1});
     } catch (e) {
         console.log(e.message);
@@ -317,8 +337,8 @@ exports.creatOrderZaloPay = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
+    let voucherId = req.body.voucherId;
     let check = 1;
-    console.log(product);
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (userId == null) {
@@ -356,8 +376,20 @@ exports.creatOrderZaloPay = async (req, res) => {
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
-        if(check === 0){
+        if (check === 0) {
             return res.send({message: "product is out of stock ", code: 0});
+        }
+        let voucherPrice = 0;
+        if (voucherId != null) {
+            let voucher = await Voucher.voucherModel.findById(voucherId);
+            if (voucher) {
+                voucherPrice = Number(voucher.price);
+                total = total - voucherPrice;
+                voucher.status = "used";
+                await voucher.save();
+            } else {
+                return res.send({message: "voucher not found", code: 0});
+            }
         }
         let order = new OrderModel.modelOrder({
             userId: userId,
@@ -368,19 +400,115 @@ exports.creatOrderZaloPay = async (req, res) => {
         })
         let cart = await Cart.cartModel.findOne({userId: userId});
         if (!cart) {
-            return res.send({message: "cart not found", code: 0});
+            await order.save();
+            return res.send({message: "create order success", code: 1});
         }
         let currentProduct = cart.product;
         console.log(currentProduct);
-        let newProduct = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
-        console.log(newProduct)
-        cart.product = newProduct;
+        cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         await cart.save();
         await order.save();
-        console.log(order);
         return res.send({message: "create order success", code: 1});
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "create order fail", code: 0});
+        return res.send({message: e.message.toString(), code: 0});
     }
+}
+exports.getOrderTop10 = async (req, res) => {
+    try {
+        let order = await OrderModel.modelOrder.find({status: "PayComplete"});
+        let arrIdProduct = [];
+        let data = []
+        order.map(item => {
+            item.product.map(data => {
+                arrIdProduct.push(data.productId);
+            });
+        })
+        let top10Product = getTop10Frequencies(arrIdProduct);
+        await Promise.all(top10Product.map(async item => {
+            let product = await ProductModel.productModel.findById(item.productId);
+            data.push({
+                productId: item.productId,
+                img: product.img_cover,
+                count: item.count
+            })
+        }));
+        return res.send({
+            message: "get top 10 success",
+            code: 1,
+            name: "top10Product",
+            data: data
+        })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+exports.getOrderFromDateToDate = async (req, res) => {
+    let fromDate = req.body.fromDate;
+    let toDate = req.body.toDate;
+    if (fromDate === null) {
+        return res.send({message: "from date is required", code: 1});
+    }
+    if (toDate === null) {
+        return res.send({message: "to date is required", code: 1});
+    }
+    try {
+        let dataOrder = [];
+        let dataGetFromDateToDate = [];
+        let data = [];
+        let order = await OrderModel.modelOrder.find({status: "PayComplete"});
+        order.map(item => {
+            const formattedDate = moment(item.date_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
+            dataOrder.push({date: formattedDate, total: item.total})
+        })
+        dataGetFromDateToDate = calculateTotalByDate(dataOrder, fromDate, toDate);
+        dataGetFromDateToDate.map(item => {
+            data.push(item.total)
+        })
+        return res.send({
+            message: "get order from date to date success",
+            code: 1,
+            name: "OrderFromDateToDate",
+            data: data
+        })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+
+function getTop10Frequencies(array) {
+    const frequencies = {};
+    array.forEach(item => {
+        frequencies[item] = (frequencies[item] || 0) + 1;
+    });
+    const frequencyArray = Object.entries(frequencies);
+    frequencyArray.sort((a, b) => b[1] - a[1]);
+    const top10 = frequencyArray.slice(0, 10).map(entry => ({
+        productId: entry[0],
+        count: entry[1],
+    }));
+    return top10;
+}
+
+function calculateTotalByDate(data, fromDate, toDate) {
+    const totalsByDate = {};
+    const filteredData = data.filter(item => {
+        const currentDate = new Date(item.date);
+        return currentDate >= new Date(fromDate) && currentDate <= new Date(toDate);
+    });
+    filteredData.forEach(item => {
+        const date = item.date;
+        const total = item.total;
+
+        if (!totalsByDate[date]) {
+            totalsByDate[date] = 0;
+        }
+        totalsByDate[date] += total;
+    });
+    return Object.entries(totalsByDate).map(([date, total]) => ({
+        date,
+        total,
+    }));
 }

@@ -113,7 +113,7 @@ block content
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
-                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
+                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='/stech.manager/login') Logout
             .container-fluid
                 form#searchForm(action='javascript:void(0)', onsubmit='return false;')
                     .input-group.m-3
@@ -141,16 +141,16 @@ block content
                                                             i.ti.ti-eye-off.fs-6
                                                             p.mb-0.fs-3 Ẩn khỏi app
                                                         a#Detail.d-flex.align-items-center.gap-2.dropdown-item.DetailPro(aria-expanded='false' data-id=product._id)
-                                                            i.ti.ti-edit.fs-6
+                                                            i.ti.ti-list-details.fs-6
                                                             p.mb-0.fs-3 Chi tiết sản phẩm
                                                         a#OpenDelete.d-flex.align-items-center.gap-2.dropdown-item.DeletePro(href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")
                                                             i.ti.ti-trash.fs-6
                                                             p.mb-0.fs-3 Xoá sản phẩm
                                                         a#OpenAddCart.d-flex.align-items-center.gap-2.dropdown-item.AddCartPro(href='' data-bs-toggle='modal' data-id=product._id data-bs-target="#AddCartModal")
-                                                            i.ti.ti-trash.fs-6
+                                                            i.ti.ti-shopping-cart.fs-6
                                                             p.mb-0.fs-3 Thêm vào giỏ hàng
                                                         a.d-flex.align-items-center.gap-2.dropdown-item( data-bs-toggle='modal' data-id=product._id class = 'OpenUpdateProduct')
-                                                            i.ti.ti-trash.fs-6
+                                                            i.ti.ti-edit.fs-6
                                                             p.mb-0.fs-3 Sửa sản phẩm
                 //- Start Pagination
                 nav(aria-label='Page navigation example')

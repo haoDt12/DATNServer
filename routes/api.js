@@ -43,6 +43,7 @@ router.post(
   ApiUserController.getListUser
 );
 router.post("/verifyOtpRegister", ApiUserController.verifyOtpRegister);
+router.post("/checkToken", ApiUserController.checkToken);
 router.post("/verifyOtpLogin", ApiUserController.verifyOtpLogin);
 router.post("/editPassword", Middleware.authorizationToken, ApiUserController.editPassword);
 router.post("/verifyOtpEditPass", Middleware.authorizationToken, ApiUserController.verifyOtpEditPass);
@@ -136,6 +137,7 @@ router.post(
 );
 
 router.post("/createOrder", Middleware.authorizationToken, ApiOrder.creatOrder);
+router.post("/getOrderTop10", Middleware.authorizationToken, ApiOrder.getOrderTop10);
 router.post("/getPriceZaloPay", Middleware.authorizationToken, ApiOrder.getPriceZaloPay);
 router.post("/creatOrderZaloPay", Middleware.authorizationToken, ApiOrder.creatOrderZaloPay);
 router.post("/creatOrderGuest", Middleware.authorizationToken, ApiOrder.creatOrderGuest);
@@ -156,6 +158,8 @@ router.post(
   ApiOrder.deleteOrder
 );
 router.post("/editOrder", Middleware.authorizationToken, ApiOrder.editOrder);
+router.post("/getOrderTop10", Middleware.authorizationToken, ApiOrder.getOrderTop10);
+router.post("/getOrderFromDateToDate", Middleware.authorizationToken, ApiOrder.getOrderFromDateToDate);
 
 router.post("/addCart", Middleware.authorizationToken, ApiCart.addCart);
 router.post(
@@ -307,6 +311,7 @@ router.post("/getVoucherByUserId", Middleware.authorizationToken, ApiVoucher.get
 router.post("/deleteVoucher", Middleware.authorizationToken, ApiVoucher.deleteVoucher);
 router.post("/editVoucher", Middleware.authorizationToken, ApiVoucher.editVoucher);
 router.post("/getAllVoucher", Middleware.authorizationToken, ApiVoucher.getAllVoucher);
+router.post("/getVoucherById", Middleware.authorizationToken, ApiVoucher.getVoucherById);
 
 router.post("/addAdmin", ApiAdmin.addAdmin);
 router.post("/loginAdmin", ApiAdmin.loginAdmin);
