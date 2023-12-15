@@ -115,6 +115,23 @@ exports.getConversationByID = async (req, res) => {
     }
 }
 
+exports.getConversationByIDUser = async (req, res) => {
+    let idUser = req.body.idUser;
+    if (idUser == null || idUser.length == 0) {
+        return res.send({ message: "idUser is required" })
+    }
+    try {
+        let conversation = await ConversationModel.conversationModel.find({ user: idUser }).populate("user");
+        if (!conversation) {
+            return res.send({ message: "conversation not found" })
+        }
+        res.send({ conversation: conversation, message: "get conversation success", code: 1 })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: "get conversation fail", code: 0 });
+    }
+}
+
 exports.getConversation = async (req, res) => {
     try {
         let listConversation = await ConversationModel.conversationModel.find();
