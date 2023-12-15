@@ -2,7 +2,7 @@ const UserModel = require("../models/model.user");
 const UserTempModel = require("../models/model.user.temp");
 const UploadFile = require("../models/uploadFile");
 const moment = require("moment");
-const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass} = require("../models/otp");
+const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 require("dotenv").config();
@@ -33,7 +33,7 @@ exports.addUser = async (req, res) => {
     let date = new Date();
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
     if (password == null) {
-        return res.send({message: "Password is required", code: 0});
+        return res.send({ message: "Password is required", code: 0 });
     }
     if (!passwordRegex.test(password)) {
         return res.send({
@@ -43,7 +43,7 @@ exports.addUser = async (req, res) => {
         });
     }
     if (phone_number == null) {
-        return res.send({message: "Phone number is required", code: 0});
+        return res.send({ message: "Phone number is required", code: 0 });
     }
     if (!phoneNumberRegex.test(phone_number)) {
         return res.send({
@@ -52,7 +52,7 @@ exports.addUser = async (req, res) => {
         });
     }
     if (email == null) {
-        return res.send({message: "Email is required", code: 0});
+        return res.send({ message: "Email is required", code: 0 });
     }
     if (!emailRegex.test(email)) {
         return res.send({
@@ -70,12 +70,12 @@ exports.addUser = async (req, res) => {
         let userPhone = await UserModel.userModel.findOne({
             phone_number: phone_number,
         });
-        let userEmail = await UserModel.userModel.findOne({email: email});
+        let userEmail = await UserModel.userModel.findOne({ email: email });
         if (userPhone) {
-            return res.send({message: "phone number already exists", code: 0});
+            return res.send({ message: "phone number already exists", code: 0 });
         }
         if (userEmail) {
-            return res.send({message: "email already exists", code: 0});
+            return res.send({ message: "email already exists", code: 0 });
         }
         if (file == null) {
             let userTemp = new UserTempModel.userTemModel({
@@ -88,7 +88,7 @@ exports.addUser = async (req, res) => {
             });
             let index = sendOTPByEmail(email);
             if (index === 0) {
-                return res.send({message: "Register user fail", code: 0});
+                return res.send({ message: "Register user fail", code: 0 });
             } else {
                 userTemp.otp = index;
                 await userTemp.save();
@@ -121,11 +121,11 @@ exports.addUser = async (req, res) => {
                 ".jpg"
             );
             if (statusCode === 0) {
-                return res.send({message: "Upload file fail", code: 0});
+                return res.send({ message: "Upload file fail", code: 0 });
             } else {
                 let index = sendOTPByEmail(email);
                 if (index === 0) {
-                    return res.send({message: "Register user fail", code: 0});
+                    return res.send({ message: "Register user fail", code: 0 });
                 } else {
                     userTemp.avatar = statusCode;
                     userTemp.otp = index;
@@ -140,7 +140,7 @@ exports.addUser = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.editUser = async (req, res) => {
@@ -150,12 +150,12 @@ exports.editUser = async (req, res) => {
     let phone_number = req.body.phone_number;
     let email = req.body.email;
     if (req.body.userId == null) {
-        return res.send({message: "User not found", code: 0});
+        return res.send({ message: "User not found", code: 0 });
     }
     try {
         let user = await UserModel.userModel.findById(req.body.userId);
         if (user == null) {
-            return res.send({message: "User not found", code: 0});
+            return res.send({ message: "User not found", code: 0 });
         }
         if (password != null) {
             if (!passwordRegex.test(password)) {
@@ -205,7 +205,7 @@ exports.editUser = async (req, res) => {
                     ".jpg"
                 );
                 if (statusCode === 0) {
-                    return res.send({message: "Upload file fail", code: 0});
+                    return res.send({ message: "Upload file fail", code: 0 });
                 } else {
                     user.avatar = statusCode;
                 }
@@ -219,34 +219,34 @@ exports.editUser = async (req, res) => {
                     ".jpg"
                 );
                 if (statusCode === 0) {
-                    return res.send({message: "Upload file fail", code: 0});
+                    return res.send({ message: "Upload file fail", code: 0 });
                 } else {
                     user.avatar = statusCode;
                 }
             }
         }
         await user.save();
-        return res.send({message: "Edit success", code: 1});
+        return res.send({ message: "Edit success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.loginUser = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     if (!username) {
-        return res.send({message: "user name is required", code: 0});
+        return res.send({ message: "user name is required", code: 0 });
     }
     if (!password) {
-        return res.send({message: "password is required", code: 0});
+        return res.send({ message: "password is required", code: 0 });
     }
     try {
         let userEmail = await UserModel.userModel
-            .findOne({email: username, password: password})
+            .findOne({ email: username, password: password })
             .populate("address");
         let userPhone = await UserModel.userModel
-            .findOne({phone_number: username, password: password})
+            .findOne({ phone_number: username, password: password })
             .populate("address");
         if (!userEmail && !userPhone) {
             return res.send({
@@ -268,7 +268,7 @@ exports.loginUser = async (req, res) => {
             const payload = {
                 messages: [
                     {
-                        destinations: [{to}],
+                        destinations: [{ to }],
                         text,
                     },
                 ],
@@ -276,7 +276,7 @@ exports.loginUser = async (req, res) => {
 
             // Gửi tin nhắn OTP bằng InfoBip REST API
             axios
-                .post(baseUrl, payload, {headers})
+                .post(baseUrl, payload, { headers })
                 .then(async () => {
                     userPhone.otp = otp;
                     await userPhone.save();
@@ -288,13 +288,13 @@ exports.loginUser = async (req, res) => {
                 })
                 .catch((error) => {
                     console.error(error.message);
-                    return res.send({message: "Fail send code", code: 0});
+                    return res.send({ message: "Fail send code", code: 0 });
                 });
         }
         if (userEmail) {
             let index = sendOTPByEmail(userEmail.email);
             if (index === 0) {
-                return res.send({message: "Verify user fail", code: 0});
+                return res.send({ message: "Verify user fail", code: 0 });
             } else {
                 userEmail.otp = index;
                 await userEmail.save();
@@ -307,7 +307,7 @@ exports.loginUser = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.getListUser = async (req, res) => {
@@ -320,17 +320,17 @@ exports.getListUser = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.verifyOtpRegister = async (req, res) => {
     let userTempId = req.body.userTempId;
     let otp = req.body.otp;
     if (userTempId === null) {
-        return res.send({message: "userTempId is required", code: 0});
+        return res.send({ message: "userTempId is required", code: 0 });
     }
     if (otp === null) {
-        return res.send({message: "otp is required", code: 0});
+        return res.send({ message: "otp is required", code: 0 });
     }
     try {
         let userTemp = await UserTempModel.userTemModel.findOne({
@@ -348,28 +348,28 @@ exports.verifyOtpRegister = async (req, res) => {
             });
             user.otp = null;
             await user.save();
-            await UserTempModel.userTemModel.deleteMany({email: userTemp.email});
-            return res.send({message: "verify user success", code: 0});
+            await UserTempModel.userTemModel.deleteMany({ email: userTemp.email });
+            return res.send({ message: "verify user success", code: 0 });
         } else {
-            return res.send({message: "otp wrong", code: 0});
+            return res.send({ message: "otp wrong", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.verifyOtpLogin = async (req, res) => {
     let userId = req.body.userId;
     let otp = req.body.otp;
     if (otp == null) {
-        return res.send({message: "otp is required", code: 0});
+        return res.send({ message: "otp is required", code: 0 });
     }
     try {
         let user = await UserModel.userModel
-            .findOne({_id: userId, otp: otp})
+            .findOne({ _id: userId, otp: otp })
             .populate("address");
         if (user) {
-            let token = jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, {
+            let token = jwt.sign({ user: user }, process.env.ACCESS_TOKEN_SECRET, {
                 expiresIn: "3600s",
             });
             user.otp = null;
@@ -381,11 +381,11 @@ exports.verifyOtpLogin = async (req, res) => {
                 code: 1,
             });
         } else {
-            return res.send({message: "otp wrong", code: 0});
+            return res.send({ message: "otp wrong", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 const formatPhoneNumber = (phoneNumber) => {
@@ -401,36 +401,52 @@ const formatPhoneNumber = (phoneNumber) => {
 exports.getUserById = async (req, res) => {
     let userId = req.body.userId;
     if (userId == null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     try {
         let user = await UserModel.userModel.findById(userId).populate("address");
-        return res.send({user: user, message: "get user success", code: 1});
+        return res.send({ user: user, message: "get user success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
+
+exports.getAnyUserById = async (req, res) => {
+    let userId = req.body.userId;
+    if (userId == null) {
+        return res.send({ message: "userId is required", code: 0 });
+    }
+    try {
+        let user = await UserModel.userModel.findById({ _id: userId }, { avatar: true, email: true, full_name: true, phone_number: true }).populate("address");
+        return res.send({ user: user, message: "get user success", code: 1 });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+};
+
+
 exports.addFCM = async (req, res) => {
     let userId = req.body.userId;
     let fcm = req.body.fcm;
     if (fcm == null) {
-        return res.send({message: "fcm is required", code: 0});
+        return res.send({ message: "fcm is required", code: 0 });
     }
     if (userId == null) {
-        return res.send({message: "user id is required", code: 0});
+        return res.send({ message: "user id is required", code: 0 });
     }
     try {
         let user = await UserModel.userModel.findById(userId);
         if (!user) {
-            return res.send({message: "user not found", code: 0});
+            return res.send({ message: "user not found", code: 0 });
         }
         user.fcm = fcm;
         await user.save();
-        return res.send({message: "add fcm success", code: 1});
+        return res.send({ message: "add fcm success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0})
+        return res.send({ message: e.message.toString(), code: 0 })
     }
 }
 exports.editPassword = async (req, res) => {
@@ -438,13 +454,13 @@ exports.editPassword = async (req, res) => {
     let currentPass = req.body.currentPass;
     let newPass = req.body.newPass;
     if (currentPass == null) {
-        return res.send({message: "currentPass id is required", code: 0});
+        return res.send({ message: "currentPass id is required", code: 0 });
     }
     if (userId == null) {
-        return res.send({message: "user id is required", code: 0});
+        return res.send({ message: "user id is required", code: 0 });
     }
     if (newPass == null) {
-        return res.send({message: "newPass id is required", code: 0});
+        return res.send({ message: "newPass id is required", code: 0 });
     }
     if (!passwordRegex.test(newPass)) {
         return res.send({
@@ -454,13 +470,13 @@ exports.editPassword = async (req, res) => {
         });
     }
     try {
-        let user = await UserModel.userModel.findOne({_id: userId, password: currentPass});
+        let user = await UserModel.userModel.findOne({ _id: userId, password: currentPass });
         if (!user) {
-            return res.send({message: "user not found", code: 0});
+            return res.send({ message: "user not found", code: 0 });
         }
         let index = sendOTPByEmail(user.email);
         if (index === 0) {
-            return res.send({message: "send otp fail", code: 0});
+            return res.send({ message: "send otp fail", code: 0 });
         } else {
             user.newPassword = newPass;
             user.otp = index;
@@ -473,20 +489,20 @@ exports.editPassword = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0})
+        return res.send({ message: e.message.toString(), code: 0 })
     }
 }
 exports.verifyOtpEditPass = async (req, res) => {
     let userId = req.body.userId;
     let otp = req.body.otp;
     if (otp == null) {
-        return res.send({message: "otp is required", code: 0});
+        return res.send({ message: "otp is required", code: 0 });
     }
     try {
-        let user = await UserModel.userModel.findOne({_id: userId, otp: otp})
+        let user = await UserModel.userModel.findOne({ _id: userId, otp: otp })
         if (user) {
-            if(user.newPassword === null){
-                return res.send({message: "Verify user fail", code: 0});
+            if (user.newPassword === null) {
+                return res.send({ message: "Verify user fail", code: 0 });
             }
             user.otp = null;
             user.password = user.newPassword;
@@ -496,11 +512,11 @@ exports.verifyOtpEditPass = async (req, res) => {
                 message: "edit pass success", code: 1,
             });
         } else {
-            return res.send({message: "otp wrong", code: 0});
+            return res.send({ message: "otp wrong", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.getPassWord = async (req, res) => {
@@ -510,18 +526,18 @@ exports.getPassWord = async (req, res) => {
     const link = `http://${ipAddress}:3000/api/resetPassword?key=${randomEndLink}`;
     const text = `STECH xin chào bạn\n Ấn vào đây để khôi phục lại mật khẩu: ${link}`;
     if (username == null) {
-        return res.send({message: "username is required", code: 0});
+        return res.send({ message: "username is required", code: 0 });
     }
-    if(!phoneNumberRegex.test(username) && isNumeric(username)){
-        return res.send({message: "The phone number is not in the correct format", code: 0});
+    if (!phoneNumberRegex.test(username) && isNumeric(username)) {
+        return res.send({ message: "The phone number is not in the correct format", code: 0 });
     }
-    if(!emailRegex.test(username) && !isNumeric(username)){
-        return res.send({message: "The email is not in the correct format", code: 0});
+    if (!emailRegex.test(username) && !isNumeric(username)) {
+        return res.send({ message: "The email is not in the correct format", code: 0 });
     }
     if (phoneNumberRegex.test(username)) {
-        let user = await UserModel.userModel.findOne({phone_number:username});
-        if(!user){
-            return res.send({message: "user not found", code: 0});
+        let user = await UserModel.userModel.findOne({ phone_number: username });
+        if (!user) {
+            return res.send({ message: "user not found", code: 0 });
         }
         const apiKey = process.env.API_KEY;
         const baseUrl = process.env.BASE_URL;
@@ -534,7 +550,7 @@ exports.getPassWord = async (req, res) => {
         const payload = {
             messages: [
                 {
-                    destinations: [{to}],
+                    destinations: [{ to }],
                     text,
                 },
             ],
@@ -542,7 +558,7 @@ exports.getPassWord = async (req, res) => {
 
         // Gửi tin nhắn OTP bằng InfoBip REST API
         axios
-            .post(baseUrl, payload, {headers})
+            .post(baseUrl, payload, { headers })
             .then(async () => {
                 user.link = link;
                 await user.save();
@@ -553,15 +569,15 @@ exports.getPassWord = async (req, res) => {
             })
             .catch((error) => {
                 console.error(error.message);
-                return res.send({message: "Fail send code", code: 0});
+                return res.send({ message: "Fail send code", code: 0 });
             });
     }
     if (emailRegex.test(username)) {
         try {
-            let user = await UserModel.userModel.findOne({email:username});
+            let user = await UserModel.userModel.findOne({ email: username });
             let index = sendOTPByEmailGetPass(username, text);
             if (index === 0) {
-                return res.send({message: "Verify user fail", code: 0});
+                return res.send({ message: "Verify user fail", code: 0 });
             } else {
                 user.link = link;
                 await user.save();
@@ -570,7 +586,7 @@ exports.getPassWord = async (req, res) => {
                     code: 1,
                 });
             }
-        }catch (e) {
+        } catch (e) {
             console.log(e.message)
             return res.send({
                 message: e.message.toString(),
@@ -585,14 +601,14 @@ exports.resetPassword = async (req, res) => {
     const newPass = generateRandomPassword(6);
     const text = `STECH xin chào bạn\nmật khẩu mới của bạn là: ${newPass}`;
     if (key == null) {
-        return res.send({message: "key is required", code: 0});
+        return res.send({ message: "key is required", code: 0 });
     }
     const link = `http://${ipAddress}:3000/api/resetPassword?key=${key}`
     try {
-        let user = await UserModel.userModel.findOne({link: link});
+        let user = await UserModel.userModel.findOne({ link: link });
         let index = sendNewPassByEmailGetPass(user.email, text);
         if (index === 0) {
-            return res.send({message: "Verify user fail", code: 0});
+            return res.send({ message: "Verify user fail", code: 0 });
         } else {
             user.password = newPass;
             await user.save();
@@ -602,7 +618,7 @@ exports.resetPassword = async (req, res) => {
             });
         }
     } catch (e) {
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 

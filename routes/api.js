@@ -33,6 +33,11 @@ router.post(
   ApiUserController.getUserById
 );
 router.post(
+  "/getAnyUserById",
+  Middleware.authorizationToken,
+  ApiUserController.getAnyUserById
+);
+router.post(
   "/getListUser",
   Middleware.authorizationToken,
   ApiUserController.getListUser
@@ -75,7 +80,7 @@ router.post(
 
 router.post(
   "/addProduct",
-   Middleware.authorizationToken,
+  Middleware.authorizationToken,
   upload.fields([
     { name: "img_cover", maxCount: 1 },
     { name: "list_img", maxCount: 10 },
@@ -258,13 +263,20 @@ router.post("/createConversation",
   ApiConversation.createConversation
 );
 router.post("/deleteConversation", Middleware.authorizationToken, ApiConversation.deleteConversation);
-router.post("/editConversation", Middleware.authorizationToken, ApiConversation.editConversation);
+router.post("/editConversation",
+  Middleware.authorizationToken,
+  ApiConversation.editConversation
+);
 router.post("/getConversationByID", Middleware.authorizationToken, ApiConversation.getConversationByID);
+router.post("/getConversationByIDUser",
+  Middleware.authorizationToken,
+  ApiConversation.getConversationByIDUser
+);
 router.post("/getConversation", Middleware.authorizationToken, ApiConversation.getConversation);
 
 // API MESSAGE
 router.post("/addMessage",
-  // Middleware.authorizationToken,
+  Middleware.authorizationToken,
   upload.fields([
     { name: "filess", maxCount: 3 },
     { name: "images", maxCount: 3 },
@@ -273,6 +285,14 @@ router.post("/addMessage",
   ApiMessage.addMessage
 );
 router.post("/updateStatusMessage", Middleware.authorizationToken, ApiMessage.updateStatusMessage);
+router.post("/getMessageLatest",
+  Middleware.authorizationToken,
+  ApiMessage.getMessageLatest
+);
+router.post("/getMessageByIDConversation",
+  Middleware.authorizationToken,
+  ApiMessage.getMessageByIDConversation
+);
 router.post("/deleteMessage", Middleware.authorizationToken, ApiMessage.deleteMessage);
 
 
@@ -293,4 +313,5 @@ router.post("/loginAdmin", ApiAdmin.loginAdmin);
 router.post("/verifyOtpLoginAdmin", ApiAdmin.verifyOtpLogin);
 router.post("/editAdmin", Middleware.authorizationToken, upload.single("file"), ApiAdmin.editAdmin);
 router.post("/deleteAdmin", Middleware.authorizationToken, ApiAdmin.editAdmin);
+
 module.exports = router;
