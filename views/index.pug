@@ -111,7 +111,7 @@ block content
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
-                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='./authentication-login.html') Logout
+                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='/stech.manager/login') Logout
             // Header End
             .container-fluid
                 // Row 1
@@ -123,11 +123,9 @@ block content
                                     .mb-3.mb-sm-0
                                         h5.card-title.fw-semibold Sales Overview
                                     div
-                                        select.form-select
-                                            option(value='1') March 2023
-                                            option(value='2') April 2023
-                                            option(value='3') May 2023
-                                            option(value='4') June 2023
+                                        select#select_year.form-select
+                                            option(value='2023') 2023
+                                            option(value='2024') 2024
                                 #chart
                     .col-lg-4
                         .row
@@ -138,7 +136,7 @@ block content
                                         h5.card-title.mb-9.fw-semibold Yearly Breakup
                                         .row.align-items-center
                                             .col-8
-                                                h4.fw-semibold.mb-3 $36,358
+                                                h4#revenue_year.fw-semibold.mb-3 $36,358
                                                 .d-flex.align-items-center.mb-3
                                                     span.me-1.rounded-circle.bg-light-success.round-20.d-flex.align-items-center.justify-content-center
                                                         i.ti.ti-arrow-up-left.text-success
@@ -161,7 +159,7 @@ block content
                                         .row.alig.n-items-start
                                             .col-8
                                                 h5.card-title.mb-9.fw-semibold  Monthly Earnings
-                                                h4.fw-semibold.mb-3 $6,820
+                                                h4#revenue_month.fw-semibold.mb-3 $6,820
                                                 .d-flex.align-items-center.pb-1
                                                     span.me-2.rounded-circle.bg-light-danger.round-20.d-flex.align-items-center.justify-content-center
                                                         i.ti.ti-arrow-down-right.text-danger
@@ -176,122 +174,27 @@ block content
                     .col-lg-4.d-flex.align-items-stretch
                         .card.w-100
                             .card-body.p-4
-                                .mb-4
-                                    h5.card-title.fw-semibold Recent Transactions
-                                ul.timeline-widget.mb-0.position-relative.mb-n5
-                                    li.timeline-item.d-flex.position-relative.overflow-hidden
-                                        .timeline-time.text-dark.flex-shrink-0.text-end 09:30
-                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
-                                            span.timeline-badge.border-2.border.border-primary.flex-shrink-0.my-8
-                                            span.timeline-badge-border.d-block.flex-shrink-0
-                                        .timeline-desc.fs-3.text-dark.mt-n1 Payment received from John Doe of $385.90
-                                    li.timeline-item.d-flex.position-relative.overflow-hidden
-                                        .timeline-time.text-dark.flex-shrink-0.text-end 10:00 am
-                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
-                                            span.timeline-badge.border-2.border.border-info.flex-shrink-0.my-8
-                                            span.timeline-badge-border.d-block.flex-shrink-0
-                                        .timeline-desc.fs-3.text-dark.mt-n1.fw-semibold
-                                            | New sale recorded
-                                            a.text-primary.d-block.fw-normal(href='javascript:void(0)') #ML-3467
-                                    li.timeline-item.d-flex.position-relative.overflow-hidden
-                                        .timeline-time.text-dark.flex-shrink-0.text-end 12:00 am
-                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
-                                            span.timeline-badge.border-2.border.border-success.flex-shrink-0.my-8
-                                            span.timeline-badge-border.d-block.flex-shrink-0
-                                        .timeline-desc.fs-3.text-dark.mt-n1 Payment was made of $64.95 to Michael
-                                    li.timeline-item.d-flex.position-relative.overflow-hidden
-                                        .timeline-time.text-dark.flex-shrink-0.text-end 09:30 am
-                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
-                                            span.timeline-badge.border-2.border.border-warning.flex-shrink-0.my-8
-                                            span.timeline-badge-border.d-block.flex-shrink-0
-                                        .timeline-desc.fs-3.text-dark.mt-n1.fw-semibold
-                                            | New sale recorded
-                                            a.text-primary.d-block.fw-normal(href='javascript:void(0)') #ML-3467
-                                    li.timeline-item.d-flex.position-relative.overflow-hidden
-                                        .timeline-time.text-dark.flex-shrink-0.text-end 09:30 am
-                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
-                                            span.timeline-badge.border-2.border.border-danger.flex-shrink-0.my-8
-                                            span.timeline-badge-border.d-block.flex-shrink-0
-                                        .timeline-desc.fs-3.text-dark.mt-n1.fw-semibold
-                                            | New arrival recorded
-                                    li.timeline-item.d-flex.position-relative.overflow-hidden
-                                        .timeline-time.text-dark.flex-shrink-0.text-end 12:00 am
-                                        .timeline-badge-wrap.d-flex.flex-column.align-items-center
-                                            span.timeline-badge.border-2.border.border-success.flex-shrink-0.my-8
-                                        .timeline-desc.fs-3.text-dark.mt-n1 Payment Done
-                    .col-lg-8.d-flex.align-items-stretch
+                                .row
+                                    .col-lg-6
+                                        .mb-3
+                                            label.form-label From
+                                            input#from_input.form-control(type='date' placeholder='Enter start hear...')
+                                    .col-lg-6
+                                        .mb-3
+                                            label.form-label To
+                                            input#to_input.form-control(type='date' placeholder='Enter end hear...')
+                                    a#save.btn.btn-outline-success() Tính
+                .row
+                    .col-lg-12.d-flex.align-items-strech
                         .card.w-100
-                            .card-body.p-4
-                                h5.card-title.fw-semibold.mb-4 Recent Transactions
-                                .table-responsive
-                                    table.table.text-nowrap.mb-0.align-middle
-                                        thead.text-dark.fs-4
-                                            tr
-                                                th.border-bottom-0
-                                                    h6.fw-semibold.mb-0 Id
-                                                th.border-bottom-0
-                                                    h6.fw-semibold.mb-0 Assigned
-                                                th.border-bottom-0
-                                                    h6.fw-semibold.mb-0 Name
-                                                th.border-bottom-0
-                                                    h6.fw-semibold.mb-0 Priority
-                                                th.border-bottom-0
-                                                    h6.fw-semibold.mb-0 Budget
-                                        tbody
-                                            tr
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0 1
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-1 Sunil Joshi
-                                                    span.fw-normal Web Designer
-                                                td.border-bottom-0
-                                                    p.mb-0.fw-normal Elite Admin
-                                                td.border-bottom-0
-                                                    .d-flex.align-items-center.gap-2
-                                                        span.badge.bg-primary.rounded-3.fw-semibold Low
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0.fs-4 $3.9
-                                            tr
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0 2
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-1 Andrew McDownland
-                                                    span.fw-normal Project Manager
-                                                td.border-bottom-0
-                                                    p.mb-0.fw-normal Real Homes WP Theme
-                                                td.border-bottom-0
-                                                    .d-flex.align-items-center.gap-2
-                                                        span.badge.bg-secondary.rounded-3.fw-semibold Medium
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0.fs-4 $24.5k
-                                            tr
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0 3
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-1 Christopher Jamil
-                                                    span.fw-normal Project Manager
-                                                td.border-bottom-0
-                                                    p.mb-0.fw-normal MedicalPro WP Theme
-                                                td.border-bottom-0
-                                                    .d-flex.align-items-center.gap-2
-                                                        span.badge.bg-danger.rounded-3.fw-semibold High
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0.fs-4 $12.8k
-                                            tr
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0 4
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-1 Nirav Joshi
-                                                    span.fw-normal Frontend Engineer
-                                                td.border-bottom-0
-                                                    p.mb-0.fw-normal Hosting Press HTML
-                                                td.border-bottom-0
-                                                    .d-flex.align-items-center.gap-2
-                                                        span.badge.bg-success.rounded-3.fw-semibold Critical
-                                                td.border-bottom-0
-                                                    h6.fw-semibold.mb-0.fs-4 $2.4k
+                            .card-body
+                                .d-sm-flex.d-block.align-items-center.justify-content-between.mb-9
+                                    .mb-3.mb-sm-0
+                                        h5.card-title.fw-semibold Overview
+                                #chart_custom
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
                         | Design and Developed by
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') &nbsp;STECH
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js")
     script(src='/js/dashboard.js')
