@@ -77,6 +77,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on('on-chat', data => {
+    // console.log(data);
     const { message } = data.message
     // decrypt message
     let messageDecrypted = message;
