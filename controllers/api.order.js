@@ -76,7 +76,7 @@ exports.creatOrder = async (req, res) => {
         let currentProduct = cart.product;
         console.log(product)
         console.log(total)
-        console.log({currentProduct : currentProduct[0].option})
+        console.log({currentProduct: currentProduct[0].option})
         cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         await cart.save();
         await order.save();
@@ -494,11 +494,11 @@ function getTop10Frequencies(array) {
 
 function calculateTotalByDate(data, fromDate, toDate) {
     const totalsByDate = {};
-    const filteredData = data.filter(item => {
-        const currentDate = new Date(item.date);
-        return currentDate >= new Date(fromDate) && currentDate <= new Date(toDate);
+    const dateRange = generateDateRange(fromDate, toDate);
+    dateRange.forEach(date => {
+        totalsByDate[date] = 0;
     });
-    filteredData.forEach(item => {
+    data.forEach(item => {
         const date = item.date;
         const total = item.total;
 
@@ -507,8 +507,18 @@ function calculateTotalByDate(data, fromDate, toDate) {
         }
         totalsByDate[date] += total;
     });
-    return Object.entries(totalsByDate).map(([date, total]) => ({
+    return Object.keys(totalsByDate).map(date => ({
         date,
-        total,
+        total: totalsByDate[date],
     }));
+}
+
+function generateDateRange(fromDate, toDate) {
+    const dateRange = [];
+    const currentDate = new Date(fromDate);
+    while (currentDate <= new Date(toDate)) {
+        dateRange.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dateRange;
 }

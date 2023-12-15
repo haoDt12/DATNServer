@@ -5,7 +5,6 @@ const path = require("path");
 const UploadFile = require("../models/uploadFile");
 const moment = require('moment');
 const { get } = require("http");
-
 const crypto = require("crypto");
 require("dotenv").config();
 
@@ -234,6 +233,59 @@ exports.getListMessage = async (req, res) => {
 exports.getMessageById = async (req, res) => {
 
 };
+
+exports.getMessageByIDConversation = async (req, res) => {
+    let date = new Date();
+    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    let conversationID = req.body.conversationID;
+    if (conversationID == null || conversationID.length <= 0) {
+        return res.send({ message: "conversationID is required" })
+    }
+
+    try {
+        const dataMessage = await MessageModel.messageModel.find({ conversation: conversationID })
+            .populate("conversation")
+        if (!dataMessage) {
+            return res.send({ message: "message not found", code: 0 , time: timestamp});
+        }
+        return res.send({ dataMessage: dataMessage, message: "get message success", code: 1, time: timestamp })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: "get message fail", code: 0, time: timestamp });
+    }
+}
+exports.getMessageLatest = async (req, res) => {
+    let date = new Date();
+    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    let conversationIDs = req.body.conversationIDs;
+    if (conversationIDs == null || conversationIDs.length <= 0) {
+        return res.send({ message: "conversationIDs is required" })
+    }
+
+
+    try {
+        const latestMessages = [];
+        for (const conversationId of conversationIDs) {
+            // Tìm tin nhắn mới nhất cho conversation hiện tại
+            const latestMessage = await MessageModel.messageModel.findOne({ conversation: conversationId })
+                .sort({ timestamp: -1 })
+                .populate("conversation")
+                // .populate("conversation", "name") // Populate thông tin của conversation (chỉ lấy trường "name")
+                .exec();
+
+            if (latestMessage) {
+                latestMessages.push(latestMessage);
+            }
+        }
+        return res.send({ dataMessage: latestMessages, message: "get conversation + message success", code: 1, time: timestamp })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: "get message fail", code: 0, time: timestamp });
+    }
+};
+
 exports.deleteMessage = async (req, res) => {
     let date = new Date();
     let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
