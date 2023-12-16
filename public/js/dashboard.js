@@ -63,30 +63,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return dates;
   }
-  let year_selected = "2023";
-  select_year.addEventListener('change', function (){
-      year_selected = select_year.value;
-  });
 
-
-  // txt_month.innerText = formattedAmount.toString();
-
-  // txt_year.innerText = formattedAmount2.toString();
-// Ví dụ sử dụng:
   let chartCustom;
   const options = {month: 'numeric', day: 'numeric'};
   const options_full = {year: 'numeric', month: 'numeric', day: 'numeric'};
-  let data_date = [];
-  const previousWeek = new Date(date);
-  previousWeek.setDate(previousWeek.getDate() - 6);
-  for (let i = 0; i < 7; i++) {
-    const currentDate = new Date(previousWeek);
-    currentDate.setDate(currentDate.getDate() + i);
-    const formattedDate = currentDate.toLocaleDateString('en-US', options);
-    data_date.push(formattedDate);
-  }
-  const first_date = year_selected+"/"+data_date[0];
-  const last_date = year_selected+"/"+data_date[data_date.length - 1];
+
 
   from_input.addEventListener('change', function (){
     console.log(from_input.value);
@@ -94,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   to_input.addEventListener('change', function (){
     console.log(to_input.value);
-  })
+  });
 
   save.addEventListener('click', function (){
     GetStatisticsCusTom(from_input.value, to_input.value).then(data =>{
@@ -188,13 +169,42 @@ document.addEventListener("DOMContentLoaded", function() {
   function reloadChart(chart) {
     chart.render();
   }
+
+  let year_selected = "2023";
+  select_year.addEventListener('change', function (){
+    year_selected = select_year.value;
+  });
+
+  let data_date = [];
+  const previousWeek = new Date(date);
+  previousWeek.setDate(previousWeek.getDate() - 6);
+  for (let i = 0; i < 7; i++) {
+    const currentDate = new Date(previousWeek);
+    currentDate.setDate(currentDate.getDate() + i);
+    const formattedDate = currentDate.toLocaleDateString('en-US', options);
+    data_date.push(formattedDate);
+  }
+  let data_date_ui = [];
+  const previousWeek_ui = new Date(date);
+  previousWeek_ui.setDate(previousWeek_ui.getDate() - 6);
+  for (let i = 0; i < 7; i++) {
+    const currentDate = new Date(previousWeek_ui);
+    currentDate.setDate(currentDate.getDate() + i);
+    const formattedDate = currentDate.toLocaleDateString('en-US', options);
+    data_date.push(formattedDate);
+  }
+
+  const first_date = year_selected+"/"+data_date[0];
+  const last_date = year_selected+"/"+data_date[data_date.length - 1];
+  console.log(last_date)
+  console.log(data_date)
   GetStatisticsCusTom(first_date, last_date).then(data =>{
     if (data.code === 1){
       data_chart = data.data;
-
+      console.log(data_chart)
       let chartData = {
         series: [
-          { name: "Earnings this day:", data: data_chart},
+          { name: "Earnings this day:", data: data_chart.reverse()},
         ],
         chart: {
           type: "bar",
@@ -293,60 +303,69 @@ document.addEventListener("DOMContentLoaded", function() {
     return days;
   }
 
-// Ví dụ sử dụng:
   const currentYear = new Date().getFullYear();
   const yearTime = getYearTime(currentYear);
-// Ví dụ sử dụng:
   const formattedYear = yearTime.map(date => date.toLocaleDateString('en-US', options_full));
-  console.log(formattedYear)
-
-  let breakupData = {
-    color: "#adb5bd",
-    series: [],
-    labels: ["2022", "2021", "2020"],
-    chart: {
-      width: 180,
-      type: "donut",
-      fontFamily: "Plus Jakarta Sans', sans-serif",
-      foreColor: "#adb0bb",
-    },
-    plotOptions: {
-      pie: {
-        startAngle: 0,
-        endAngle: 360,
-        donut: {
-          size: '75%',
+  let data_year = [];
+  GetStatisticsCusTom(formattedYear[0], formattedYear[formattedYear.length-1]).then(data =>{
+    if (data.code === 1){
+      data_year = data.data;
+      let total = calculateSum(data_year);
+      const formatted = total.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'VND'
+      });
+      txt_year.innerText = formatted.toString();
+      let breakupData = {
+        color: "#adb5bd",
+        series: data_year,
+        labels: ["2022", "2021", "2020"],
+        chart: {
+          width: 180,
+          type: "donut",
+          fontFamily: "Plus Jakarta Sans', sans-serif",
+          foreColor: "#adb0bb",
         },
-      },
-    },
-    stroke: {
-      show: false,
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
-    colors: ["#5D87FF", "#ecf2ff", "#F9F9FD"],
-    responsive: [
-      {
-        breakpoint: 991,
-        options: {
-          chart: {
-            width: 150,
+        plotOptions: {
+          pie: {
+            startAngle: 0,
+            endAngle: 360,
+            donut: {
+              size: '75%',
+            },
           },
         },
-      },
-    ],
-    tooltip: {
-      theme: "dark",
-      fillSeriesColor: false,
-    },
-  };
-
-  let breakupChart = new ApexCharts(document.querySelector("#breakup"), breakupData);
-  breakupChart.render().then(r => {});
+        stroke: {
+          show: false,
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        legend: {
+          show: false,
+        },
+        colors: ["#5D87FF", "#ecf2ff", "#F9F9FD"],
+        responsive: [
+          {
+            breakpoint: 991,
+            options: {
+              chart: {
+                width: 150,
+              },
+            },
+          },
+        ],
+        tooltip: {
+          theme: "dark",
+          fillSeriesColor: false,
+        },
+      };
+      let breakupChart = new ApexCharts(document.querySelector("#breakup"), breakupData);
+      breakupChart.render().then(r => {});
+    }else {
+      console.log(data.message);
+    }
+  });
 
   function getCurrentMonthTime() {
     const currentDate = new Date();
