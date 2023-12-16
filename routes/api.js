@@ -27,6 +27,8 @@ router.post(
   ApiUserController.editUser
 );
 router.post("/loginUser", ApiUserController.loginUser);
+router.post("/loginWithGoogle", ApiUserController.loginWithGoogle);
+router.post("/checkEmailExist", ApiUserController.checkEmailExist);
 router.post(
   "/getUserById",
   Middleware.authorizationToken,
@@ -49,7 +51,6 @@ router.post("/editPassword", Middleware.authorizationToken, ApiUserController.ed
 router.post("/verifyOtpEditPass", Middleware.authorizationToken, ApiUserController.verifyOtpEditPass);
 router.post("/getPassWord", Middleware.authorizationToken, ApiUserController.getPassWord);
 router.get("/resetPassword", ApiUserController.resetPassword);
-router.post("/updateconversationID", ApiConversation.updateconversationID);
 
 router.post(
   "/addCategory",
@@ -263,7 +264,7 @@ router.post("/getPublicNotification", Middleware.authorizationToken, ApiNotifica
 
 // API Conversation
 router.post("/createConversation",
-  Middleware.authorizationToken,
+  // Middleware.authorizationToken,
   ApiConversation.createConversation
 );
 router.post("/deleteConversation", Middleware.authorizationToken, ApiConversation.deleteConversation);
@@ -276,6 +277,7 @@ router.post("/getConversationByIDUser",
   Middleware.authorizationToken,
   ApiConversation.getConversationByIDUser
 );
+router.post("/updateconversationID", ApiConversation.updateconversationID);
 router.post("/getConversation", Middleware.authorizationToken, ApiConversation.getConversation);
 
 // API MESSAGE
