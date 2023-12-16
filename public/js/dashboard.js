@@ -5,6 +5,11 @@ document.addEventListener("DOMContentLoaded", function() {
   const save = document.getElementById("save");
   const from_input = document.getElementById("from_input");
   const select_year = document.getElementById("select_year");
+  const logout = document.getElementById("logout");
+  logout.addEventListener("click", function (){
+    window.location.assign("/stech.manager/login");
+    utils.DeleteAllCookies();
+  });
   const token = utils.GetCookie("token");
   const date = new Date();
   
@@ -81,11 +86,10 @@ document.addEventListener("DOMContentLoaded", function() {
     GetStatisticsCusTom(from_input.value, to_input.value).then(data =>{
       const startDate = new Date(from_input.value);
       const endDate = new Date(to_input.value);
-      const dateArray = createArrayOfDates(startDate,endDate);
-      console.log(dateArray);
+      let dateArray = createArrayOfDates(startDate,endDate);
       chartCustom = {
         series: [
-          { name: "Earnings this day:", data: data.data.reverse() },
+          { name: "Earnings this day:", data: data.data },
         ],
         chart: {
           type: "bar",
@@ -124,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         xaxis: {
           type: "category",
-          categories: dateArray.reverse(),
+          categories: dateArray,
           labels: {
             style: { cssClass: "grey--text lighten-2--text fill-color" },
           },
@@ -132,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
         yaxis: {
           show: true,
           min: 0,
-          max: findMax(data.data)+50,
+          max: findMax(data.data)+150,
           tickAmount: 4,
           labels: {
             style: {
@@ -161,8 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
         ]
       };
       let chart_custom = new ApexCharts(document.querySelector("#chart_custom"), chartCustom);
-      // chart_custom.render().then(r =>{});
-      reloadChart(chart_custom);
+      chart_custom.render().then(r =>{});
     });
   });
 
@@ -177,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   let data_date = [];
   const previousWeek = new Date(date);
-  previousWeek.setDate(previousWeek.getDate() - 6);
+  previousWeek.setDate(previousWeek.getDate() - 5);
   for (let i = 0; i < 7; i++) {
     const currentDate = new Date(previousWeek);
     currentDate.setDate(currentDate.getDate() + i);
@@ -191,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const currentDate = new Date(previousWeek_ui);
     currentDate.setDate(currentDate.getDate() + i);
     const formattedDate = currentDate.toLocaleDateString('en-US', options);
-    data_date.push(formattedDate);
+    data_date_ui.push(formattedDate);
   }
 
   const first_date = year_selected+"/"+data_date[0];
@@ -243,7 +246,7 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         xaxis: {
           type: "category",
-          categories: data_date.reverse(),
+          categories: data_date_ui.reverse(),
           labels: {
             style: { cssClass: "grey--text lighten-2--text fill-color" },
           },

@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmCreate = document.getElementById('buttonConfirmCreate');
     const confirmUpdate = document.getElementById('buttonConfirmUpdate');
     const confirmDelete = document.getElementById('buttonConfirmDelete');
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
     //Create Notification
     openModalCreate.addEventListener('click', function (){
         modalCreateNotification.show();

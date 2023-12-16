@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var myModalUp = new bootstrap.Modal(document.getElementById('UpdateUserModal'));
     var myModalDe = new bootstrap.Modal(document.getElementById('deleteUserModal'));
     const addUserButton = document.getElementById("addUserButton");
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
 
     const deleteProButtons = document.querySelectorAll(".deleteUs");
     const editUserButton = document.querySelectorAll(".updateUs");

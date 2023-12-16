@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const detailLink = document.getElementById("Detail");
 
     //
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
     // Modal
     const CreProModal = new bootstrap.Modal(document.getElementById('CreProModal'));
     const UpProModal = new bootstrap.Modal(document.getElementById('UpProModal'));

@@ -5,7 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const detailUser = document.getElementById('detail-user')
     const textUserName = document.getElementById('username')
     const textMessage = document.querySelectorAll('.content-msg')
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
 
     textMessage.forEach(function (itemMsg) {
         let statusMsg = itemMsg.getAttribute("data-status");
