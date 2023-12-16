@@ -1,5 +1,6 @@
 const UserModel = require("../models/model.user");
 const UserTempModel = require("../models/model.user.temp");
+const { ObjectId } = require('mongodb');
 const UploadFile = require("../models/uploadFile");
 const moment = require("moment");
 const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
@@ -388,6 +389,92 @@ exports.verifyOtpLogin = async (req, res) => {
         return res.send({ message: e.message.toString(), code: 0 });
     }
 };
+
+exports.loginWithGoogle = async (req, res) => {
+    let date = new Date();
+    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    let id = req.body.id;
+    let email = req.body.email;
+    let displayName = req.body.displayName;
+    let photoUrl = req.body.photoUrl;
+    let expirationTime = req.body.expirationTime;
+
+
+    if (id == null || id.length <= 0) {
+        return res.send({ message: "id is required", code: 0, time: timestamp });
+    }
+    if (email == null || email.length <= 0) {
+        return res.send({ message: "email is required", code: 0, time: timestamp });
+    }
+    if (displayName == null || displayName.length <= 0) {
+        return res.send({ message: "displayName is required", code: 0, time: timestamp });
+    }
+    if (expirationTime == null || expirationTime.length <= 0) {
+        return res.send({ message: "expirationTime is required", code: 0, time: timestamp });
+    }
+
+    try {
+        let user = await UserModel.userModel
+            .findOne({ email: email })
+            .populate("address");
+        if (user) {
+            let token = jwt.sign({ user: user }, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: "86400s",
+            });
+
+            user.otp = null;
+            await user.save();
+            return res.send({
+                user: user,
+                token: token,
+                message: "Login success",
+                code: 1,
+            });
+        }
+        else {
+            let token = null;
+            const randomId = new ObjectId();
+            let userGoogle = {
+                avatar: photoUrl,
+                email,
+                password: email,
+                full_name: displayName,
+                phone_number: id,
+                role: "User",
+                address: [],
+                date: timestamp,
+                account_type: "Google",
+                otp: null,
+                fcm: "",
+            }
+
+            let mUser = new UserModel.userModel(userGoogle);
+            await mUser.save();
+            if (parseInt(expirationTime)) {
+                token = jwt.sign({ user: mUser }, process.env.ACCESS_TOKEN_SECRET, {
+                    expiresIn: expirationTime
+                });
+            }
+            else {
+                token = jwt.sign({ user: userGoogle }, process.env.ACCESS_TOKEN_SECRET, {
+                    expiresIn: "86400s",
+                });
+            }
+            return res.send({
+                user: mUser,
+                token: token,
+                message: "Login success",
+                code: 1,
+                time: timestamp
+            });
+        }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+};
+
 const formatPhoneNumber = (phoneNumber) => {
     // Loại bỏ tất cả các ký tự không phải số từ chuỗi
     const numericPhoneNumber = phoneNumber.replace(/\D/g, "");
@@ -445,7 +532,7 @@ exports.addFCM = async (req, res) => {
         await user.save();
         return res.send({ message: "add fcm success", code: 1 });
     } catch (e) {
-        console.log(e.message);
+        console.log(`error add fcm: ${e.message}`);
         return res.send({ message: e.message.toString(), code: 0 })
     }
 }
@@ -646,6 +733,37 @@ exports.checkToken = (req, res) => {
         return res.send({ message: "token ok", code: 1 })
     } catch (e) {
         return res.send({ message: "wrong token", code: 0 });
+    }
+}
+
+exports.checkEmailExist = async (req, res) => {
+    let date = new Date();
+    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    const email = req.body.email;
+    if (!email) {
+        return res.send({ message: "email is require", code: 0 });
+    }
+
+    if (!emailRegex.test(email)) {
+        return res.send({
+            message: "The email is not in the correct format",
+            code: 0,
+            time: timestamp
+        });
+    }
+
+    try {
+        let user = await UserModel.userModel.findOne({ email: email });
+        console.log(user);
+        if (user) {
+            return res.send({ message: "email exist", code: 1, time: timestamp })
+        }
+        else {
+            return res.send({ message: "email not exist", code: 1, time: timestamp })
+        }
+    } catch (e) {
+        return res.send({ message: "error check email exist", code: 0, time: timestamp });
     }
 }
 
