@@ -19,7 +19,11 @@ exports.checkPermission = (req,res,next)=>{
     }
     try {
         let data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        return res.send({data: data})
+        if(data.role === "Admin"){
+            next();
+        }else {
+            return res.send({message:"you do not have access", code: 0});
+        }
     } catch (e) {
         return res.send({message: "wrong token", code: 0});
     }
