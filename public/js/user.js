@@ -84,9 +84,8 @@ document.addEventListener('DOMContentLoaded', function () {
             addUser(email, password, full_name, phone_number,avatar).then(data => {
                 if (data.code === 1){
                     const Uid = data.id;
-                    document.cookie = "Uid=" + encodeURIComponent(Uid);
-                    utils.PushCookie("Uid", Uid);
-                    utils.PushCookie("typeVerify", "signup");
+                    utils.PushCookie("Uid_cre_user", Uid);
+                    utils.PushCookie("typeVerify", "register_user");
                     window.location.assign('/stech.manager/verify');
                 }else {
                     utils.showMessage(data.message);
