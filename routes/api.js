@@ -42,6 +42,7 @@ router.post(
 router.post(
   "/getListUser",
   Middleware.authorizationToken,
+  Middleware.checkPermission,
   ApiUserController.getListUser
 );
 router.post("/verifyOtpRegister", ApiUserController.verifyOtpRegister);

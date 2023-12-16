@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function (){
   verifyButton.addEventListener("click",function () {
     const otp = inputs[0].value + inputs[1].value + inputs[2].value + inputs[3].value + inputs[4].value + inputs[5].value;
     const Uid = utils.GetCookie("Uid");
+    const Uid_cre_user = utils.GetCookie("Uid_cre_user");
     const typeVerify = utils.GetCookie("typeVerify");
     if (typeVerify === "login"){
       verifyLogin(Uid, otp).then(data  => {
@@ -77,6 +78,16 @@ document.addEventListener("DOMContentLoaded", function (){
       verifySignUp(Uid, otp).then(data  => {
         if (data.code === 1) {
           window.location.href = '/stech.manager/login';
+        }else {
+          utils.showMessage(data.message);
+        }
+      }).catch(error => {
+        console.error('Login error:', error);
+      });
+    }else if (typeVerify === 'register_user'){
+      verifySignUp(Uid_cre_user, otp).then(data  => {
+        if (data.code === 1) {
+          window.location.href = '/stech.manager/user';
         }else {
           utils.showMessage(data.message);
         }
