@@ -18,6 +18,7 @@ const productSchema = database.mongoose.Schema({
         type: {type: String, required: false},
         title: {type: String, required: false},
         content: {type: String, required: false},
+        quantity: {type: String, required: true},
         feesArise:{type: String, required: false, default: "0"},
     }],
 }, {

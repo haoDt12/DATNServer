@@ -90,7 +90,7 @@ router.get("/stech.manager/category", async function (req, res, next) {
     let listCategory = await CategoryModel.categoryModel.find();
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+    if (user.role === "Admin") {
       res.render("category", {
         category: listCategory,
         message: "get list category success",
@@ -156,7 +156,7 @@ router.get('/stech.manager/user', async function (req, res, next) {
   try {
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+    if (user.role === "Admin") {
       let listUser = await UserModel.userModel.find().populate({ path: 'address', select: 'city' });
 
       res.render("user", {
@@ -183,7 +183,7 @@ router.get("/stech.manager/profile", async function (req, res, next) {
     let listprofile = await UserModel.userModel.findById(id).populate({ path: 'address', select: 'city' });
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+    if (user.role === "Admin") {
       res.render("profile", {
         profiles: listprofile,
         message: "get list profile success",
@@ -533,7 +533,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
       console.log('Orders:', orders);
       let userId = req.cookies.Uid;
       let user = await UserModel.userModel.findById(userId);
-      if (user.role === "Admin"){
+      if (user.role === "Admin") {
         const ordersWithProductInfo = await Promise.all(orders.map(async order => {
           const allProductInfo = await order.getAllProductInfo();
           const userInfo = await order.getUserInfo();
@@ -553,7 +553,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
 
       let userId = req.cookies.Uid;
       let user = await UserModel.userModel.findById(userId);
-      if (user.role === "Admin"){
+      if (user.role === "Admin") {
         console.log('Orders:', orders);
         const ordersWithProductInfo = await Promise.all(orders.map(async order => {
           const allProductInfo = await order.getAllProductInfo();
@@ -636,7 +636,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
     console.log(cartUser)
     // let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+    if (user.role === "Admin") {
       res.render("cart", {
         carts: cartUser,
         message: "get list profile success",
@@ -680,7 +680,7 @@ router.get("/stech.manager/notification", async function (req, res, next) {
     let listNotification = await NotificationPublicModel.notificationPublicModel.find();
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+    if (user.role === "Admin") {
       res.render("notification", {
         notifications: listNotification,
         message: "get list notification success",
@@ -701,7 +701,7 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
     let listVoucher = await VoucherModel.voucherModel.find();
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+    if (user.role === "Admin") {
       res.render("voucher", {
         vouchers: listVoucher,
         message: "get list voucher success",
@@ -722,7 +722,7 @@ router.get("/stech.manager/banner", async function (req, res, next) {
     let listbanner = await BannerModel.bannerModel.find();
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+    if (user.role === "Admin") {
       res.render("banner", { banners: listbanner, message: "get list banner success", code: 1 });
     }
     else {
@@ -755,17 +755,17 @@ router.get("/stech.manager/edit_product_action", async function (req, res, next)
     let productSelected = await ProductModel.productModel.findById(productId);
     let listCategory = await CategoryModel.categoryModel.find();
 
-     res.render("edit_product_action",
-        {
-          products: productSelected,
-          categories: listCategory,
-          message: "get list product success",
-          token:token,
-          code:1
-        })
+    res.render("edit_product_action",
+      {
+        products: productSelected,
+        categories: listCategory,
+        message: "get list product success",
+        token: token,
+        code: 1
+      })
   } catch (e) {
     console.log(e.message);
-    res.send({message: "product not found", code: 0})
+    res.send({ message: "product not found", code: 0 })
   }
 });
 module.exports = router;

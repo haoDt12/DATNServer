@@ -57,6 +57,7 @@ head
                                     th(scope='col') Type
                                     th(scope='col') Title
                                     th(scope='col') Content
+                                    th(scope='col') Quantity
                                     th(scope='col') feesArise
                                     th(scope='col') Action
                             tbody#TableOption
@@ -114,6 +115,10 @@ head
                             .form-group
                                 label#lableContent Content
                                 input#content.content.form-control(type='text' name='content' placeholder='' aria-describedby='helpId')
+                        .mb-4
+                            .form-group
+                                label#lableContent Quantity
+                                input#quantityOption.content.form-control(min="1" type='number' name='content' placeholder='' aria-describedby='helpId')
                         .mb-4
                             .form-group
                                 label#lablefeesArise feesArise

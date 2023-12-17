@@ -159,6 +159,7 @@ exports.getListProduct = async (req, res) => {
         let listProduct = await ProductModel.productModel
             .find()
             .populate("category");
+            // console.log(`getListproduct: ${listProduct}`);
         return res.send({
             product: listProduct,
             message: "get list product success",

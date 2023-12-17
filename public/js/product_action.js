@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function (){
+document.addEventListener('DOMContentLoaded', function () {
     const save_btn = document.getElementById('save');
     const cancel_btn = document.getElementById('cancel');
 
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function (){
     const name = document.getElementById('name');
     const myModal = new bootstrap.Modal(document.getElementById('OptionModal'));
     const save_option = document.getElementById('save_option');
-//
+    //
     const title = document.getElementById('title');
     const price = document.getElementById('price');
     const quantity = document.getElementById('quantity');
@@ -32,23 +32,23 @@ document.addEventListener('DOMContentLoaded', function (){
 
     const categoryDropdown = document.getElementById('categoryDropdown');
     const dropdown = document.querySelectorAll('.dropdown_item');
-    dropdown.forEach(function (itemDropDown){
-        itemDropDown.addEventListener('click',function () {
+    dropdown.forEach(function (itemDropDown) {
+        itemDropDown.addEventListener('click', function () {
             let cateId = itemDropDown.getAttribute('data-id')
             categorykey.value = cateId;
             categoryDropdown.style.display = 'none';
         })
     })
-    let token = document.getElementById('textToken').textContent+"";
+    let token = document.getElementById('textToken').textContent + "";
 
     //
-    let myArray=[];
+    let myArray = [];
 
 
 
 
     document.getElementById('openAddProductModal').addEventListener('click', function () {
-        save_option.style.display='none'
+        save_option.style.display = 'none'
         myModal.show();
     });
 
@@ -100,8 +100,8 @@ document.addEventListener('DOMContentLoaded', function (){
 
     //<---->Thêm-Xóa option
     content.style.display = 'none';
-    lableContent.style.display='none'
-    OptionType.addEventListener('change', function() {
+    lableContent.style.display = 'none'
+    OptionType.addEventListener('change', function () {
         let selectedOption = OptionType.value;
 
         // Ẩn tất cả các trường
@@ -110,21 +110,22 @@ document.addEventListener('DOMContentLoaded', function (){
 
         // Nếu Option là 'Color', hiển thị trường màu
         if (selectedOption === 'Color') {
-            lableColor.style.display='block'
-            lableContent.style.display='none'
+            lableColor.style.display = 'block'
+            lableContent.style.display = 'none'
             color.style.display = 'block';
         } else {
             // Nếu Option là 'Ram' hoặc 'Rom', hiển thị trường content
-            lableColor.style.display='none'
-            lableContent.style.display='block'
+            lableColor.style.display = 'none'
+            lableContent.style.display = 'block'
             content.style.display = 'block';
         }
     });
-    document.getElementById('add_option').addEventListener('click', function() {
+    document.getElementById('add_option').addEventListener('click', function () {
 
         // Lấy giá trị từ các trường input
         let type = document.getElementById('OptionType').value;
         let title = document.getElementById('name').value;
+        let quantity = document.getElementById('quantityOption').value;
         let feesArise = document.getElementById('feesArise').value;
         //let content = document.getElementById('content').value;
         let contentValue;
@@ -137,17 +138,25 @@ document.addEventListener('DOMContentLoaded', function (){
 
 
         // Kiểm tra xem các trường có giá trị không
-        if (type && name && content) {
+        if (type && name && content && quantity) {
             // Tạo một hàng mới trong mảng
-            let newOption = {type, title,content: contentValue,feesArise};
-            console.log(newOption)
+            if (quantity >= 1) {
+                let newOption = { type, title, content: contentValue, quantity, feesArise };
+                console.log(newOption)
 
-            // Thêm hàng mới vào mảng
-            myArray.push(newOption);
+                // Thêm hàng mới vào mảng
+                myArray.push(newOption);
 
-            updateTable();
+                updateTable();
+                myModal.hide();
+            }
+            else{
+                alert('quantity >=1.');
+            }
 
-            myModal.hide();
+
+
+
         } else {
             // Hiển thị thông báo hoặc thực hiện xử lý khi có lỗi
             alert('Vui lòng điền đầy đủ thông tin.');
@@ -166,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function (){
 
             // Tạo ô dữ liệu cho index
             let indexCell = document.createElement("td");
-            indexCell.textContent = i+1;
+            indexCell.textContent = i + 1;
             row.appendChild(indexCell);
 
             // Duyệt qua các trường của đối tượng option
@@ -223,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function (){
         // Ví dụ: gán giá trị cho các trường input trong modal
         document.getElementById('OptionType').value = editedOption.type;
         document.getElementById('name').value = editedOption.title;
-      //  document.getElementById('feeArise').value = editedOption.feesArise;
+        //  document.getElementById('feeArise').value = editedOption.feesArise;
 
         // Kiểm tra và hiển thị nội dung hoặc màu sắc tùy thuộc vào loại
         if (editedOption.type === 'Color') {
@@ -254,6 +263,7 @@ document.addEventListener('DOMContentLoaded', function (){
             let index = parseInt(save_option.dataset.index);
             let type = document.getElementById('OptionType').value;
             let title = document.getElementById('name').value;
+            let quantity = document.getElementById('quantityOption').value;
             let feesArise = document.getElementById('feesArise').value;
             let contentValue;
 
@@ -264,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function (){
             }
 
             if (type && title && contentValue && feesArise) {
-                myArray[index] = { type, title, content: contentValue,feesArise:fe};
+                myArray[index] = { type, title, content: contentValue, quantity, feesArise: fe };
                 updateTable();
                 myModal.hide();
             } else {
@@ -277,25 +287,27 @@ document.addEventListener('DOMContentLoaded', function (){
 
     //<-----> AddProduct
     async function createProduct(category, title, description, img_cover, price,
-                                 quantity, sold, video,list_img,option) {
+        quantity, sold, video, list_img, option) {
+        console.log(option);
+
         try {
             var json_option = JSON.stringify(option);
             var formData = new FormData();
-            formData.append("img_cover",img_cover)
-            formData.append("category",category)
-            formData.append("title",title)
-            formData.append("description",description)
-            formData.append("price",price)
-            formData.append("quantity",quantity)
-            formData.append("sold",sold)
+            formData.append("img_cover", img_cover)
+            formData.append("category", category)
+            formData.append("title", title)
+            formData.append("description", description)
+            formData.append("price", price)
+            formData.append("quantity", quantity)
+            formData.append("sold", sold)
             list_img.forEach((file) => {
                 formData.append("list_img", file);
             });
-            formData.append("video",video)
-            formData.append("option",json_option)
+            formData.append("video", video)
+            formData.append("option", json_option)
 
 
-            const response = await axios.post("/api/addProduct",formData,{
+            const response = await axios.post("/api/addProduct", formData, {
                 headers: {
                     'Authorization': token,
                     'Content-Type': 'multipart/form-data'
@@ -308,43 +320,43 @@ document.addEventListener('DOMContentLoaded', function (){
         }
     }
     save_btn.addEventListener("click", function () {
-        if(title.value.length <=0){
+        if (title.value.length <= 0) {
             alert("Chưa chọn title");
             return;
         }
-        if(price.value.length <=0){
+        if (price.value.length <= 0) {
             alert("Chưa chọn giá");
             return;
         }
-        if(quantity.value.length <=0){
+        if (quantity.value.length <= 0) {
             alert("Chưa chọn quantity");
             return;
         }
-        if(description.value.length <=0){
+        if (description.value.length <= 0) {
             alert("Chưa chọn description");
             return;
         }
-        if(categorykey.value.length <= 0){
+        if (categorykey.value.length <= 0) {
             alert("Chưa chọn loại");
             return;
         }
-        if(!img_cover){
+        if (!img_cover) {
             alert("Chưa chọn ảnh");
             return;
         }
-        if(myArray.length <= 0){
+        if (myArray.length <= 0) {
             alert("chưa chọn option");
             return;
         }
-        if(!video){
+        if (!video) {
             alert("Chưa chọn video");
             return;
         }
-        if(!list_img){
+        if (!list_img) {
             alert("Chưa chọn list_img");
             return;
         }
-        createProduct(categorykey.value, title.value, description.value, img_cover.files[0], price.value, quantity.value, "0", video.files[0],Array.from(list_img.files), myArray)
+        createProduct(categorykey.value, title.value, description.value, img_cover.files[0], price.value, quantity.value, "0", video.files[0], Array.from(list_img.files), myArray)
             .then(data => {
                 console.log(data);
                 if (data.code == 1) {
