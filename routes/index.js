@@ -22,13 +22,7 @@ require("dotenv").config();
 /* GET home page. */
 router.get("/stech.manager/home", async function (req, res, next) {
   try {
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
       res.render("index");
-    } else {
-      res.render("error");
-    }
   } catch (e) {
     console.log(e.message);
     res.send({ message: "product not found", code: 0 })
@@ -36,14 +30,12 @@ router.get("/stech.manager/home", async function (req, res, next) {
 });
 router.get("/stech.manager/product_action", async function (req, res, next) {
   const token = req.cookies.token
-  console.log(token)
   try {
     let listProduct = await ProductModel.productModel.find();
     let listCategory = await CategoryModel.categoryModel.find();
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
     if (user.role === "Admin"){
-      console.log(listProduct[1].option[1].title)
       res.render("product_action", {
         products: listProduct,
         categories: listCategory,
@@ -66,7 +58,6 @@ router.get('/stech.manager/product', async function (req, res, next) {
     let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
     if (user.role === "Admin"){
-      console.log(listProduct[1].option[1].title)
       res.render("product", {
         products: listProduct,
         message: "get list product success",
@@ -84,8 +75,6 @@ router.get('/stech.manager/product', async function (req, res, next) {
 
   try {
     let listProduct = await ProductModel.productModel.find();
-
-    console.log(listProduct[1].option[1].title)
     res.render("product_action", {
       products: listProduct,
       message: "get list product success",
@@ -93,7 +82,7 @@ router.get('/stech.manager/product', async function (req, res, next) {
     });
   } catch (e) {
     console.log(e.message);
-    res.send({message: "product not found", code: 0})
+    res.render("error", {message: "product not found", code: 0});
   }
 });
 router.get("/stech.manager/category", async function (req, res, next) {
