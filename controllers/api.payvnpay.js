@@ -33,41 +33,48 @@ exports.createPaymentUrl = async (req, res) => {
     }
     try {
         let total = 0;
+        let check = 1;
         await Promise.all(product.map(async item => {
             let product = await ProductModel.productModel.findById(item.productId);
             if (!product) {
                 return res.send({message: "product not found", code: 0});
             }
-            let quantity = Number(product.quantity);
             let sold = Number(product.sold);
-            if (quantity !== 0) {
-                newQuantity = quantity - 1;
-                newShold = sold + 1;
-                product.quantity = newQuantity.toString();
-                product.sold = newShold.toString();
-            } else {
-                return res.send({message: "product is out of stock ", code: 0});
-            }
+            let newShold = sold + item.quantity;
+            product.sold = newShold.toString();
+            item.option.map((item2, index) => {
+                product.option.map((item3, index2) => {
+                    if (item3.title == item2.title) {
+                        console.log(`item: ${item.quantity} - item2: ${item2.quantity} - item3: ${item3.quantity}`);
+                        if (item.quantity <= item3.quantity) {
+                            console.log(`item${index}: ${item.option[index].quantity}`);
+                            product.option[index2].quantity -= item.quantity;
+                        } else {
+                            check = 0;
+                        }
+                    }
+                })
+            })
             let feesArise = 0;
-            item.option.map(item => {
-                if (item.feesArise) {
-                    feesArise += Number(item.feesArise);
+            item.option.map(item2 => {
+                if (item2.feesArise) {
+                    feesArise += Number(item2.feesArise);
                 }
             })
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
+        if (check === 0) {
+            return res.send({message: "product is out of stock ", code: 0});
+        }
         let voucherPrice = 0;
         if (voucherId != null) {
             let voucher = await Voucher.voucherModel.findById(voucherId);
             if (voucher) {
-                voucherPrice = Number(voucher.price);
                 total = total - voucherPrice;
-                mVoucherId = voucher._id.toString();
             } else {
                 return res.send({message: "voucher not found", code: 0});
             }
         }
-        total = total - voucherPrice;
         let createDate = moment(date).format('YYYYMMDDHHmmss');
         let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
         let ipAddr = req.headers['x-forwarded-for'] ||
@@ -145,32 +152,47 @@ exports.vnpayReturn = async (req, res) => {
         let code = vnp_Params['vnp_ResponseCode'];
         if (code === "00") {
             try {
+                let total = 0;
+                let check = 1;
                 await Promise.all(mProduct.map(async item => {
                     let product = await ProductModel.productModel.findById(item.productId);
                     if (!product) {
                         return res.redirect(`http://${ipAddress}:3000/api/payFail`);
                     }
-                    let quantity = Number(product.quantity);
                     let sold = Number(product.sold);
-                    if (quantity !== 0) {
-                        newQuantity = quantity - 1;
-                        newShold = sold + 1;
-                        product.quantity = newQuantity.toString();
-                        product.sold = newShold.toString();
-                        await product.save();
-                    } else {
-                        return res.send({message: "product is out of stock ", code: 0});
-                    }
+                    let newShold = sold + item.quantity;
+                    product.sold = newShold.toString();
+                    item.option.map((item2, index) => {
+                        product.option.map((item3, index2) => {
+                            if (item3.title == item2.title) {
+                                console.log(`item: ${item.quantity} - item2: ${item2.quantity} - item3: ${item3.quantity}`);
+                                if (item.quantity <= item3.quantity) {
+                                    console.log(`item${index}: ${item.option[index].quantity}`);
+                                    product.option[index2].quantity -= item.quantity;
+                                } else {
+                                    check = 0;
+                                }
+                            }
+                        })
+                    })
+                    await product.save();
                     let feesArise = 0;
-                    item.option.map(item => {
-                        if (item.feesArise) {
-                            feesArise += Number(item.feesArise);
+                    item.option.map(item2 => {
+                        if (item2.feesArise) {
+                            feesArise += Number(item2.feesArise);
                         }
                     })
+                    total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
                 }));
-                if(mVoucherId != null){
+                if (check === 0) {
+                    return res.send({message: "product is out of stock ", code: 0});
+                }
+                let voucherPrice = 0;
+                if (mVoucherId != null) {
                     let voucher = await Voucher.voucherModel.findById(mVoucherId);
                     if (voucher) {
+                        voucherPrice = Number(voucher.price);
+                        total = total - voucherPrice;
                         voucher.status = "used";
                         await voucher.save();
                     } else {
