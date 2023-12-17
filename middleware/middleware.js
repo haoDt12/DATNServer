@@ -49,6 +49,7 @@ exports.checkPermission = (req,res,next)=>{
     }
     try {
         let data = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        console.log(data);
         if(data.role === "Admin"){
             next();
         }else {
