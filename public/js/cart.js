@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
         await axios.post('/api/editCartV2', requestData, {headers})
             .then(response => {
                 console.log(response.data)
+                    alert(response.data.message);
                 window.location.reload();
             })
             .catch(error => {
