@@ -44,7 +44,7 @@ class FeedBackCtrl {
       }
     } catch (error) {
       console.log(error.message);
-      return res.send({ message: e.message.toString(), code: 0 });
+      return res.send({ message: error.message.toString(), code: 0 });
     }
   }
   async getFeedBackByProductId(req, res) {
