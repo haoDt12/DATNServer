@@ -173,8 +173,21 @@ router.get('/stech.manager/user', async function (req, res, next) {
     res.send({ message: "user not found", code: 0 });
   }
 });
-router.get("/stech.manager/verify", function (req, res, next) {
-  res.render("verify");
+router.get("/stech.manager/verify", async function (req, res, next) {
+  try {
+    let userId = req.cookies.Uid;
+    let user = await UserModel.userModel.findById(userId);
+    console.log(user)
+    if (user.role === "Admin") {
+      res.render("verify");
+    } else {
+      res.send("do ngu");
+    }
+  } catch (e) {
+    console.log(e.message);
+    res.send({message: "user not found", code: 0});
+  }
+
 });
 router.get("/stech.manager/profile", async function (req, res, next) {
   const id = utils_1.getCookie(req, 'Uid');

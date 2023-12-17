@@ -42,18 +42,21 @@ document.addEventListener('DOMContentLoaded', function () {
         type: {type: String},
         title: {type: String},
         content: {type: String},
+        quantity: {type: String},
         feesArise: {type: String}
     };
     let optionRamRequest = {
         type: {type: String},
         title: {type: String},
         content: {type: String},
+        quantity: {type: String},
         feesArise: {type: String}
     };
     let optionRomRequest = {
         type: {type: String},
         title: {type: String},
         content: {type: String},
+        quantity: {type: String},
         feesArise: {type: String}
     };
 
@@ -267,6 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (item.title === selectedOption.innerText){
                                 optionRomRequest.title = item.title;
                                 optionRomRequest.content = item.content;
+                                optionRomRequest.quantity = item.quantity;
                                 optionRomRequest.feesArise = item.feesArise;
                                 optionRomRequest.type = item.type;
                             }
@@ -283,9 +287,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                 optionRamRequest.title = item.title;
                                 optionRamRequest.content = item.content;
                                 optionRamRequest.feesArise = item.feesArise;
+                                optionRamRequest.quantity = item.quantity;
                                 optionRamRequest.type = item.type;
                             }
                         })
+
                     })
                     dropdowncolor.addEventListener("change", function (){
                         selectedColor = dropdowncolor.value;
@@ -297,9 +303,12 @@ document.addEventListener('DOMContentLoaded', function () {
                                 optionColorRequest.title = item.title;
                                 optionColorRequest.content = item.content;
                                 optionColorRequest.feesArise = item.feesArise;
+                                optionColorRequest.quantity = item.quantity;
                                 optionColorRequest.type = item.type;
+                                // alert(item.quantity);
                             }
                         })
+
                     })
                     console.log(data.product.option)
                     addimg.src = data.product.img_cover;
@@ -360,6 +369,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 optionColorRequest = {};
                 optionRequest = [];
                 location.reload();
+            }else {
+                alert(response.data.message);
+                // AddCartModal.hide();
             }
             return response.data;
 
