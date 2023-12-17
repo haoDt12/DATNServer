@@ -48,9 +48,18 @@ exports.addCart = async (req, res) => {
             } else {
                 // console.log(option.length);
                 let valid = true;
+                let optionProduct = myCart.product[index].option;
+                let limitQuantity = Number(optionProduct[0].quantity);
+                optionProduct.map((item) => {
+                    if (limitQuantity > Number(item.quantity)) {
+                        limitQuantity = Number(item.quantity)
+                    }
+                })
+                // console.log(`limit ${limitQuantity}`);
+
                 for (let index = 0; index < option.length; index++) {
                     const itemOption = option[index];
-                    console.log(Number(itemOption.quantity));
+                    // console.log(Number(itemOption.quantity));
                     if (Number(itemOption.quantity) == 0) {
                         valid = false;
                         break;
@@ -59,8 +68,11 @@ exports.addCart = async (req, res) => {
                 // console.log(`valid: ${valid}`);
                 if (valid) {
                     if (myCart.product[index].quantity != productQuantity) {
-                        myCart.product[index].quantity =
-                            myCart.product[index].quantity + Number(quantity);
+
+                        if (myCart.product[index].quantity == limitQuantity) {
+                            return res.send({ message: `Sản phẩm tạm hết hàng`, code: 0 });
+                        }
+                        myCart.product[index].quantity = myCart.product[index].quantity + Number(quantity);
                         await myCart.save();
                         return res.send({ message: "update quantity success", code: 1 });
                     }
@@ -69,7 +81,7 @@ exports.addCart = async (req, res) => {
                     }
                 }
                 else {
-                    return res.send({ message: `Sản  phẩm tạm hết hàng`, code: 0 });
+                    return res.send({ message: `Sản phẩm tạm hết hàng`, code: 0 });
                 }
 
                 // let title = option[0].title
