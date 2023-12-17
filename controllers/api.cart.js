@@ -1,4 +1,5 @@
 const CartModel = require("../models/model.cart");
+const ProductModal = require("../models/model.product")
 const moment = require("moment/moment");
 exports.addCart = async (req, res) => {
     let userId = req.body.userId;
@@ -11,26 +12,29 @@ exports.addCart = async (req, res) => {
     let option = req.body.option;
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
     if (userId == null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     if (title == null) {
-        return res.send({message: "title is required", code: 0});
+        return res.send({ message: "title is required", code: 0 });
     }
     if (imgCover == null) {
-        return res.send({message: "imgCover is required", code: 0});
+        return res.send({ message: "imgCover is required", code: 0 });
     }
     if (price == null) {
-        return res.send({message: "price is required", code: 0});
+        return res.send({ message: "price is required", code: 0 });
     }
     try {
-        let myCart = await CartModel.cartModel.findOne({userId: userId});
+        let myCart = await CartModel.cartModel.findOne({ userId: userId });
+        let currentProduct = await ProductModal.productModel.findById({ _id: productId });
+        let productQuantity = currentProduct.quantity;
         if (myCart) {
             const index = myCart.product.findIndex(
                 (id) =>
-                    id.productId.toString() === productId && arraysEqual(option,id.option)
+                    id.productId.toString() === productId && arraysEqual(option, id.option)
             );
 
             if (index === -1) {
+                console.log(`index===-1: ${option}`);
                 myCart.product.push({
                     productId: productId,
                     quantity: quantity,
@@ -40,14 +44,46 @@ exports.addCart = async (req, res) => {
                     imgCover: imgCover,
                 });
                 await myCart.save();
-                return res.send({message: "add cart success", code: 1});
+                return res.send({ message: "add cart success", code: 1 });
             } else {
-                myCart.product[index].quantity =
-                    myCart.product[index].quantity + Number(quantity);
-                await myCart.save();
-                return res.send({message: "update quantity success", code: 1});
+                // console.log(option.length);
+                let valid = true;
+                for (let index = 0; index < option.length; index++) {
+                    const itemOption = option[index];
+                    console.log(Number(itemOption.quantity));
+                    if (Number(itemOption.quantity) == 0) {
+                        valid = false;
+                        break;
+                    }
+                }
+                // console.log(`valid: ${valid}`);
+                if (valid) {
+                    if (myCart.product[index].quantity != productQuantity) {
+                        myCart.product[index].quantity =
+                            myCart.product[index].quantity + Number(quantity);
+                        await myCart.save();
+                        return res.send({ message: "update quantity success", code: 1 });
+                    }
+                    else {
+                        return res.send({ message: "Số lượng trong giỏ hàng vượt giới hạn bán", code: 0 });
+                    }
+                }
+                else {
+                    return res.send({ message: `Sản  phẩm tạm hết hàng`, code: 0 });
+                }
+
+                // let title = option[0].title
+                // let content = option[0].content
+                // let quantityOption = option[0].quantity
+
+                // console.log(`item: ${title}- ${content} - ${quantityOption}`);
+
+
+
+
             }
         } else {
+            console.log(`else 2: ${option}`);
             let objCart = new CartModel.cartModel();
             objCart.userId = userId;
             objCart.product.push({
@@ -60,21 +96,21 @@ exports.addCart = async (req, res) => {
             });
             objCart.date_time = date_time;
             await objCart.save();
-            return res.send({message: "Create cart and add cart success", code: 1});
+            return res.send({ message: "Create cart and add cart success", code: 1 });
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.getCartByUserId = async (req, res) => {
     let userId = req.body.id;
     console.log(userId);
     if (userId === null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     try {
-        let listCart = await CartModel.cartModel.findOne({userId: userId});
+        let listCart = await CartModel.cartModel.findOne({ userId: userId });
 
         return res.send({
             listCart: listCart.product,
@@ -83,20 +119,20 @@ exports.getCartByUserId = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.getCartByCartId = async (req, res) => {
     let cartId = req.body.cartId;
     if (cartId === null) {
-        return res.send({message: "cartId is required", code: 0});
+        return res.send({ message: "cartId is required", code: 0 });
     }
     try {
         let cart = await CartModel.cartModel.findOne(cartId);
-        return res.send({cart: cart, message: "get cart success", code: 1});
+        return res.send({ cart: cart, message: "get cart success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.getCart = async (req, res) => {
@@ -109,7 +145,7 @@ exports.getCart = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.deleteCart = async (req, res) => {
@@ -117,17 +153,17 @@ exports.deleteCart = async (req, res) => {
     let userId = req.body.userId;
     let productId = req.body.productId;
     if (cartId === null) {
-        return res.send({message: "orderId is required", code: 0});
+        return res.send({ message: "orderId is required", code: 0 });
     }
     try {
-        const objCart = await CartModel.cartModel.findOne({userId: userId});
+        const objCart = await CartModel.cartModel.findOne({ userId: userId });
         console.log(objCart)
         if (objCart) {
             const index = objCart.product.findIndex(
                 (id) => id.productId.toString() === productId.toString()
             );
             if (index == -1) {
-                return res.send({message: "No product found in your cart", code: 0});
+                return res.send({ message: "No product found in your cart", code: 0 });
             } else {
                 objCart.product.splice(index, 1);
                 await objCart.save();
@@ -149,7 +185,7 @@ exports.deleteCart = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.editCart = async (req, res) => {
@@ -157,20 +193,21 @@ exports.editCart = async (req, res) => {
     let productId = req.body.productId;
     let caculation = req.body.caculation;
     if (caculation == null) {
-        return res.send({message: "cacaluation is required", code: 0});
+        return res.send({ message: "cacaluation is required", code: 0 });
     }
     if (caculation !== "reduce" && caculation !== "increase") {
-        return res.send({message: "cacaluation invalid", code: 0});
+        return res.send({ message: "cacaluation invalid", code: 0 });
     }
     try {
-        let cart = await CartModel.cartModel.findOne({userId: userId});
+        let cart = await CartModel.cartModel.findOne({ userId: userId });
+        let currentProduct = await ProductModal.productModel.findById({ _id: productId });
         if (cart) {
             const index = cart.product.findIndex(
                 (idProduct) => idProduct.productId.toString() === productId
             );
             if (index == -1) {
                 return res.send({
-                    message: "No product found in your  cart ",
+                    message: "No product found in your cart ",
                     code: 0,
                 });
             } else {
@@ -201,21 +238,42 @@ exports.editCart = async (req, res) => {
                         code: 1,
                     });
                 } else if (caculation === "increase") {
-                    cart.product[index].quantity =
-                        Number(cart.product[index].quantity) + 1;
-                    await cart.save();
-                    return res.send({
-                        message: "increase quantity product in your  cart success",
-                        code: 1,
-                    });
+                    if (!currentProduct) {
+                        return res.send({ message: "Product not found", code: 0 });
+                    }
+                    let quantityProduct = currentProduct.quantity;
+                    let optionProduct = cart.product[index].option;
+
+                    let limitQuantity = Number(optionProduct[0].quantity);
+                    optionProduct.map((item) => {
+                        if (limitQuantity > Number(item.quantity)) {
+                            limitQuantity = Number(item.quantity)
+                        }
+                    })
+
+                    if (Number(cart.product[index].quantity < limitQuantity)) {
+                        cart.product[index].quantity =
+                            Number(cart.product[index].quantity) + 1;
+                        await cart.save();
+                        return res.send({
+                            message: "increase quantity product in your  cart success",
+                            code: 1,
+                        });
+                    }
+                    else {
+                        return res.send({
+                            message: "Số lượng vượt quá giới hạn",
+                            code: 0,
+                        });
+                    }
                 }
             }
         } else {
-            return res.send({message: "No found product in you cart ", code: 0});
+            return res.send({ message: "No found product in you cart ", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.editCartV2 = async (req, res) => {
@@ -223,7 +281,7 @@ exports.editCartV2 = async (req, res) => {
     let product = req.body.productId;
     let quantity = req.body.quantity;
     try {
-        let cart = await CartModel.cartModel.findOne({userId: userId});
+        let cart = await CartModel.cartModel.findOne({ userId: userId });
         if (quantity !== null) {
             let productList = cart.product;
             productList.map(item => {
@@ -235,10 +293,10 @@ exports.editCartV2 = async (req, res) => {
             console.log(cart.product);
             await cart.save();
         }
-        return res.send({message: "edit cart success", code: 1});
+        return res.send({ message: "edit cart success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 const arraysEqual = (arr1, arr2) => {
@@ -250,7 +308,7 @@ const arraysEqual = (arr1, arr2) => {
         const obj1 = arr1[i];
         const obj2 = arr2[i];
 
-        if (obj1.type !== obj2.type || obj1.title !== obj2.title|| obj1.content !== obj2.content) {
+        if (obj1.type !== obj2.type || obj1.title !== obj2.title || obj1.content !== obj2.content) {
             return false;
         }
     }
