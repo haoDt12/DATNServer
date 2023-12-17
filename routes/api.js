@@ -97,6 +97,11 @@ router.post(
   ApiProduct.getListProduct
 );
 router.post(
+  "/searchProduct",
+  Middleware.authorizationToken,
+  ApiProduct.searchProduct
+);
+router.post(
   "/getProductById",
   // Middleware.authorizationToken,
   ApiProduct.getProductById
