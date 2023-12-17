@@ -1,25 +1,26 @@
 const db = require("./database");
 const status = "WaitConfirm";
 const orderSchema = db.mongoose.Schema({
-    userId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'user', required: false},
+    userId: { type: db.mongoose.Schema.Types.ObjectId, ref: 'user', required: false },
     product: [{
-        productId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'product', required: true},
+        productId: { type: db.mongoose.Schema.Types.ObjectId, ref: 'product', required: true },
         option: [{
-            type: {type: String, required: false},
-            title: {type: String, required: false},
-            content: {type: String, required: false},
-            quantity: {type: String, required: false},
-            feesArise: {type: String, required: false},
+            type: { type: String, required: false },
+            title: { type: String, required: false },
+            content: { type: String, required: false },
+            quantity: { type: String, required: false },
+            feesArise: { type: String, required: false },
         }],
-        quantity: {type: Number, required: true}
+        quantity: { type: Number, required: true }
     }],
-    addressId: {type: db.mongoose.Schema.Types.ObjectId, ref: 'address', required: false},
-    total: {type: Number, required: true},
-    status: {type: String, default: status},
-    date_time: {type: String, required: true},
-    guestName: {type: String, required: false},
-    guestPhone: {type: String, required: false},
-    guestAddress: {type: String, required: false},
+    addressId: { type: db.mongoose.Schema.Types.ObjectId, ref: 'address', required: false },
+    total: { type: Number, required: true },
+    status: { type: String, default: status },
+    date_time: { type: String, required: true },
+    payment_method: { type: String, required: true },
+    guestName: { type: String, required: false },
+    guestPhone: { type: String, required: false },
+    guestAddress: { type: String, required: false },
 }, {
     collection: "Order"
 });
@@ -56,4 +57,4 @@ orderSchema.methods.getUserInfo = async function () {
     }
 };
 const modelOrder = db.mongoose.model("order", orderSchema);
-module.exports = {modelOrder};
+module.exports = { modelOrder };
