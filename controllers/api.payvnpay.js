@@ -23,13 +23,13 @@ exports.createPaymentUrl = async (req, res) => {
     let voucherId = req.body.voucherId;
     let date = new Date();
     if (userId == null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     if (product === undefined) {
-        return res.send({message: "product is required", code: 0});
+        return res.send({ message: "product is required", code: 0 });
     }
     if (address == null) {
-        return res.send({message: "address is required", code: 0});
+        return res.send({ message: "address is required", code: 0 });
     }
     try {
         let total = 0;
@@ -37,7 +37,7 @@ exports.createPaymentUrl = async (req, res) => {
         await Promise.all(product.map(async item => {
             let product = await ProductModel.productModel.findById(item.productId);
             if (!product) {
-                return res.send({message: "product not found", code: 0});
+                return res.send({ message: "product not found", code: 0 });
             }
             let sold = Number(product.sold);
             let newShold = sold + item.quantity;
@@ -64,7 +64,7 @@ exports.createPaymentUrl = async (req, res) => {
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
         if (check === 0) {
-            return res.send({message: "product is out of stock ", code: 0});
+            return res.send({ message: "product is out of stock ", code: 0 });
         }
         let voucherPrice = 0;
         if (voucherId != null) {
@@ -72,7 +72,7 @@ exports.createPaymentUrl = async (req, res) => {
             if (voucher) {
                 total = total - voucherPrice;
             } else {
-                return res.send({message: "voucher not found", code: 0});
+                return res.send({ message: "voucher not found", code: 0 });
             }
         }
         let createDate = moment(date).format('YYYYMMDDHHmmss');
@@ -111,28 +111,28 @@ exports.createPaymentUrl = async (req, res) => {
         }
         vnp_Params = sortObject(vnp_Params);
         let querystring = require('qs');
-        let signData = querystring.stringify(vnp_Params, {encode: false});
+        let signData = querystring.stringify(vnp_Params, { encode: false });
         let crypto = require("crypto");
         let hmac = crypto.createHmac("sha512", secretKey);
         let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
         vnp_Params['vnp_SecureHash'] = signed;
-        vnpUrl += '?' + querystring.stringify(vnp_Params, {encode: false});
+        vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
         mUserId = userId;
         mProduct = product;
         mAddress = address;
         mDate_time = date_time;
-        return res.send({message: "get url success", code: 1, url: vnpUrl});
+        return res.send({ message: "get url success", code: 1, url: vnpUrl });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "create order fail", code: 0});
+        return res.send({ message: "create order fail", code: 0 });
     }
 }
 
 exports.payFail = (req, res) => {
-    return res.send({message: "pay fail", code: 0});
+    return res.send({ message: "pay fail", code: 0 });
 }
 exports.paySuccess = async (req, res) => {
-    return res.send({message: "pay success", code: 1});
+    return res.send({ message: "pay success", code: 1 });
 
 }
 exports.vnpayReturn = async (req, res) => {
@@ -144,7 +144,7 @@ exports.vnpayReturn = async (req, res) => {
     let tmnCode = process.env.VNP_TMN_CODE;
     let secretKey = process.env.VNP_HASH_SECRET;
     let querystring = require('qs');
-    let signData = querystring.stringify(vnp_Params, {encode: false});
+    let signData = querystring.stringify(vnp_Params, { encode: false });
     let crypto = require("crypto");
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
@@ -185,7 +185,7 @@ exports.vnpayReturn = async (req, res) => {
                     total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
                 }));
                 if (check === 0) {
-                    return res.send({message: "product is out of stock ", code: 0});
+                    return res.send({ message: "product is out of stock ", code: 0 });
                 }
                 let voucherPrice = 0;
                 if (mVoucherId != null) {
@@ -196,17 +196,18 @@ exports.vnpayReturn = async (req, res) => {
                         voucher.status = "used";
                         await voucher.save();
                     } else {
-                        return res.send({message: "voucher not found", code: 0});
+                        return res.send({ message: "voucher not found", code: 0 });
                     }
                 }
                 let order = new OrderModel.modelOrder({
                     userId: mUserId,
                     product: mProduct,
                     addressId: mAddress,
+                    payment_method: "E-Banking",
                     total: 0,
                     date_time: mDate_time,
                 })
-                let cart = await Cart.cartModel.findOne({userId: mUserId});
+                let cart = await Cart.cartModel.findOne({ userId: mUserId });
                 if (!cart) {
                     await order.save();
                     return res.redirect(`http://${ipAddress}:3000/api/paySuccess`);

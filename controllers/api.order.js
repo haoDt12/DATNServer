@@ -7,6 +7,7 @@ exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
+    let paymentMethod = "Tiền mặt";
     let voucherId = req.body.voucherId;
     let check = 1;
     let date = new Date();
@@ -44,6 +45,7 @@ exports.creatOrder = async (req, res) => {
                     }
                 })
             })
+
             await product.save();
             let feesArise = 0;
             item.option.map(item2 => {
@@ -71,6 +73,7 @@ exports.creatOrder = async (req, res) => {
         let order = new OrderModel.modelOrder({
             userId: userId,
             product: product,
+            payment_method: paymentMethod,
             addressId: address,
             total: total,
             date_time: date_time,
@@ -350,6 +353,7 @@ exports.creatOrderZaloPay = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
     let address = req.body.address;
+    let paymentMethod = "Zalo Pay";
     let voucherId = req.body.voucherId;
     let check = 1;
     let date = new Date();
@@ -415,6 +419,7 @@ exports.creatOrderZaloPay = async (req, res) => {
             userId: userId,
             product: product,
             addressId: address,
+            payment_method: paymentMethod,
             total: 0,
             date_time: date_time,
         })

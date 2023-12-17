@@ -9,6 +9,7 @@ const crypto = require("crypto");
 require("dotenv").config();
 
 const matchImg = [
+    "image/*",
     "image/jpeg",
     "image/png",
     "image/gif",
