@@ -48,7 +48,7 @@ router.post("/checkToken", ApiUserController.checkToken);
 router.post("/verifyOtpLogin", ApiUserController.verifyOtpLogin);
 router.post("/editPassword", Middleware.authorizationToken, ApiUserController.editPassword);
 router.post("/verifyOtpEditPass", Middleware.authorizationToken, ApiUserController.verifyOtpEditPass);
-router.post("/getPassWord", Middleware.authorizationToken, ApiUserController.getPassWord);
+router.post("/getPassWord", ApiUserController.getPassWord);
 router.get("/resetPassword", ApiUserController.resetPassword);
 router.post("/updateconversationID", ApiConversation.updateconversationID);
 
@@ -205,6 +205,12 @@ router.post(
   Middleware.authorizationToken,
   upload.single("file"),
   ApiBanner.getLisBanner
+);
+router.post(
+    "/getBannerById",
+    Middleware.authorizationToken,
+    upload.single("file"),
+    ApiBanner.getBannerById
 );
 
 router.post("/addFCM", Middleware.authorizationToken, ApiUserController.addFCM);

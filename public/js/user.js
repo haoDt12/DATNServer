@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Login error:', error);
             });
         }
+
     });
 
     //
