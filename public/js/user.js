@@ -9,6 +9,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const addUserButton = document.getElementById("addUserButton");
 
 
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
+
     const deleteProButtons = document.querySelectorAll(".deleteUs");
     const editUserButton = document.querySelectorAll(".updateUs");
 
@@ -17,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const confirmUpdateButton = document.getElementById("UpdateUser");
     const confirmDeleteButton = document.getElementById("deleteUser");
+    let roleAU;
 
 
     document.getElementById('openUserModal').addEventListener('click', function () {
@@ -27,14 +34,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // create function
-    async function addUser(email, password,full_name, phone_number,file) {
+    async function addUser(email, password,full_name, phone_number,file,role) {
         try {
             const response = await axios.post('/api/registerUser', {
                 full_name: full_name,
                 phone_number: phone_number,
                 email: email,
                 password: password,
-                file:file
+                file:file,
+                role:role
             });
             myModal.hide();
             return response.data;
@@ -79,9 +87,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const avatar = document.getElementById("avatar").files[0];
+        const role = document.querySelectorAll(".role");
+        role.forEach(function (radio){
+            if (radio.checked){
+                roleAU=radio.value;
+            }
+        })
 
         if (validFormAdd(email, password, full_name, phone_number)) {
-            addUser(email, password, full_name, phone_number,avatar).then(data => {
+            addUser(email, password, full_name, phone_number,avatar,roleAU).then(data => {
                 if (data.code === 1){
                     const Uid = data.id;
                     utils.PushCookie("Uid_cre_user", Uid);
@@ -94,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Login error:', error);
             });
         }
+
     });
 
     //
@@ -106,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const password = document.getElementById("passwordUp");
             const full_name = document.getElementById("full_nameUp");
             const phone_number = document.getElementById("phone_numberUp");
-            const role = document.getElementById("roleUp");
+            const role = document.querySelectorAll(".roleUp");
             const avatar = document.getElementById("avatarUp");
             console.log(Id_user);
             if (avatar && avatar.files) {
@@ -130,7 +145,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 password.value = jsonData.password
                 full_name.value = jsonData.full_name
                 phone_number.value = jsonData.phone_number
-                role.value = jsonData.role
+                role.forEach(function (radio){
+                        radio.checked = jsonData.role === radio.value;
+                })
                 avatar.src = jsonData.avatar
             }).catch(function (error) {
                 console.log(error);
@@ -143,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const passwordUp = document.getElementById("passwordUp");
         const full_nameUp = document.getElementById("full_nameUp");
         const phone_numberUp = document.getElementById("phone_numberUp");
-        const roleUp = document.getElementById("roleUp");
+        const roleUp = document.querySelectorAll(".roleUp");
         const imgUp = document.getElementById("avatarUp");
         let Id_user;
         console.log("id:" + idUp.value)
@@ -153,7 +170,11 @@ document.addEventListener('DOMContentLoaded', function () {
         formDataUp.append('password', passwordUp.value)
         formDataUp.append('full_name', full_nameUp.value)
         formDataUp.append('phone_number', phone_numberUp.value)
-        formDataUp.append('role', roleUp.value)
+        roleUp.forEach(function (radio){
+            if (radio.checked){
+                formDataUp.append('role', radio.value)
+            }
+        })
         formDataUp.append('file', imgUp.files[0])
         await axios.post("/api/editUser", formDataUp, {
             headers: {

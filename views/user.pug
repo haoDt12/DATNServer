@@ -117,7 +117,7 @@ block content
                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
-                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='/stech.manager/login') Logout
+                                        a#logout.btn.btn-outline-primary.mx-3.mt-2.d-block(href='/stech.manager/login') Logout
             // Header End
             .container-fluid
                 .col-md-12
@@ -208,19 +208,19 @@ block content
                                     label.form-label(for='phone') Phone
                                     input#phone.form-control(type='text' name="phone" aria-describedby='textHelp')
                                 .mb-3
-                                    label.form-label(for='role') Role
-                                        input#role.form-check-input(type='radio' name='role' value='user' checked)
-                                        label.form-check-label(for='role') User
+                                    label.form-label Role
+                                        input.form-check-input(class='role' type='radio' name='role' value='User' checked)
+                                        label.form-check-label User
 
-                                        //input#role.form-check-input(type='radio' name='role' value='admin')
-                                        //label.form-check-label(for='role') Admin
+                                        input.form-check-input(class='role' type='radio' name='role' value='Admin')
+                                        label.form-check-label Admin
                                 .mb-3
                                     .form-group
                                         label(for="avatar") Hình ảnh
                                         input#avatar(type="file", name="avatar", accept="image/*")
                         .modal-footer
                             button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
-                            button.btn.btn-primary#addUser(type="button") Add User
+                            button.btn.btn-primary#addUserButton(type="button") Add User
             div#UpdateUserModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="userModalLabel", aria-hidden="true")
                 .modal-dialog
                     .modal-content
@@ -246,12 +246,12 @@ block content
                                     label.form-label(for='phone') Phone
                                     input#phone_numberUp.form-control(type='text' name="phone" aria-describedby='textHelp')
                                 .mb-3
-                                    label.form-label(for='role') Role
-                                        input#roleUp.form-check-input(type='radio' name='role' value='user' checked)
-                                        label.form-check-label(for='role') User
+                                    label.form-label Role
+                                        input.form-check-input(class='roleUp' type='radio' name='role' value='User')
+                                        label.form-check-label User
 
-                                        //input#role.form-check-input(type='radio' name='role' value='admin')
-                                        //label.form-check-label(for='role') Admin
+                                        input.form-check-input(class='roleUp' type='radio' name='role' value='Admin')
+                                        label.form-check-label Admin
                                 .mb-3
                                     .form-group
                                         label(for="avatar") Hình ảnh

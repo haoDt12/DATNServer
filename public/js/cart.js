@@ -20,7 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
     saveButtons.forEach(saveBtn => {
         saveBtn.addEventListener('click', saveQuantity);
     });
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
     function updateTotal() {
         let total = 0;
 

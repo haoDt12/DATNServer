@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const openModalCreate = document.getElementById('openModalCreateVoucher');
     const openModalUpdate = document.querySelectorAll(".openModalUpdateVoucher");
     const openModalDelete = document.querySelectorAll(".openModalDeleteVoucher");
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
     //Button Confirm
     const confirmCreate = document.getElementById('buttonConfirmCreate');
     const confirmUpdate = document.getElementById('buttonConfirmUpdate');

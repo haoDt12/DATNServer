@@ -17,7 +17,11 @@ document.addEventListener('DOMContentLoaded', function(){
     const inputAddressId = document.getElementById('inputAddressId');
     const inputStatus = document.getElementById('inputStatus');
     const btnValueStatus = document.getElementById('updateOrderButton');
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
 
     const openDetailOrder = document.querySelectorAll(".detailOrder");
     const loadListOrderByStatus = document.querySelectorAll(".statusButton");

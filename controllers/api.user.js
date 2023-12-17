@@ -31,6 +31,8 @@ exports.addUser = async (req, res) => {
     let phone_number = req.body.phone_number;
     let address = req.body.address;
     let email = req.body.email;
+    let role = req.body.role;
+
     let date = new Date();
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
     if (password == null) {
@@ -86,6 +88,7 @@ exports.addUser = async (req, res) => {
                 date: date_time,
                 email: email,
                 address: address,
+                role:role
             });
             let index = sendOTPByEmail(email);
             if (index === 0) {
@@ -113,6 +116,7 @@ exports.addUser = async (req, res) => {
                 date: date_time,
                 email: email,
                 address: address,
+                role:role
             });
             let statusCode = await UploadFile.uploadFile(
                 req,
@@ -150,6 +154,7 @@ exports.editUser = async (req, res) => {
     let full_name = req.body.full_name;
     let phone_number = req.body.phone_number;
     let email = req.body.email;
+    let role = req.body.role;
     if (req.body.userId == null) {
         return res.send({ message: "User not found", code: 0 });
     }
@@ -226,6 +231,7 @@ exports.editUser = async (req, res) => {
                 }
             }
         }
+        user.role = role;
         await user.save();
         return res.send({ message: "Edit success", code: 1 });
     } catch (e) {
@@ -346,6 +352,7 @@ exports.verifyOtpRegister = async (req, res) => {
                 date: userTemp.date,
                 email: userTemp.email,
                 address: userTemp.address,
+                role: userTemp.role
             });
             user.otp = null;
             await user.save();

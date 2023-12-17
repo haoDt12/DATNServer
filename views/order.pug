@@ -130,7 +130,7 @@ block content
                                             i.ti.ti-list-check.fs-6
                                             p.mb-0.fs-3 My Task
 
-                                        a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='/stech.manager/login') Logout
+                                        a#logout.btn.btn-outline-primary.mx-3.mt-2.d-block(href='/stech.manager/login') Logout
 
 
             // Header End
@@ -152,7 +152,7 @@ block content
                                     td.list-unstyled.ps-0.mb-0
                                         div
                                             h5.font-size-18.text-center(style='font-size: 20px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= order.allProductInfo[0].title
+                                                a.text-dark(href='#')= order.allProductInfo[0].title
                                     td
                                         ul.list-unstyled.ps-0.mb-0
                                             if order.userInfo

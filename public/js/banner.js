@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const CreateBanner = document.getElementById("CreateBanner");
     console.log(CreateBanner);
     const UpdateBanner = document.querySelectorAll(".UpdateBanner");
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
 
     CreateBanner.addEventListener("click", function (e){
         CreBannerModal.show();

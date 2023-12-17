@@ -10,7 +10,11 @@ document.addEventListener('DOMContentLoaded', function (){
     openModalConfirm.addEventListener('click', function (){
         ConfirmModal.show();
     })
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
     buttonConfirm.addEventListener('click', function (){
         const valueName = document.getElementById('full_name').value;
         const valuePhone = document.getElementById('phone_number').value;

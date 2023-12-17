@@ -19,7 +19,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const deleteCateButtons = document.querySelectorAll(".delCate");
     const editCateButton = document.querySelectorAll(".updateCate");
-
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
     deleteCateButtons.forEach(function (deleteCateBtn) {
         deleteCateBtn.addEventListener("click", function () {
             confirmDeleteModal.show()
