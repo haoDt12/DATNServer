@@ -161,6 +161,17 @@ exports.creatOrderGuest = async (req, res) => {
             date_time: date_time,
             status: status
         })
+        let cart = await Cart.cartModel.findOne({userId: userId});
+        if (!cart) {
+            await order.save();
+            return res.send({message: "create order success", code: 1});
+        }
+        let currentProduct = cart.product;
+        console.log(product)
+        console.log(total)
+        console.log({currentProduct: currentProduct[0].option})
+        cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
+        await cart.save();
         await order.save();
         return res.send({ message: "create order success", code: 1 });
     } catch (e) {
