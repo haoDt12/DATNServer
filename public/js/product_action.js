@@ -138,9 +138,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
         // Kiểm tra xem các trường có giá trị không
-        if (type && name && content && quantity) {
+        if (type && title && content && quantity && feesArise) {
             // Tạo một hàng mới trong mảng
-            if (quantity >= 1) {
+            if (quantity >= 1 && feesArise>=0) {
                 let newOption = { type, title, content: contentValue, quantity, feesArise };
                 console.log(newOption)
 
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 myModal.hide();
             }
             else{
-                alert('quantity >=1.');
+                alert('quantity >=1 và fessArise >=0');
             }
 
 
@@ -273,10 +273,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 contentValue = document.getElementById('content').value;
             }
 
-            if (type && title && contentValue && feesArise) {
-                myArray[index] = { type, title, content: contentValue, quantity, feesArise: fe };
-                updateTable();
-                myModal.hide();
+            if (type && title && contentValue &&quantity&&feesArise ) {
+                if(quantity>=1 && feesArise>=0){
+                    myArray[index] = { type, title, content: contentValue, quantity, feesArise: feesArise };
+                    updateTable();
+                    myModal.hide();
+                }else{
+                    alert('Giá trị quantity>=1 và feesArise>=0');
+                }
+
             } else {
                 alert('Vui lòng điền đầy đủ thông tin.');
             }
@@ -328,8 +333,16 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Chưa chọn giá");
             return;
         }
+        if(price.value < 0){
+            alert("giá phải > 0");
+            return;
+        }
         if (quantity.value.length <= 0) {
             alert("Chưa chọn quantity");
+            return;
+        }
+        if(quantity.value >= 1){
+            alert("giá phải >- 1");
             return;
         }
         if (description.value.length <= 0) {
@@ -363,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     location.reload();
                 } else if (data.code == 0) {
                     if (data.message == "wrong token") {
-                        window.location.href = "/stech.manager/login/";
+                        window.location.href = "/stech.manager/login";
                     }
                 }
             }).catch(error => {
