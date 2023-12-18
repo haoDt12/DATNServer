@@ -132,16 +132,21 @@ document.addEventListener('DOMContentLoaded', function (){
 
         // Kiểm tra xem các trường có giá trị không
         if (type && title && content && quantity && fee) {
-            // Tạo một hàng mới trong mảng
-            let newOption = {type, title, content: contentValue, quantity, feesArise: fee};
-            console.log(newOption)
+            if(quantity>=1 && fee>=0){
+                // Tạo một hàng mới trong mảng
+                let newOption = {type, title, content: contentValue, quantity, feesArise: fee};
+                console.log(newOption)
 
-            // Thêm hàng mới vào mảng
-            myArray.push(newOption);
+                // Thêm hàng mới vào mảng
+                myArray.push(newOption);
 
-            updateTable();
+                updateTable();
 
-            myModal.hide();
+                myModal.hide();
+            }else{
+                alert('quantity >=1 và fessArise >=0');
+            }
+
         } else {
             // Hiển thị thông báo hoặc thực hiện xử lý khi có lỗi
             alert('Vui lòng điền đầy đủ thông tin.');
@@ -163,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function (){
 
             // Tạo ô dữ liệu cho index
 
-            let fieldsToDisplay = ['type', 'title', 'content', 'feesArise'];
+            let fieldsToDisplay = ['type', 'title', 'content','quantity','feesArise'];
             for (let j = 0; j < fieldsToDisplay.length; j++) {
                 let key = fieldsToDisplay[j];
                 let value = option[key];
@@ -227,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function (){
         // Ví dụ: gán giá trị cho các trường input trong modal
         document.getElementById('OptionType').value = editedOption.type;
         document.getElementById('name').value = editedOption.title;
+        document.getElementById('quantityOption').value=editedOption.quantity;
         document.getElementById('feeArise').value = editedOption.feesArise;
 
         // Kiểm tra và hiển thị nội dung hoặc màu sắc tùy thuộc vào loại
@@ -269,9 +275,14 @@ document.addEventListener('DOMContentLoaded', function (){
             }
 
             if (type && title && contentValue && fee && quantity) {
-                myArray[index] = { type, title, content: contentValue, quantity, feesArise: fee };
-                updateTable();
-                myModal.hide();
+                if(quantity>=1 && fee>=0){
+                    myArray[index] = { type, title, content: contentValue, quantity, feesArise: fee };
+                    updateTable();
+                    myModal.hide();
+                }else{
+                    alert('quantity >=1 và fessArise >=0');
+                }
+
             } else {
                 alert('Vui lòng điền đầy đủ thông tin.');
             }
@@ -321,8 +332,16 @@ document.addEventListener('DOMContentLoaded', function (){
             alert("Chưa chọn giá");
             return;
         }
+        if(price.value < 0){
+            alert("quantity >=0");
+            return;
+        }
         if (quantity.value.length <= 0) {
             alert("Chưa chọn quantity");
+            return;
+        }
+        if(quantity.value < 0){
+            alert("số lượng >=0");
             return;
         }
         if (description.value.length <= 0) {
