@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (type && title && contentValue && feesArise) {
-                myArray[index] = { type, title, content: contentValue, quantity, feesArise: fe };
+                myArray[index] = { type, title, content: contentValue, quantity, feesArise: feesArise };
                 updateTable();
                 myModal.hide();
             } else {
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     location.reload();
                 } else if (data.code == 0) {
                     if (data.message == "wrong token") {
-                        window.location.href = "/stech.manager/login/";
+                        window.location.href = "/stech.manager/login";
                     }
                 }
             }).catch(error => {

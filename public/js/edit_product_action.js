@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function (){
 
     //
     const title = document.getElementById('title');
+    const product_avatar = document.getElementById('product_avatar');
     const price = document.getElementById('price');
     const quantity = document.getElementById('quantity');
     const description = document.getElementById('description');
@@ -20,14 +21,13 @@ document.addEventListener('DOMContentLoaded', function (){
     const video = document.getElementById('video');
     const list_img = document.getElementById('list_img');
     //
-
     const color = document.getElementById('color');
     const content = document.getElementById('content');
     const lableColor = document.getElementById('lableColor');
     const lableContent = document.getElementById('lableContent');
     const save_option = document.getElementById('save_option');
     let token = document.getElementById('textToken').textContent+"";
-    let idProduct = document.getElementById('idProduct').textContent+"";4
+    let idProduct = document.getElementById('idProduct').textContent+"";
 
     console.log(idProduct)
 
@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function (){
         // Lấy giá trị từ các trường input
         let type = document.getElementById('OptionType').value;
         let title = document.getElementById('name').value;
+        let quantity = document.getElementById('quantityOption').value;
         let fee = document.getElementById('feeArise').value;
         //let content = document.getElementById('content').value;
         let contentValue;
@@ -130,9 +131,9 @@ document.addEventListener('DOMContentLoaded', function (){
         }
 
         // Kiểm tra xem các trường có giá trị không
-        if (type && title && content&&fee) {
+        if (type && title && content && quantity && fee) {
             // Tạo một hàng mới trong mảng
-            let newOption = {type, title,content: contentValue ,feesArise: fee};
+            let newOption = {type, title, content: contentValue, quantity, feesArise: fee};
             console.log(newOption)
 
             // Thêm hàng mới vào mảng
@@ -254,6 +255,7 @@ document.addEventListener('DOMContentLoaded', function (){
         save_option.addEventListener('click', saveButtonClickHandler);
 
         function saveButtonClickHandler() {
+            let quantity = document.getElementById('quantityOption').value;
             let index = parseInt(save_option.dataset.index);
             let type = document.getElementById('OptionType').value;
             let title = document.getElementById('name').value;
@@ -266,8 +268,8 @@ document.addEventListener('DOMContentLoaded', function (){
                 contentValue = document.getElementById('content').value;
             }
 
-            if (type && title && contentValue && fee) {
-                myArray[index] = { type, title, content: contentValue, feesArise: fee };
+            if (type && title && contentValue && fee && quantity) {
+                myArray[index] = { type, title, content: contentValue, quantity, feesArise: fee };
                 updateTable();
                 myModal.hide();
             } else {
@@ -356,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function (){
                     window.location.href = "/stech.manager/product";
                 } else if (data.code == 0) {
                     if (data.message == "wrong token") {
-                        window.location.href = "/stech.manager/login/";
+                        window.location.href = "/stech.manager/login";
                     }
                 }
             }).catch(error => {

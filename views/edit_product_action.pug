@@ -58,6 +58,7 @@ head
                                     th(scope='col') Type
                                     th(scope='col') Title
                                     th(scope='col') Content
+                                    th(scope='col') Quantity
                                     th(scope='col') FeeArise
                                     th(scope='col') Action
                             tbody#TableOption
@@ -78,19 +79,19 @@ head
                     .card-body
                         h3.h6 Product avatar
                         img#product_avatar.form-control(width='250' height='200')
-                        input#img_cover.form-control(type='file'  accept='image/*')
+                        input#img_cover.form-control(type='file'  accept='image/*' src=products.img_cover)
                 .card.mb-4
                     .card-body
                         h3.h6 Product video
                         video#video_product.form-control(controls='' width='250' height='200')
-                        input#video.form-control(type='file' accept='video/*')
+                        input#video.form-control(type='file' accept='video/*' src= products.video)
                 .card.mb-4
                     .card-body
                         h3.h6 Product image description
                         .mb-2
                             #imageList.swiper-container.form-control
                                 .swiper-wrapper
-                            input#list_img.form-control(type='file' accept='image/*' multiple='')
+                            input#list_img.form-control(type='file' accept='image/*' multiple='' src=products.list_img)
     #OptionModal.modal.fade
         .modal-dialog
             .modal-content
@@ -118,6 +119,10 @@ head
                             .form-group
                                 label#lableContent Content
                                 input#content.content.form-control(type='text' name='content' placeholder='' aria-describedby='helpId')
+                        .mb-4
+                            .form-group
+                                label#lableQuantity Quantity
+                                input#quantityOption.content.form-control(min="1" type='number' name='content' placeholder='' aria-describedby='helpId')
                         .mb-4
                             .form-group
                                 label#lableFeeArise FeesArise
