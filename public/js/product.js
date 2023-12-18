@@ -263,38 +263,43 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                     dropdownrom.addEventListener("change", function (){
                         selectRom = dropdownrom.value;
-                        totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
-                        total.innerText = totalData.toString();
-                        const selectedOption = dropdownrom.options[dropdownrom.selectedIndex];
-                        romData.map(item => {
-                            if (item.title === selectedOption.innerText){
-                                optionRomRequest.title = item.title;
-                                optionRomRequest.content = item.content;
-                                optionRomRequest.quantity = item.quantity;
-                                optionRomRequest.feesArise = item.feesArise;
-                                optionRomRequest.type = item.type;
-                            }
-                        })
+                            totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
+                            total.innerText = totalData.toString();
+                            const selectedOption = dropdownrom.options[dropdownrom.selectedIndex];
+                            romData.map(item => {
+                                if (item.title === selectedOption.innerText){
+                                    optionRomRequest.title = item.title;
+                                    optionRomRequest.content = item.content;
+                                    optionRomRequest.quantity = item.quantity;
+                                    optionRomRequest.feesArise = item.feesArise;
+                                    optionRomRequest.type = item.type;
+                                }
+                            })
+
+
                         console.log(optionRomRequest)
                     })
                     dropdown.addEventListener("change", function (){
                         selectRam = dropdown.value;
-                        totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
-                        total.innerText = totalData.toString();
-                        const selectedRamOption = dropdown.options[dropdown.selectedIndex];
-                        ramData.map(item => {
-                            if (item.title === selectedRamOption.innerText){
-                                optionRamRequest.title = item.title;
-                                optionRamRequest.content = item.content;
-                                optionRamRequest.feesArise = item.feesArise;
-                                optionRamRequest.quantity = item.quantity;
-                                optionRamRequest.type = item.type;
-                            }
-                        })
+
+                            totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
+                            total.innerText = totalData.toString();
+                            const selectedRamOption = dropdown.options[dropdown.selectedIndex];
+                            ramData.map(item => {
+                                if (item.title === selectedRamOption.innerText){
+                                    optionRamRequest.title = item.title;
+                                    optionRamRequest.content = item.content;
+                                    optionRamRequest.feesArise = item.feesArise;
+                                    optionRamRequest.quantity = item.quantity;
+                                    optionRamRequest.type = item.type;
+                                }
+                            })
+
 
                     })
                     dropdowncolor.addEventListener("change", function (){
                         selectedColor = dropdowncolor.value;
+
                         totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
                         total.innerText = totalData.toString();
                         const selectedColorOption = dropdowncolor.options[dropdowncolor.selectedIndex];
@@ -334,13 +339,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     ConfirmAddCartPro.addEventListener("click", async function () {
-        if (Object.keys(optionRamRequest).length){
+        if (Object.keys(optionRamRequest).length !== 0){
             optionRequest.push(optionRamRequest);
+            console.log(optionRamRequest)
         }
-        if (Object.keys(optionRomRequest).length){
+        if (Object.keys(optionRomRequest).length !== 0){
             optionRequest.push(optionRomRequest);
         }
-        if (Object.keys(optionColorRequest).length){
+        if (Object.keys(optionColorRequest).length !== 0){
             optionRequest.push(optionColorRequest);
         }
         console.log(optionRequest)
