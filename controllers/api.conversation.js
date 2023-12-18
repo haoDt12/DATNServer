@@ -33,22 +33,28 @@ exports.createConversation = async (req, res) => {
     if (idUserSelected == null || idUserSelected.length == 0) {
         return res.send({ message: "user selected is null", code: 0 });
     }
+    let arrayID = [idUserLoged, ...idUserSelected]
 
-    try {
+    // console.log(`selected: ${arrayID}`);
 
-        let conversation = new ConversationModel.conversationModel({
-            name: name,
-            user: [idUserLoged, ...idUserSelected],
-            timestamp: timestamp,
+    ConversationModel.conversationModel.findOne({ user: { $all: arrayID } })
+        .then(async conversation => {
+            if (conversation) {
+                return res.send({ id: conversation._id, message: " conversation exist", code: 1 });
+            } else {
+                let conversation = new ConversationModel.conversationModel({
+                    name: name,
+                    user: [idUserLoged, ...idUserSelected],
+                    timestamp: timestamp,
+                })
+                await conversation.save();
+                return res.send({ id: conversation._id, message: "add conversation success", code: 1 });
+            }
         })
-        await conversation.save();
-        return res.send({ message: "add conversation success", code: 1 });
-
-    } catch (e) {
-        console.log(e.message);
-        return res.send({ message: "Add conversation fail", code: 0 })
-    }
-
+        .catch(err => {
+            console.error(err);
+            return res.send({ message: "Add conversation fail", code: 0 })
+        });
 };
 
 exports.editConversation = async (req, res) => {

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     const logout = document.getElementById("logout");
-    logout.addEventListener("click", function (){
+    logout.addEventListener("click", function () {
         window.location.assign("/stech.manager/login");
         utils.DeleteAllCookies();
     });
@@ -33,16 +33,53 @@ document.addEventListener('DOMContentLoaded', function () {
         myModalDe.show();
     });
 
+    let chatUser = document.querySelectorAll('.chatUser');
+    chatUser.forEach(function (item) {
+        item.addEventListener('click', () => {
+            let userSelected = item.getAttribute("data-id");
+            const idUserLoged = utils.GetCookie("Uid");
+            let arrayID = []
+            arrayID.push(userSelected)
+            createConversation(idUserLoged, arrayID).then(data => {
+                if (data.code == 1) {
+                    window.location.href = "/stech.manager/chat/c/" + data.id;
+
+                }
+                else { alert(data.message) }
+            })
+        })
+
+    })
+
+    // 
+    async function createConversation(idUserLoged, arrayID) {
+        const token = utils.GetCookie("token");
+        try {
+            const response = await axios.post('/api/createConversation', {
+                name: "ChatRoom",
+                idUserLoged,
+                idUserSelected: arrayID
+            }, {
+                headers: {
+                    'Authorization': token
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     // create function
-    async function addUser(email, password,full_name, phone_number,file,role) {
+    async function addUser(email, password, full_name, phone_number, file, role) {
         try {
             const response = await axios.post('/api/registerUser', {
                 full_name: full_name,
                 phone_number: phone_number,
                 email: email,
                 password: password,
-                file:file,
-                role:role
+                file: file,
+                role: role
             });
             myModal.hide();
             return response.data;
@@ -51,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function validFormAdd(email,password,full_name, phone_number) {
+    function validFormAdd(email, password, full_name, phone_number) {
         const phonePatternAdd = /^(0|\+84)[3789][0-9]{8}$/;
         const emailPatternAdd = /^[A-Za-z0-9+_.-]+@(.+)$/;
 
@@ -81,27 +118,27 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    addUserButton.addEventListener("click",function () {
+    addUserButton.addEventListener("click", function () {
         const full_name = document.getElementById("full_name").value;
         const phone_number = document.getElementById("phone").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
         const avatar = document.getElementById("avatar").files[0];
         const role = document.querySelectorAll(".role");
-        role.forEach(function (radio){
-            if (radio.checked){
-                roleAU=radio.value;
+        role.forEach(function (radio) {
+            if (radio.checked) {
+                roleAU = radio.value;
             }
         })
 
         if (validFormAdd(email, password, full_name, phone_number)) {
-            addUser(email, password, full_name, phone_number,avatar,roleAU).then(data => {
-                if (data.code === 1){
+            addUser(email, password, full_name, phone_number, avatar, roleAU).then(data => {
+                if (data.code === 1) {
                     const Uid = data.id;
                     utils.PushCookie("Uid_cre_user", Uid);
                     utils.PushCookie("typeVerify", "register_user");
                     window.location.assign('/stech.manager/verify');
-                }else {
+                } else {
                     utils.showMessage(data.message);
                 }
             }).catch(error => {
@@ -112,10 +149,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     //
-    editUserButton.forEach(function (button){
-        button.addEventListener("click", function (){
+    editUserButton.forEach(function (button) {
+        button.addEventListener("click", function () {
             myModalUp.show();
-            const Id_user= this.getAttribute("data-id");
+            const Id_user = this.getAttribute("data-id");
             const id = document.getElementById("idUser");
             const email = document.getElementById("emailUp");
             const password = document.getElementById("passwordUp");
@@ -133,28 +170,28 @@ document.addEventListener('DOMContentLoaded', function () {
             const dataUser = {
                 userId: Id_user
             };
-            axios.post("/api/getUserById", dataUser,{
-                headers:{
+            axios.post("/api/getUserById", dataUser, {
+                headers: {
                     'Authorization': token
                 }
             })
-            .then(function (response) {
-                let jsonData = response.data.user
-                id.value = jsonData._id
-                email.value = jsonData.email
-                password.value = jsonData.password
-                full_name.value = jsonData.full_name
-                phone_number.value = jsonData.phone_number
-                role.forEach(function (radio){
+                .then(function (response) {
+                    let jsonData = response.data.user
+                    id.value = jsonData._id
+                    email.value = jsonData.email
+                    password.value = jsonData.password
+                    full_name.value = jsonData.full_name
+                    phone_number.value = jsonData.phone_number
+                    role.forEach(function (radio) {
                         radio.checked = jsonData.role === radio.value;
+                    })
+                    avatar.src = jsonData.avatar
+                }).catch(function (error) {
+                    console.log(error);
                 })
-                avatar.src = jsonData.avatar
-            }).catch(function (error) {
-                console.log(error);
-            })
         })
     })
-    confirmUpdateButton.addEventListener("click",async function (){
+    confirmUpdateButton.addEventListener("click", async function () {
         const idUp = document.getElementById("idUser");
         const emailUp = document.getElementById("emailUp");
         const passwordUp = document.getElementById("passwordUp");
@@ -170,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function () {
         formDataUp.append('password', passwordUp.value)
         formDataUp.append('full_name', full_nameUp.value)
         formDataUp.append('phone_number', phone_numberUp.value)
-        roleUp.forEach(function (radio){
-            if (radio.checked){
+        roleUp.forEach(function (radio) {
+            if (radio.checked) {
                 formDataUp.append('role', radio.value)
             }
         })
@@ -188,8 +225,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log(error);
             });
     })
-    detailLinks.forEach(function(detailLink) {
-        detailLink.addEventListener("click", function(event) {
+    detailLinks.forEach(function (detailLink) {
+        detailLink.addEventListener("click", function (event) {
             event.preventDefault();
             var userId = this.getAttribute("data-id");
             var encodedUserId = btoa(userId);

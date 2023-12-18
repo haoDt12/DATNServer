@@ -213,10 +213,10 @@ router.post(
   ApiBanner.getLisBanner
 );
 router.post(
-    "/getBannerById",
-    Middleware.authorizationToken,
-    upload.single("file"),
-    ApiBanner.getBannerById
+  "/getBannerById",
+  Middleware.authorizationToken,
+  upload.single("file"),
+  ApiBanner.getBannerById
 );
 
 router.post("/addFCM", Middleware.authorizationToken, ApiUserController.addFCM);
@@ -276,7 +276,7 @@ router.post("/getPublicNotification", Middleware.authorizationToken, ApiNotifica
 
 // API Conversation
 router.post("/createConversation",
-  // Middleware.authorizationToken,
+  Middleware.authorizationToken,
   ApiConversation.createConversation
 );
 router.post("/deleteConversation", Middleware.authorizationToken, ApiConversation.deleteConversation);
@@ -284,7 +284,10 @@ router.post("/editConversation",
   Middleware.authorizationToken,
   ApiConversation.editConversation
 );
-router.post("/getConversationByID", Middleware.authorizationToken, ApiConversation.getConversationByID);
+router.post("/getConversationByID",
+  Middleware.authorizationToken,
+  ApiConversation.getConversationByID
+);
 router.post("/getConversationByIDUser",
   Middleware.authorizationToken,
   ApiConversation.getConversationByIDUser

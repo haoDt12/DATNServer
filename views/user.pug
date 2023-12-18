@@ -1,6 +1,7 @@
 extends layout
 
 block content
+    link(rel='stylesheet' href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css')
     link(rel='stylesheet' href='/css/user.css')
     #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
         // Sidebar Start
@@ -156,6 +157,9 @@ block content
                                             span=user.role
                                         td
                                             ul.list-unstyled.mb-0.d-flex
+                                                li
+                                                    a.text-primary(class='chatUser' title='' data-id=user._id)
+                                                        i.bx.bx-message-dots
                                                 li
                                                     a#Detail.text-primary.DetailUser( data-toggle='tooltip', title='', data-original-title='View' data-id=user._id)
                                                         i.far.fa-eye
