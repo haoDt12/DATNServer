@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (){
     const token = utils.GetCookie("token");
+    const id = utils.GetCookie("Uid");
     //Modal
     const ConfirmModal = new bootstrap.Modal(document.getElementById('ConfirmModal'));
     //Button open modal
@@ -33,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function (){
             guestPhone: valuePhone,
             guestAddress: valueAddress,
             product: valueProduct,
-            status: 'PayComplete'
+            status: 'PayComplete',
+            userId: id
         }
 
         fetch('http://localhost:3000/api/creatOrderGuest', {
@@ -52,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function (){
 
         const dataToInvoice = {
             guestName: valueName,
+            guestPhone: valuePhone,
             guestPhone: valuePhone,
             guestAddress: valueAddress,
             product: JSON.parse(valueProduct),
