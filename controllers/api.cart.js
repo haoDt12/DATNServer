@@ -10,6 +10,7 @@ exports.addCart = async (req, res) => {
     let title = req.body.title;
     let date = new Date();
     let option = req.body.option;
+
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
     if (userId == null) {
         return res.send({ message: "userId is required", code: 0 });
@@ -169,7 +170,7 @@ exports.deleteCart = async (req, res) => {
     }
     try {
         const objCart = await CartModel.cartModel.findOne({ userId: userId });
-        console.log(objCart)
+        // console.log(objCart)
         if (objCart) {
             const index = objCart.product.findIndex(
                 (id) => id.productId.toString() === productId.toString()

@@ -100,6 +100,7 @@ exports.creatOrderGuest = async (req, res) => {
     let guestPhone = req.body.guestPhone;
     let guestAddress = req.body.guestAddress;
     let product = req.body.product;
+    let userId = req.body.userId;
     let status = req.body.status;
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
@@ -128,7 +129,6 @@ exports.creatOrderGuest = async (req, res) => {
             if (!product) {
                 return res.send({ message: "product not found", code: 0 });
             }
-            let quantity = Number(product.quantity);
             let sold = Number(product.sold);
 
             newShold = sold + 1;
@@ -166,20 +166,20 @@ exports.creatOrderGuest = async (req, res) => {
             guestPhone: guestPhone,
             guestAddress: guestAddress,
             total: total,
+            userId: userId,
             date_time: date_time,
             payment_method: "Thanh toán trực tiếp",
             status: status
         })
+        console.log("UserId",userId)
         let cart = await Cart.cartModel.findOne({ userId: userId });
         if (!cart) {
             await order.save();
             return res.send({ message: "create order success", code: 1 });
         }
         let currentProduct = cart.product;
-        console.log(product)
-        console.log(total)
         console.log({ currentProduct: currentProduct[0].option })
-        cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
+        cart.product = currentProduct.filter(item1 => !listProduct.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         await cart.save();
         await order.save();
         return res.send({ message: "create order success", code: 1 });

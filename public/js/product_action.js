@@ -341,8 +341,8 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Chưa chọn quantity");
             return;
         }
-        if(quantity.value >= 1){
-            alert("giá phải >- 1");
+        if(quantity.value <= 1){
+            alert("giá phải > 1");
             return;
         }
         if (description.value.length <= 0) {
