@@ -34,7 +34,7 @@ exports.addCart = async (req, res) => {
             );
 
             if (index === -1) {
-                console.log(`index===-1: ${option}`);
+
                 myCart.product.push({
                     productId: productId,
                     quantity: quantity,
@@ -95,7 +95,7 @@ exports.addCart = async (req, res) => {
 
             }
         } else {
-            console.log(`else 2: ${option}`);
+
             let objCart = new CartModel.cartModel();
             objCart.userId = userId;
             objCart.product.push({
