@@ -223,6 +223,7 @@ exports.getOrderByOrderId = async (req, res) => {
 exports.getOrder = async (req, res) => {
     try {
         let listOrder = await OrderModel.modelOrder.find().populate("product").populate("addressId");
+        listOrder.reverse()
         return res.send({ listOrder: listOrder, message: "get list order success", code: 1 });
     } catch (e) {
         console.log(e.message);
