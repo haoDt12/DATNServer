@@ -13,13 +13,13 @@ exports.creatOrder = async (req, res) => {
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (userId == null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     if (product === undefined) {
-        return res.send({message: "product is required", code: 0});
+        return res.send({ message: "product is required", code: 0 });
     }
     if (address == null) {
-        return res.send({message: "address is required", code: 0});
+        return res.send({ message: "address is required", code: 0 });
     }
     try {
         let total = 0;
@@ -27,7 +27,7 @@ exports.creatOrder = async (req, res) => {
         await Promise.all(product.map(async (item) => {
             let product = await ProductModel.productModel.findById(item.productId);
             if (!product) {
-                return res.send({message: "product not found", code: 0});
+                return res.send({ message: "product not found", code: 0 });
             }
             let sold = Number(product.sold);
             let newShold = sold + item.quantity;
@@ -35,9 +35,9 @@ exports.creatOrder = async (req, res) => {
             item.option.map((item2, index) => {
                 product.option.map((item3, index2) => {
                     if (item3.title == item2.title) {
-                        console.log(`item: ${item.quantity} - item2: ${item2.quantity} - item3: ${item3.quantity}`);
+                        // console.log(`item: ${item.quantity} - item2: ${item2.quantity} - item3: ${item3.quantity}`);
                         if (item.quantity <= item3.quantity) {
-                            console.log(`item${index}: ${item.option[index].quantity}`);
+                            // console.log(`item${index}: ${item.option[index].quantity}`);
                             product.option[index2].quantity -= item.quantity;
                         } else {
                             check = 0;
@@ -56,7 +56,7 @@ exports.creatOrder = async (req, res) => {
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
         if (check === 0) {
-            return res.send({message: "product is out of stock ", code: 0});
+            return res.send({ message: "product is out of stock ", code: 0 });
         }
         let voucherPrice = 0;
         if (voucherId != null) {
@@ -67,7 +67,7 @@ exports.creatOrder = async (req, res) => {
                 voucher.status = "used";
                 await voucher.save();
             } else {
-                return res.send({message: "voucher not found", code: 0});
+                return res.send({ message: "voucher not found", code: 0 });
             }
         }
         let order = new OrderModel.modelOrder({
@@ -78,10 +78,10 @@ exports.creatOrder = async (req, res) => {
             total: total,
             date_time: date_time,
         })
-        let cart = await Cart.cartModel.findOne({userId: userId});
+        let cart = await Cart.cartModel.findOne({ userId: userId });
         if (!cart) {
             await order.save();
-            return res.send({message: "create order success", code: 1});
+            return res.send({ message: "create order success", code: 1 });
         }
         let currentProduct = cart.product;
         // console.log(product)
@@ -89,10 +89,10 @@ exports.creatOrder = async (req, res) => {
         cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         await cart.save();
         await order.save();
-        return res.send({message: "create order success", code: 1});
+        return res.send({ message: "create order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "create order fail", code: 0});
+        return res.send({ message: "create order fail", code: 0 });
     }
 }
 exports.creatOrderGuest = async (req, res) => {
@@ -104,49 +104,62 @@ exports.creatOrderGuest = async (req, res) => {
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (guestPhone == null) {
-        return res.send({message: "guestPhone is required", code: 0});
+        return res.send({ message: "guestPhone is required", code: 0 });
     }
     if (guestName == null) {
-        return res.send({message: "guestName is required", code: 0});
+        return res.send({ message: "guestName is required", code: 0 });
     }
     if (guestAddress == null) {
-        return res.send({message: "guestAddress is required", code: 0});
+        return res.send({ message: "guestAddress is required", code: 0 });
     }
     if (status == null) {
-        return res.send({message: "status is required", code: 0});
+        return res.send({ message: "status is required", code: 0 });
     }
     if (product === undefined) {
-        return res.send({message: "product is required", code: 0});
+        return res.send({ message: "product is required", code: 0 });
     }
 
-
+    let check = 1;
     try {
         let total = 0;
         let listProduct = JSON.parse(product)
         await Promise.all(listProduct.map(async item => {
             let product = await ProductModel.productModel.findById(item.productId);
             if (!product) {
-                return res.send({message: "product not found", code: 0});
+                return res.send({ message: "product not found", code: 0 });
             }
             let quantity = Number(product.quantity);
             let sold = Number(product.sold);
-            if (quantity !== 0) {
-                newQuantity = quantity - 1;
-                newShold = sold + 1;
-                product.quantity = newQuantity.toString();
-                product.sold = newShold.toString();
-                await product.save();
-                let feesArise = 0;
-                item.option.map(item => {
-                    if (item.feesArise) {
-                        feesArise += Number(item.feesArise);
+
+            newShold = sold + 1;
+            product.sold = newShold.toString();
+
+            item.option.map((item2, index) => {
+                product.option.map((item3, index2) => {
+                    if (item3.title == item2.title) {
+                        // console.log(`item: ${item.quantity} - item2: ${item2.quantity} - item3: ${item3.quantity}`);
+                        if (item.quantity <= item3.quantity) {
+                            // console.log(`item${index}: ${item.option[index].quantity}`);
+                            product.option[index2].quantity -= item.quantity;
+                        } else {
+                            check = 0;
+                        }
                     }
                 })
-                total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
-            } else {
-                return res.send({message: "product is out of stock ", code: 0});
-            }
+            })
+
+            await product.save();
+            let feesArise = 0;
+            item.option.map(item => {
+                if (item.feesArise) {
+                    feesArise += Number(item.feesArise);
+                }
+            })
+            total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
+        if (check === 0) {
+            return res.send({ message: "product is out of stock ", code: 0 });
+        }
         let order = new OrderModel.modelOrder({
             guestName: guestName,
             product: listProduct,
@@ -154,82 +167,83 @@ exports.creatOrderGuest = async (req, res) => {
             guestAddress: guestAddress,
             total: total,
             date_time: date_time,
+            payment_method: "Thanh toán trực tiếp",
             status: status
         })
-        let cart = await Cart.cartModel.findOne({userId: userId});
+        let cart = await Cart.cartModel.findOne({ userId: userId });
         if (!cart) {
             await order.save();
-            return res.send({message: "create order success", code: 1});
+            return res.send({ message: "create order success", code: 1 });
         }
         let currentProduct = cart.product;
         console.log(product)
         console.log(total)
-        console.log({currentProduct: currentProduct[0].option})
+        console.log({ currentProduct: currentProduct[0].option })
         cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         await cart.save();
         await order.save();
-        return res.send({message: "create order success", code: 1});
+        return res.send({ message: "create order success", code: 1 });
     } catch (e) {
-        console.log(e.message);
-        return res.send({message: "create order fail", code: 0});
+        console.log(`guest: ${e.message}`);
+        return res.send({ message: "create order fail", code: 0 });
     }
 }
 exports.getOrderByUserId = async (req, res) => {
     let userId = req.body.userId;
     if (userId === null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     try {
-        let listOrder = await OrderModel.modelOrder.find({userId: userId}).populate("product").populate("addressId");
+        let listOrder = await OrderModel.modelOrder.find({ userId: userId }).populate("product").populate("addressId");
         if (!listOrder) {
-            return res.send({message: "listOrder not found", code: 0});
+            return res.send({ message: "listOrder not found", code: 0 });
         }
-        return res.send({listOrder: listOrder, message: "get list order success", code: 1});
+        return res.send({ listOrder: listOrder, message: "get list order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list order fail", code: 0});
+        return res.send({ message: "get list order fail", code: 0 });
     }
 }
 exports.getOrderByOrderId = async (req, res) => {
     let orderId = req.body.orderId;
     if (orderId === null) {
-        return res.send({message: "orderId is required", code: 0});
+        return res.send({ message: "orderId is required", code: 0 });
     }
     try {
         let order = await OrderModel.modelOrder.findById(orderId).populate("product.productId").populate("addressId");
         if (!order) {
-            return res.send({message: "order not found", code: 0});
+            return res.send({ message: "order not found", code: 0 });
         }
-        return res.send({order: order, message: "get order success", code: 1});
+        return res.send({ order: order, message: "get order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get order fail", code: 0});
+        return res.send({ message: "get order fail", code: 0 });
     }
 }
 exports.getOrder = async (req, res) => {
     try {
         let listOrder = await OrderModel.modelOrder.find().populate("product").populate("addressId");
-        return res.send({listOrder: listOrder, message: "get list order success", code: 1});
+        return res.send({ listOrder: listOrder, message: "get list order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list order fail", code: 0});
+        return res.send({ message: "get list order fail", code: 0 });
     }
 }
 exports.deleteOrder = async (req, res) => {
     let orderId = req.body.orderId;
     if (orderId === null) {
-        return res.send({message: "orderId is required", code: 0});
+        return res.send({ message: "orderId is required", code: 0 });
     }
     try {
         let order = OrderModel.modelOrder.findById(orderId);
         if (!order) {
-            return res.send({message: "order not found", code: 0});
+            return res.send({ message: "order not found", code: 0 });
         }
-        await OrderModel.modelOrder.deleteOne({_id: orderId});
-        return res.send({message: "delete order success", code: 1});
+        await OrderModel.modelOrder.deleteOne({ _id: orderId });
+        return res.send({ message: "delete order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "get list order fail", code: 0});
+        return res.send({ message: "get list order fail", code: 0 });
     }
 }
 exports.editOrder = async (req, res) => {
@@ -243,7 +257,7 @@ exports.editOrder = async (req, res) => {
     try {
         let order = await OrderModel.modelOrder.findById(orderId);
         if (!order) {
-            return res.send({message: "order not found", code: 0});
+            return res.send({ message: "order not found", code: 0 });
         }
         if (status !== null) {
             order.status = status;
@@ -258,7 +272,7 @@ exports.editOrder = async (req, res) => {
             await Promise.all(product.map(async item => {
                 let product = await ProductModel.productModel.findById(item.productId);
                 if (!product) {
-                    return res.send({message: "product not found", code: 0});
+                    return res.send({ message: "product not found", code: 0 });
                 }
                 total += product.price * item.quantity;
             }));
@@ -277,10 +291,10 @@ exports.editOrder = async (req, res) => {
 
         console.log(order);
         await order.save();
-        return res.send({message: "edit order success", code: 1});
+        return res.send({ message: "edit order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "edit order fail", code: 0});
+        return res.send({ message: "edit order fail", code: 0 });
     }
 }
 const arraysEqual = (arr1, arr2) => {
@@ -306,20 +320,20 @@ exports.getPriceZaloPay = async (req, res) => {
     let voucherId = req.body.voucherId;
     let check = 1;
     if (userId == null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     if (product === undefined) {
-        return res.send({message: "product is required", code: 0});
+        return res.send({ message: "product is required", code: 0 });
     }
     if (address == null) {
-        return res.send({message: "address is required", code: 0});
+        return res.send({ message: "address is required", code: 0 });
     }
     try {
         let total = 0;
         await Promise.all(product.map(async item => {
             let product = await ProductModel.productModel.findById(item.productId);
             if (!product) {
-                return res.send({message: "product not found", code: 0});
+                return res.send({ message: "product not found", code: 0 });
             }
             item.option.map((item2, index) => {
                 product.option.map((item3, index2) => {
@@ -342,7 +356,7 @@ exports.getPriceZaloPay = async (req, res) => {
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
         if (check === 0) {
-            return res.send({message: "product is out of stock ", code: 0});
+            return res.send({ message: "product is out of stock ", code: 0 });
         }
         let voucherPrice = 0;
         if (voucherId != null) {
@@ -351,13 +365,13 @@ exports.getPriceZaloPay = async (req, res) => {
                 voucherPrice = Number(voucher.price);
                 total = total - voucherPrice;
             } else {
-                return res.send({message: "voucher not found", code: 0});
+                return res.send({ message: "voucher not found", code: 0 });
             }
         }
-        return res.send({message: "get price order success", price: total, code: 1});
+        return res.send({ message: "get price order success", price: total, code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "create order fail", code: 0});
+        return res.send({ message: "create order fail", code: 0 });
     }
 }
 exports.creatOrderZaloPay = async (req, res) => {
@@ -370,20 +384,20 @@ exports.creatOrderZaloPay = async (req, res) => {
     let date = new Date();
     let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
     if (userId == null) {
-        return res.send({message: "userId is required", code: 0});
+        return res.send({ message: "userId is required", code: 0 });
     }
     if (product === undefined) {
-        return res.send({message: "product is required", code: 0});
+        return res.send({ message: "product is required", code: 0 });
     }
     if (address == null) {
-        return res.send({message: "address is required", code: 0});
+        return res.send({ message: "address is required", code: 0 });
     }
     try {
         let total = 0;
         await Promise.all(product.map(async item => {
             let product = await ProductModel.productModel.findById(item.productId);
             if (!product) {
-                return res.send({message: "product not found", code: 0});
+                return res.send({ message: "product not found", code: 0 });
             }
             let sold = Number(product.sold);
             let newShold = sold + item.quantity;
@@ -412,7 +426,7 @@ exports.creatOrderZaloPay = async (req, res) => {
             total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
         }));
         if (check === 0) {
-            return res.send({message: "product is out of stock ", code: 0});
+            return res.send({ message: "product is out of stock ", code: 0 });
         }
         let voucherPrice = 0;
         if (voucherId != null) {
@@ -423,7 +437,7 @@ exports.creatOrderZaloPay = async (req, res) => {
                 voucher.status = "used";
                 await voucher.save();
             } else {
-                return res.send({message: "voucher not found", code: 0});
+                return res.send({ message: "voucher not found", code: 0 });
             }
         }
         let order = new OrderModel.modelOrder({
@@ -434,25 +448,25 @@ exports.creatOrderZaloPay = async (req, res) => {
             total: 0,
             date_time: date_time,
         })
-        let cart = await Cart.cartModel.findOne({userId: userId});
+        let cart = await Cart.cartModel.findOne({ userId: userId });
         if (!cart) {
             await order.save();
-            return res.send({message: "create order success", code: 1});
+            return res.send({ message: "create order success", code: 1 });
         }
         let currentProduct = cart.product;
         console.log(currentProduct);
         cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
         await cart.save();
         await order.save();
-        return res.send({message: "create order success", code: 1});
+        return res.send({ message: "create order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.getOrderTop10 = async (req, res) => {
     try {
-        let order = await OrderModel.modelOrder.find({status: "PayComplete"});
+        let order = await OrderModel.modelOrder.find({ status: "PayComplete" });
         let arrIdProduct = [];
         let data = []
         order.map(item => {
@@ -477,26 +491,26 @@ exports.getOrderTop10 = async (req, res) => {
         })
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.getOrderFromDateToDate = async (req, res) => {
     let fromDate = req.body.fromDate;
     let toDate = req.body.toDate;
     if (fromDate === null) {
-        return res.send({message: "from date is required", code: 1});
+        return res.send({ message: "from date is required", code: 1 });
     }
     if (toDate === null) {
-        return res.send({message: "to date is required", code: 1});
+        return res.send({ message: "to date is required", code: 1 });
     }
     try {
         let dataOrder = [];
         let dataGetFromDateToDate = [];
         let data = [];
-        let order = await OrderModel.modelOrder.find({status: "PayComplete"});
+        let order = await OrderModel.modelOrder.find({ status: "PayComplete" });
         order.map(item => {
             const formattedDate = moment(item.date_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
-            dataOrder.push({date: formattedDate, total: item.total})
+            dataOrder.push({ date: formattedDate, total: item.total })
         })
         dataGetFromDateToDate = calculateTotalByDate(dataOrder, fromDate, toDate);
         dataGetFromDateToDate.map(item => {
@@ -510,7 +524,7 @@ exports.getOrderFromDateToDate = async (req, res) => {
         })
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 
