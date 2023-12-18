@@ -42,7 +42,7 @@ exports.addProduct = async (req, res) => {
         filevideo = req.files["video"];
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "error read fields"});
+        return res.send({ message: "error read fields" });
     }
     let price = req.body.price;
     let quantity = req.body.quantity;
@@ -50,40 +50,40 @@ exports.addProduct = async (req, res) => {
     let date = new Date();
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
     if (category == null) {
-        return res.send({message: "category is required", code: 0});
+        return res.send({ message: "category is required", code: 0 });
     }
     if (title == null) {
-        return res.send({message: "title is required", code: 0});
+        return res.send({ message: "title is required", code: 0 });
     }
     if (description == null) {
-        return res.send({message: "description is required", code: 0});
+        return res.send({ message: "description is required", code: 0 });
     }
     if (fileimg_cover === undefined) {
-        return res.send({message: "img cover is required", code: 0});
+        return res.send({ message: "img cover is required", code: 0 });
     }
     if (filelist_img === undefined) {
-        return res.send({message: "img des is required", code: 0});
+        return res.send({ message: "img des is required", code: 0 });
     }
     if (filevideo === undefined) {
-        return res.send({message: "video des is required", code: 0});
+        return res.send({ message: "video des is required", code: 0 });
     }
     if (price == null) {
-        return res.send({message: "price is required", code: 0});
+        return res.send({ message: "price is required", code: 0 });
     }
     if (quantity == null) {
-        return res.send({message: "quantity is required", code: 0});
+        return res.send({ message: "quantity is required", code: 0 });
     }
     if (sold == null) {
-        return res.send({message: "sold is required", code: 0});
+        return res.send({ message: "sold is required", code: 0 });
     }
     if (isNaN(price)) {
-        return res.send({message: "price is number", code: 0});
+        return res.send({ message: "price is number", code: 0 });
     }
     if (isNaN(quantity)) {
-        return res.send({message: "quantity is number", code: 0});
+        return res.send({ message: "quantity is number", code: 0 });
     }
     if (isNaN(sold)) {
-        return res.send({message: "sold is number", code: 0});
+        return res.send({ message: "sold is number", code: 0 });
     }
     let isFormat = true;
     filelist_img.map((item) => {
@@ -122,7 +122,7 @@ exports.addProduct = async (req, res) => {
             ".jpg"
         );
         if (img_cover === 0) {
-            return res.send({message: "upload file fail", code: 0});
+            return res.send({ message: "upload file fail", code: 0 });
         }
         let video = await UploadFile.uploadFile(
             req,
@@ -132,7 +132,7 @@ exports.addProduct = async (req, res) => {
             ".mp4"
         );
         if (video === 0) {
-            return res.send({message: "upload file fail", code: 0});
+            return res.send({ message: "upload file fail", code: 0 });
         }
         let list_img = await UploadFile.uploadFiles(
             req,
@@ -142,16 +142,16 @@ exports.addProduct = async (req, res) => {
             ".jpg"
         );
         if (list_img === 0) {
-            return res.send({message: "upload file fail", code: 0});
+            return res.send({ message: "upload file fail", code: 0 });
         }
         product.img_cover = img_cover;
         product.list_img = list_img;
         product.video = video;
         await product.save();
-        return res.send({message: "add product success", code: 1});
+        return res.send({ message: "add product success", code: 1 });
     } catch (e) {
         console.log("sai" + e);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.getListProduct = async (req, res) => {
@@ -167,13 +167,13 @@ exports.getListProduct = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.getProductById = async (req, res) => {
     let productId = req.body.productId;
     if (productId == null) {
-        return res.send({message: "product id is required"});
+        return res.send({ message: "product id is required" });
     }
     try {
         console.log(productId);
@@ -181,50 +181,50 @@ exports.getProductById = async (req, res) => {
             .findById(productId)
             .populate("category");
         if (!product) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
         console.log(product);
         if (!product) {
-            return res.send({message: "get product fail", code: 0});
+            return res.send({ message: "get product fail", code: 0 });
         }
-        res.send({product: product, message: "get product success", code: 1});
+        res.send({ product: product, message: "get product success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 
 exports.getProductByIdCate = async (req, res) => {
     let categoryId = req.body.categoryId;
     if (categoryId == null) {
-        return res.send({message: "category id is required"});
+        return res.send({ message: "category id is required" });
     }
     try {
         let product = await ProductModel.productModel
-            .find({category: categoryId})
+            .find({ category: categoryId })
             .populate("category");
         if (!product) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
         if (!product) {
-            return res.send({message: "get product by id cate fail", code: 0});
+            return res.send({ message: "get product by id cate fail", code: 0 });
         }
-        res.send({product: product, message: "get product by id cate success", code: 1});
+        res.send({ product: product, message: "get product by id cate success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 
 exports.deleteProduct = async (req, res) => {
     let productId = req.body.productId;
     if (productId == null) {
-        return res.send({message: "product not found", code: 0});
+        return res.send({ message: "product not found", code: 0 });
     }
     try {
         let product = await ProductModel.productModel.findById(productId);
         if (!product) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
         let list_img = product.list_img;
         let img_cover = product.img_cover;
@@ -246,7 +246,7 @@ exports.deleteProduct = async (req, res) => {
             }
         });
         if (isRemove === false) {
-            return res.send({message: "delete product fail", code: 0});
+            return res.send({ message: "delete product fail", code: 0 });
         }
         if (pathFolderDelete !== undefined) {
             fs.rmdir(
@@ -256,18 +256,18 @@ exports.deleteProduct = async (req, res) => {
                         isRemove = false;
                         console.log(err.message);
                     } else {
-                        await ProductModel.productModel.deleteOne({_id: productId});
-                        return res.send({message: "Delete product success", code: 1});
+                        await ProductModel.productModel.deleteOne({ _id: productId });
+                        return res.send({ message: "Delete product success", code: 1 });
                     }
                 }
             );
         }
         if (isRemove === false) {
-            return res.send({message: "delete product fail", code: 0});
+            return res.send({ message: "delete product fail", code: 0 });
         }
     } catch (e) {
         console.log(e);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.editProduct = async (req, res) => {
@@ -289,15 +289,15 @@ exports.editProduct = async (req, res) => {
         filevideo = req.files["video"];
     } catch (e) {
         console.log(e.message);
-        return res.send({message: "error read fields"});
+        return res.send({ message: "error read fields" });
     }
     if (productId == null) {
-        return res.send({message: "product not found", code: 0});
+        return res.send({ message: "product not found", code: 0 });
     }
     try {
         let product = await ProductModel.productModel.findById(productId);
         if (!product) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
         if (category !== undefined) {
             product.category = category;
@@ -324,14 +324,14 @@ exports.editProduct = async (req, res) => {
             console.log(fileimg_cover[0].mimetype);
             if (matchImg.indexOf(fileimg_cover[0].mimetype) === -1) {
                 console.log(fileimg_cover[0].mimetype);
-                return res.send({message: "The uploaded file is not in the correct format 1", code: 0});
+                return res.send({ message: "The uploaded file is not in the correct format 1", code: 0 });
             }
             if (product.img_cover.split("3000")[1] !== undefined) {
                 UploadFile.deleteFile(res, product.img_cover.split("3000")[1]);
             }
             let img_cover = await UploadFile.uploadFile(req, product._id.toString(), "product", fileimg_cover[0], ".jpg");
             if (img_cover === 0) {
-                return res.send({message: "upload file fail", code: 0});
+                return res.send({ message: "upload file fail", code: 0 });
             }
             product.img_cover = img_cover;
         }
@@ -345,7 +345,7 @@ exports.editProduct = async (req, res) => {
                 }
             });
             if (isFormat === false) {
-                return res.send({message: "The uploaded file is not in the correct format 2", code: 0});
+                return res.send({ message: "The uploaded file is not in the correct format 2", code: 0 });
             }
             product.list_img.map((item) => {
                 if (item.split("3000")[1] !== undefined) {
@@ -354,7 +354,7 @@ exports.editProduct = async (req, res) => {
             })
             let list_img = await UploadFile.uploadFiles(req, product._id.toString(), "product", filelist_img, ".jpg");
             if (list_img === 0) {
-                return res.send({message: "upload file fail", code: 0});
+                return res.send({ message: "upload file fail", code: 0 });
             }
             product.list_img = list_img;
         }
@@ -362,28 +362,28 @@ exports.editProduct = async (req, res) => {
             console.log(filevideo[0].mimetype)
             if (matchVideo.indexOf(filevideo[0].mimetype) === -1) {
                 console.log(filevideo[0].mimetype)
-                return res.send({message: "The uploaded file is not in the correct format 3", code: 0});
+                return res.send({ message: "The uploaded file is not in the correct format 3", code: 0 });
             }
             if (product.video.split("3000")[1] !== undefined) {
                 UploadFile.deleteFile(res, product.video.split("3000")[1]);
             }
             let video = await UploadFile.uploadFile(req, product._id.toString(), "product", filevideo[0], ".mp4");
             if (video === 0) {
-                return res.send({message: "upload file fail", code: 0});
+                return res.send({ message: "upload file fail", code: 0 });
             }
             product.video = video;
         }
         await product.save();
-        return res.send({message: "Edit product success", code: 1});
+        return res.send({ message: "Edit product success", code: 1 });
     } catch (e) {
         console.log(e);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.searchProduct = async (req, res) => {
     let txtSearch = req.body.txtSearch;
     if (txtSearch === null) {
-        return res.send({message: "text search is required", code: 0});
+        return res.send({ message: "text search is required", code: 0 });
     }
     try {
         let product = await ProductModel.productModel.find().populate("category");
@@ -392,10 +392,10 @@ exports.searchProduct = async (req, res) => {
             const lowercasedSearchString = txtSearch.toLowerCase();
             return lowercasedTitle.includes(lowercasedSearchString);
         });
-        return res.send({message: "search success", listProduct: filteredProducts,code: 1});
+        return res.send({ message: "search success", product: filteredProducts, code: 1 });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 
 }
