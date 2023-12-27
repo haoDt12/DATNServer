@@ -5,7 +5,7 @@ const OrderModel = require("./../models/model.order");
 const CategoryModel = require("./../models/model.category");
 const CartModel = require("./../models/model.cart");
 const UserModel = require("./../models/model.user");
-const BannerModel = require("./../models/model.banner");
+const BannerModel = require("./../modelsv2/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
 const VoucherModel = require("./../models/model.voucher");
@@ -564,7 +564,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
     } else {
       let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
       let orders = await OrderModel.modelOrder.find({ status: valueStatus });
-
+      orders.reverse();
       let userId = req.cookies.Uid;
       let user = await UserModel.userModel.findById(userId);
       if (user.role === "Admin") {
