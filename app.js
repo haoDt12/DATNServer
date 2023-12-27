@@ -1,16 +1,17 @@
-var createError = require("http-errors");
-var express = require("express");
+const createError = require("http-errors");
+const express = require("express");
 require('dotenv').config();
 const crypto = require('crypto');
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var apiRouter = require("./routes/api");
-var app = express();
-var cors = require('cors');
-var http = require('http')
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const apiRouter = require("./routes/api");
+const apiRouterV2 = require("./routes/apiv2");
+const app = express();
+const cors = require('cors');
+const http = require('http');
 const server = http.createServer(app)
 const { Server } = require('socket.io')
 const { readFileSync } = require("fs");
@@ -48,6 +49,7 @@ app.use(session(sessionConfig));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api", apiRouter);
+app.use("/apiv2",apiRouterV2);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
