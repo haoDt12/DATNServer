@@ -543,6 +543,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
 
     if (encodedValueStatus === undefined || Buffer.from(encodedValueStatus, 'base64').toString('utf8') == 'All') {
       let orders = await OrderModel.modelOrder.find();
+      orders.reverse();
       console.log('Orders:', orders);
       let userId = req.cookies.Uid;
       let user = await UserModel.userModel.findById(userId);

@@ -39,25 +39,25 @@ document.addEventListener('DOMContentLoaded', function () {
     let titleRequest ;
     let optionRequest = [];
     let optionColorRequest = {
-        type: {type: String},
-        title: {type: String},
-        content: {type: String},
-        quantity: {type: String},
-        feesArise: {type: String}
+        // type: {type: String},
+        // title: {type: String},
+        // content: {type: String},
+        // quantity: {type: String},
+        // feesArise: {type: String}
     };
     let optionRamRequest = {
-        type: {type: String},
-        title: {type: String},
-        content: {type: String},
-        quantity: {type: String},
-        feesArise: {type: String}
+        // type: {type: String},
+        // title: {type: String},
+        // content: {type: String},
+        // quantity: {type: String},
+        // feesArise: {type: String}
     };
     let optionRomRequest = {
-        type: {type: String},
-        title: {type: String},
-        content: {type: String},
-        quantity: {type: String},
-        feesArise: {type: String}
+        // type: {type: String},
+        // title: {type: String},
+        // content: {type: String},
+        // quantity: {type: String},
+        // feesArise: {type: String}
     };
 
     async function createProduct(category, title, description, img_cover, price,
@@ -339,17 +339,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     ConfirmAddCartPro.addEventListener("click", async function () {
-        if (Object.keys(optionRamRequest).length !== 0){
+        if (JSON.stringify(optionRamRequest) !== "{}"){
             optionRequest.push(optionRamRequest);
-            console.log(optionRamRequest)
+            console.log(JSON.stringify(optionRamRequest))
         }
-        if (Object.keys(optionRomRequest).length !== 0){
+        if (JSON.stringify(optionRomRequest) !== "{}"){
             optionRequest.push(optionRomRequest);
         }
-        if (Object.keys(optionColorRequest).length !== 0){
+        if (JSON.stringify(optionColorRequest) !== "{}"){
             optionRequest.push(optionColorRequest);
         }
-        console.log(optionRequest)
+        // console.log(optionRequest)
         try {
             const response = await axios.post("/api/addCart", {
                 userId: Uid,
