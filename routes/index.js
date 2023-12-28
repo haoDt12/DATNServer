@@ -4,7 +4,7 @@ const ProductModel = require("./../models/model.product");
 const OrderModel = require("./../models/model.order");
 const CategoryModel = require("./../models/model.category");
 const CartModel = require("./../models/model.cart");
-const CartModelv2 = require("../modelsv2/model.product_cart");
+const CartModelv2 = require("../modelsv2/model.ProductCart");
 const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
@@ -35,9 +35,6 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
     let listCategory = await CategoryModel.categoryModel.find();
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
       res.render("product_action", {
         products: listProduct,
         categories: listCategory,
@@ -45,10 +42,6 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
         token: token,
         code: 1
       });
-    }
-    else {
-      res.render("error");
-    }
   } catch (e) {
     console.log(e.message);
     res.send({ message: "product not found", code: 0 })
@@ -57,19 +50,12 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin"){
+
       res.render("product", {
         products: listProduct,
         message: "get list product success",
         code: 1
       });
-    }
-    else {
-      res.render("error");
-    }
-
   } catch (e) {
     console.log(e.message);
     res.send({ message: "product not found", code: 0 })
@@ -90,18 +76,11 @@ router.get('/stech.manager/product', async function (req, res, next) {
 router.get("/stech.manager/category", async function (req, res, next) {
   try {
     let listCategory = await CategoryModel.categoryModel.find();
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
       res.render("category", {
         category: listCategory,
         message: "get list category success",
         code: 1,
       });
-    }
-    else {
-      res.render("error");
-    }
 
   } catch (e) {
     console.log(e.message);
@@ -156,9 +135,7 @@ router.get("/stech.manager/detail_user", async function (req, res, next) {
 
 router.get('/stech.manager/user', async function (req, res, next) {
   try {
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
+
       let listUser = await UserModel.userModel.find().populate({ path: 'address', select: 'city' });
 
       res.render("user", {
@@ -166,10 +143,6 @@ router.get('/stech.manager/user', async function (req, res, next) {
         message: "get list user success",
         code: 1,
       });
-    }
-    else {
-      res.render("error");
-    }
   } catch (e) {
     console.log(e.message);
     res.send({ message: "user not found", code: 0 });
@@ -177,18 +150,12 @@ router.get('/stech.manager/user', async function (req, res, next) {
 });
 router.get("/stech.manager/verify", async function (req, res, next) {
   try {
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    console.log(user)
-    if (user.role === "Admin") {
       res.render("verify");
-    } else {
-      res.send("do ngu");
-    }
-  } catch (e) {
-    console.log(e.message);
-    res.send({message: "user not found", code: 0});
-  }
+
+} catch (e) {
+  console.log(e.message);
+  res.send({ message: "profile not found", code: 0 });
+}
 
 });
 router.get("/stech.manager/profile", async function (req, res, next) {
@@ -196,18 +163,11 @@ router.get("/stech.manager/profile", async function (req, res, next) {
   console.log(id);
   try {
     let listprofile = await UserModel.userModel.findById(id).populate({ path: 'address', select: 'city' });
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
       res.render("profile", {
         profiles: listprofile,
         message: "get list profile success",
         code: 1,
       });
-    }
-    else {
-      res.render("error");
-    }
 
   } catch (e) {
     console.log(e.message);
@@ -547,9 +507,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
       let orders = await OrderModel.modelOrder.find();
       orders.reverse();
       console.log('Orders:', orders);
-      let userId = req.cookies.Uid;
-      let user = await UserModel.userModel.findById(userId);
-      if (user.role === "Admin") {
+
         const ordersWithProductInfo = await Promise.all(orders.map(async order => {
           const allProductInfo = await order.getAllProductInfo();
           const userInfo = await order.getUserInfo();
@@ -558,18 +516,12 @@ router.get("/stech.manager/order", async function (req, res, next) {
           return { ...order.toObject(), allProductInfo, userInfo };
         }));
         res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
-      }
-      else {
-        res.render("error");
-      }
 
     } else {
       let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
       let orders = await OrderModel.modelOrder.find({ status: valueStatus });
       orders.reverse();
-      let userId = req.cookies.Uid;
-      let user = await UserModel.userModel.findById(userId);
-      if (user.role === "Admin") {
+
         console.log('Orders:', orders);
         const ordersWithProductInfo = await Promise.all(orders.map(async order => {
           const allProductInfo = await order.getAllProductInfo();
@@ -579,10 +531,6 @@ router.get("/stech.manager/order", async function (req, res, next) {
           return { ...order.toObject(), allProductInfo, userInfo };
         }));
         res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
-      }
-      else {
-        res.render("error");
-      }
 
     }
 
@@ -645,22 +593,16 @@ router.get("/stech.manager/cart", async function (req, res, next) {
   // const userId = utils_1.getCookie(req, 'Uid');
 
   const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
+
   console.log("id", userId)
   try {
-    let cartUser = await CartModelv2.productCartModel.find({ :userId }).populate({ path: 'product', select: 'productId quantity' });
+    let cartUser = await CartModelv2.productCartModel.findOne({ userId }).populate("product_id")
     console.log(cartUser)
-    // let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
       res.render("cart", {
         carts: cartUser,
         message: "get list profile success",
         code: 1,
       })
-    }
-    else {
-      res.render("error");
-    }
 
   } catch (e) {
     console.log(e.message);
@@ -674,18 +616,13 @@ router.post("/stech.manager/AddCart",async (req, res) =>{
   let date = new Date();
   let timestamp = moment(date).format('YYYY-MM-DD-HH:mm:ss');
   let cart = new CartModelv2.productCartModel({
-    userId: userID,
-    productId: productID,
+    customer_id: userID,
+    product_id: productID,
     quantity: quantity,
-    date_time: timestamp,
+    create_time: timestamp,
   })
   await cart.save();
-  // if (user.role === "Admin") {
-  // res.render("banner", { carts: cart, message: "get list cart success", code: 1 });
-  // }
-  // else {
-  //   res.render("error");
-  // }
+
 });
 router.post('/updateQuantity/:productId', async (req, res) => {
   const productId = req.params.productId;
@@ -713,18 +650,12 @@ router.post('/updateQuantity/:productId', async (req, res) => {
 router.get("/stech.manager/notification", async function (req, res, next) {
   try {
     let listNotification = await NotificationPublicModel.notificationPublicModel.find();
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
+
       res.render("notification", {
         notifications: listNotification,
         message: "get list notification success",
         code: 1,
       });
-    }
-    else {
-      res.render("error");
-    }
 
   } catch (e) {
     console.log(e.message);
@@ -734,18 +665,13 @@ router.get("/stech.manager/notification", async function (req, res, next) {
 router.get("/stech.manager/voucher", async function (req, res, next) {
   try {
     let listVoucher = await VoucherModel.voucherModel.find();
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
+
       res.render("voucher", {
         vouchers: listVoucher,
         message: "get list voucher success",
         code: 1,
       });
-    }
-    else {
-      res.render("error");
-    }
+
 
   } catch (e) {
     console.log(e.message);
@@ -755,14 +681,8 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
 router.get("/stech.manager/banner", async function (req, res, next) {
   try {
     let listbanner = await BannerModel.bannerModel.find();
-    let userId = req.cookies.Uid;
-    let user = await UserModel.userModel.findById(userId);
-    if (user.role === "Admin") {
+
       res.render("banner", { banners: listbanner, message: "get list banner success", code: 1 });
-    }
-    else {
-      res.render("error");
-    }
 
   } catch (e) {
     console.log(e.message);
