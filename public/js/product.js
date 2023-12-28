@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const UpdatePro = document.querySelectorAll(".UpdatePro");
     const AddCartPro = document.querySelectorAll(".AddCartPro");
     const OpenUpdateProduct = document.querySelectorAll(".OpenUpdateProduct");
+    const productIdv2 = document.getElementById("productId");
     const userId = Uid;
     let productId;
     let quantityRequest ;
@@ -324,6 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     priceRequest = data.product.price;
                     productId = data.product._id;
                     total.innerText = totalData.toString();
+                    productIdv2.value = productId;
 
                     addquantity.addEventListener("change", function (){
                         totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
@@ -338,53 +340,57 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     });
 
-    ConfirmAddCartPro.addEventListener("click", async function () {
-        if (JSON.stringify(optionRamRequest) !== "{}"){
-            optionRequest.push(optionRamRequest);
-            console.log(JSON.stringify(optionRamRequest))
-        }
-        if (JSON.stringify(optionRomRequest) !== "{}"){
-            optionRequest.push(optionRomRequest);
-        }
-        if (JSON.stringify(optionColorRequest) !== "{}"){
-            optionRequest.push(optionColorRequest);
-        }
-        // console.log(optionRequest)
-        try {
-            const response = await axios.post("/api/addCart", {
-                userId: Uid,
-                productId: productId,
-                quantity: quantityRequest,
-                price: priceRequest,
-                title: titleRequest,
-                imgCover: imgCoverRequest,
-                option: optionRequest,
-            }, {
-                headers: {
-                    'Authorization': `${token}`
-                }
-            });
-            console.log(response.data);
-            if (response.data.code === 1){
-                titleRequest = null;
-                quantityRequest = null;
-                imgCoverRequest = null;
-                priceRequest = null;
-                optionRomRequest = {};
-                optionRamRequest = {};
-                optionColorRequest = {};
-                optionRequest = [];
-                location.reload();
-            }else {
-                alert(response.data.message);
-                // AddCartModal.hide();
-            }
-            return response.data;
-
-            // AddCartModal.style.display ='none';
-        } catch (error) {
-            console.log(error)
-        }
+    // ConfirmAddCartPro.addEventListener("click", async function () {
+    //     if (JSON.stringify(optionRamRequest) !== "{}"){
+    //         optionRequest.push(optionRamRequest);
+    //         console.log(JSON.stringify(optionRamRequest))
+    //     }
+    //     if (JSON.stringify(optionRomRequest) !== "{}"){
+    //         optionRequest.push(optionRomRequest);
+    //     }
+    //     if (JSON.stringify(optionColorRequest) !== "{}"){
+    //         optionRequest.push(optionColorRequest);
+    //     }
+    //     // console.log(optionRequest)
+    //     try {
+    //         const response = await axios.post("/api/addCart", {
+    //             userId: Uid,
+    //             productId: productId,
+    //             quantity: quantityRequest,
+    //             price: priceRequest,
+    //             title: titleRequest,
+    //             imgCover: imgCoverRequest,
+    //             option: optionRequest,
+    //         }, {
+    //             headers: {
+    //                 'Authorization': `${token}`
+    //             }
+    //         });
+    //         console.log(response.data);
+    //         if (response.data.code === 1){
+    //             titleRequest = null;
+    //             quantityRequest = null;
+    //             imgCoverRequest = null;
+    //             priceRequest = null;
+    //             optionRomRequest = {};
+    //             optionRamRequest = {};
+    //             optionColorRequest = {};
+    //             optionRequest = [];
+    //             location.reload();
+    //         }else {
+    //             alert(response.data.message);
+    //             // AddCartModal.hide();
+    //         }
+    //         return response.data;
+    //
+    //         // AddCartModal.style.display ='none';
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // });
+    ConfirmAddCartPro.addEventListener("click", async function (e) {
+       //e.preventDefault()
+        console.log("addcart")
     });
 
     UpdatePro.forEach(function (UpdateProduct){

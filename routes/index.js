@@ -4,12 +4,12 @@ const ProductModel = require("./../models/model.product");
 const OrderModel = require("./../models/model.order");
 const CategoryModel = require("./../models/model.category");
 const CartModel = require("./../models/model.cart");
+const CartModelv2 = require("../modelsv2/model.product_cart");
 const UserModel = require("./../models/model.user");
-const BannerModel = require("./../modelsv2/model.banner");
+const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
 const VoucherModel = require("./../models/model.voucher");
-
 const utils_1 = require('../public/js/ultils_1');
 const path = require("path");
 const mongoose = require('mongoose');
@@ -17,6 +17,8 @@ const mongoose = require('mongoose');
 const NotificationPublicModel = require("./../models/model.notification.pulic");
 
 const crypto = require("crypto");
+const CustomerModel = require("../modelsv2/model.customer");
+const moment = require("moment/moment");
 require("dotenv").config();
 
 /* GET home page. */
@@ -643,10 +645,9 @@ router.get("/stech.manager/cart", async function (req, res, next) {
   // const userId = utils_1.getCookie(req, 'Uid');
 
   const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
-
   console.log("id", userId)
   try {
-    let cartUser = await CartModel.cartModel.findOne({ userId }).populate({ path: 'product', select: 'productId quantity' });;
+    let cartUser = await CartModelv2.productCartModel.find({ :userId }).populate({ path: 'product', select: 'productId quantity' });
     console.log(cartUser)
     // let userId = req.cookies.Uid;
     let user = await UserModel.userModel.findById(userId);
@@ -665,6 +666,26 @@ router.get("/stech.manager/cart", async function (req, res, next) {
     console.log(e.message);
     res.send({ message: "cart not found", code: 0 })
   }
+});
+router.post("/stech.manager/AddCart",async (req, res) =>{
+  const userID = req.cookies.Uid;
+  const productID = req.body.productId;
+  const quantity = req.body.quantity;
+  let date = new Date();
+  let timestamp = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+  let cart = new CartModelv2.productCartModel({
+    userId: userID,
+    productId: productID,
+    quantity: quantity,
+    date_time: timestamp,
+  })
+  await cart.save();
+  // if (user.role === "Admin") {
+  // res.render("banner", { carts: cart, message: "get list cart success", code: 1 });
+  // }
+  // else {
+  //   res.render("error");
+  // }
 });
 router.post('/updateQuantity/:productId', async (req, res) => {
   const productId = req.params.productId;

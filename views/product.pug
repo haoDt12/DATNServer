@@ -276,7 +276,7 @@ block content
                             h5.modal-title Thêm vào giỏ hàng
                             button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form
+                            form(method='post' action='/stech.manager/AddCart')
                                 .mb-3
                                     img#Addimg.rounded-circle.p-1(src='', alt='', width='110')
                                 .mb-3
@@ -284,7 +284,7 @@ block content
                                 div#colorAdd
                                     .mb-3
                                         th color
-                                        select#colorDropdown.form-control(name='color')
+                                        select#colorDropdown.form-control(name='color' )
                                 div#ramAdd
                                     .mb-3
                                         th ram
@@ -297,11 +297,13 @@ block content
                                     th quantity
                                     input#Addquantity.form-control.text-center(class='quantity-checkbox' style='width: 90px;' type='number' name='quantity' min='1' value='1')
                                 .mb-3
+                                    th productId
+                                    input#productId.form-control.text-center(type='text' name='productId')
+                                .mb-3
                                     h4.mt-3 Tổng tiền:
                                         span#total.ms-2
-                            .modal-footer
                                 button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                                button#ConfirmAddCartPro.btn.btn-outline-dark-light(type='button') Thêm vào giỏ hàng
+                                button#ConfirmAddCartPro1.btn.btn-outline-dark-light(type='submit') Thêm vào giỏ hàng
 
 
             #DelProModal.modal
