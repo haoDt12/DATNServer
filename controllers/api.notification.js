@@ -4,9 +4,9 @@ const UserModel = require("../models/model.user");
 const admin = require("firebase-admin");
 const serviceAccount = require("../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-19faa2ce40.json");
 const moment = require("moment");
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount)
+// });
 exports.addNotificationPublic = async (req, res) => {
     let date = new Date();
     let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
