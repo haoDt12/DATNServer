@@ -1,15 +1,22 @@
 var express = require("express");
 var router = express.Router();
-const ProductModel = require("./../models/model.product");
+const ProductModel = require("./../modelsv2/model.product");
+const ProductVideo = require("./../modelsv2/model.productvideo");
+const ProductImg = require("./../modelsv2/model.imgproduct");
 const OrderModel = require("./../models/model.order");
-const CategoryModel = require("./../models/model.category");
+const CategoryModel = require("./../modelsv2/model.category");
 const CartModel = require("./../models/model.cart");
 const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
 const VoucherModel = require("./../modelsv2/model.voucher");
+const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
+const moment = require('moment');
 const utils_1 = require('../public/js/ultils_1');
 const path = require("path");
 const mongoose = require('mongoose');
@@ -18,6 +25,8 @@ const NotificationPublicModel = require("./../models/model.notification.pulic");
 
 const crypto = require("crypto");
 const moment = require("moment");
+
+const {stat} = require("fs");
 require("dotenv").config();
 
 /* GET home page. */
@@ -73,6 +82,167 @@ router.get('/stech.manager/product', async function (req, res, next) {
         console.log(e.message);
         res.render("error", {message: "product not found", code: 0});
     }
+
+  const token = req.cookies.token
+  try {
+    let listProduct = await ProductModel.productModel.find();
+    let listCategory = await CategoryModel.categoryModel.find();
+      res.render("product_action", {
+        products: listProduct,
+        categories: listCategory,
+        message: "get list product success",
+        token: token,
+        code: 1
+      });
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "product not found", code: 0 })
+  }
+});
+router.post("/stech.manager/AddProduct",upload.fields([{ name: "img_cover", maxCount: 1 }, { name: "video", maxCount: 1 },{ name: "list_img", maxCount: 10 }]),async function (req, res, next) {
+  try {
+    const name = req.body.name;
+    const category_id = req.body.category_id;
+    const price = req.body.price;
+    const quantity = req.body.quantity;
+    const color = req.body.color;
+    const color_code = req.body.color_code;
+    const ram = req.body.ram;
+    const rom = req.body.rom;
+    const description = req.body.description;
+
+    const fileimg_cover = req.files["img_cover"];
+    const filelist_img = req.files["list_img"];
+    const filevideo = req.files["video"];
+    const sold = req.body.sold;
+    const status = req.body.status;
+    let date = new Date();
+    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    //
+    if (category_id == null) {
+      return res.send({message: "category is required", code: 0});
+    }
+    if (name == null) {
+      return res.send({message: "name is required", code: 0});
+    }
+    if (description == null) {
+      return res.send({message: "description is required", code: 0});
+    }
+    if (fileimg_cover === undefined) {
+      return res.send({message: "img cover is required", code: 0});
+    }
+    if (filelist_img === undefined) {
+      return res.send({message: "img cover is required", code: 0});
+    }
+    if (filevideo === undefined) {
+      return res.send({message: "video is required", code: 0});
+    }
+    if (price == null) {
+      return res.send({message: "price is required", code: 0});
+    }
+    if (quantity == null) {
+      return res.send({message: "quantity is required", code: 0});
+    }
+    if (color == null) {
+      return res.send({message: "color is required", code: 0});
+    }
+    if (color_code == null) {
+      return res.send({message: "color_code is required", code: 0});
+    }
+    if (ram == null) {
+      return res.send({message: "ram is required", code: 0});
+    }
+    if (rom == null) {
+      return res.send({message: "rom is required", code: 0});
+    }
+
+    if (isNaN(price)) {
+      return res.send({message: "price is number", code: 0});
+    }
+    if (isNaN(quantity)) {
+      return res.send({message: "quantity is number", code: 0});
+    }
+
+    let product = new ProductModel.productModel({
+      category_id: category_id,
+      name: name,
+      ram: ram,
+      rom: rom,
+      color: color,
+      quantity: quantity,
+      price: price,
+      description: description,
+      sold: sold,
+      status: status,
+      color_code: color_code,
+      create_time: create_time,
+    });
+    let img_cover = await UploadFileFirebase.uploadFile(
+        req,
+        product._id.toString(),
+        "products",
+        fileimg_cover[0]
+    );
+    if (img_cover === 0) {
+      return res.send({message: "upload file fail", code: 0});
+    }
+    product.img_cover = img_cover;
+    //VIDEO
+    let productVideo = new ProductVideo.productVideoModel({
+      product_id: product._id,
+    });
+    let video = await UploadFileFirebase.uploadFile(
+        req,
+        product._id.toString(),
+        "products",
+        filevideo[0]
+    );
+    if (video === 0) {
+      return res.send({message: "upload file fail", code: 0});
+    }
+    productVideo.video = video;
+    //LIST IMG
+    for (const file of filelist_img) {
+      let productListImg = new ProductImg.productImgModel({
+        product_id: product._id,
+      });
+
+      let img = await UploadFileFirebase.uploadFile(
+          req,
+          product._id.toString(),
+          "products",
+          file
+      );
+
+      if (img === 0) {
+        return res.send({ message: "upload file fail", code: 0 });
+      }
+
+      productListImg.img = img;
+      await productListImg.save();
+    }
+    await productVideo.save();
+    await product.save();
+    res.redirect(req.get('referer'));
+  }catch (e) {
+    console.log(e.message);
+    res.send({ message: "Error adding product", code: 0 });
+  }
+});
+
+router.get('/stech.manager/product', async function (req, res, next) {
+  try {
+    let listProduct = await ProductModel.productModel.find();
+    res.render("product", {
+      products: listProduct,
+      message: "get list product success",
+      code: 1
+    });
+  } catch (e) {
+    console.log(e.message);
+    res.render("error", {message: "product not found", code: 0});
+  }
 });
 router.get("/stech.manager/category", async function (req, res, next) {
     try {
