@@ -179,7 +179,7 @@ exports.creatOrderGuest = async (req, res) => {
         }
         let currentProduct = cart.product;
         console.log({ currentProduct: currentProduct[0].option })
-        cart.product = currentProduct.filter(item1 => !listProduct.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
+        cart.product = currentProduct.filter(item1 => !listProduct.some(item2 => item2.productId.toString() === item1.productId.toString()));
         await cart.save();
         await order.save();
         return res.send({ message: "create order success", code: 1 });
