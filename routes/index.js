@@ -11,17 +11,17 @@ const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
 const VoucherModel = require("./../modelsv2/model.voucher");
+const NotificationModel = require("./../modelsv2/model.notification");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const moment = require('moment');
 const utils_1 = require('../public/js/ultils_1');
 const path = require("path");
 const mongoose = require('mongoose');
 // const {cartModel, CartModel} = require("../models/model.cart");
-const NotificationPublicModel = require("./../models/model.notification.pulic");
+
 
 const crypto = require("crypto");
 const moment = require("moment");
@@ -831,22 +831,6 @@ router.post('/updateQuantity/:productId', async (req, res) => {
         res.status(500).json({success: false, message: 'Error updating quantity'});
     }
 });
-router.get("/stech.manager/notification", async function (req, res, next) {
-    try {
-        let listNotification = await NotificationPublicModel.notificationPublicModel.find();
-
-            res.render("notification", {
-                notifications: listNotification,
-                message: "get list notification success",
-                code: 1,
-            });
-
-
-    } catch (e) {
-        console.log(e.message);
-        res.send({message: "user not found", code: 0});
-    }
-});
 router.get("/stech.manager/banner", async function (req, res, next) {
     try {
         let listbanner = await BannerModel.bannerModel.find();
@@ -984,10 +968,10 @@ router.post("/stech.manager/updateVoucher",async function(req, res, next) {
                 newVoucher.price = price;
             }
             if (toDate !== null) {
-                newVoucher.toDate = toDate;
+                newVoucher.toDate = formatDateTime(toDate);
             }
             if (fromDate !== null) {
-                newVoucher.fromDate = fromDate;
+                newVoucher.fromDate = formatDateTime(fromDate);
             }
             await VoucherModel.voucherModel.updateMany({_id: voucherId}, {$set: newVoucher});
             res.redirect(req.get('referer'));
@@ -1034,4 +1018,128 @@ router.post("/stech.manager/deleteVoucher", async function(req, res, next) {
         return res.send({message: e.message.toString(), code: 0});
     }
 });
+
+//Notification
+router.get("/stech.manager/notification", async function (req, res, next) {
+    try {
+        let listNotification = await NotificationModel.notificationModel.find();
+
+        res.render("notification", {
+            notifications: listNotification,
+            message: "get list notification success",
+            code: 1,
+        });
+
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "notification not found", code: 0});
+    }
+});
+
+router.post("/stech.manager/createNotification", upload.fields([{name: "img", maxCount: 1}]), async function(req, res, next) {
+    const img = req.files["img"];
+    let title = req.body.title;
+    let content = req.body.content;
+    let date = new Date();
+    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    if (title == null) {
+        return res.send({message: "title is required", code: 0});
+    }
+    if (content == null) {
+        return res.send({message: "content is required", code: 0});
+    }
+    try {
+        let notification = new NotificationModel.notificationModel({
+            title: title,
+            content: content,
+            create_time: create_time,
+        });
+        let imgNoti = await UploadFileFirebase.uploadFileNotifi(
+            req,
+            notification._id.toString(),
+            "img",
+            "notifications",
+            img[0]
+        );
+        if (imgNoti === 0) {
+            return res.send({message: "upload file img fail", code: 0});
+        }
+        notification.img = imgNoti;
+        await notification.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        return res.send({message: e.message.toString(), code: 0});
+    }
+
+});
+
+router.post("/stech.manager/updateNotification", upload.fields([{name: "img", maxCount: 1}]), async function(req, res, next) {
+    const img = req.files["img"];
+    let title = req.body.title;
+    let content = req.body.content;
+    let notificationId = req.body.notificationId;
+
+    if (notificationId == null) {
+        return res.send({message: "notificationId is required", code: 0});
+    }
+    try {
+        let notification = await NotificationModel.notificationModel.findById(notificationId);
+        let newNotification = {
+            title: notification.title,
+            content: notification.content,
+            img: notification.img,
+            create_time: notification.create_time,
+        }
+        if (title != null) {
+            newNotification.title = title;
+        }
+        if (content != null) {
+            newNotification.content = content;
+        }
+        if (img != null) {
+            const productFirebase = `notifications/${notificationId}`;
+            await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
+
+            let imgNoti = await UploadFileFirebase.uploadFileNotifi(
+                req,
+                notification._id.toString(),
+                "img",
+                "notifications",
+                img[0]
+            );
+            if (imgNoti === 0) {
+                return res.send({message: "upload file img fail", code: 0});
+            }
+            newNotification.img = imgNoti;
+        }
+
+        await NotificationModel.notificationModel.updateMany({_id: notificationId}, {$set: newNotification});
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+});
+
+router.post("/stech.manager/deleteNotification", async function (req, res, next) {
+    try {
+        let notificationId = req.body.NotifiId;
+        if (notificationId == null) {
+            return res.send({message: "notificationId is required", code: 0});
+        }
+
+        await NotificationModel.notificationModel.deleteMany({_id: notificationId});
+
+        const productFirebase = `notifications/${notificationId}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
+
+        res.redirect(req.get('referer'));
+
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+})
 module.exports = router;
