@@ -94,10 +94,7 @@ block content
                                 .col-lg-5.col-md-5.col-sm-6
                                     .white-box.text-center
                                         //img.img-responsive(src=detailProduct.img_cover)
-                                        i.fas.fa-angle-left.fa-4x(onclick='prevImage()' style='outline: none;')
-                                        img.img-responsive(id='productImage',style='max-width: 300px; height: 300px;', src=detailProduct.list_img[0] )
-                                        i.fas.fa-angle-right.fa-4x(onclick='nextImage()' style='outline: none;')
-
+                                        img.img-responsive(style='max-width: 300px; height: 300px;', src=detailProduct.img_cover )
                                 .col-lg-7.col-md-7.col-sm-6
                                     h4.box-title.mt-5 Product description
                                     p
@@ -111,74 +108,30 @@ block content
                                             tbody
                                                 tr
                                                     th Loại
-                                                    th=detailProduct.category.title
+                                                    th=detailProduct.category_id.name
                                                 tr
                                                     td Tên sản phẩm
-                                                    td= detailProduct.title
+                                                    td= detailProduct.name
                                                 tr
                                                     td Số lượng
                                                     td= detailProduct.quantity
                                                 tr
-                                                    td Đã bán
-                                                    td= detailProduct.sold
-
-                                                tr
-                                                    td Màu
-                                                    td
-                                                        -var hasColor = false
-                                                        each option in detailProduct.option
-                                                            case option.type
-                                                                when "Color"
-                                                                    -hasColor = true
-                                                                    i.list-inline-item(style=`background-color: ${option.content}; border: 2px solid #C0C0C0;  width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%; `)
-                                                        unless hasColor
-                                                            | Không có
-
-                                                tr
                                                     td Ram
-                                                    td
-                                                        -var hasRam = false
-                                                        each option in detailProduct.option
-                                                            case option.type
-                                                                when "Ram"
-                                                                    -hasRam=true
-                                                                    i(style='margin-right: 15px')= option.content
-                                                        unless hasRam
-                                                            | Không có
+                                                    td= detailProduct.ram
                                                 tr
                                                     td Rom
+                                                    td= detailProduct.rom
+                                                tr
+                                                    td Color
                                                     td
-                                                        -var hasRom = false
-                                                        each option in detailProduct.option
-                                                            case option.type
-                                                                when "Rom"
-                                                                    -hasRom=true
-                                                                    i(style='margin-right: 15px')= option.content
-                                                        unless hasRom
-                                                            | Không có
-
-
+                                                        i.list-inline-item(style=`background-color: ${detailProduct.color_code}; border: 2px solid #C0C0C0;  width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%;`)
+                                                tr
+                                                    td Đã bán
+                                                    td= detailProduct.sold
                                                 tr
                                                     td Date
-                                                    td= detailProduct.date
+                                                    td= detailProduct.create_time
                 script(src='https://code.jquery.com/jquery-1.10.2.min.js')
                 script(src='https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js')
                 script(type='text/javascript').
-                    var images = !{JSON.stringify(detailProduct.list_img)};
-                    var currentImageIndex = 0;
-
-                    function showImage(index) {
-                        var productImage = document.getElementById('productImage');
-                        productImage.src = images[index];
-                    }
-
-                    function prevImage() {
-                        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-                        showImage(currentImageIndex);
-                    }
-
-                    function nextImage() {
-                        currentImageIndex = (currentImageIndex + 1) % images.length;
-                        showImage(currentImageIndex);
-                    }
 

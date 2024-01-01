@@ -27,6 +27,7 @@ const crypto = require("crypto");
 const moment = require("moment");
 
 const {stat} = require("fs");
+const UploadFile = require("../models/uploadFile");
 require("dotenv").config();
 
 /* GET home page. */
@@ -99,7 +100,7 @@ router.get('/stech.manager/product', async function (req, res, next) {
     res.send({ message: "product not found", code: 0 })
   }
 });
-router.post("/stech.manager/AddProduct",upload.fields([{ name: "img_cover", maxCount: 1 }, { name: "video", maxCount: 1 },{ name: "list_img", maxCount: 10 }]),async function (req, res, next) {
+router.post("/stech.manager/AddProduct", upload.fields([{ name: "img_cover", maxCount: 1 }, { name: "video", maxCount: 1 },{ name: "list_img", maxCount: 10 }]), async function (req, res, next) {
   try {
     const name = req.body.name;
     const category_id = req.body.category_id;
@@ -119,49 +120,12 @@ router.post("/stech.manager/AddProduct",upload.fields([{ name: "img_cover", maxC
     let date = new Date();
     let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
 
-    //
-    if (category_id == null) {
-      return res.send({message: "category is required", code: 0});
-    }
-    if (name == null) {
-      return res.send({message: "name is required", code: 0});
-    }
-    if (description == null) {
-      return res.send({message: "description is required", code: 0});
-    }
-    if (fileimg_cover === undefined) {
-      return res.send({message: "img cover is required", code: 0});
-    }
-    if (filelist_img === undefined) {
-      return res.send({message: "img cover is required", code: 0});
-    }
-    if (filevideo === undefined) {
-      return res.send({message: "video is required", code: 0});
-    }
-    if (price == null) {
-      return res.send({message: "price is required", code: 0});
-    }
-    if (quantity == null) {
-      return res.send({message: "quantity is required", code: 0});
-    }
-    if (color == null) {
-      return res.send({message: "color is required", code: 0});
-    }
-    if (color_code == null) {
-      return res.send({message: "color_code is required", code: 0});
-    }
-    if (ram == null) {
-      return res.send({message: "ram is required", code: 0});
-    }
-    if (rom == null) {
-      return res.send({message: "rom is required", code: 0});
+    if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null || ram == null || rom == null) {
+      return res.send({message: "All fields are required", code: 0});
     }
 
-    if (isNaN(price)) {
-      return res.send({message: "price is number", code: 0});
-    }
-    if (isNaN(quantity)) {
-      return res.send({message: "quantity is number", code: 0});
+    if (isNaN(price) || isNaN(quantity)) {
+      return res.send({message: "Price and quantity must be numbers", code: 0});
     }
 
     let product = new ProductModel.productModel({
@@ -178,31 +142,39 @@ router.post("/stech.manager/AddProduct",upload.fields([{ name: "img_cover", maxC
       color_code: color_code,
       create_time: create_time,
     });
+
     let img_cover = await UploadFileFirebase.uploadFile(
         req,
         product._id.toString(),
+        "img_cover",
         "products",
         fileimg_cover[0]
     );
+
     if (img_cover === 0) {
-      return res.send({message: "upload file fail", code: 0});
+      return res.send({message: "Failed to upload img_cover", code: 0});
     }
+
     product.img_cover = img_cover;
-    //VIDEO
+
     let productVideo = new ProductVideo.productVideoModel({
       product_id: product._id,
     });
+
     let video = await UploadFileFirebase.uploadFile(
         req,
         product._id.toString(),
+        "video",
         "products",
         filevideo[0]
     );
+
     if (video === 0) {
-      return res.send({message: "upload file fail", code: 0});
+      return res.send({message: "Failed to upload video", code: 0});
     }
+
     productVideo.video = video;
-    //LIST IMG
+
     for (const file of filelist_img) {
       let productListImg = new ProductImg.productImgModel({
         product_id: product._id,
@@ -211,6 +183,137 @@ router.post("/stech.manager/AddProduct",upload.fields([{ name: "img_cover", maxC
       let img = await UploadFileFirebase.uploadFile(
           req,
           product._id.toString(),
+          "list_img",
+          "products",
+          file
+      );
+
+      if (img === 0) {
+        return res.send({ message: "Failed to upload list_img", code: 0 });
+      }
+
+      productListImg.img = img;
+      await productListImg.save();
+    }
+
+    await productVideo.save();
+    await product.save();
+    res.redirect(req.get('referer'));
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "Error adding product", code: 0 });
+  }
+});
+router.post("/stech.manager/EditProduct", upload.fields([{ name: "img_cover", maxCount: 1 }, { name: "video", maxCount: 1 }, { name: "list_img", maxCount: 10 }]), async function (req, res, next) {
+  try {
+    let productId = req.body.productId;
+    const name = req.body.name;
+    const category_id = req.body.category_id;
+    const price = req.body.price;
+    const quantity = req.body.quantity;
+    const color = req.body.color;
+    const color_code = req.body.color_code;
+    const ram = req.body.ram;
+    const rom = req.body.rom;
+    const description = req.body.description;
+
+    const fileimg_cover = req.files["img_cover"];
+    const filelist_img = req.files["list_img"];
+    const filevideo = req.files["video"];
+    const sold = req.body.sold;
+    const status = req.body.status;
+    let date = new Date();
+    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    if (productId == null) {
+      return res.send({ message: "product not found", code: 0 });
+    }
+
+    let product = await ProductModel.productModel.findById(productId);
+    if (!product) {
+      return res.send({ message: "product not found", code: 0 });
+    }
+
+    if (category_id !== undefined) {
+      product.category_id = category_id;
+    }
+    if (name !== undefined) {
+      product.name = name;
+    }
+    if (description !== undefined) {
+      product.description = description;
+    }
+    if (price !== undefined) {
+      product.price = price;
+    }
+    if (quantity !== undefined) {
+      product.quantity = quantity;
+    }
+    if (sold !== undefined) {
+      product.sold = sold;
+    }
+    if (ram !== undefined) {
+      product.ram = ram;
+    }
+    if (rom !== undefined) {
+      product.rom = rom;
+    }
+    if (color !== undefined) {
+      product.color = color;
+    }
+    if (color_code !== undefined) {
+      product.color_code = color_code;
+    }
+    if (status !== undefined) {
+      product.status = status;
+    }
+
+    // Xóa thư mục img_cover cũ
+
+      const imgCoverFolder = `products/${productId}/img_cover`;
+      await UploadFileFirebase.deleteFolderAndFiles(res, imgCoverFolder);
+
+    // Upload file mới cho img_cover
+    let img_cover = await UploadFileFirebase.uploadFile(req, product._id.toString(), "img_cover", "products", fileimg_cover[0]);
+    if (img_cover === 0) {
+      return res.send({ message: "upload file fail", code: 0 });
+    }
+    product.img_cover = img_cover;
+
+    // Xóa thư mục video cũ
+    let productVideo = await ProductVideo.productVideoModel.findOne({ product_id: productId });
+
+    const videoFolder = `products/${productId}/video`;
+    await UploadFileFirebase.deleteFolderAndFiles(res, videoFolder);
+
+    // Upload file mới cho video
+    let video = await UploadFileFirebase.uploadFile(
+        req,
+        product._id.toString(),
+        "video",
+        "products",
+        filevideo[0]
+    );
+    if (video === 0) {
+      return res.send({ message: "upload file fail", code: 0 });
+    }
+    productVideo.video = video;
+
+    // Xóa thư mục list_img cũ và xóa dữ liệu cũ trong MongoDB
+    let productListImgs = await ProductImg.productImgModel.find({ product_id: productId });
+    for (const productListImg of productListImgs) {
+        const listImgFolder = `products/${productId}/list_img`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, listImgFolder);
+
+      await ProductImg.productImgModel.findByIdAndDelete(productListImg._id);
+    }
+
+    // Upload file mới cho list_img và thêm dữ liệu mới vào MongoDB
+    for (const file of filelist_img) {
+      let img = await UploadFileFirebase.uploadFile(
+          req,
+          productId.toString(),
+          "list_img",
           "products",
           file
       );
@@ -219,21 +322,47 @@ router.post("/stech.manager/AddProduct",upload.fields([{ name: "img_cover", maxC
         return res.send({ message: "upload file fail", code: 0 });
       }
 
-      productListImg.img = img;
-      await productListImg.save();
+      const newProductListImg = new ProductImg.productImgModel({
+        product_id: productId,
+        img: img
+      });
+
+      await newProductListImg.save();
     }
+
     await productVideo.save();
     await product.save();
+    return res.send({ message: "Edit product success", code: 1 });
+  } catch (e) {
+    console.log(e);
+    return res.send({ message: e.message.toString(), code: 0 });
+  }
+});
+router.post('/stech.manager/deleteProduct', async function (req, res, next) {
+  let productId = req.body.productId;
+  if (productId == null) {
+    return res.send({ message: "product not found", code: 0 });
+  }
+  try {
+
+    await ProductModel.productModel.findByIdAndDelete(productId);
+    await ProductImg.productImgModel.deleteMany({product_id: productId });
+    await ProductVideo.productVideoModel.findOneAndDelete({product_id: productId });
+
+
+    const productFirebase = `products/${productId}`;
+    await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
     res.redirect(req.get('referer'));
-  }catch (e) {
-    console.log(e.message);
-    res.send({ message: "Error adding product", code: 0 });
+  } catch (e) {
+    console.log(e);
+    return res.send({ message: e.message.toString(), code: 0 });
   }
 });
 
 router.get('/stech.manager/product', async function (req, res, next) {
   try {
     let listProduct = await ProductModel.productModel.find();
+
     res.render("product", {
       products: listProduct,
       message: "get list product success",
@@ -267,22 +396,19 @@ router.get("/stech.manager/register", function (req, res, next) {
     res.render("register");
 });
 router.get("/stech.manager/detail_product", async function (req, res, next) {
-    try {
-        var encodedProductId = req.query.productId;
-        let productId = Buffer.from(encodedProductId, 'base64').toString('utf8');
-        //let productId = req.query.productId;
-        console.log("Received productId from cookie:", productId);
+  try {
+    var encodedProductId = req.query.productId;
+    let productId = Buffer.from(encodedProductId, 'base64').toString('utf8');
+    //let productId = req.query.productId;
+    console.log("Received productId from cookie:", productId);
 
-        let product = await ProductModel.productModel.findById(productId).populate({path: 'category', select: 'title'});
+    let product = await ProductModel.productModel.findById(productId).populate({ path: 'category_id', select: 'name' });
 
-        if (product) {
-            res.render("detail_product", {detailProduct: product, message: "get product details success", code: 1});
-        } else {
-            res.send({message: "Product not found", code: 0});
-        }
-    } catch (e) {
-        console.error("Error fetching product details:", e.message);
-        res.send({message: "Error fetching product details", code: 0});
+    if (product) {
+      res.render("detail_product", { detailProduct: product, message: "get product details success", code: 1 });
+    } else {
+      res.send({ message: "Product not found", code: 0 });
+
     }
 });
 router.get("/stech.manager/detail_user", async function (req, res, next) {
@@ -872,6 +998,7 @@ router.get("/stech.manager/pay", function (req, res, next) {
     }
 });
 router.get("/stech.manager/edit_product_action", async function (req, res, next) {
+
     var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)productId\s*=\s*([^;]*).*$)|^.*$/, "$1");
     var productId = JSON.parse(decodeURIComponent(cookieValue));
     const token = req.cookies.token
@@ -909,6 +1036,17 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
     }
 });
 
+    res.render("edit_product_action",
+      {
+        products: productSelected,
+        categories: listCategory,
+        message: "get list product success",
+        code: 1
+      })
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "product not found", code: 0 })
+  }
 router.post("/stech.manager/createVoucher", async function (req, res, next) {
     try {
         let name = req.body.name;
