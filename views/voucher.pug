@@ -123,7 +123,7 @@ block content
                     table.table.table-striped.align-middle.table-nowrap
                         thead
                             tr
-                                th.text-center Title
+                                th.text-center Name
                                 th.text-start Content
                                 th.text-center Price
                                 th.text-center FromDate - ToDate
@@ -134,15 +134,15 @@ block content
                                     td(style='width: 300px;')
                                         div
                                             h5.font-size-15.text-center(style='font-size: 14px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= voucher.title
+                                                a.text-dark(href='#')= voucher.name
                                     td(style='width: 550px;')
                                         div
                                             h5.font-size-18.text-start(style='font-size: 14px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= voucher.content
+                                                a.text-dark(href='#')= voucher.content
                                     td(style='width: 200px')
                                         div
                                             h5.text-center(style='font-size: 14px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= voucher.price
+                                                a.text-dark(href='#')= voucher.price
                                     td(style='width: 500px')
                                         p.text-muted.mb-1.text-truncate.text-center
                                             i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 From:
@@ -150,32 +150,13 @@ block content
                                         p.text-muted.mb-1.text-truncate.text-center
                                             i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 To:
                                                 = voucher.toDate
-
                                     td
                                         .dropdown.text-center
                                             a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
                                                 i.bx.text-center
                                             .dropdown-menu.dropdown-menu-end
-                                                a.dropdown-item( class = "openModalUpdateVoucher" data-id = voucher._id data-title = voucher.title data-content = voucher.content data-price = voucher.price data-fromDate = voucher.fromDate data-toDate = voucher.toDate data-bs-toggle="modal") Sửa mã giảm giá
+                                                a.dropdown-item( class = "openModalUpdateVoucher" data-id = voucher._id data-title = voucher.name data-content = voucher.content data-price = voucher.price data-fromDate = voucher.fromDate data-toDate = voucher.toDate data-bs-toggle="modal") Sửa mã giảm giá
                                                 a.dropdown-item( class = "openModalDeleteVoucher" data-id = voucher._id data-bs-toggle="modal") Xóa mã giảm giá
-                //- Start Pagination
-                .text-center.mt-3.mt-sm-3
-                    ul.pagination.justify-content-center.mb-0
-                        li.page-item.disabled
-                            span.page-link Prev
-                        li.page-item.active(aria-current='page')
-                            span.page-link 1
-                            span.sr-only (current)
-                        li.page-item
-                            a.page-link(href='#') 2
-                        li.page-item
-                            a.page-link(href='#') 3
-                        li.page-item
-                            a.page-link(href='#') ...
-                        li.page-item
-                            a.page-link(href='#') 25
-                        li.page-item
-                            a.page-link(href='#') Next
                 //- End Pagination
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
@@ -186,60 +167,67 @@ block content
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Warning!
+                            h5.modal-title Xóa Voucher!
                         .modal-body
-                            p Bạn có chắc chắn muốn xóa?
-                        .modal-footer
-                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id = 'buttonConfirmDelete') Đồng ý
+                            p.ms-4 Bạn có chắc chắn muốn xóa?
+                            .modal-body
+                                form(action="/stech.manager/deleteVoucher" method="post")
+                                    .mb-3.d-none
+                                        label.form-label(for='title') idvoucher
+                                        input#idVoucherDelete.form-control(name='voucherId', type='text', aria-describedby='textHelp')
+                                    button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                    button.ms-3.btn.btn-danger(type='submit') Đồng ý
             #CreateVoucherModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Tạo Mã Giảm Giá
                         .modal-body
-                            form(action="/" method="post")
+                            form(action="/stech.manager/createVoucher" method="post")
                                 .mb-3
-                                    label.form-label(for='title') Title
-                                    input#title.form-control(placeholder='Nhập Title Mã giảm giá', type='text', aria-describedby='textHelp')
+                                    label.form-label(for='title') Name
+                                    input#title.form-control(name='name',placeholder='Nhập Name Mã giảm giá', type='text', aria-describedby='textHelp', required)
                                 .mb-3
                                     label.form-label(for='content') Content
-                                    input#content.form-control(type='textarea', placeholder='Nhập Content Mã giảm giá', name='type', aria-describedby='textHelp')
+                                    input#content.form-control(name='content',type='textarea', placeholder='Nhập Content Mã giảm giá', aria-describedby='textHelp', required)
                                 .mb-3
                                     label.form-label(for='content') Price
-                                    input#price.form-control(type='number', placeholder='Nhập Giá trị Mã giảm giá', name='type', aria-describedby='textHelp')
+                                    input#price.form-control(name='price',type='number', placeholder='Nhập Giá trị Mã giảm giá', aria-describedby='textHelp',required)
                                 .form-group
                                     label.form-label(for="fromDate") From Date
-                                    input#fromDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
+                                    input#fromDate(name='fromDate',type="datetime-local", class="form-control", placeholder="", aria-describedby="helpId")
                                 .form-group
                                     label.form-label(for="toDate") To Date
-                                    input#toDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmCreate') Lưu thông báo
+                                    input#toDate(name='toDate',type="datetime-local", class="form-control", placeholder="", aria-describedby="helpId")
+                                button.mt-3.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                                button.mt-3.ms-2.btn.btn-outline-dark-light(type='submit') Save
+
             #UpdateVoucherModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Cập nhật Mã giảm giá
                         .modal-body
-                            form(action="/" method="post")
+                            form(action="/stech.manager/updateVoucher" method="post")
+                                .mb-3.d-none
+                                    label.form-label(for='title')
+                                    input#idVoucherUpdate.form-control(name='voucherId', type='text', aria-describedby='textHelp', required)
                                 .mb-3
-                                    label.form-label(for='upTitle') Title
-                                    input#upTitle.form-control(placeholder='Nội Mã giảm giá', type='text', aria-describedby='textHelp')
+                                    label.form-label(for='title') Name
+                                    input#titleUp.form-control(name='name',placeholder='Nhập Name Mã giảm giá', type='text', aria-describedby='textHelp', required)
                                 .mb-3
-                                    label.form-label(for='upContent') Content
-                                    input#upContent.form-control(type='textarea', placeholder='Nội dung Mã giảm giá', name='type', aria-describedby='textHelp')
+                                    label.form-label(for='content') Content
+                                    input#contentUp.form-control(name='content',type='textarea', placeholder='Nhập Content Mã giảm giá', aria-describedby='textHelp', required)
                                 .mb-3
-                                    label.form-label(for='upContent') Price
-                                    input#upPrice.form-control(type='number', placeholder='Giá trị Voucher', name='type', aria-describedby='textHelp')
-                                .form-group.mb-3
-                                    label.form-label(for="upFromDate") FromDate
-                                    input#upFromDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
+                                    label.form-label(for='content') Price
+                                    input#priceUp.form-control(name='price',type='number', placeholder='Nhập Giá trị Mã giảm giá', aria-describedby='textHelp',required)
                                 .form-group
-                                    label.form-label(for="upToDate") ToDate
-                                    input#upToDate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmUpdate') Lưu thông báo
+                                    label.form-label(for="fromDate") From Date
+                                    input#fromDateUp(name='fromDate',type="datetime-local", class="form-control", placeholder="", aria-describedby="helpId")
+                                .form-group
+                                    label.form-label(for="toDate") To Date
+                                    input#toDateUp(name='toDate',type="datetime-local", class="form-control", placeholder="", aria-describedby="helpId")
+                                button.mt-3.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                                button.mt-3.ms-2.btn.btn-outline-dark-light(type='submit') Save
+
     script(src='/js/voucher.js')

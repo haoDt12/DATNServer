@@ -11,24 +11,24 @@ const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
-const VoucherModel = require("./../models/model.voucher");
+const VoucherModel = require("./../modelsv2/model.voucher");
+const NotificationModel = require("./../modelsv2/model.notification");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const multer = require('multer');
 const storage = multer.memoryStorage();
-
-const upload = multer({storage: storage});
-
-const moment = require('moment');
+const upload = multer({ storage: storage });
 
 const utils_1 = require('../public/js/ultils_1');
 const path = require("path");
 const mongoose = require('mongoose');
 // const {cartModel, CartModel} = require("../models/model.cart");
-const NotificationPublicModel = require("./../models/model.notification.pulic");
+
 
 const crypto = require("crypto");
 const CustomerModel = require("../modelsv2/model.customer");
+const moment = require("moment");
 const {stat} = require("fs");
+const UploadFile = require("../models/uploadFile");
 require("dotenv").config();
 
 /* GET home page. */
@@ -52,9 +52,76 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
             token: token,
             code: 1
         });
+
     } catch (e) {
         console.log(e.message);
         res.send({message: "product not found", code: 0})
+    }
+});
+router.get('/stech.manager/product', async function (req, res, next) {
+    try {
+        let listProduct = await ProductModel.productModel.find();
+
+        res.render("product", {
+            products: listProduct,
+            message: "get list product success",
+            code: 1
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "product not found", code: 0})
+    }
+
+    try {
+        let listProduct = await ProductModel.productModel.find();
+        res.render("product_action", {
+            products: listProduct,
+            message: "get list product success",
+            code: 1
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.render("error", {message: "product not found", code: 0});
+    }
+
+  const token = req.cookies.token
+  try {
+    let listProduct = await ProductModel.productModel.find();
+    let listCategory = await CategoryModel.categoryModel.find();
+      res.render("product_action", {
+        products: listProduct,
+        categories: listCategory,
+        message: "get list product success",
+        token: token,
+        code: 1
+      });
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "product not found", code: 0 })
+  }
+});
+router.post("/stech.manager/AddProduct", upload.fields([{ name: "img_cover", maxCount: 1 }, { name: "video", maxCount: 1 },{ name: "list_img", maxCount: 10 }]), async function (req, res, next) {
+  try {
+    const name = req.body.name;
+    const category_id = req.body.category_id;
+    const price = req.body.price;
+    const quantity = req.body.quantity;
+    const color = req.body.color;
+    const color_code = req.body.color_code;
+    const ram = req.body.ram;
+    const rom = req.body.rom;
+    const description = req.body.description;
+
+    const fileimg_cover = req.files["img_cover"];
+    const filelist_img = req.files["list_img"];
+    const filevideo = req.files["video"];
+    const sold = req.body.sold;
+    const status = req.body.status;
+    let date = new Date();
+    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null || ram == null || rom == null) {
+      return res.send({message: "All fields are required", code: 0});
     }
 });
 router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxCount: 1}, {
@@ -215,6 +282,7 @@ router.get('/stech.manager/product', async function (req, res, next) {
         console.log(e.message);
         res.render("error", {message: "product not found", code: 0});
     }
+
 });
 router.get("/stech.manager/category", async function (req, res, next) {
     try {
@@ -224,6 +292,7 @@ router.get("/stech.manager/category", async function (req, res, next) {
             message: "get list category success",
             code: 1,
         });
+
 
     } catch (e) {
         console.log(e.message);
@@ -286,6 +355,7 @@ router.get('/stech.manager/user', async function (req, res, next) {
             message: "get list user success",
             code: 1,
         });
+
     } catch (e) {
         console.log(e.message);
         res.send({message: "user not found", code: 0});
@@ -319,12 +389,16 @@ router.get("/stech.manager/profile", async function (req, res, next) {
     //tìm cart theo userId
     // res.render("profile");
     // res.render("profile");
+
 });
+router.get("/stech.manager/profile", async function (req, res, next) {
+    const id = utils_1.getCookie(req, 'Uid');
+    console.log(id);
+    try {
+        let listprofile = await UserModel.userModel.findById(id).populate({path: 'address', select: 'city'});
 
 router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
     try {
-
-
         // Check login
         let idUserLoged = req.cookies.Uid
         if (idUserLoged == null || idUserLoged.length <= 0) {
@@ -715,9 +789,16 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
     } catch (e) {
         console.error("Error fetching order details:", e.message);
         res.send({message: "Error fetching order details", code: 0});
+
     }
 });
-router.get("/stech.manager/invoice", function (req, res, next) {
+router.get("/stech.manager/chat", async function (req, res, next) {
+    try {
+        // Check login
+        let idUserLoged = req.cookies.Uid
+        if (idUserLoged == null || idUserLoged.length <= 0) {
+            return res.redirect('/stech.manager/login')
+        }
 
     function getCookie(name) {
         const match = req.headers.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -941,6 +1022,274 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
     } catch (e) {
         console.log(e.message);
         res.send({message: "user not found", code: 0});
+=======
+        let dataUserLoged = await UserModel.userModel.find({_id: idUserLoged}).populate({
+            path: 'address',
+            select: 'city'
+        });
+        let listConversation = await ConversationModel.conversationModel.find().populate({path: 'user'});
+        let dataMessage = await MessageModel.messageModel.find().populate({path: 'conversation'});
+
+        let dataLastMessage = []
+        let latestMessages = {};
+        listConversation.map((con) => {
+            dataMessage.map((msg) => {
+                if (con._id + "" == msg.conversation._id + "") {
+                    if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
+                        let message = ''
+                        if (msg.message.length <= 0) {
+                            return msg.message
+                        }
+                        const ENCRYPTION_KEY = process.env.API_KEY;
+                        const algorithm = process.env.ALGORITHM;
+                        const hash = crypto.createHash("sha1");
+                        hash.update(ENCRYPTION_KEY)
+                        const digestResult = hash.digest();
+                        const uint8Array = new Uint8Array(digestResult);
+                        const keyUint8Array = uint8Array.slice(0, 16);
+                        const keyBuffer = Buffer.from(keyUint8Array);
+                        let textParts = msg.message.split(':');
+                        let iv = Buffer.from(textParts.shift(), 'hex');
+                        let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+                        let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+                        let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+                        decrypted += decipher.final('utf8');
+
+                        message = decrypted;
+                        latestMessages[con._id] = {
+                            id: msg._id,
+                            conversationID: con._id,
+                            senderID: msg.senderId,
+                            status: msg.status,
+                            message: message,
+                            images: msg.images,
+                            video: msg.video,
+                            timestamp: msg.timestamp
+                        };
+                    }
+                }
+            })
+        })
+
+        for (let conversationID in latestMessages) {
+            dataLastMessage.push(latestMessages[conversationID]);
+        }
+
+        let dataConversation = []
+        listConversation.map((con) => {
+            dataLastMessage.map((msg) => {
+                if (con._id + "" == msg.conversationID + "") {
+                    let idMessage = msg.id
+                    let message = msg.deleted ? " đã gỡ 1 tin nhắn" : msg.message.length > 0 ? msg.message : msg.images.length > 0 ? ` đã gửi ${msg.images.length} ảnh` : msg.video.length > 0 ? `Bạn đã gửi 1 video` : ''
+                    let time = msg.timestamp
+                    let senderID = msg.senderID
+                    let status = msg.status
+
+                    dataConversation.push({
+                        _id: con._id,
+                        idMsg: idMessage,
+                        name: con.name,
+                        user: con.user,
+                        timestamp: con.timestamp,
+                        lastmessage: message,
+                        lastSender: senderID,
+                        status: status,
+                        lasttime: time
+                    })
+                }
+            })
+        })
+
+        const conversationNoMessage = listConversation.filter(obj1 =>
+            !dataConversation.some(obj2 => obj1._id === obj2._id)
+        );
+
+        conversationNoMessage.map((con) => {
+            dataConversation.push({
+                _id: con._id,
+                idMessage: "",
+                name: con.name,
+                user: con.user,
+                timestamp: con.timestamp,
+                lastmessage: "",
+                lastSender: "",
+                status: "",
+                lasttime: ""
+            })
+        })
+
+        // console.log(dataConversation);
+        // console.log("==================");
+        // console.log(dataLastMessage);
+
+        return res.render("chat", {
+            conversations: dataConversation.length > 0 ? dataConversation : [],
+            userLoged: dataUserLoged[0],
+            dataMessage: {},
+            dataLastMessage: dataLastMessage.length > 0 ? dataLastMessage : [],
+            isOpenChat: false,
+            idConversation: "",
+            message: "get data chat success",
+            code: 1,
+        });
+
+
+    } catch (e) {
+        console.log(`error get chat: ${e.message}`);
+        return res.send({message: "conversation not found", code: 0});
+    }
+});
+router.get("/stech.manager/order", async function (req, res, next) {
+    try {
+        var encodedValueStatus = req.cookies.status;
+
+        if (encodedValueStatus === undefined || Buffer.from(encodedValueStatus, 'base64').toString('utf8') == 'All') {
+            let orders = await OrderModel.modelOrder.find();
+            orders.reverse();
+            console.log('Orders:', orders);
+            let userId = req.cookies.Uid;
+            let user = await UserModel.userModel.findById(userId);
+            if (user.role === "Admin") {
+                const ordersWithProductInfo = await Promise.all(orders.map(async order => {
+                    const allProductInfo = await order.getAllProductInfo();
+                    const userInfo = await order.getUserInfo();
+                    console.log('ProductInfo:', allProductInfo);
+                    console.log('UserInfo:', userInfo);
+                    return {...order.toObject(), allProductInfo, userInfo};
+                }));
+                res.render("order", {orders: ordersWithProductInfo, message: "get list order success", code: 1});
+            } else {
+                res.render("error");
+            }
+
+        } else {
+            let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
+            let orders = await OrderModel.modelOrder.find({status: valueStatus});
+
+            let userId = req.cookies.Uid;
+            let user = await UserModel.userModel.findById(userId);
+            if (user.role === "Admin") {
+                console.log('Orders:', orders);
+                const ordersWithProductInfo = await Promise.all(orders.map(async order => {
+                    const allProductInfo = await order.getAllProductInfo();
+                    const userInfo = await order.getUserInfo();
+                    console.log('ProductInfo:', allProductInfo);
+                    console.log('UserInfo:', userInfo);
+                    return {...order.toObject(), allProductInfo, userInfo};
+                }));
+                res.render("order", {orders: ordersWithProductInfo, message: "get list order success", code: 1});
+            } else {
+                res.render("error");
+            }
+
+        }
+
+        // res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "order not found", code: 0})
+    }
+});
+router.get("/stech.manager/detail_order", async function (req, res, next) {
+    try {
+        var encodedOrderId = req.query.orderId;
+        let orderId = Buffer.from(encodedOrderId, 'base64').toString('utf8');
+        //let productId = req.query.productId;			
+        console.log("Received orderId from cookie:", orderId);
+
+        let order = await OrderModel.modelOrder.findById(orderId);
+        if (order) {
+            const allProductInfo = await order.getAllProductInfo();
+            const userInfo = await order.getUserInfo();
+            console.log('ProductInfo:', allProductInfo);
+            console.log('UserInfo:', userInfo);
+
+            res.render("detail_order", {
+                detailOrder: {...order.toObject(), allProductInfo, userInfo},
+                message: "get order details success",
+                code: 1
+            });
+        } else {
+            res.send({message: "Order not found", code: 0});
+        }
+    } catch (e) {
+        console.error("Error fetching order details:", e.message);
+        res.send({message: "Error fetching order details", code: 0});
+    }
+});
+router.get("/stech.manager/invoice", function (req, res, next) {
+
+    function getCookie(name) {
+        const match = req.headers.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        if (match) return match[2];
+    }
+
+    const orderDataCookie = getCookie('dataToInvoice');
+
+    if (orderDataCookie) {
+        // Giải mã cookie để có được dữ liệu đặt hàng
+        const orderData = JSON.parse(decodeURIComponent(orderDataCookie));
+
+        // Truyền dữ liệu vào layout "invoice.pug"
+        res.render("invoice", {
+            guestName: orderData.guestName,
+            guestPhone: orderData.guestPhone,
+            guestAddress: orderData.guestAddress,
+            products: orderData.product,
+        });
+    } else {
+        // Xử lý khi không có giá trị cookie
+        res.send({message: "No order data found in the cookie", code: 0});
+    }
+});
+router.get("/stech.manager/cart", async function (req, res, next) {
+    // const userId = req.query.userId;
+    // const userId = utils_1.getCookie(req, 'Uid');
+
+    const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
+
+    console.log("id", userId)
+    try {
+        let cartUser = await CartModel.cartModel.findOne({userId}).populate({
+            path: 'product',
+            select: 'productId quantity'
+        });
+        ;
+        console.log(cartUser)
+
+            res.render("cart", {
+                carts: cartUser,
+                message: "get list profile success",
+                code: 1,
+            })
+
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "cart not found", code: 0})
+    }
+});
+router.post('/updateQuantity/:productId', async (req, res) => {
+    const productId = req.params.productId;
+    const newQuantity = req.body.quantity;
+
+    try {
+        // Tìm và cập nhật số lượng trong cơ sở dữ liệu
+        const updatedProduct = await CartModel.updateOne(
+            {'product._id': productId},
+            {$set: {'product.$.quantity': newQuantity}}
+        );
+
+        if (updatedProduct.nModified > 0) {
+            // Cập nhật thành công
+            res.json({success: true, message: 'Quantity updated successfully'});
+        } else {
+            // Không có bản ghi nào được cập nhật (productId không tồn tại)
+            res.status(404).json({success: false, message: 'Product not found'});
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({success: false, message: 'Error updating quantity'});
     }
 });
 router.get("/stech.manager/banner", async function (req, res, next) {
@@ -948,6 +1297,7 @@ router.get("/stech.manager/banner", async function (req, res, next) {
         let listbanner = await BannerModel.bannerModel.find();
 
         res.render("banner", {banners: listbanner, message: "get list banner success", code: 1});
+
 
     } catch (e) {
         console.log(e.message);
@@ -967,6 +1317,7 @@ router.get("/stech.manager/pay", function (req, res, next) {
     }
 });
 router.get("/stech.manager/edit_product_action", async function (req, res, next) {
+
     var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)productId\s*=\s*([^;]*).*$)|^.*$/, "$1");
     var productId = JSON.parse(decodeURIComponent(cookieValue));
     const token = req.cookies.token
@@ -987,5 +1338,282 @@ router.get("/stech.manager/edit_product_action", async function (req, res, next)
         console.log(e.message);
         res.send({message: "product not found", code: 0})
     }
+
 });
+
+//Voucher
+router.get("/stech.manager/voucher", async function (req, res, next) {
+    try {
+        let listVoucher = await VoucherModel.voucherModel.find();
+        res.render("voucher", {
+            vouchers: listVoucher,
+            message: "get list voucher success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "user not found", code: 0});
+    }
+});
+
+    res.render("edit_product_action",
+      {
+        products: productSelected,
+        categories: listCategory,
+        message: "get list product success",
+        code: 1
+      })
+  } catch (e) {
+    console.log(e.message);
+    res.send({ message: "product not found", code: 0 })
+  }
+router.post("/stech.manager/createVoucher", async function (req, res, next) {
+    try {
+        let name = req.body.name;
+        let content = req.body.content;
+        let price = req.body.price;
+        let toDate = req.body.toDate;
+        let fromDate = req.body.fromDate;
+        let date = new Date();
+        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+        if (name == null) {
+            return res.send({message: "title is required", code: 0});
+        }
+        if (content == null) {
+            return res.send({message: "content is required", code: 0});
+        }
+        if (price == null) {
+            return res.send({message: "price is required", code: 0});
+        }
+        if (toDate == null) {
+            return res.send({message: "toDate is required", code: 0});
+        }
+        if (fromDate == null) {
+            return res.send({message: "fromDate is required", code: 0});
+        }
+        if (create_time == null) {
+            return res.send({message: "create_time is required", code: 0});
+        }
+
+        let voucher = new VoucherModel.voucherModel({
+            name: name,
+            content: content,
+            price: price,
+            toDate: formatDateTime(toDate),
+            fromDate: formatDateTime(fromDate),
+            create_time: create_time,
+        });
+        await voucher.save();
+        res.redirect(req.get('referer'));
+    } catch (e){
+        console.log(e.message);
+        res.send({message: "create voucher fail", code: 0});
+    }
+});
+router.post("/stech.manager/updateVoucher",async function(req, res, next) {
+    try {
+        let name = req.body.name;
+        let content = req.body.content;
+        let price = req.body.price;
+        let toDate = req.body.toDate;
+        let fromDate = req.body.fromDate;
+        let voucherId = req.body.voucherId;
+        if (voucherId == null) {
+            return res.send({message: "voucherId is required", code: 0});
+        }
+        try {
+            let voucher = await VoucherModel.voucherModel.findById(voucherId);
+            let newVoucher = {
+                name: voucher.name,
+                content: voucher.content,
+                price: voucher.price,
+                toDate: formatDateTime(voucher.toDate),
+                fromDate: formatDateTime(voucher.fromDate),
+                create_time: voucher.create_time,
+            }
+            if (name !== null) {
+                newVoucher.name = name;
+            }
+            if (content !== null) {
+                newVoucher.content = content;
+            }
+            if (price !== null) {
+                newVoucher.price = price;
+            }
+            if (toDate !== null) {
+                newVoucher.toDate = formatDateTime(toDate);
+            }
+            if (fromDate !== null) {
+                newVoucher.fromDate = formatDateTime(fromDate);
+            }
+            await VoucherModel.voucherModel.updateMany({_id: voucherId}, {$set: newVoucher});
+            res.redirect(req.get('referer'));
+        } catch (e) {
+            console.log(e.message);
+            return res.send({message: e.message.toString(), code: 0});
+        }
+    }catch (e) {
+        console.log(e.message);
+        res.send({message: "create voucher fail", code: 0});
+    }
+})
+function formatDateTime(dateTimeString) {
+    var selectedDate = new Date(dateTimeString);
+
+    // Lấy các thành phần của ngày và giờ
+    var year = selectedDate.getFullYear();
+    var month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+    var day = selectedDate.getDate().toString().padStart(2, '0');
+    var hour = selectedDate.getHours().toString().padStart(2, '0');
+    var minute = selectedDate.getMinutes().toString().padStart(2, '0');
+    var second = selectedDate.getSeconds().toString().padStart(2, '0');
+
+    // Định dạng lại theo "YYYY-MM-DD HH:mm:ss"
+    var formattedDate = `${year}-${month}-${day}-${hour}:${minute}:${second}`;
+
+    return formattedDate;
+}
+
+router.post("/stech.manager/deleteVoucher", async function(req, res, next) {
+    let voucherId = req.body.voucherId;
+    if(voucherId === null){
+        return res.send({message:"voucher id is required", code: 0 })
+    }
+    try {
+        let voucher = await VoucherModel.voucherModel.findById(voucherId);
+        if(!voucher){
+            return res.send({message:"voucher not found", code: 0 })
+        }
+        await VoucherModel.voucherModel.deleteMany({_id: voucherId});
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+});
+
+//Notification
+router.get("/stech.manager/notification", async function (req, res, next) {
+    try {
+        let listNotification = await NotificationModel.notificationModel.find();
+
+        res.render("notification", {
+            notifications: listNotification,
+            message: "get list notification success",
+            code: 1,
+        });
+
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "notification not found", code: 0});
+    }
+});
+
+router.post("/stech.manager/createNotification", upload.fields([{name: "img", maxCount: 1}]), async function(req, res, next) {
+    const img = req.files["img"];
+    let title = req.body.title;
+    let content = req.body.content;
+    let date = new Date();
+    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+
+    if (title == null) {
+        return res.send({message: "title is required", code: 0});
+    }
+    if (content == null) {
+        return res.send({message: "content is required", code: 0});
+    }
+    try {
+        let notification = new NotificationModel.notificationModel({
+            title: title,
+            content: content,
+            create_time: create_time,
+        });
+        let imgNoti = await UploadFileFirebase.uploadFileNotifi(
+            req,
+            notification._id.toString(),
+            "img",
+            "notifications",
+            img[0]
+        );
+        if (imgNoti === 0) {
+            return res.send({message: "upload file img fail", code: 0});
+        }
+        notification.img = imgNoti;
+        await notification.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        return res.send({message: e.message.toString(), code: 0});
+    }
+
+});
+
+router.post("/stech.manager/updateNotification", upload.fields([{name: "img", maxCount: 1}]), async function(req, res, next) {
+    const img = req.files["img"];
+    let title = req.body.title;
+    let content = req.body.content;
+    let notificationId = req.body.notificationId;
+
+    if (notificationId == null) {
+        return res.send({message: "notificationId is required", code: 0});
+    }
+    try {
+        let notification = await NotificationModel.notificationModel.findById(notificationId);
+        let newNotification = {
+            title: notification.title,
+            content: notification.content,
+            img: notification.img,
+            create_time: notification.create_time,
+        }
+        if (title != null) {
+            newNotification.title = title;
+        }
+        if (content != null) {
+            newNotification.content = content;
+        }
+        if (img != null) {
+            const productFirebase = `notifications/${notificationId}`;
+            await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
+
+            let imgNoti = await UploadFileFirebase.uploadFileNotifi(
+                req,
+                notification._id.toString(),
+                "img",
+                "notifications",
+                img[0]
+            );
+            if (imgNoti === 0) {
+                return res.send({message: "upload file img fail", code: 0});
+            }
+            newNotification.img = imgNoti;
+        }
+
+        await NotificationModel.notificationModel.updateMany({_id: notificationId}, {$set: newNotification});
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+});
+
+router.post("/stech.manager/deleteNotification", async function (req, res, next) {
+    try {
+        let notificationId = req.body.NotifiId;
+        if (notificationId == null) {
+            return res.send({message: "notificationId is required", code: 0});
+        }
+
+        await NotificationModel.notificationModel.deleteMany({_id: notificationId});
+
+        const productFirebase = `notifications/${notificationId}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
+
+        res.redirect(req.get('referer'));
+
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+})
 module.exports = router;

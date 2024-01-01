@@ -143,7 +143,7 @@ block content
                                                         a#Detail.d-flex.align-items-center.gap-2.dropdown-item.DetailPro(aria-expanded='false' data-id=product._id)
                                                             i.ti.ti-list-details.fs-6
                                                             p.mb-0.fs-3 Chi tiết sản phẩm
-                                                        a#OpenDelete.d-flex.align-items-center.gap-2.dropdown-item.DeletePro(href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")
+                                                        a.d-flex.align-items-center.gap-2.dropdown-item.DeletePro( class="openModalDeleteProduct" href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")
                                                             i.ti.ti-trash.fs-6
                                                             p.mb-0.fs-3 Xoá sản phẩm
                                                         a#OpenAddCart.d-flex.align-items-center.gap-2.dropdown-item.AddCartPro(href='' data-bs-toggle='modal' data-id=product data-bs-target="#AddCartModal")
@@ -169,105 +169,6 @@ block content
                 .py-6.px-6.text-center
                     p.mb-0.fs-4 Design and Developed by&nbsp;
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
-            //Modal product
-            #CreProModal.modal.fade
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
-                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
-                        .modal-body
-                            form
-                                .mb-3
-                                    label.form-label(for='category') Danh m&#x1EE5;c
-                                    input#category.form-control(type='text', placeholder='Tìm danh mục', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='title') T&ecirc;n s&#x1EA3;n ph&#x1EA9;m
-                                    input#title.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='description') M&ocirc; t&#x1EA3; s&#x1EA3;n ph&#x1EA9;m
-                                    input#description.form-control(type='textarea', placeholder='Mô tả sản phẩm', name='description', aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for='img_cover') &#x1EA2;nh n&#x1EC1;n
-                                        input#img_cover(type='file', accept='image/*')
-                                .mb-3
-                                    label.form-label(for='price') price
-                                    input#price.form-control(placeholder='Giá', type='number', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='quantity') quantity
-                                    input#quantity.form-control(placeholder='Số lượng', type='number', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='sold') sold
-                                    input#sold.form-control(type='number', aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for='video') Video
-                                        input#video(type='file', accept='video/*')
-                                .mb-3
-                                    .form-group
-                                        label.form-label(for='color') color
-                                            input#color(type='color')
-                                .mb-3
-                                    .form-group
-                                        label(for='list_img') Ảnh mô tả
-                                        input#list_img(type='file', multiple='multiple', accept='image/*')
-                                .mb-3
-                                    label.form-label(for='ram_rom') Option
-                                    input#ram_rom.form-control(type='text', aria-describedby='textHelp')
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button#ConfirmCrePro.btn.btn-outline-dark-light(type='button') Lưu sản phẩm
-            //Update
-            #UpProModal.modal.fade
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
-                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
-                        .modal-body
-                            form
-                                .mb-3
-                                    label.form-label(for='update_category') Danh m&#x1EE5;c
-                                    input#update_category.form-control(type='text', placeholder='Tìm danh mục', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='update_title') T&ecirc;n s&#x1EA3;n ph&#x1EA9;m
-                                    input#update_title.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='update_description') M&ocirc; t&#x1EA3; s&#x1EA3;n ph&#x1EA9;m
-                                    textarea#update_description.form-control( placeholder='Mô tả sản phẩm', name='description', aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for='update_img_cover') &#x1EA2;nh n&#x1EC1;n
-                                        input#update_img_cover(type='file', accept='image/*')
-                                .mb-3
-                                    label.form-label(for='update_price') price
-                                    input#update_price.form-control(placeholder='Giá', type='number', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='update_quantity') quantity
-                                    input#update_quantity.form-control(placeholder='Số lượng', type='number', aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='update_sold') sold
-                                    input#update_sold.form-control(type='number', aria-describedby='textHelp')
-                                .mb-3
-                                    .form-group
-                                        label(for='update_video') Video
-                                        input#update_video(type='file', accept='video/*')
-                                .mb-3
-                                    .form-group
-                                        label.form-label(for='update_color') color
-                                            input#update_color(type='color')
-                                .mb-3
-                                    .form-group
-                                        label(for='update_list_img') Ảnh mô tả
-                                        input#update_list_img(type='file', multiple='multiple', accept='image/*')
-                                .mb-3
-                                    label.form-label(for='update_ram_rom') Option
-                                    input#update_ram_rom.form-control(type='text', aria-describedby='textHelp')
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button#ConfirmUpPro.btn.btn-outline-dark-light(type='button') Lưu sản phẩm
-
 
             #AddCartModal.modal.fade
                 .modal-dialog
@@ -281,6 +182,7 @@ block content
                                     img#Addimg.rounded-circle.p-1(src='', alt='', width='110')
                                 .mb-3
                                     input#Addtitle.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp' value=products.name readonly)
+
                                 div#colorAdd
                                     .mb-3
                                         th color
@@ -306,17 +208,19 @@ block content
                                 button#ConfirmAddCartPro1.btn.btn-outline-dark-light(type='submit' data-bs-dismiss='modal') Thêm vào giỏ hàng
 
 
-            #DelProModal.modal
+            #DeleteProductModal.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Xác nhận xóa !
-                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                            h5.modal-title Xóa Product!
                         .modal-body
-                            p Bạn có chắc chắn muốn xoá sản phẩm này.
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button#ConfirmDelPro.btn.btn-danger(type='button') Xác nhận
+                            p.ms-4 Bạn có chắc chắn muốn xóa?
+                            .modal-body
+                                form(action="/stech.manager/deleteProduct" method="post")
+                                    .mb-3.d-none
+                                        input#idProductDelete.form-control(name='productId', type='text', aria-describedby='textHelp')
+                                    button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                    button.ms-3.btn.btn-danger(type='submit') Đồng ý
     script(src="/js/product.js")
     script.
         function removeDiacritics(str) {
