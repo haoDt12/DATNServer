@@ -122,13 +122,13 @@ block content
                                     tbody
                                         each product in products
                                             tr
-                                                td.col-md-7= product.title
+                                                td.col-md-7= product.product_name
                                                 td.col-md-2
                                                     i.fa.fa-inr
                                                     | #{product.quantity}
                                                 td.col-md-3
                                                     i.fa.fa-inr
-                                                    | #{Intl.NumberFormat('vi-VN').format(product.quantity * product.price) + ' VND'}
+                                                    | #{Intl.NumberFormat('vi-VN').format(product.quantity * product.product_price) + ' VND'}
                                         tr
                                             td.text-left.text-muted
                                                 p
@@ -146,7 +146,7 @@ block content
                                                         if products && products.length > 0
                                                             // Tính tổng giá trị của các sản phẩm
                                                             - var totalPrice = products.reduce(function (total, product) {
-                                                            - return total + (product.quantity * product.price);
+                                                            - return total + (product.quantity * product.product_price);
                                                             - }, 0);
                                                             = Intl.NumberFormat('vi-VN').format(totalPrice) + ' VND'
                                                 p
@@ -160,7 +160,7 @@ block content
                                                         if products && products.length > 0
                                                             // Tính tổng giá trị của các sản phẩm
                                                             - var totalPrice = products.reduce(function (total, product) {
-                                                            - return total + (product.quantity * product.price);
+                                                            - return total + (product.quantity * product.product_price);
                                                             - }, 0);
                                                             = Intl.NumberFormat('vi-VN').format(totalPrice + 0.1 * totalPrice) + ' VND'
                                         tr
@@ -176,7 +176,7 @@ block content
                                                         if products && products.length > 0
                                                             // Tính tổng giá trị của các sản phẩm
                                                             - var totalPrice = products.reduce(function (total, product) {
-                                                            - return total + (product.quantity * product.price);
+                                                            - return total + (product.quantity * product.product_price);
                                                             - }, 0);
                                                             = Intl.NumberFormat('vi-VN').format(totalPrice + 0.1 * totalPrice) + ' VND'
                             .row

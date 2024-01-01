@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("img:" + img.files[0])
         const formData = new FormData();
         formData.append('file', img.files[0])
-        await axios.post("/api/addBanner", formData, {
+        await axios.post("/apiv2/addBanner", formData, {
             headers: {
                 'Authorization': token
             }

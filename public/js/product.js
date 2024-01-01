@@ -13,45 +13,49 @@ document.addEventListener('DOMContentLoaded', function () {
         utils.DeleteAllCookies();
     });
     // Modal
-    const DelProModal = new bootstrap.Modal(document.getElementById('DeleteProductModal'));
+    const DelProModal = new bootstrap.Modal(document.getElementById('DelProModal'));
     const AddCartModal = new bootstrap.Modal(document.getElementById('AddCartModal'));
     // Button call api
-    const ConfirmCrePro = document.getElementById("ConfirmCrePro");
+    const ConfirmDelPro = document.getElementById("ConfirmDelPro");
     const ConfirmAddCartPro = document.getElementById("ConfirmAddCartPro");
     // Button call modal
-
-
+    const UpdatePro = document.querySelectorAll(".UpdatePro");
     const AddCartPro = document.querySelectorAll(".AddCartPro");
     const OpenUpdateProduct = document.querySelectorAll(".OpenUpdateProduct");
+    const productIdv2 = document.getElementById("productId");
     const userId = Uid;
-    let productId;
     let quantityRequest ;
-    let priceRequest ;
-    let imgCoverRequest;
-    let titleRequest ;
-    let optionRequest = [];
-    let optionColorRequest = {
-        // type: {type: String},
-        // title: {type: String},
-        // content: {type: String},
-        // quantity: {type: String},
-        // feesArise: {type: String}
-    };
-    let optionRamRequest = {
-        // type: {type: String},
-        // title: {type: String},
-        // content: {type: String},
-        // quantity: {type: String},
-        // feesArise: {type: String}
-    };
-    let optionRomRequest = {
-        // type: {type: String},
-        // title: {type: String},
-        // content: {type: String},
-        // quantity: {type: String},
-        // feesArise: {type: String}
-    };
 
+    async function createProduct(category, title, description, img_cover, price,
+                                 quantity, sold, video, color, list_img, ram_rom) {
+        try {
+            const response = await axios.post(`/api/addProduct`, {
+                category: category,
+                title: title,
+                description: description,
+                img_cover: img_cover,
+                list_img: list_img,
+                price: price,
+                quantity: quantity,
+                sold: sold,
+                video: video,
+                color: color,
+                ram_rom: ram_rom
+            }, {
+                headers: {
+                    'Authorization': `${token}`
+                }
+            });
+            console.log("data:" + response.data);
+            return response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function deleteProduct(productId) {
+        try {
+            const response = await axios.post("/api/deleteProduct", {
     async function getProduct(productId) {
         try {
             const response = await axios.post("/api/getProductById", {
@@ -63,6 +67,51 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             console.log(response.data);
             return response.data;
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    ConfirmCrePro.addEventListener("click", function () {
+        console.log(title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
+        createProduct("654a752e1ab38cd5dd0f7e17", title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value).then(data => {
+            console.log(data);
+            if (data.code === 1) {
+                utils.showMessage(data);
+                location.reload();
+            }else {
+                utils.showMessage(data.message);
+            }
+        }).catch(error => {
+            console.error('Login error:', error);
+        });
+        CreProModal.hide();
+    });
+    const category = document.getElementById("category");
+    const title = document.getElementById("title");
+    const description = document.getElementById("description");
+    const img_cover = document.getElementById("img_cover");
+    const price = document.getElementById("price");
+    const quantity = document.getElementById("quantity");
+    const sold = document.getElementById("sold");
+    const video = document.getElementById("video");
+    const list_img = document.getElementById("list_img");
+    const update_category = document.getElementById("update_category");
+    const update_title = document.getElementById("update_title");
+    const update_description = document.getElementById("update_description");
+    const update_img_cover = document.getElementById("update_img_cover");
+    const update_price = document.getElementById("update_price");
+    const update_quantity = document.getElementById("update_quantity");
+    const update_sold = document.getElementById("update_sold");
+    const update_video = document.getElementById("update_video");
+    const color = document.getElementById("colorDropdown");
+    const ram = document.getElementById("ramDropdown");
+    const rom = document.getElementById("romDropdown");
+    const addimg = document.getElementById('Addimg');
+    const addtitle = document.getElementById("Addtitle");
+    const addquantity = document.getElementById("Addquantity");
+    const productId = document.getElementById("productId")
+    let listColor = [];
+
         } catch (error) {
             console.log(error)
         }
@@ -82,147 +131,66 @@ document.addEventListener('DOMContentLoaded', function () {
 
     AddCartPro.forEach(function (AddToCart){
         AddToCart.addEventListener("click", function (){
-            let Id_product = this.getAttribute("data-id");
+            let product = this.getAttribute("data-id");
+            let data_product = JSON.parse(product)
+            const total = document.getElementById('total');
 
+            quantityRequest = 1;
+
+            addimg.src =data_product.img_cover;
+            addtitle.value = data_product.name;
+
+            ram.value= data_product.ram;
+            rom.value = data_product.rom;
+            color.value = data_product.color;
+            totalData = data_product.price;
+            total.value = totalData;
+            total.innerText = totalData.toString();
+            productIdv2.value = data_product._id;
+
+            addquantity.addEventListener("change", function (){
+                totalData = (Number(data_product.price)) * Number(addquantity.value);
+                total.innerText = totalData.toString();
+                quantityRequest = addquantity.value.toString();
+            })
+
+
+
+        })
+    });
+    UpdatePro.forEach(function (UpdateProduct){
+        UpdateProduct.addEventListener("click", function (){
+            let Id_product = this.getAttribute("data-id");
             console.log(Id_product);
             getProduct(Id_product).then(data =>{
-                if (data.code === 1){
-                    const dropdown = document.getElementById('ramDropdown');
-                    const dropdownrom = document.getElementById('romDropdown');
-                    const dropdowncolor = document.getElementById('colorDropdown');
-                    const total = document.getElementById('total');
-                    let colorData = data.product.option.filter(item => item.type === "Color")
-                    let romData = data.product.option.filter(item => item.type === "Rom")
-                    let ramData = data.product.option.filter(item => item.type === "Ram")
-                    let totalData = 0;
-                    let selectRom =0;
-                    let selectRam= 0;
-                    quantityRequest = 1;
-                    if (ramData.length !== 0){
-                        optionRamRequest = ramData[0];
-                        document.getElementById('ramAdd').style.display = 'block';
-                    }else {
-                        document.getElementById('ramAdd').style.display = 'none';
-                    }
-                    if (romData.length !== 0){
-                        optionRomRequest = romData[0];
-                        document.getElementById('romAdd').style.display = 'block';
-                    }
-                    else {
-                        document.getElementById('romAdd').style.display = 'none';
-                    }
-                    if (colorData.length !== 0){
-                        optionColorRequest = colorData[0];
-                        document.getElementById('colorAdd').style.display = 'block';
-                    }else {
-                        document.getElementById('colorAdd').style.display = 'none';
-                    }
-                    console.log(ramData)
-                    // Xóa tất cả các option hiện tại
-                    dropdown.innerHTML = '';
-                    dropdownrom.innerHTML = '';
-                    dropdowncolor.innerHTML = '';
-                    totalData = data.product.price
-
-                    total.value = totalData;
-                    console.log(totalData)
-                    // Thêm option mới từ dữ liệu API
-                    ramData.forEach(option => {
-                        const optionElement = document.createElement('option');
-                        optionElement.value = option.feesArise;
-                        optionElement.textContent = option.title;
-                        dropdown.appendChild(optionElement);
-                    });
-                    romData.forEach(option => {
-                        const optionElement = document.createElement('option');
-                        optionElement.value = option.feesArise;
-                        optionElement.textContent = option.title;
-                        dropdownrom.appendChild(optionElement);
-
-                    });
-                    colorData.forEach(option => {
-                        const optionElement = document.createElement('option');
-                        optionElement.value = option.content;
-                        optionElement.textContent = option.title;
-                        // optionElement.style.backgroundColor = option.content;
-                        dropdowncolor.appendChild(optionElement);
-
-                    });
-                    dropdownrom.addEventListener("change", function (){
-                        selectRom = dropdownrom.value;
-                            totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
-                            total.innerText = totalData.toString();
-                            const selectedOption = dropdownrom.options[dropdownrom.selectedIndex];
-                            romData.map(item => {
-                                if (item.title === selectedOption.innerText){
-                                    optionRomRequest.title = item.title;
-                                    optionRomRequest.content = item.content;
-                                    optionRomRequest.quantity = item.quantity;
-                                    optionRomRequest.feesArise = item.feesArise;
-                                    optionRomRequest.type = item.type;
-                                }
-                            })
-
-
-                        console.log(optionRomRequest)
-                    })
-                    dropdown.addEventListener("change", function (){
-                        selectRam = dropdown.value;
-
-                            totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
-                            total.innerText = totalData.toString();
-                            const selectedRamOption = dropdown.options[dropdown.selectedIndex];
-                            ramData.map(item => {
-                                if (item.title === selectedRamOption.innerText){
-                                    optionRamRequest.title = item.title;
-                                    optionRamRequest.content = item.content;
-                                    optionRamRequest.feesArise = item.feesArise;
-                                    optionRamRequest.quantity = item.quantity;
-                                    optionRamRequest.type = item.type;
-                                }
-                            })
-
-
-                    })
-                    dropdowncolor.addEventListener("change", function (){
-                        selectedColor = dropdowncolor.value;
-
-                        totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
-                        total.innerText = totalData.toString();
-                        const selectedColorOption = dropdowncolor.options[dropdowncolor.selectedIndex];
-                        colorData.map(item => {
-                            if (item.title === selectedColorOption.innerText){
-                                optionColorRequest.title = item.title;
-                                optionColorRequest.content = item.content;
-                                optionColorRequest.feesArise = item.feesArise;
-                                optionColorRequest.quantity = item.quantity;
-                                optionColorRequest.type = item.type;
-                                // alert(item.quantity);
-                            }
-                        })
-
-                    })
-                    console.log(data.product.option)
-                    addimg.src = data.product.img_cover;
-                    addtitle.value = data.product.title;
-
-                    titleRequest = data.product.title;
-                    imgCoverRequest = data.product.img_cover;
-                    priceRequest = data.product.price;
-                    productId = data.product._id;
-                    total.innerText = totalData.toString();
-
-                    addquantity.addEventListener("change", function (){
-                        totalData = (Number(data.product.price) + Number(selectRam) + Number(selectRom)) * Number(addquantity.value);
-                        total.innerText = totalData.toString();
-                        quantityRequest = addquantity.value.toString();
-                    })
-
-                }
+                update_category.value = data.product.category;
+                update_title.value = data.product.title;
+                update_description.value = data.product.description;
+                update_img_cover.value = data.product.img_cover;
+                update_price.value = data.product.price;
+                update_quantity.value = data.product.quantity;
+                update_sold.value = data.product.sold;
+                // update_color.value = data.product.color;
+                update_video.src = data.product.video;
+                update_list_img.src = data.product.list_img;
+                update_ram_rom.value = data.product.ram_rom;
             }).catch(error => {
                 console.error('Login error:', error);
             });
-        })
+            ConfirmUpdate.addEventListener("click", function () {
+                // updateProduct(Id_product, title.value, description.value, img_cover.files[0], price.value, quantity.value, sold.value, video.files[0], listColor, list_img.files[0], ram_rom.value)
+                //     .then(data => {
+                //     if (data.code === 1) {
+                //         UpProModal.hide();
+                //         location.reload();
+                //     } else {
+                //         utils.showMessage(data.message);
+                //     }
+                // }).catch(error => {
+                //     console.error('Login error:', error);
+                // });
+            });
+        });
     });
 
     ConfirmAddCartPro.addEventListener("click", async function () {
