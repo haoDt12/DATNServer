@@ -363,7 +363,7 @@ router.get("/stech.manager/detail_product", async function (req, res, next) {
     //let productId = req.query.productId;
     console.log("Received productId from cookie:", productId);
 
-    let product = await ProductModel.productModel.findById(productId).populate({ path: 'category', select: 'title' });
+    let product = await ProductModel.productModel.findById(productId).populate({ path: 'category_id', select: 'name' });
 
     if (product) {
       res.render("detail_product", { detailProduct: product, message: "get product details success", code: 1 });
