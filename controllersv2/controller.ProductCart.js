@@ -1,6 +1,8 @@
 const ProductCart = require("../modelsv2/model.ProductCart");
 const moment = require("moment");
 const Product = require("../modelsv2/model.product");
+const CartModel = require("../models/model.cart");
+const CartModelv2 = require("../modelsv2/model.ProductCart");
 exports.addCard = async (req, res) => {
   const { customer_id, product_id, quantity } = req.body;
   let date = new Date();
@@ -147,3 +149,47 @@ exports.updateCart = async (req, res) => {
     return res.send({ message: error.message.toString(), code: 0 });
   }
 };
+exports.editCartV2 = async (req, res) => {
+  let userId = req.body.userId;
+  let product = req.body.productId;
+  let quantity = req.body.quantity;
+  try {
+    let cart = await CartModelv2.productCartModel.findOne({ userId: userId });
+    let message = ""
+    let code = 0;
+    if (quantity !== null) {
+      let productList = cart.product;
+      productList.map(item => {
+        if (item.productId.toString() === product.toString()) {
+          let optionProduct = item.option;
+          let limitQuantity = Number(optionProduct[0].quantity);
+          optionProduct.map((item) => {
+            if (limitQuantity > Number(item.quantity)) {
+              limitQuantity = Number(item.quantity)
+            }
+          })
+          console.log("lmt" +  limitQuantity);
+          if (quantity > limitQuantity) {
+            item.quantity = limitQuantity
+            message = "Số lượng vượt quá giới hạn";
+            code = 0;
+
+          }
+          else {
+            item.quantity = quantity
+            message = "edit cart success"
+            code = 1;
+          }
+
+        }
+      });
+      cart.product = productList;
+      console.log(cart.product);
+      await cart.save();
+    }
+    return res.send({ message: message, code: code });
+  } catch (e) {
+    console.log(e.message);
+    return res.send({ message: e.message.toString(), code: 0 });
+  }
+}

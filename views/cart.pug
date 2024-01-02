@@ -133,43 +133,34 @@ block content
                                                 a.shop-tooltip.float-none.text-light(href='#' title='' data-original-title='Clear cart')
                                                     i.ino.ion-md-trash
                                     tbody
-                                        if carts
-                                            each cartProduct in carts.product
+                                        if dataCart
+                                            each cartProduct in dataCart
                                                 //if itemcart.productId
                                                 tr
                                                     td(style='text-align: center')
-                                                        input#quantity(type='checkbox' class='product-checkbox' data-product = cartProduct data-price=cartProduct.price data-quantity=cartProduct.quantity)
+                                                        input#quantity(type='checkbox' class='product-checkbox' data-product = cartProduct data-price=cartProduct.product_price data-quantity=cartProduct.quantity)
                                                     // Hiển thị thông tin sản phẩm trong giỏ hàng
 
                                                     td.p-4
-
                                                         .media.align-items-center
-                                                            img#imgCoverUp.d-block.ui-w-40.ui-bordered.mr-4(src=cartProduct.imgCover alt='')
+                                                            img#imgCoverUp.d-block.ui-w-40.ui-bordered.mr-4(src=cartProduct.img_cover alt='')
                                                             .media-body
-                                                                a#titleUp.d-block.text-dark= cartProduct.title
+                                                                a#titleUp.d-block.text-dark(style='display: inline-block; margin-right: 10px;')= cartProduct.product_name
                                                                 small
-                                                                    span.text-muted Color:
-                                                                        each optionColor in cartProduct.option
-                                                                            case optionColor.type
-                                                                                when "Color"
-                                                                                    i#colorUp.list-inline-item.me-2(style=`background-color: ${optionColor.content}; border: 2px solid #C0C0C0; width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
+                                                                    span.text-muted(style='display: inline-block; margin-left: 5px;') Color:
+                                                                        i#titleUp.d-block.text-dark(style='display: inline-block; margin-left: 5px;')= cartProduct.product_color
+                                                                    span.text-muted(style='display: inline-block; margin-left: 5px;') ram:
+                                                                        i#titleUp.d-block.text-dark(style='display: inline-block; margin-left: 5px;')= cartProduct.product_ram ? cartProduct.product_ram : 'không có'
+                                                                    span.text-muted(style='display: inline-block; margin-left: 5px;') rom:
+                                                                        i#titleUp.d-block.text-dark(style='display: inline-block; margin-left: 5px;')= cartProduct.product_rom ? cartProduct.product_rom : 'không có'
 
-                                                                        -var hasRam = false
-                                                                            each optionColor in cartProduct.option
-                                                                                case optionColor.type
-                                                                                    when "Ram"
-                                                                                        -hasRam = true
-                                                                                            ='Ram/Rom: '+ optionColor.content + '/'
-                                                                                    when "Rom"
-                                                                                        -hasRam = true
-                                                                                        = optionColor.content
-                                                    td#priceUp.text-right.font-weight-semibold.align-middle.p-4(style='width: 180px') #{Intl.NumberFormat('vi-VN').format(cartProduct.price)} VND
+                                                    td#priceUp.text-right.font-weight-semibold.align-middle.p-4(style='width: 180px') #{Intl.NumberFormat('vi-VN').format(cartProduct.product_price)} VND
                                                     td.align-middle.p-4
-                                                        input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.price name='quantity' min='1' value=`${cartProduct.quantity}`)
-                                                        button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id data-productId=cartProduct.productId) Lưu
-                                                    td#total.text-right.font-weight-semibold.align-middle.p-4( style='width: 180px' class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.price) #{Intl.NumberFormat('vi-VN').format(cartProduct.quantity * cartProduct.price)} VND
+                                                        input#caculation.form-control.text-center(class='quantity-checkbox' type='number' data-id=cartProduct._id data-price=cartProduct.product_price name='quantity' min='1' value=`${cartProduct.quantity}`)
+                                                        button.btn.btn-sm.btn-primary.save-btn( id='save' data-id=cartProduct._id data-productId=cartProduct.product_id) Lưu
+                                                    td#total.text-right.font-weight-semibold.align-middle.p-4( style='width: 180px' class='total-checkbox' data-id=cartProduct._id data-value=cartProduct.quantity * cartProduct.product_price) #{Intl.NumberFormat('vi-VN').format(cartProduct.quantity * cartProduct.product_price)} VND
                                                     td.text-center.align-middle.px-0
-                                                        a#deleteCart.shop-tooltip.close.float-none.text-danger.deleteCartPro(href='#' title='' data-id=cartProduct._id data-productId=cartProduct.productId  data-original-title='Remove'  data-bs-target="#confirmDeleteCate") &times;
+                                                        a#deleteCart.shop-tooltip.close.float-none.text-danger.deleteCartPro(href='#' title='' data-id=cartProduct._id data-original-title='Remove') &times;
                                         else
                                             tr
                                                 td(style='text-align: center')
@@ -185,10 +176,11 @@ block content
                                             h5.modal-title Warning!
                                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                                         .modal-body
-                                            p Bạn có chắc chắn muốn xoá giỏ hàng này.
-                                        .modal-footer
-                                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                                            button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
+                                            form(method='post' action='/stech.manager/DeleteCart')
+                                                p Bạn có chắc chắn muốn xoá giỏ hàng này.
+                                                button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                                //if cartProduct && cartProduct.product_id
+                                                button.btn.btn-danger(type='submit' id='confirmDelete' name="cartId") Đồng ý
                             .float-end
                                 a.btn.btn-lg.btn.btn-success.mt-2(type='button', id='goOrder') Order
         script(src='/js/cart.js')

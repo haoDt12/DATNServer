@@ -146,7 +146,7 @@ block content
                                                         a.d-flex.align-items-center.gap-2.dropdown-item.DeletePro( class="openModalDeleteProduct" href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")
                                                             i.ti.ti-trash.fs-6
                                                             p.mb-0.fs-3 Xoá sản phẩm
-                                                        a#OpenAddCart.d-flex.align-items-center.gap-2.dropdown-item.AddCartPro(href='' data-bs-toggle='modal' data-id=product._id data-bs-target="#AddCartModal")
+                                                        a#OpenAddCart.d-flex.align-items-center.gap-2.dropdown-item.AddCartPro(href='' data-bs-toggle='modal' data-id=product data-bs-target="#AddCartModal")
                                                             i.ti.ti-shopping-cart.fs-6
                                                             p.mb-0.fs-3 Thêm vào giỏ hàng
                                                         a.d-flex.align-items-center.gap-2.dropdown-item( data-bs-toggle='modal' data-id=product._id class = 'OpenUpdateProduct')
@@ -177,32 +177,35 @@ block content
                             h5.modal-title Thêm vào giỏ hàng
                             button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form
+                            form(method='post' action='/stech.manager/AddCart')
                                 .mb-3
                                     img#Addimg.rounded-circle.p-1(src='', alt='', width='110')
                                 .mb-3
-                                    input#Addtitle.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp')
+                                    input#Addtitle.form-control(placeholder='Nhập tên sản phẩm', type='text', aria-describedby='textHelp' value=products.name readonly)
+
                                 div#colorAdd
                                     .mb-3
                                         th color
-                                        select#colorDropdown.form-control(name='color')
+                                        input#colorDropdown.form-control(name='color' readonly)
                                 div#ramAdd
                                     .mb-3
                                         th ram
-                                        select#ramDropdown.form-select.mb-3(name='ram')
+                                        input#ramDropdown.form-control.mb-3(name='ram' readonly)
                                 div#romAdd
                                     .mb-3
                                         th rom
-                                        select#romDropdown.form-select.mb-3(name='rom')
+                                        input#romDropdown.form-control.mb-3(name='rom' readonly)
                                 .mb-3
                                     th quantity
                                     input#Addquantity.form-control.text-center(class='quantity-checkbox' style='width: 90px;' type='number' name='quantity' min='1' value='1')
                                 .mb-3
+                                    th productId
+                                    input#productId.form-control.text-center(type='text' name='productId' readonly)
+                                .mb-3
                                     h4.mt-3 Tổng tiền:
                                         span#total.ms-2
-                            .modal-footer
                                 button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                                button#ConfirmAddCartPro.btn.btn-outline-dark-light(type='button') Thêm vào giỏ hàng
+                                button#ConfirmAddCartPro1.btn.btn-outline-dark-light(type='submit' data-bs-dismiss='modal') Thêm vào giỏ hàng
 
 
             #DeleteProductModal.modal(tabindex='-1')

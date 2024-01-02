@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalQuan = document.querySelectorAll('.total-checkbox');
     const saveButtons = document.querySelectorAll('.save-btn');
     const deleteCCartPro = document.querySelectorAll('.deleteCartPro');
+    const deleteCart = document.getElementById("deleteCart");
     const DeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteCart"));
     const confirmDelete =  document.getElementById("confirmDelete");
     const detailLink =  document.getElementById("goOrder");
@@ -35,44 +36,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 total += price * quantity;
             }
         });
-
         // Hiển thị tổng giá
         totalDisplay.innerText = `${Intl.NumberFormat('vi-VN').format(total)} VND`;
     }
+    document.getElementById('confirmDelete').addEventListener('click', async function () {
+        const cartId = this.getAttribute('data-id');
+    });
+
     deleteCCartPro.forEach(function (DeleteProduct){
         DeleteProduct.addEventListener("click", function() {
             DeleteModal.show();
-            const cartId = this.dataset.id;
-            const productId = this.dataset.productid;
-            console.log(productId)
-            const id_product = this.getAttribute("data-id");
-            console.log(id_product);
-            confirmDelete.addEventListener("click", async function () {
-                console.log("da click")
-
-                const requestData = {
-                    userId: Uid,
-                    productId: productId,
-                    cartId: cartId,
-                };
-                const headers = {
-                    Authorization: token,
-                    'Content-Type': 'application/json',
-                };
-                await axios.post('/api/deleteCart', requestData, {headers})
-                    .then(response => {
-                        console.log(response.data)
-
-                    })
-                    .catch(error => {
-                        console.error('Error:', error.response ? error.response.data : error.message);
-                    });
-
-                // DeleteModal.hide();
-                window.location.reload();
-            });
+            const cartId = this.getAttribute("data-id")
+            // const productId = this.dataset.productid;
+            console.log(cartId)
+            confirmDelete.value = cartId;
+            // confirmDelete.addEventListener("click", async function () {
+            //     console.log("da click")
+            // });
         });
     });
+
     function updateTotalQuantity() {
         inputQuan.forEach(item => {
             item.addEventListener("click",  () =>{
@@ -90,21 +73,15 @@ document.addEventListener('DOMContentLoaded', function () {
             })
         });
     }
+
+    function setCookie(name, value) {
+        document.cookie = `${name}=${value}; path=/`;
+    }
     async function saveQuantity() {
-        // console.log(document.cookie);
         const productId = this.dataset.productid;
-        // const productId = document.querySelector(`.quantity-checkbox[data-id="${cartId}"]`).dataset.productId;
-
-        // const userId = utils.GetCookie("userId");
+        const cartId = this.dataset.id;
         const caculation = parseInt(document.getElementById('caculation').value);
-        const formDataUp = new FormData();
-        formDataUp.append('userId', Uid);
-        formDataUp.append('productId', productId);
-        formDataUp.append('quantity', caculation);
 
-
-        console.log('userId', Uid)
-        console.log(productId)
         const requestData = {
             userId: Uid,
             productId: productId,
@@ -114,21 +91,20 @@ document.addEventListener('DOMContentLoaded', function () {
             Authorization: token,
             'Content-Type': 'application/json',
         };
-        await axios.post('/api/editCartV2', requestData, {headers})
-            .then(response => {
-                console.log(response.data)
-                    alert(response.data.message);
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Error:', error.response ? error.response.data : error.message);
-            });
-        console.log("Save button clicked");
+
+        try {
+            // Gửi yêu cầu lưu vào MongoDB
+            const response = await axios.post(`/apiv2/editCartV2/${cartId}`, requestData, { headers });
+            console.log(response.data);
+            alert(response.data.message);
+
+            // Sau khi lưu thành công, cập nhật lại trang hoặc làm bất cứ điều gì phù hợp với ứng dụng của bạn
+            window.location.reload();
+        } catch (error) {
+            console.error('Error:', error.response ? error.response.data : error.message);
+        }
     }
 
-    function setCookie(name, value) {
-        document.cookie = `${name}=${value}; path=/`;
-    }
 
     document.getElementById('goOrder').addEventListener('click', function (){
         var selectedProducts = [];
