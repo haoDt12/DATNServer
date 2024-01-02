@@ -12,6 +12,8 @@ router.post("/getInfoCus", CusController.getInfoCus);
 router.post("/addFCM", CusController.addFCM);
 router.post("/verifyCusLogin", CusController.verifyCusLogin);
 router.get("/verifyCusRegister", CusController.verifyCusRegister);
+router.get("/getInfoCus", CusController.getInfoCus);
+router.get("/editCus", CusController.editCus);
 
 router.post("/getCategory", CategoryController.getCategory);
 

@@ -22,6 +22,10 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const passwordRegex =
     /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
+let mEmail = null;
+let mFull_name = null;
+let mPhone_number = null;
+let mAvatar = null;
 exports.registerCustomer = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
@@ -279,5 +283,35 @@ exports.addFCM = async (req, res) => {
     } catch (e) {
         console.log(`error add fcm: ${e.message}`);
         return res.send({ message: e.message.toString(), code: 0 })
+    }
+}
+exports.editCus = async (req, res) => {
+    let email = req.body.email;
+    let full_name = req.body.full_name;
+    let phone_number = req.body.phone_number;
+    let avatar = req.body.avatar;
+    try {
+        let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
+        let cus = await CustomerModel.customerModel.findById(data.cus._id);
+        if(email !== null){
+            mEmail = email;
+        }
+        if(full_name !== null){
+            mFull_name = full_name;
+        }
+        if(phone_number !== null){
+            cus.email = phone_number;
+        }
+        if(avatar !== null){
+            cus.email = avatar;
+        }
+        await cus.save();
+        return res.send({
+            message: "edit cus success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
     }
 }
