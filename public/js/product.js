@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const Uid = utils.GetCookie("Uid");
     const token = utils.GetCookie("token");
     const detailLinks = document.querySelectorAll(".DetailPro");
+    const openModalDelete = document.querySelectorAll(".openModalDeleteProduct");
     const detailLink = document.getElementById("Detail");
 
     //
@@ -16,10 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const AddCartModal = new bootstrap.Modal(document.getElementById('AddCartModal'));
     // Button call api
     const ConfirmDelPro = document.getElementById("ConfirmDelPro");
+    const ConfirmAddCartPro = document.getElementById("ConfirmAddCartPro");
     // Button call modal
-    const DeletePro = document.querySelectorAll(".DeletePro");
-
-
     const UpdatePro = document.querySelectorAll(".UpdatePro");
     const AddCartPro = document.querySelectorAll(".AddCartPro");
     const OpenUpdateProduct = document.querySelectorAll(".OpenUpdateProduct");
@@ -57,6 +56,9 @@ document.addEventListener('DOMContentLoaded', function () {
     async function deleteProduct(productId) {
         try {
             const response = await axios.post("/api/deleteProduct", {
+    async function getProduct(productId) {
+        try {
+            const response = await axios.post("/api/getProductById", {
                 productId: productId
             }, {
                 headers: {
@@ -110,23 +112,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const productId = document.getElementById("productId")
     let listColor = [];
 
-    DeletePro.forEach(function (DeleteProduct){
-        DeleteProduct.addEventListener("click", function() {
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    //DELETE
+    openModalDelete.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const productId = this.getAttribute('data-id');
+            console.log(productId)
+            document.getElementById('idProductDelete').value = productId;
             DelProModal.show();
-            const id_product = this.getAttribute("data-id");
-            console.log(id_product);
-            ConfirmDelPro.addEventListener("click", function (){
-                deleteProduct(id_product).then(data => {
-                    console.log(data);
-                    DelProModal.hide();
-                    location.reload();
-                    utils.showMessage(data.message)
-                }).catch(error => {
-                    console.error('Login error:', error);
-                });
-            });
-        });
-    });
+
+        })
+    })
+
 
     AddCartPro.forEach(function (AddToCart){
         AddToCart.addEventListener("click", function (){
@@ -191,6 +192,61 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    ConfirmAddCartPro.addEventListener("click", async function () {
+        if (JSON.stringify(optionRamRequest) !== "{}"){
+            optionRequest.push(optionRamRequest);
+            console.log(JSON.stringify(optionRamRequest))
+        }
+        if (JSON.stringify(optionRomRequest) !== "{}"){
+            optionRequest.push(optionRomRequest);
+        }
+        if (JSON.stringify(optionColorRequest) !== "{}"){
+            optionRequest.push(optionColorRequest);
+        }
+        // console.log(optionRequest)
+        try {
+            const response = await axios.post("/api/addCart", {
+                userId: Uid,
+                productId: productId,
+                quantity: quantityRequest,
+                price: priceRequest,
+                title: titleRequest,
+                imgCover: imgCoverRequest,
+                option: optionRequest,
+            }, {
+                headers: {
+                    'Authorization': `${token}`
+                }
+            });
+            console.log(response.data);
+            if (response.data.code === 1){
+                titleRequest = null;
+                quantityRequest = null;
+                imgCoverRequest = null;
+                priceRequest = null;
+                optionRomRequest = {};
+                optionRamRequest = {};
+                optionColorRequest = {};
+                optionRequest = [];
+                location.reload();
+            }else {
+                alert(response.data.message);
+                // AddCartModal.hide();
+            }
+            return response.data;
+
+            // AddCartModal.style.display ='none';
+        } catch (error) {
+            console.log(error)
+        }
+    });
+
+
+    // function setCookie(name, value) {
+    //     document.cookie = `${name}=${value}; path=/`;
+    // }
+    //     setCookie("productId", productId);
     detailLinks.forEach(function(detailLink) {
         detailLink.addEventListener("click", function(event) {
             event.preventDefault();
@@ -210,7 +266,4 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = "/stech.manager/edit_product_action";
         })
     })
-
-
-
 });

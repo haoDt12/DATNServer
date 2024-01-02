@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const openModalDelete = document.querySelectorAll(".openModalDeleteNotifi");
 
     //Button Confirm
-    const confirmCreate = document.getElementById('buttonConfirmCreate');
-    const confirmUpdate = document.getElementById('buttonConfirmUpdate');
-    const confirmDelete = document.getElementById('buttonConfirmDelete');
+    // const confirmCreate = document.getElementById('buttonConfirmCreate');
+    // const confirmUpdate = document.getElementById('buttonConfirmUpdate');
+    // const confirmDelete = document.getElementById('buttonConfirmDelete');
     const logout = document.getElementById("logout");
     logout.addEventListener("click", function (){
         window.location.assign("/stech.manager/login");
@@ -24,26 +24,26 @@ document.addEventListener('DOMContentLoaded', function () {
         modalCreateNotification.show();
     })
 
-    confirmCreate.addEventListener('click', async function (){
-        const valueTitle = document.getElementById('title').value;
-        const valueContent = document.getElementById('content').value;
-        const formData = new URLSearchParams();
-        formData.append("title", valueTitle);
-        formData.append("content", valueContent);
-        fetch('/api/addNotificationPublic', {
-            headers: {
-                'Authorization': `${token}`,
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            method: "POST",
-            body: formData,
-        }).then((response) => {
-            console.log(response)
-            location.reload();
-        }).catch((error) => {
-            console.error("Error:", error);
-        });
-    })
+    // confirmCreate.addEventListener('click', async function (){
+    //     const valueTitle = document.getElementById('title').value;
+    //     const valueContent = document.getElementById('content').value;
+    //     const formData = new URLSearchParams();
+    //     formData.append("title", valueTitle);
+    //     formData.append("content", valueContent);
+    //     fetch('/api/addNotificationPublic', {
+    //         headers: {
+    //             'Authorization': `${token}`,
+    //             "Content-Type": "application/x-www-form-urlencoded",
+    //         },
+    //         method: "POST",
+    //         body: formData,
+    //     }).then((response) => {
+    //         console.log(response)
+    //         location.reload();
+    //     }).catch((error) => {
+    //         console.error("Error:", error);
+    //     });
+    // })
 
     //Update Notification
     openModalUpdate.forEach(function (button) {
@@ -52,32 +52,33 @@ document.addEventListener('DOMContentLoaded', function () {
             const valueContent = this.getAttribute('data-content');
             const valueTitle = this.getAttribute('data-title');
 
+            document.getElementById('idUpdate').value = notifiId;
             document.getElementById('upTitle').value = valueTitle;
             document.getElementById('upContent').value = valueContent;
 
             modalUpdateNotification.show();
 
-            confirmUpdate.addEventListener('click', async function(){
-                const newTitle = document.getElementById('upTitle').value;
-                const newContent = document.getElementById('upContent').value;
-                const formData = new URLSearchParams();
-                formData.append("title", newTitle);
-                formData.append("content", newContent);
-                formData.append("notificationId", notifiId);
-                fetch('/api/editNotification', {
-                    headers: {
-                        'Authorization': `${token}`,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    method: "POST",
-                    body: formData,
-                }).then((response) => {
-                    console.log(response)
-                    location.reload();
-                }).catch((error) => {
-                    console.error("Error:", error);
-                });
-            })
+            // confirmUpdate.addEventListener('click', async function(){
+            //     const newTitle = document.getElementById('upTitle').value;
+            //     const newContent = document.getElementById('upContent').value;
+            //     const formData = new URLSearchParams();
+            //     formData.append("title", newTitle);
+            //     formData.append("content", newContent);
+            //     formData.append("notificationId", notifiId);
+            //     fetch('/api/editNotification', {
+            //         headers: {
+            //             'Authorization': `${token}`,
+            //             "Content-Type": "application/x-www-form-urlencoded",
+            //         },
+            //         method: "POST",
+            //         body: formData,
+            //     }).then((response) => {
+            //         console.log(response)
+            //         location.reload();
+            //     }).catch((error) => {
+            //         console.error("Error:", error);
+            //     });
+            // })
         })
     })
 
@@ -85,26 +86,25 @@ document.addEventListener('DOMContentLoaded', function () {
     openModalDelete.forEach(function (button){
         button.addEventListener('click', function (){
             const notifiId = this.getAttribute('data-id');
-            const dataDelete = new URLSearchParams();
-            dataDelete.append("nonotificationId", notifiId);
+            document.getElementById('idNotifiDelete').value = notifiId;
             modalDeleteNotification.show();
-            confirmDelete.addEventListener('click', async function(){
-                fetch('/api/deleteNotification',{
-                    headers: {
-                        'Authorization': `${token}`,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    method: "POST",
-                    body: dataDelete,
-                })
-                    .then((response) => {
-                        console.log(response)
-                        location.reload();
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    });
-            })
+            // confirmDelete.addEventListener('click', async function(){
+            //     fetch('/api/deleteNotification',{
+            //         headers: {
+            //             'Authorization': `${token}`,
+            //             "Content-Type": "application/x-www-form-urlencoded",
+            //         },
+            //         method: "POST",
+            //         body: dataDelete,
+            //     })
+            //         .then((response) => {
+            //             console.log(response)
+            //             location.reload();
+            //         })
+            //         .catch((error) => {
+            //             console.error("Error:", error);
+            //         });
+            // })
         })
     })
 })

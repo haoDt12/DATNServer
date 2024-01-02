@@ -123,13 +123,18 @@ block content
                     table.table.table-striped.align-middle.table-nowrap
                         thead
                             tr
+                                th.text-center Image
                                 th.text-center Title
                                 th.text-start Content
                                 th.text-center Date
+                                th.text-center Action
                         tbody
                             each notification in notifications
                                 tr
-                                    td(style='width: 300px;')
+                                    td(style='width:150px')
+                                        .avatar-lg.me-4
+                                            img.img-fluid.rounded(src=notification.img,style='width:100px; height: 90px;', alt='')
+                                    td(style='width: 250px;')
                                         div
                                             h5.font-size-15.text-center(style='font-size: 14px;')
                                                 a.text-dark(href='ecommerce-product-detail.html')= notification.title
@@ -137,36 +142,18 @@ block content
                                         div
                                             h5.font-size-18.text-start(style='font-size: 14px;')
                                                 a.text-dark(href='ecommerce-product-detail.html')= notification.content
-                                    td
+                                    td(style='width: 200px;')
                                         div
                                             h5.font-size-18.text-center(style='font-size: 14px;')
-                                                a.text-dark(href='ecommerce-product-detail.html')= notification.date
+                                                a.text-dark(href='ecommerce-product-detail.html')= notification.create_time
 
                                     td
                                         .dropdown.text-center
                                             a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
                                                 i.bx.text-center
                                             .dropdown-menu.dropdown-menu-end
-                                                a.dropdown-item( class = "openModalUpdateNotifi" data-id = notification._id data-title = notification.title data-content = notification.content data-bs-toggle="modal") Sửa thông báo
+                                                a.dropdown-item( class = "openModalUpdateNotifi" data-id = notification._id data-title = notification.title data-img = notification.img data-content = notification.content data-bs-toggle="modal") Sửa thông báo
                                                 a.dropdown-item( class = "openModalDeleteNotifi" data-id = notification._id data-bs-toggle="modal") Xóa thông báo
-                //- Start Pagination
-                .text-center.mt-3.mt-sm-3
-                    ul.pagination.justify-content-center.mb-0
-                        li.page-item.disabled
-                            span.page-link Prev
-                        li.page-item.active(aria-current='page')
-                            span.page-link 1
-                            span.sr-only (current)
-                        li.page-item
-                            a.page-link(href='#') 2
-                        li.page-item
-                            a.page-link(href='#') 3
-                        li.page-item
-                            a.page-link(href='#') ...
-                        li.page-item
-                            a.page-link(href='#') 25
-                        li.page-item
-                            a.page-link(href='#') Next
                 //- End Pagination
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
@@ -180,41 +167,52 @@ block content
                             h5.modal-title Warning!
                         .modal-body
                             p Bạn có chắc chắn muốn xóa?
-                        .modal-footer
-                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id = 'buttonConfirmDelete') Đồng ý
+                            .modal-body
+                                form(action="/stech.manager/deleteNotification" method="post")
+                                    .mb-3.d-none
+                                        label.form-label(for='title')
+                                        input#idNotifiDelete.form-control(name='NotifiId', type='text', aria-describedby='textHelp')
+                                    button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                    button.ms-3.btn.btn-danger(type='submit') Đồng ý
             #CreateNotificationModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Tạo thông báo
                         .modal-body
-                            form(action="/" method="post")
+                            form(action="/stech.manager/createNotification" method="post" enctype='multipart/form-data')
                                 .mb-3
                                     label.form-label(for='title') Title
-                                    input#title.form-control(placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp')
+                                    input#title.form-control(name='title' placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp' required)
                                 .mb-3
                                     label.form-label(for='content') Content
-                                    input#content.form-control(type='textarea', placeholder='Thể loại thông báo', name='type', aria-describedby='textHelp')
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmCreate') Lưu thông báo
+                                    input#content.form-control(name='content' type='textarea', placeholder='Thể loại thông báo', aria-describedby='textHelp' required)
+                                .mb-3
+                                    label.form-label(for='content') Image
+                                    input#img_cover.form-control(name='img' type='file'  accept='image/*')
+                                button.mt-3.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                button.mt-3.ms-2.btn.btn-outline-dark-light(type='submit') Save
             #UpdateNotificationModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Cập nhật thông báo
                         .modal-body
-                            form(action="/" method="post")
+                            form(action="/stech.manager/updateNotification" method="post" enctype='multipart/form-data')
+                                .mb-3.d-none
+                                    label.form-label(for='upTitle')
+                                    input#idUpdate.form-control(name='notificationId', type='text', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='upTitle') Title
-                                    input#upTitle.form-control(placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp')
+                                    input#upTitle.form-control(name='title' placeholder='Nhập Title thông báo', type='text', aria-describedby='textHelp')
                                 .mb-3
                                     label.form-label(for='upContent') Content
-                                    input#upContent.form-control(type='textarea', placeholder='Thể loại thông báo', name='type', aria-describedby='textHelp')
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button.btn.btn-outline-dark-light(type='button' id = 'buttonConfirmUpdate') Lưu thông báo
+                                    input#upContent.form-control(name='content' type='textarea', placeholder='Thể loại thông báo', aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='content') Image
+                                    input.form-control(name='img' type='file'  accept='image/*')
+                                button.mt-3.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                                button.mt-3.ms-2.btn.btn-outline-dark-light(type='submit') Save
     script(src='/js/notification.js')
     script.
         function removeDiacritics(str) {
