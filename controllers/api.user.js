@@ -520,7 +520,6 @@ exports.getAnyUserById = async (req, res) => {
     }
 };
 
-
 exports.addFCM = async (req, res) => {
     let userId = req.body.userId;
     let fcm = req.body.fcm;
