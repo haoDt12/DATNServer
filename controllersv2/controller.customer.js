@@ -4,6 +4,7 @@ const moment = require("moment");
 const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass, sendVerifyCus} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
+const UserModel = require("../models/model.user");
 require("dotenv").config();
 const match = [
     "image/jpeg",
@@ -315,3 +316,16 @@ exports.editCus = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+exports.getListCustomer = async (req, res) => {
+    try {
+        let listCus = await CustomerModel.customerModel.find();
+        return res.send({
+            listCus: listCus,
+            message: "get list customer success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+};
