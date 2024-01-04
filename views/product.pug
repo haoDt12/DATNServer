@@ -198,14 +198,14 @@ block content
                                 .mb-3
                                     th quantity
                                     input#Addquantity.form-control.text-center(class='quantity-checkbox' style='width: 90px;' type='number' name='quantity' min='1' value='1')
-                                .mb-3
+                                .mb-3.d-none
                                     th productId
                                     input#productId.form-control.text-center(type='text' name='productId' readonly)
                                 .mb-3
                                     h4.mt-3 Tổng tiền:
                                         span#total.ms-2
                                 button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                                button#ConfirmAddCartPro1.btn.btn-outline-dark-light(type='submit' data-bs-dismiss='modal') Thêm vào giỏ hàng
+                                button.ms-3#ConfirmAddCartPro1.btn.btn-outline-dark-light(type='submit' data-bs-dismiss='modal') Thêm vào giỏ hàng
 
             #DeleteProductModal.modal(tabindex='-1')
                 .modal-dialog
