@@ -7,6 +7,13 @@ document.addEventListener('DOMContentLoaded', function (){
     const openModalConfirm = document.getElementById('openModalConfirm');
     //Button Confirm
     const buttonConfirm = document.getElementById('buttonConfirm');
+    const idCartProduct = document.querySelectorAll('.idCartProduct');
+
+    let arrIdCart = [];
+
+    idCartProduct.forEach(function (idCart) {
+        arrIdCart.push(idCart.getAttribute('data_id'))
+    })
 
     openModalConfirm.addEventListener('click', function (){
         ConfirmModal.show();
@@ -27,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function (){
             guest_phoneNumber: valuePhone,
             guest_address: valueAddress,
             list_order: valueProduct,
+            arrIdCart: arrIdCart,
             employee_id: id,
             status: 'PayComplete',
             userId: id
@@ -52,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function (){
             document.cookie = `dataToInvoice=${encodeURIComponent(JSON.stringify(dataToInvoice))}`;
 
             window.location.href = "/stech.manager/invoice";
-            // location.reload();
+            location.reload();
         }).catch((error) => {
             console.error("Error:", error);
         });

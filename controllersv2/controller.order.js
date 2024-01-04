@@ -1,11 +1,14 @@
 const OrderModel = require("../modelsv2/model.order");
 const DetailOrder = require("../modelsv2/model.detailorder");
 const ProductModel = require("../modelsv2/model.product");
+const ProductCartModel = require("../modelsv2/model.ProductCart");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const moment = require("moment");
+const mongoose = require('mongoose');
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
+const ProductImg = require("../modelsv2/model.imgproduct");
 
 exports.createOrder = async (req, res) => {
     let list_order = req.body.list_order;
@@ -63,6 +66,7 @@ exports.createOrder = async (req, res) => {
 }
 exports.createOrderGuest = async (req, res) => {
     let list_order = req.body.list_order;
+    let arrIdCart = req.body.arrIdCart;
     let employee_id = req.body.employee_id;
     let guest_name = req.body.guest_name;
     let guest_phoneNumber = req.body.guest_phoneNumber;
@@ -106,6 +110,11 @@ exports.createOrderGuest = async (req, res) => {
             await product.save();
             await detailOrder.save();
         }));
+
+        await Promise.all(arrIdCart.map(async item => {
+            const itemId = new mongoose.Types.ObjectId(item);
+            await ProductCartModel.productCartModel.findByIdAndDelete(itemId);
+        }))
         order.total_amount = total_amount;
         await order.save();
         return res.send({message: "Create order success", code: 1});

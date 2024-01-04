@@ -136,10 +136,11 @@ block content
                                                                     i#titleUp.d-block.text-dark(style='display: inline-block; margin-left: 5px;')= product.product_ram ? product.product_ram : 'không có'
                                                                 span.text-muted(style='display: inline-block; margin-left: 5px;') rom:
                                                                     i#titleUp.d-block.text-dark(style='display: inline-block; margin-left: 5px;')= product.product_rom ? product.product_rom : 'không có'
+                                                                span.d-none.text-muted(style='display: inline-block; margin-left: 5px;')
+                                                                    a.d-block.text-dark(style='display: inline-block; margin-left: 5px;', class = 'idCartProduct' data_id = product._id)= product._id
                                                 td#priceUp.text-right.font-weight-semibold.align-middle.p-4(style='width: 180px') #{Intl.NumberFormat('vi-VN').format(product.product_price)} VND
                                                 td#priceUp.text-right.font-weight-semibold.align-middle.p-4= product.quantity
                                                 button.d-none.btn.btn-danger(type='button' id = 'product' value = products)
-
 
                                                 td#total.text-right.font-weight-semibold.align-middle.p-4( style='width: 180px' class='total-checkbox' data-id=product._id data-value=product.quantity * product.product_price) #{Intl.NumberFormat('vi-VN').format(product.quantity * product.product_price)} VND
                                 .mb-3.mt-3
