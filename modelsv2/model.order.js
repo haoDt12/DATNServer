@@ -6,12 +6,15 @@ const orderSchema = db.mongoose.Schema({
         required: false,
         default: null
     },
-    customer_id: {type: db.mongoose.Schema.Types.ObjectId, ref: "customer", required: true},
+    customer_id: {type: db.mongoose.Schema.Types.ObjectId, ref: "customer", required: false},
     employee_id: {type: db.mongoose.Schema.Types.ObjectId, ref: "employees", required: false, default: null},
-    delivery_address_id: {type: db.mongoose.Schema.Types.ObjectId, ref: "delivery_address", required: true},
+    delivery_address_id: {type: db.mongoose.Schema.Types.ObjectId, ref: "delivery_address", required: false},
     status: {type: String, required: true, default: "WaitConfirm"},
     total_amount: {type: String, required: true, default: "0"},
     create_time: {type: String, required: true},
+    guest_name: {type: String, required: false},
+    guest_phoneNumber: {type: String, required: false},
+    guest_address: {type: String, required: false},
 }, {
     collection: "Orders"
 });

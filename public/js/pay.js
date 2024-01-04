@@ -23,22 +23,16 @@ document.addEventListener('DOMContentLoaded', function (){
 
         const valueProduct = document.getElementById('product').value;
 
-        const formData = new URLSearchParams();
-        formData.append('guestName', valueName);
-        formData.append('guestPhone', valuePhone);
-        formData.append('guestAddress', valueAddress);
-        formData.append('product', valueProduct);
-        formData.append('status', 'PayComplete');
-
-        const data = {guestName: valueName,
-            guestPhone: valuePhone,
-            guestAddress: valueAddress,
-            product: valueProduct,
+        const data = {guest_name: valueName,
+            guest_phoneNumber: valuePhone,
+            guest_address: valueAddress,
+            list_order: valueProduct,
+            employee_id: id,
             status: 'PayComplete',
             userId: id
         }
 
-        fetch('http://localhost:3000/api/creatOrderGuest', {
+        fetch('http://localhost:3000/apiv2/createOrderGuest', {
             headers: {
                 'Authorization': token,
                 "Content-Type": "application/json",
@@ -47,23 +41,21 @@ document.addEventListener('DOMContentLoaded', function (){
             body: JSON.stringify(data),
         }).then((response) => {
             console.log(response)
+            const dataToInvoice = {
+                guestName: valueName,
+                guestPhone: valuePhone,
+                guestPhone: valuePhone,
+                guestAddress: valueAddress,
+                product: JSON.parse(valueProduct),
+            }
+
+            document.cookie = `dataToInvoice=${encodeURIComponent(JSON.stringify(dataToInvoice))}`;
+
+            window.location.href = "/stech.manager/invoice";
             // location.reload();
         }).catch((error) => {
             console.error("Error:", error);
         });
-
-        const dataToInvoice = {
-            guestName: valueName,
-            guestPhone: valuePhone,
-            guestPhone: valuePhone,
-            guestAddress: valueAddress,
-            product: JSON.parse(valueProduct),
-        }
-
-        document.cookie = `dataToInvoice=${encodeURIComponent(JSON.stringify(dataToInvoice))}`;
-
-        window.location.href = "/stech.manager/invoice";
-
     })
 
 })
