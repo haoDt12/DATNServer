@@ -295,9 +295,7 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
 
         await productVideo.save();
         await product.save();
-        res.redirect(req.get('referer'));
-        return res.send({message: "Edit product success", code: 1});
-
+        return res.redirect('/stech.manager/product');
     } catch (e) {
         console.log(e);
         return res.send({message: e.message.toString(), code: 0});
