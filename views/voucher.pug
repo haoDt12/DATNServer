@@ -120,6 +120,21 @@ block content
                         input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
                         button#searchButton.btn.btn-outline-secondary(type='submit') Search
                 .row
+                    .col-md-6
+                        .card.rounded-3.p-3.ps-5
+                            h3 Voucher được sử dụng nhiều nhất
+                            .card-body.p-2
+                                h6.fw-semibold.fs-4 Name: #{mostVoucher.name}
+                                h6.fw-semibold Date: #{mostVoucher.fromDate}  to  #{mostVoucher.toDate}
+                                h6.fw-semibold Số lần sử dụng: #{mostCount}
+                    .col-md-6
+                        .card.rounded-3.p-3.ps-5
+                            h3 Voucher được sử dụng ít nhất
+                            .card-body.p-2
+                                h6.fw-semibold.fs-4 Name: #{lessVoucher.name}
+                                h6.fw-semibold Date: #{lessVoucher.fromDate}  to  #{lessVoucher.toDate}
+                                h6.fw-semibold Số lần sử dụng: #{lessCount}
+                .row
                     table.table.table-striped.align-middle.table-nowrap
                         thead
                             tr
