@@ -3,7 +3,7 @@ var router = express.Router();
 const ProductModel = require("./../modelsv2/model.product");
 const ProductVideo = require("./../modelsv2/model.productvideo");
 const ProductImg = require("./../modelsv2/model.imgproduct");
-const OrderModel = require("./../models/model.order");
+const OrderModel = require("./../modelsv2/model.order");
 const CategoryModel = require("./../modelsv2/model.category");
 const CartModelv2 = require("../modelsv2/model.ProductCart");
 const UserModel = require("./../models/model.user");
@@ -27,6 +27,8 @@ const crypto = require("crypto");
 
 const {stat} = require("fs");
 const UploadFile = require("../models/uploadFile");
+const CustomerModel = require("../modelsv2/model.customer");
+const EmployeeModel = require("../modelsv2/model.employee");
 require("dotenv").config();
 
 /* GET home page. */
@@ -66,8 +68,8 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         const quantity = req.body.quantity;
         const color = req.body.color;
         const color_code = req.body.color_code;
-        const ram = req.body.ram;
-        const rom = req.body.rom;
+        const ram = req.body.ram !== "" ? req.body.ram : null;
+        const rom = req.body.rom !== "" ? req.body.rom : null;
         const description = req.body.description;
 
         const fileimg_cover = req.files["img_cover"];
@@ -78,7 +80,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         let date = new Date();
         let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
 
-        if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null || ram == null || rom == null) {
+        if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null) {
             return res.send({message: "All fields are required", code: 0});
         }
 
@@ -174,8 +176,8 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         const quantity = req.body.quantity;
         const color = req.body.color;
         const color_code = req.body.color_code;
-        const ram = req.body.ram;
-        const rom = req.body.rom;
+        const ram = req.body.ram !== "" ? req.body.ram : null;
+        const rom = req.body.rom !== "" ? req.body.rom : null;
         const description = req.body.description;
 
         const fileimg_cover = req.files["img_cover"];
@@ -213,10 +215,10 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         if (sold !== undefined) {
             product.sold = sold;
         }
-        if (ram !== undefined) {
+        if (ram !== null) {
             product.ram = ram;
         }
-        if (rom !== undefined) {
+        if (rom !== null) {
             product.rom = rom;
         }
         if (color !== undefined) {
@@ -419,6 +421,96 @@ router.get('/stech.manager/user', async function (req, res, next) {
         res.send({message: "user not found", code: 0});
     }
 });
+router.get('/stech.manager/customer', async function (req, res, next) {
+    try {
+
+        let listCus = await CustomerModel.customerModel.find();
+
+        res.render("customer", {
+            customers: listCus,
+            message: "get list customer success",
+            code: 1,
+        });
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "user not found", code: 0});
+    }
+});
+router.post('/stech.manager/deleteCustomer', async function (req, res, next) {
+    let customerId = req.body._id;
+    console.log('cusId', customerId)
+    if (customerId == null) {
+        return res.send({message: "product not found", code: 0});
+    }
+    // try {
+    //     await CustomerModel.customerModel.findByIdAndDelete(customerId);
+    //     await CustomerModel.customerModel.deleteMany({_id: customerId});
+    //     await CustomerModel.customerModel.findOneAndDelete({_id: customerId});
+    //
+    //     const customerFirebase = `Customer/${customerId}`;
+    //     await UploadFileFirebase.deleteFolderAndFiles(res, customerFirebase);
+    //     res.redirect(req.get('referer'));
+    // } catch (e) {
+    //     console.log(e);
+    //     return res.send({message: e.message.toString(), code: 0});
+    // }
+});
+router.get('/stech.manager/employee', async function (req, res, next) {
+    try {
+
+        let listEmployee = await EmployeeModel.employeeModel.find();
+
+        res.render("employee", {
+            employees: listEmployee,
+            message: "get list Employee success",
+            code: 1,
+        });
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "user not found", code: 0});
+    }
+});
+router.post('/stech.manager/AddEmployee',upload.fields([{name: "avatar", maxCount: 1}]), async function (req, res, next) {
+    try {
+        const full_name = req.body.full_name;
+        const password = req.body.password;
+        const fileAvatar = req.files["avatar"];
+        const email = req.body.email;
+        const phone_number = req.body.phone_number;
+        let date = new Date();
+        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+        let employee = new EmployeeModel.employeeModel({
+            full_name: full_name,
+            email: email,
+            password: password,
+            phone_number: phone_number,
+            create_time: create_time,
+        });
+
+        let avatar = await UploadFileFirebase.uploadFile(
+            req,
+            employee._id.toString(),
+            "avatar",
+            "Employees",
+            fileAvatar[0]
+        );
+
+        if (avatar === 0) {
+            return res.send({message: "Failed to upload avatar", code: 0});
+        }
+
+        employee.avatar = avatar;
+        await employee.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "Error adding employee", code: 0});
+    }
+});
+
+
 router.get("/stech.manager/verify", async function (req, res, next) {
     res.render("verify");
 });
@@ -927,23 +1019,10 @@ router.get("/stech.manager/order", async function (req, res, next) {
         var encodedValueStatus = req.cookies.status;
 
         if (encodedValueStatus === undefined || Buffer.from(encodedValueStatus, 'base64').toString('utf8') == 'All') {
-            let orders = await OrderModel.modelOrder.find();
+            let orders = await OrderModel.oderModel.find().populate('customer_id employee_id delivery_address_id');
             orders.reverse();
-            console.log('Orders:', orders);
-            let userId = req.cookies.Uid;
-            let user = await UserModel.userModel.findById(userId);
-            if (user.role === "Admin") {
-                const ordersWithProductInfo = await Promise.all(orders.map(async order => {
-                    const allProductInfo = await order.getAllProductInfo();
-                    const userInfo = await order.getUserInfo();
-                    console.log('ProductInfo:', allProductInfo);
-                    console.log('UserInfo:', userInfo);
-                    return {...order.toObject(), allProductInfo, userInfo};
-                }));
-                res.render("order", {orders: ordersWithProductInfo, message: "get list order success", code: 1});
-            } else {
-                res.render("error");
-            }
+
+            res.render("order", {orders: orders, message: "get list order success", code: 1});
 
         } else {
             let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
