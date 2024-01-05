@@ -6,6 +6,8 @@ require("dotenv").config();
 const moment = require("moment");
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
+const VoucherModel = require("../modelsv2/model.voucher");
+const MapVoucherModel = require("../modelsv2/model.map_voucher_cust")
 
 exports.createOrder = async (req, res) => {
     let list_order = req.body.list_order;
@@ -21,6 +23,7 @@ exports.createOrder = async (req, res) => {
         return res.send({message: "list order is required", code: 0});
     }
     try {
+        let voucherPrice = 0;
         let errorOccurred = false;
         let total_amount = 0;
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
@@ -50,10 +53,26 @@ exports.createOrder = async (req, res) => {
             let product = await ProductModel.productModel.findById(item.product_id);
             total_amount = total_amount + (Number(product.price) * Number(item.quantity));
             product.quantity = (Number(product.quantity) - Number(item.quantity)).toString();
+            product.sold = (Number(product.sold) + Number(item.quantity)).toString();
             await product.save();
             await detailOrder.save();
         }));
-        order.total_amount = total_amount;
+        if (map_voucher_cus_id !== null) {
+            let mapVoucher = await MapVoucherModel.mapVoucherModel.findOne({
+                _id: map_voucher_cus_id,
+                customer_id: data.cus._id,
+                is_used: false
+            });
+            if (mapVoucher) {
+                let voucher = VoucherModel.voucherModel.findById(mapVoucher.vocher_id);
+                if (voucher) {
+                    voucherPrice = Number(voucher.price);
+                    mapVoucher.is_used = true;
+                    await mapVoucher.save();
+                }
+            }
+        }
+        order.total_amount = total_amount - voucherPrice;
         await order.save();
         return res.send({message: "Create order success", code: 1});
     } catch (e) {
@@ -61,21 +80,65 @@ exports.createOrder = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
-exports.getOderByUser = async (req, res) => {
+
+exports.getOrderByStatus = async (req, res) => {
+    let status = req.body.status;
+    if (status == null) {
+        return res.send({message: "status is required", code: 0})
+    }
     try {
-        let listOrder = [];
+        let listDetailOrder = [];
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
         let cus = await CustomerModel.customerModel.findById(data.cus._id);
-        let order = await OrderModel.oderModel.find({customer_id: cus._id})
+        let order = await OrderModel.oderModel.find({
+            customer_id: cus._id,
+            status: status
+        })
             .populate("map_voucher_cus_id")
             .populate("customer_id")
             .populate("employee_id")
-            .populate("delivery_address_id");
+            .populate("delivery_address_id")
         await Promise.all(order.map(async item => {
-            let detailOrder = await DetailOrder.detailOrderModel.find({order_id: item._id}).populate("order_id").populate("product_id");
-            listOrder.push({detailOrder: detailOrder});
+            let listProduct = [];
+            // if(item.map_voucher_cus_id != null){
+            //     item.map_voucher_cus_id.vocher_id = await VoucherModel.voucherModel.findById(item.map_voucher_cus_id.vocher_id);
+            // }
+            let detailOrder = await DetailOrder.detailOrderModel.find({
+                order_id: item._id,
+            })
+                .populate("order_id")
+                .populate("product_id")
+            await Promise.all(detailOrder.map(async item => {
+                console.log(item)
+                let product = await ProductModel.productModel.findById(item.product_id);
+                product.quantity = item.quantity;
+                listProduct.push(product);
+            }))
+            listDetailOrder.push({order: item, listProduct: listProduct});
         }))
-        return res.send({message: "get order success", dataOrder: listOrder, code: 1})
+        return res.send({message: "get order success", listDetailOrder: listDetailOrder, code: 1})
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+exports.cancelOrder = async (req, res) => {
+    let orderId = req.body.orderId;
+    if (orderId == null) {
+        return res.send({message: "order id is required", code: 0})
+    }
+    try {
+        let order = await OrderModel.oderModel.findById(orderId);
+        if (order.status !== "WaitConfirm") {
+            return res.send({message: "Orders that have been sent cannot be canceled", code: 0})
+        }
+        if (order.map_voucher_cus_id !== null) {
+            let mapVoucher = await MapVoucherModel.mapVoucherModel.findById(order.map_voucher_cus_id);
+            mapVoucher.is_used = false;
+            await mapVoucher.save();
+        }
+        order.status = "Cancel";
+        await order.save();
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});

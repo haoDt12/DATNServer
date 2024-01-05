@@ -45,6 +45,7 @@ router.post("/getVoucherByIdV2",VoucherCtrl.getVoucherByIdV2);
 
 //order
 router.post("/createOrder",OrderCtrl.createOrder);
-router.post("/getOderByUser",OrderCtrl.getOderByUser);
+router.post("/getOrderByStatus",OrderCtrl.getOrderByStatus);
+router.post("/cancelOrder",OrderCtrl.cancelOrder);
 
 module.exports = router;
