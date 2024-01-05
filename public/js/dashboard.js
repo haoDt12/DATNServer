@@ -16,13 +16,9 @@ document.addEventListener("DOMContentLoaded", function() {
   let data_chart = [];
   async function GetStatisticsCusTom(from_date,to_date) {
     try {
-      const response = await axios.post(`/api/getOrderFromDateToDate`, {
+      const response = await axios.post(`/apiv2/getStatic`, {
         fromDate: from_date,
         toDate: to_date
-      }, {
-        headers: {
-          'Authorization': `${token}`
-        }
       });
       return response.data;
     } catch (error) {
@@ -172,15 +168,23 @@ document.addEventListener("DOMContentLoaded", function() {
   function reloadChart(chart) {
     chart.render();
   }
+  let dataSelect = ["2023", "2024", "2025"]
+  dataSelect.forEach(date =>{
+    let child = document.createElement("option")
+    child.value = date
+    child.text = date
+    select_year.appendChild(child)
+  })
 
-  let year_selected = "2023";
+  let year_selected = dataSelect[0];
   select_year.addEventListener('change', function (){
     year_selected = select_year.value;
+    console.log(year_selected)
   });
 
   let data_date = [];
   const previousWeek = new Date(date);
-  previousWeek.setDate(previousWeek.getDate() - 5);
+  previousWeek.setDate(previousWeek.getDate() - 6);
   for (let i = 0; i < 7; i++) {
     const currentDate = new Date(previousWeek);
     currentDate.setDate(currentDate.getDate() + i);
