@@ -48,7 +48,7 @@ router.post("/createOrder",OrderCtrl.createOrder);
 router.post("/getOrderByStatus",OrderCtrl.getOrderByStatus);
 router.post("/cancelOrder",OrderCtrl.cancelOrder);
 router.post("/createOrderGuest",OrderCtrl.createOrderGuest);
-router.post("/getOderByUser",OrderCtrl.getOderByUser);
+// router.post("/getOderByUser",OrderCtrl.getOderByUser);
 router.post("/getStatic", OrderCtrl.getStatic);
 
 module.exports = router;

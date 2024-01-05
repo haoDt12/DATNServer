@@ -358,6 +358,9 @@ router.get("/stech.manager/category", async function (req, res, next) {
 router.get("/stech.manager/login", function (req, res, next) {
     res.render("login");
 });
+router.get("/stech.manager/typeLogin", function (req, res, next) {
+    res.render("type_of_login");
+});
 router.get("/stech.manager/register", function (req, res, next) {
     res.render("register");
 });

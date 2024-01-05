@@ -83,6 +83,7 @@ exports.createOrder = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+
 exports.createOrderGuest = async (req, res) => {
     let list_order = req.body.list_order;
     let arrIdCart = req.body.arrIdCart;
@@ -184,6 +185,7 @@ exports.getOrderByStatus = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+
 exports.cancelOrder = async (req, res) => {
     let orderId = req.body.orderId;
     if (orderId == null) {
@@ -206,6 +208,7 @@ exports.cancelOrder = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+
 exports.getStatic = async (req, res) => {
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
