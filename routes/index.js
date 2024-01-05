@@ -12,6 +12,7 @@ const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
 const VoucherModel = require("./../modelsv2/model.voucher");
 const NotificationModel = require("./../modelsv2/model.notification");
+const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -1026,23 +1027,11 @@ router.get("/stech.manager/order", async function (req, res, next) {
 
         } else {
             let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
-            let orders = await OrderModel.modelOrder.find({status: valueStatus});
+            let orders = await OrderModel.oderModel.find({status: valueStatus}).populate('customer_id employee_id delivery_address_id');
+            orders.reverse();
 
-            let userId = req.cookies.Uid;
-            let user = await UserModel.userModel.findById(userId);
-            if (user.role === "Admin") {
-                console.log('Orders:', orders);
-                const ordersWithProductInfo = await Promise.all(orders.map(async order => {
-                    const allProductInfo = await order.getAllProductInfo();
-                    const userInfo = await order.getUserInfo();
-                    console.log('ProductInfo:', allProductInfo);
-                    console.log('UserInfo:', userInfo);
-                    return {...order.toObject(), allProductInfo, userInfo};
-                }));
-                res.render("order", {orders: ordersWithProductInfo, message: "get list order success", code: 1});
-            } else {
-                res.render("error");
-            }
+            res.render("order", {orders: orders, message: "get list order success", code: 1});
+
 
         }
 
@@ -1206,15 +1195,72 @@ router.get("/stech.manager/edit_product_action", async function (req, res, next)
 //Voucher
 router.get("/stech.manager/voucher", async function (req, res, next) {
     try {
+        //Voucher su dung nhieu nhat
+        let mostVoucherValue = await MapVoucherCus.mapVoucherModel.aggregate([
+            {
+                $match: {
+                    is_used: true
+                }
+            },
+            {
+                $group: {
+                    _id: "$vocher_id",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { count: -1 } // Sắp xếp theo số lần sử dụng giảm dần
+            },
+            {
+                $limit: 1
+            },
+            {
+                $project: {
+                    vocher_id: "$_id", // Chỉ định lại tên trường
+                    count: 1
+                }
+            }
+        ]);
+
+        let mostVoucher = await VoucherModel.voucherModel.findById(mostVoucherValue[0]._id);
+
+// Voucher được sử dụng ít nhất
+        let lessVoucherValue = await MapVoucherCus.mapVoucherModel.aggregate([
+            {
+                $group: {
+                    _id: "$vocher_id",
+                    count: { $sum: { $cond: [{ $eq: ["$is_used", true] }, 1, 0] } }
+                }
+            },
+            {
+                $sort: { count: 1 } // Sắp xếp theo số lần sử dụng tăng dần
+            },
+            {
+                $limit: 1
+            },
+            {
+                $project: {
+                    vocher_id: "$_id", // Chỉ định lại tên trường
+                    count: 1
+                }
+            }
+        ]);
+
+        let lessVoucher = await VoucherModel.voucherModel.findById(lessVoucherValue[0]._id);
+
         let listVoucher = await VoucherModel.voucherModel.find();
         res.render("voucher", {
             vouchers: listVoucher,
+            mostVoucher: mostVoucher,
+            mostCount: mostVoucherValue[0].count,
+            lessVoucher: lessVoucher,
+            lessCount: lessVoucherValue[0].count,
             message: "get list voucher success",
             code: 1,
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "user not found", code: 0});
+        res.send({message: "voucher not found", code: 0});
     }
 });
 router.post("/stech.manager/createVoucher", async function (req, res, next) {

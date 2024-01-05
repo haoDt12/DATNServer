@@ -115,6 +115,7 @@ exports.createOrderGuest = async (req, res) => {
             guest_name: guest_name,
             guest_phoneNumber: guest_phoneNumber,
             guest_address: guest_address,
+            status: 'PayComplete',
         });
         let listProduct = JSON.parse(list_order);
         await Promise.all(listProduct.map(async item => {
