@@ -27,6 +27,8 @@ const crypto = require("crypto");
 
 const {stat} = require("fs");
 const UploadFile = require("../models/uploadFile");
+const CustomerModel = require("../modelsv2/model.customer");
+const EmployeeModel = require("../modelsv2/model.employee");
 require("dotenv").config();
 
 /* GET home page. */
@@ -419,6 +421,96 @@ router.get('/stech.manager/user', async function (req, res, next) {
         res.send({message: "user not found", code: 0});
     }
 });
+router.get('/stech.manager/customer', async function (req, res, next) {
+    try {
+
+        let listCus = await CustomerModel.customerModel.find();
+
+        res.render("customer", {
+            customers: listCus,
+            message: "get list customer success",
+            code: 1,
+        });
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "user not found", code: 0});
+    }
+});
+router.post('/stech.manager/deleteCustomer', async function (req, res, next) {
+    let customerId = req.body._id;
+    console.log('cusId', customerId)
+    if (customerId == null) {
+        return res.send({message: "product not found", code: 0});
+    }
+    // try {
+    //     await CustomerModel.customerModel.findByIdAndDelete(customerId);
+    //     await CustomerModel.customerModel.deleteMany({_id: customerId});
+    //     await CustomerModel.customerModel.findOneAndDelete({_id: customerId});
+    //
+    //     const customerFirebase = `Customer/${customerId}`;
+    //     await UploadFileFirebase.deleteFolderAndFiles(res, customerFirebase);
+    //     res.redirect(req.get('referer'));
+    // } catch (e) {
+    //     console.log(e);
+    //     return res.send({message: e.message.toString(), code: 0});
+    // }
+});
+router.get('/stech.manager/employee', async function (req, res, next) {
+    try {
+
+        let listEmployee = await EmployeeModel.employeeModel.find();
+
+        res.render("employee", {
+            employees: listEmployee,
+            message: "get list Employee success",
+            code: 1,
+        });
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "user not found", code: 0});
+    }
+});
+router.post('/stech.manager/AddEmployee',upload.fields([{name: "avatar", maxCount: 1}]), async function (req, res, next) {
+    try {
+        const full_name = req.body.full_name;
+        const password = req.body.password;
+        const fileAvatar = req.files["avatar"];
+        const email = req.body.email;
+        const phone_number = req.body.phone_number;
+        let date = new Date();
+        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+        let employee = new EmployeeModel.employeeModel({
+            full_name: full_name,
+            email: email,
+            password: password,
+            phone_number: phone_number,
+            create_time: create_time,
+        });
+
+        let avatar = await UploadFileFirebase.uploadFile(
+            req,
+            employee._id.toString(),
+            "avatar",
+            "Employees",
+            fileAvatar[0]
+        );
+
+        if (avatar === 0) {
+            return res.send({message: "Failed to upload avatar", code: 0});
+        }
+
+        employee.avatar = avatar;
+        await employee.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "Error adding employee", code: 0});
+    }
+});
+
+
 router.get("/stech.manager/verify", async function (req, res, next) {
     res.render("verify");
 });
