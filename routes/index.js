@@ -66,8 +66,8 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         const quantity = req.body.quantity;
         const color = req.body.color;
         const color_code = req.body.color_code;
-        const ram = req.body.ram;
-        const rom = req.body.rom;
+        const ram = req.body.ram !== "" ? req.body.ram : null;
+        const rom = req.body.rom !== "" ? req.body.rom : null;
         const description = req.body.description;
 
         const fileimg_cover = req.files["img_cover"];
@@ -78,7 +78,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         let date = new Date();
         let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
 
-        if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null || ram == null || rom == null) {
+        if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null) {
             return res.send({message: "All fields are required", code: 0});
         }
 
@@ -174,8 +174,8 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         const quantity = req.body.quantity;
         const color = req.body.color;
         const color_code = req.body.color_code;
-        const ram = req.body.ram;
-        const rom = req.body.rom;
+        const ram = req.body.ram !== "" ? req.body.ram : null;
+        const rom = req.body.rom !== "" ? req.body.rom : null;
         const description = req.body.description;
 
         const fileimg_cover = req.files["img_cover"];
@@ -293,9 +293,7 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
 
         await productVideo.save();
         await product.save();
-        res.redirect(req.get('referer'));
-        return res.send({message: "Edit product success", code: 1});
-
+        return res.redirect('/stech.manager/product');
     } catch (e) {
         console.log(e);
         return res.send({message: e.message.toString(), code: 0});
