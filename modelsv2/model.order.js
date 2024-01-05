@@ -11,6 +11,7 @@ const orderSchema = db.mongoose.Schema({
     delivery_address_id: {type: db.mongoose.Schema.Types.ObjectId, ref: "delivery_address", required: false},
     status: {type: String, required: true, default: "WaitConfirm"},
     total_amount: {type: String, required: true, default: "0"},
+    payment_methods: {type: String, required: true, default: "Thanh Toán Khi Nhận Hàng"},
     create_time: {type: String, required: true},
     guest_name: {type: String, required: false},
     guest_phoneNumber: {type: String, required: false},

@@ -189,7 +189,7 @@ exports.getVoucherByIdV2 = async (req, res) => {
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
-    }
+    }x
 }
 function filterVouchersForUser(listVoucher) {
     const currentDate = moment();
