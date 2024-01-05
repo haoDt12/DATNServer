@@ -1,32 +1,14 @@
 const CustomerModel = require("../modelsv2/model.customer");
-const UploadFile = require("../models/uploadFile");
 const moment = require("moment");
 const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass, sendVerifyCus} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const UserModel = require("../models/model.user");
 require("dotenv").config();
-const match = [
-    "image/jpeg",
-    "image/*",
-    "image/png",
-    "image/gif",
-    "image/bmp",
-    "image/tiff",
-    "image/webp",
-    "image/svg+xml",
-    "image/x-icon",
-    "image/jp2",
-    "image/heif",
-];
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const passwordRegex =
     /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
-let mEmail = null;
-let mFull_name = null;
-let mPhone_number = null;
-let mAvatar = null;
 exports.registerCustomer = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
@@ -268,47 +250,55 @@ exports.addFCM = async (req, res) => {
     let cusId = req.body.cusId;
     let fcm = req.body.fcm;
     if (fcm == null) {
-        return res.send({ message: "fcm is required", code: 0 });
+        return res.send({message: "fcm is required", code: 0});
     }
     if (cusId == null) {
-        return res.send({ message: "cus id is required", code: 0 });
+        return res.send({message: "cus id is required", code: 0});
     }
     try {
         let cus = await CustomerModel.customerModel.findById(cusId);
         if (!cus) {
-            return res.send({ message: "cus not found", code: 0 });
+            return res.send({message: "cus not found", code: 0});
         }
         cus.fcm = fcm;
         await cus.save();
-        return res.send({ message: "add fcm success", code: 1 });
+        return res.send({message: "add fcm success", code: 1});
     } catch (e) {
         console.log(`error add fcm: ${e.message}`);
-        return res.send({ message: e.message.toString(), code: 0 })
+        return res.send({message: e.message.toString(), code: 0})
     }
 }
-exports.editCus = async (req, res) => {
+exports.sendOtpEditCus = async (req, res) => {
     let email = req.body.email;
-    let full_name = req.body.full_name;
     let phone_number = req.body.phone_number;
+    let full_name = req.body.full_name;
     let avatar = req.body.avatar;
+    console.log(`email ${email} phone ${phone_number} name ${full_name} avt ${avatar}`)
     try {
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
         let cus = await CustomerModel.customerModel.findById(data.cus._id);
-        if(email !== null){
-            mEmail = email;
+        if (email !== null) {
+            if (!emailRegex.test(email)) {
+                return res.send({message: "The email is not in the correct format", code: 0});
+            }
         }
-        if(full_name !== null){
-            mFull_name = full_name;
+        if (phone_number !== null) {
+            if (!emailRegex.test(email)) {
+                return res.send({message: "The number phone is not in the correct format", code: 0});
+            }
         }
-        if(phone_number !== null){
-            cus.email = phone_number;
+
+        let index = sendOTPByEmail(cus.email);
+        if (index === 0) {
+            return res.send({
+                message: "send otp fail",
+                code: 0,
+            });
         }
-        if(avatar !== null){
-            cus.email = avatar;
-        }
+        cus.otp = index;
         await cus.save();
         return res.send({
-            message: "edit cus success",
+            message: "Enter the otp code to confirm changing personal information",
             code: 1,
         });
     } catch (e) {
@@ -329,3 +319,46 @@ exports.getListCustomer = async (req, res) => {
         return res.send({ message: e.message.toString(), code: 0 });
     }
 };
+exports.editCus = async (req, res) => {
+    let otp = req.body.otp;
+    let full_name = req.body.full_name;
+    let email = req.body.email;
+    let phone_number = req.body.phone_number;
+    let avatar = req.body.avatar;
+    try {
+        let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
+        let cus = await CustomerModel.customerModel.findOne({_id: data.cus._id, otp: otp});
+        if(cus){
+            cus.otp = null;
+            if (email !== null) {
+                if (!emailRegex.test(email)) {
+                    cus.email = email;
+                    return res.send({message: "The email is not in the correct format", code: 0});
+                }
+            }
+            if (phone_number !== null) {
+                if (!emailRegex.test(email)) {
+                    cus.phone_number = phone_number;
+                    return res.send({message: "The number phone is not in the correct format", code: 0});
+                }
+            }
+            if(full_name !== null){
+                cus.full_name = full_name;
+            }
+            if(avatar !== null){
+                cus.avatar = avatar;
+            }
+            await cus.save();
+            return res.send({
+                message: "Edit cus success",
+                code: 1,
+            });
+        }else {
+            return res.send({message: "wrong otp", code: 0});
+        }
+
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}

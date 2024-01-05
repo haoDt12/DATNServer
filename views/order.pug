@@ -139,41 +139,72 @@ block content
                     table.table.table-striped.align-middle.table-nowrap
                         thead
                             tr
-                                th.text-center Ảnh
-                                th.text-center NameProduct
                                 th.text-center InfoUser
+                                th.text-center InfoEmployee
+                                th InfoAddress
+                                th.text-center Status
                                 th.text-center Action
                         tbody
                             each order in orders
                                 tr
-                                    td(style='text-align: center;')
-                                        .avatar-lg.me-4
-                                            img.img-fluid.rounded(src=order.allProductInfo[0].img_cover,style='max-width: 70%; height: 90px;', alt='')
-                                    td.list-unstyled.ps-0.mb-0
-                                        div
-                                            h5.font-size-18.text-center(style='font-size: 20px;')
-                                                a.text-dark(href='#')= order.allProductInfo[0].title
                                     td
                                         ul.list-unstyled.ps-0.mb-0
-                                            if order.userInfo
+                                            if order.customer_id
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
-                                                            =  order.userInfo.full_name
+                                                            =  order.customer_id.full_name
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
-                                                            = order.userInfo.phone_number
-                                            if !order.userInfo
+                                                            = order.customer_id.phone_number
+                                            if !order.customer_id
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
-                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name: Tên người dùng
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
+                                                            = order.guest_name
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
-                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone: Số điện thoại
-                                            a.dropdown-item.d-none(id="btnGetAddress" data-status = order.addressId)
-                                            a.dropdown-item.d-none(id="btnGetImg" data-status = order.allProductInfo[0].img_cover)
-                                            a.dropdown-item.d-none(id="btnGetTitle" data-status = order.allProductInfo[0].title)
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
+                                                            = order.guest_phoneNumber
+                                    td
+                                        ul.list-unstyled.ps-0.mb-0
+                                            if order.employee_id
+                                                li
+                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
+                                                            =  order.employee_id.full_name
+                                                li
+                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
+                                                            = order.employee_id.phone_number
+                                            if !order.employee_id
+                                                li
+                                                    p.text-muted.mb-1.text-truncate.text-center
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Trống
+                                    td
+                                        ul.list-unstyled.ps-0.mb-0
+                                            if order.delivery_address_id
+                                                li
+                                                    p.text-muted.mb-1.text-truncate
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
+                                                            =  order.delivery_address_id.name
+                                                li
+                                                    p.text-muted.mb-1.text-truncate
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 City:
+                                                            = order.delivery_address_id.city
+                                                li
+                                                    p.text-muted.mb-1.text-truncate
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Street:
+                                                            = order.delivery_address_id.street
+                                            if !order.customer_id
+                                                li
+                                                    p.text-muted.mb-1.text-truncate
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Address:
+                                                            = order.guest_address
+                                    td
+                                        p.text-muted.mb-1.text-truncate.text-center
+                                            | #{order.status}
                                     td
                                         .dropdown.text-center
                                                 a.text-muted.dropdown-toggle.font-size-20(href='#', role='button', data-bs-toggle='dropdown', aria-haspopup='true')
