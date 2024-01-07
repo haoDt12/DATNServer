@@ -83,6 +83,7 @@ exports.createOrder = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+
 exports.createOrderGuest = async (req, res) => {
     let list_order = req.body.list_order;
     let arrIdCart = req.body.arrIdCart;
@@ -115,6 +116,7 @@ exports.createOrderGuest = async (req, res) => {
             guest_name: guest_name,
             guest_phoneNumber: guest_phoneNumber,
             guest_address: guest_address,
+            status: 'PayComplete',
         });
         let listProduct = JSON.parse(list_order);
         await Promise.all(listProduct.map(async item => {
@@ -184,6 +186,7 @@ exports.getOrderByStatus = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+
 exports.cancelOrder = async (req, res) => {
     let orderId = req.body.orderId;
     if (orderId == null) {
@@ -205,4 +208,68 @@ exports.cancelOrder = async (req, res) => {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
     }
+}
+
+exports.getStatic = async (req, res) => {
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+
+    if (!startDate) {
+        return res.send({ message: "start date is required", code: 1 });
+    }
+    if (!endDate) {
+        return res.send({ message: "end date is required", code: 1 });
+    }
+
+    try {
+        const order = await OrderModel.oderModel.find({ status: "PayComplete" });
+
+        const dataOrder = order.map(item => ({
+            date: moment(item.date_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD"),
+            total: item.total
+        }));
+
+        const dataStatic = calculateOneDay(dataOrder, startDate, endDate);
+
+        const data = dataStatic.map(item => item.total);
+
+        return res.send({
+            message: "get order from date to date success",
+            code: 1,
+            data: data
+        });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+};
+
+function calculateOneDay(data, fromDate, toDate) {
+    const totals = {};
+    const dateRange = generateDateRange(fromDate, toDate);
+
+    for (const date of dateRange) {
+        totals[date] = 0;
+    }
+
+    for (const item of data) {
+        const date = item.date;
+        const total = item.total;
+
+        totals[date] = (totals[date] || 0) + total;
+    }
+
+    return Object.entries(totals).map(([date, total]) => ({ date, total }));
+}
+
+function generateDateRange(fromDate, toDate) {
+    const dateRange = [];
+    const startDate = new Date(fromDate);
+    const endDate = new Date(toDate);
+
+    for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+        dateRange.push(currentDate.toISOString().split('T')[0]);
+    }
+
+    return dateRange;
 }
