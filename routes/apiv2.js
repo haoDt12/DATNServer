@@ -27,6 +27,8 @@ router.post("/getCategory", CategoryController.getCategory);
 //product
 router.post("/getAllProduct", ProductController.getAllProduct);
 router.post("/getDetailProduct", ProductController.getDetailProduct);
+router.post("/getProductRunOut", ProductController.getRunOutProducts);
+
 
 // cart
 router.post("/addCart", ProductCartCtrl.addCard);

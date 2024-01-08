@@ -41,3 +41,45 @@ exports.getDetailProduct = async (req, res) => {
     return res.send({ message: e.message.toString(), code: 0 });
   }
 };
+
+exports.getRunOutProducts = async (req, res) => {
+  let products = await ProductModel.productModel.find();
+  let productsRunOut = getProductsInRange(products)
+  const ProductsRunOut = getTopProducts(10, productsRunOut);
+  try {
+    return res.send({ message: "get product is running out success", data: ProductsRunOut, code: 1 });
+  }catch (e) {
+    console.log(e.message);
+    return res.send({ message: e.message.toString(), code: 0 });
+  }
+}
+
+exports.getHotSellProducts = async (req, res) => {
+  let products = await ProductModel.productModel.find();
+  let productsRunOut = getProductsInRange(products)
+  const ProductsRunOut = getTopProducts(10, productsRunOut);
+  try {
+    return res.send({ message: "get product is running out success", data: ProductsRunOut, code: 1 });
+  }catch (e) {
+    console.log(e.message);
+    return res.send({ message: e.message.toString(), code: 0 });
+  }
+}
+function getTopProducts(number, products) {
+  const sortedProducts = sortProductsByQuantity(products);
+  return sortedProducts.slice(0, number);
+}
+function getTopSaleProducts(number, products) {
+  const sortedProducts = sortProductsBySold(products);
+  return sortedProducts.slice(0, number);
+}
+function sortProductsByQuantity(products) {
+  return products.sort((a, b) => a.quantity - b.quantity);
+}
+function sortProductsBySold(products) {
+  return products.sort((a, b) => b.sold - a.sold);
+}
+function getProductsInRange(products) {
+  let limit = Math.min(products.quantity);
+  return products.filter(product => product.quantity >= 1 && product.quantity <= limit);
+}

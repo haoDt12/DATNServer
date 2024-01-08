@@ -225,8 +225,8 @@ exports.getStatic = async (req, res) => {
         const order = await OrderModel.oderModel.find({ status: "PayComplete" });
 
         const dataOrder = order.map(item => ({
-            date: moment(item.date_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD"),
-            total: item.total
+            create_time: moment(item.create_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD"),
+            total_amount: item.total_amount
         }));
 
         const dataStatic = calculateOneDay(dataOrder, startDate, endDate);
@@ -244,6 +244,37 @@ exports.getStatic = async (req, res) => {
     }
 };
 
+exports.getTopProduct = async (req, res) => {
+    try {
+        let order = await OrderModel.oderModel.find({ status: "PayComplete" });
+        let arrIdPro = [];
+        let data = []
+        order.map(item => {
+            item.product.map(data => {
+                arrIdPro.push(data.productId);
+            });
+        })
+        let top10Product = getTopFrequencies(arrIdPro);
+        await Promise.all(top10Product.map(async item => {
+            let product = await ProductModel.productModel.findById(item.productId);
+            data.push({
+                productId: item.productId,
+                img: product.img_cover,
+                count: item.count
+            })
+        }));
+        return res.send({
+            message: "get top 10 success",
+            code: 1,
+            name: "top10Product",
+            data: data
+        })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+}
+
 function calculateOneDay(data, fromDate, toDate) {
     const totals = {};
     const dateRange = generateDateRange(fromDate, toDate);
@@ -253,8 +284,8 @@ function calculateOneDay(data, fromDate, toDate) {
     }
 
     for (const item of data) {
-        const date = item.date;
-        const total = item.total;
+        const date = item.create_time;
+        const total = item.total_amount;
 
         totals[date] = (totals[date] || 0) + total;
     }
@@ -272,4 +303,18 @@ function generateDateRange(fromDate, toDate) {
     }
 
     return dateRange;
+}
+
+function getTopFrequencies(array) {
+    const _frequencies = {};
+    array.forEach(item => {
+        _frequencies[item] = (_frequencies[item] || 0) + 1;
+    });
+    const frequencyArray = Object.entries(_frequencies);
+    frequencyArray.sort((a, b) => b[1] - a[1]);
+    const tops = frequencyArray.slice(0, 10).map(entry => ({
+        productId: entry[0],
+        count: entry[1],
+    }));
+    return tops;
 }
