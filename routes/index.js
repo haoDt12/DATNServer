@@ -13,6 +13,7 @@ const MessageModel = require("./../models/model.message");
 const VoucherModel = require("./../modelsv2/model.voucher");
 const NotificationModel = require("./../modelsv2/model.notification");
 const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
+const AdminModel = require("./../modelsv2/model.admin");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -30,6 +31,9 @@ const {stat} = require("fs");
 const UploadFile = require("../models/uploadFile");
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
+const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
+
+const axios = require("axios");
 require("dotenv").config();
 
 /* GET home page. */
@@ -474,7 +478,10 @@ router.get('/stech.manager/employee', async function (req, res, next) {
         res.send({message: "user not found", code: 0});
     }
 });
-router.post('/stech.manager/AddEmployee',upload.fields([{name: "avatar", maxCount: 1}]), async function (req, res, next) {
+router.post('/stech.manager/AddEmployee', upload.fields([{
+    name: "avatar",
+    maxCount: 1
+}]), async function (req, res, next) {
     try {
         const full_name = req.body.full_name;
         const password = req.body.password;
@@ -1206,11 +1213,11 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
             {
                 $group: {
                     _id: "$vocher_id",
-                    count: { $sum: 1 }
+                    count: {$sum: 1}
                 }
             },
             {
-                $sort: { count: -1 } // Sắp xếp theo số lần sử dụng giảm dần
+                $sort: {count: -1} // Sắp xếp theo số lần sử dụng giảm dần
             },
             {
                 $limit: 1
@@ -1230,11 +1237,11 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
             {
                 $group: {
                     _id: "$vocher_id",
-                    count: { $sum: { $cond: [{ $eq: ["$is_used", true] }, 1, 0] } }
+                    count: {$sum: {$cond: [{$eq: ["$is_used", true]}, 1, 0]}}
                 }
             },
             {
-                $sort: { count: 1 } // Sắp xếp theo số lần sử dụng tăng dần
+                $sort: {count: 1} // Sắp xếp theo số lần sử dụng tăng dần
             },
             {
                 $limit: 1
@@ -1519,4 +1526,56 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
         return res.send({message: e.message.toString(), code: 0});
     }
 })
+
+//Login Admin
+router.get("/stech.manager/goLoginAdmin", function (req, res, next) {
+    res.render("loginAdmin");
+});
+
+router.post("/stech.manager/loginAdmin", async function (req, res, next) {
+    try {
+        let email = req.body.email;
+        let pass = req.body.password;
+        if (email == null) {
+            return res.send({message: "email is required", code: 0});
+        }
+        if (pass == null) {
+            return res.send({message: "password is required", code: 0});
+        }
+
+        let adminEmail = await AdminModel.adminModel.findOne({email: email, password: pass});
+        if (!adminEmail) {
+            return res.send({
+                message: "Login fail please check your Email and Password",
+                code: 0,
+            });
+        }
+
+        if (adminEmail) {
+            let index = sendOTPByEmail(adminEmail.email);
+            if (index === 0) {
+                return res.send({message: "Verify admin fail", code: 0});
+            } else {
+                adminEmail.otp = index;
+                await adminEmail.save();
+                res.cookie('Uid', adminEmail._id.toString(), { encode: String });
+                res.cookie('typeVerify', "login", { encode: String });
+                res.cookie('verifyWith', "Admin", { encode: String });
+                return res.render("verify",{
+                    message: "Please verify your account",
+                    id: adminEmail._id,
+                    code: 1,
+                });
+            }
+        }
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+});
+
+//Login Employee
+router.post("/stech.manager/goLoginEmployee", function (req, res, next) {
+    res.render("loginEmployee");
+});
 module.exports = router;
