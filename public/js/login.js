@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded",function () {
     const loginButton = document.getElementById("loginButton");
     // create function
+    let type = utils.GetCookie("LoginType");
     async function login(username, password) {
         try {
             const response = await axios.post('/api/loginUser', {
@@ -39,22 +40,28 @@ document.addEventListener("DOMContentLoaded",function () {
     }
 
     loginButton.addEventListener("click",function () {
-        const user = document.getElementById("username").value;
-        const pass = document.getElementById("password").value;
-        if (validFormLogin(user, pass)) {
-            login(user, pass).then(data => {
-                if (data.code === 1){
-                    const Uid = data.id;
-                    utils.PushCookie("Uid", Uid);
-                    localStorage.setItem("idUser", Uid);
-                    utils.PushCookie("typeVerify", "login");
-                    window.location.assign('/stech.manager/verify');
-                }else {
-                    utils.showMessage(data.message);
-                }
-            }).catch(error => {
+        if (type === "LoginWithEmployee"){
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            if (validFormLogin(user, pass)) {
+                login(user, pass).then(data => {
+                    if (data.code === 1){
+                        const Uid = data.id;
+                        utils.PushCookie("Uid", Uid);
+                        localStorage.setItem("idUser", Uid);
+                        utils.PushCookie("typeVerify", "login");
+                        window.location.assign('/stech.manager/verify');
+                    }else {
+                        utils.showMessage(data.message);
+                    }
+                }).catch(error => {
                     console.error('Login error:', error);
                 });
+            }
         }
+        else if (type === "LoginWithAdmin"){
+            // viết y đúc thay api admin vào
+        }
+
     });
 });
