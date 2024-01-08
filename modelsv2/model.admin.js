@@ -6,6 +6,7 @@ const adminSchema = db.mongoose.Schema({
     password: {type: String, required: true},
     phone_number: {type: String, required: true},
     create_time: {type: String, required: true},
+    otp: {type: String, required: false},
 },{
     collection:"Admins"
 });
