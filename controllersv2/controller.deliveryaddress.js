@@ -1,5 +1,5 @@
 const DeliveryAddressModel = require("../modelsv2/model.deliveryaddress");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 exports.getDeliveryAddress = async (req, res) => {

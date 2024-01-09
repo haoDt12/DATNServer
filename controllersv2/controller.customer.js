@@ -1,5 +1,5 @@
 const CustomerModel = require("../modelsv2/model.customer");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass, sendVerifyCus} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");

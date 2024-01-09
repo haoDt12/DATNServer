@@ -1,6 +1,6 @@
 const CartModel = require("../models/model.cart");
 const ProductModal = require("../models/model.product")
-const moment = require("moment/moment");
+const moment = require("moment-timezone");
 exports.addCart = async (req, res) => {
     let userId = req.body.userId;
     let productId = req.body.productId;

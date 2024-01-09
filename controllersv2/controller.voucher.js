@@ -1,5 +1,5 @@
 const VoucherModel = require("../modelsv2/model.voucher");
-const moment = require("moment/moment");
+const moment = require("moment-timezone");
 const CusModel = require("../modelsv2/model.customer");
 const MapVoucherModel = require("../modelsv2/model.map_voucher_cust");
 const jwt = require("jsonwebtoken");

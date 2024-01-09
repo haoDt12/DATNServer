@@ -1,5 +1,5 @@
 const ProductCart = require("../modelsv2/model.ProductCart");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const Product = require("../modelsv2/model.product");
 const CartModel = require("../models/model.cart");
 const CartModelv2 = require("../modelsv2/model.ProductCart");

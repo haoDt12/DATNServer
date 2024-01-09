@@ -2,7 +2,7 @@ const OrderModel = require("../models/model.order");
 const ProductModel = require("../models/model.product");
 const Cart = require("../models/model.cart");
 let Voucher = require("../models/model.voucher");
-const moment = require("moment/moment");
+const moment = require("moment-timezone");
 exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;

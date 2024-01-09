@@ -1,5 +1,5 @@
 const MapVoucherModel = require("../modelsv2/model.map_voucher_cust");
-const moment = require("moment/moment");
+const moment = require("moment-timezone");
 
 exports.getMapVoucher = async (req, res) => {
     try {

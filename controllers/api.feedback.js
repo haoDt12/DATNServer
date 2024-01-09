@@ -1,6 +1,6 @@
 const Feedback = require("../models/model.feedback");
 const Oder = require("../models/model.order");
-const moment = require("moment/moment");
+const moment = require("moment-timezone");
 class FeedBackCtrl {
   async addFeedBack(req, res) {
     const { userId, productId, rating, comment, nameUser, avtUser } = req.body;

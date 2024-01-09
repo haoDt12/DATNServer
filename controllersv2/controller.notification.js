@@ -1,6 +1,5 @@
 const NotificationModel = require("../modelsv2/model.notification");
-const moment = require("moment");
-
+const moment = require("moment-timezone");
 exports.getNotification = async (req, res) => {
     try {
         let notification = await  NotificationModel.notificationModel.find();
