@@ -75,7 +75,7 @@ block content
                                 i.ti.ti-dots.nav-small-cap-icon.fs-4
                                 span.hide-menu AUTH
                             li.sidebar-item
-                                a.sidebar-link(href='/stech.manager/login' aria-expanded='false')
+                                a.sidebar-link(href='/stech.manager/type_login' aria-expanded='false')
                                     span
                                         i.ti.ti-login
                                     span.hide-menu Login
@@ -107,7 +107,7 @@ block content
                                         .receipt-right
                                             h5= guestName
                                             p
-                                                b Mobile :
+                                                b Phone Number :
                                                 |  #{guestPhone}
                                             p
                                                 b Address :
@@ -133,10 +133,6 @@ block content
                                             td.text-left.text-muted
                                                 p
                                                     strong Tổng cộng:
-                                                p
-                                                    strong Thuế VAT:
-                                                p
-                                                    strong Số tiền phải trả:
                                             td
                                             td.text-muted
                                                 p
@@ -149,20 +145,6 @@ block content
                                                             - return total + (product.quantity * product.product_price);
                                                             - }, 0);
                                                             = Intl.NumberFormat('vi-VN').format(totalPrice) + ' VND'
-                                                p
-                                                    strong
-                                                        i.fa.fa-inr
-                                                        | 10%
-                                                p
-                                                    strong
-                                                        i.fa.fa-inr
-                                                        |
-                                                        if products && products.length > 0
-                                                            // Tính tổng giá trị của các sản phẩm
-                                                            - var totalPrice = products.reduce(function (total, product) {
-                                                            - return total + (product.quantity * product.product_price);
-                                                            - }, 0);
-                                                            = Intl.NumberFormat('vi-VN').format(totalPrice + 0.1 * totalPrice) + ' VND'
                                         tr
                                             td.text-right.text-muted
                                                 h2

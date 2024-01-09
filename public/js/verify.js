@@ -35,10 +35,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     window.addEventListener("load", () => inputs[0].focus());
 
-    async function verifyLogin(userId, otp) {
+    async function verifyLoginAdmin(userId, otp) {
         try {
-            const response = await axios.post('/api/verifyOtpLogin', {
-                userId: userId,
+            const response = await axios.post('/apiv2/verifyOtpLoginAdmin', {
+                adminId: userId,
+                otp: otp
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    async function verifyLoginEmployee(userId, otp) {
+        try {
+            const response = await axios.post('/apiv2/verifyOtpLoginEmployee', {
+                employeeId: userId,
                 otp: otp
             });
             return response.data;
@@ -67,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const verifyWith = utils.GetCookie("verifyWith");
         if (typeVerify === "login") {
             if (verifyWith === "Admin") {
-                verifyLogin(Uid, otp).then(data => {
+                verifyLoginAdmin(Uid, otp).then(data => {
                     if (data.code === 1) {
                         const token = data.token;
                         utils.PushCookie("token", token);
@@ -78,12 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 }).catch(error => {
                     console.error('Login error:', error);
                 });
-            } else if (verifyWith === "Employee00"){
-              verifyLogin(Uid, otp).then(data  => {
+            } else if (verifyWith === "Employee"){
+              verifyLoginEmployee(Uid, otp).then(data  => {
                 if (data.code === 1) {
                   const token = data.token;
                   utils.PushCookie("token", token);
-                  window.location.assign('/stech.manager/home');
+                  window.location.assign('/stech.manager/product');
                 }else {
                   utils.showMessage(data.message);
                 }

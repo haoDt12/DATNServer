@@ -92,24 +92,44 @@ block content
                     .card-body
                         a.page-link(href='#')
                         .row
-                            if detailOrder
+                            if order
                             h3.box-title.mt-1.ms-5 User Info
-                                if detailOrder.userInfo
+                                if order.customer_id
                                     .col-lg-3.col-md-5.col-sm-6
                                         .white-box
-                                            img.img-responsive.mt-2(src= detailOrder.userInfo.avatar, style='max-width: 200px; height: 200px;' )
+                                            img.img-responsive.mt-2(src= order.customer_id.avatar, style='max-width: 200px; height: 200px;' )
                                     .col-lg-7.col-md-7.col-sm-6
                                         h3.mt-3 Name:
-                                            =detailOrder.userInfo.full_name
+                                            = order.customer_id.full_name
                                         h5 Email:
-                                            =detailOrder.userInfo.email
+                                            = order.customer_id.email
                                         h5 Phone:
-                                            =detailOrder.userInfo.phone_number
-                                if !detailOrder.userInfo
+                                            = order.customer_id.phone_number
+                                if !order.customer_id
                                     .col-lg-7.col-md-7.col-sm-6
-                                        h3.mt-3 Name: Tên người dùng
-                                        h5 Email: Email ngời dùng
-                                        h5 Phone: Số điện thoại người dùng
+                                        h3.mt-3 Name:
+                                            = order.guest_name
+                                        h5 Phone:
+                                            = order.guest_phoneNumber
+                                        h5 Address:
+                                            = order.guest_address
+                            h3.box-title.mt-1.ms-5 Employee Info
+                                if order.employee_id
+                                    .col-lg-3.col-md-5.col-sm-6
+                                        .white-box
+                                            img.img-responsive.mt-2(src= order.employee_id.avatar, style='max-width: 200px; height: 200px;' )
+                                    .col-lg-7.col-md-7.col-sm-6
+                                        h3.mt-3 Name:
+                                            = order.employee_id.full_name
+                                        h5 Email:
+                                            = order.employee_id.email
+                                        h5 Phone:
+                                            = order.employee_id.phone_number
+                                if !order.employee_id
+                                    .col-lg-7.col-md-7.col-sm-6
+                                        h3.mt-3 Name: Trống
+                                        h5 Email: Trống
+                                        h5 Phone: Trống
                                 h3.box-title.mt-5.ms-5 Product Info
                                 .table-responsive
                                     table.table.table-striped.align-middle.table-nowrap
@@ -120,58 +140,50 @@ block content
                                                 th.text-center InfoProduct
                                                 th.text-center Giá sản phẩm
                                         tbody
-                                            each pro in detailOrder.allProductInfo
+                                            each pro in detailOrders
                                                 tr
                                                     td(style='text-align: center;')
                                                         .avatar-lg
-                                                            img.img-fluid.rounded(src=pro.img_cover,style='max-width: 100%; height: 100px;', alt='')
+                                                            img.img-fluid.rounded(src=pro.product_id.img_cover,style='max-width: 100%; height: 100px;', alt='')
                                                     td
                                                         div
                                                             h5.font-size-18.text-center(style='font-size: 20px;')
-                                                                a.text-dark(href='#')= pro.title
+                                                                a.text-dark(href='#')= pro.product_id.name
                                                     td
                                                         ul.list-unstyled.ps-0.mb-0
-                                                            each item in detailOrder.product
-                                                                if (item.productId.toString() === pro._id.toString())
+                                                            if (pro.product_id.color)
                                                                 li
                                                                     p.text-muted.mb-1.text-truncate.text-center
                                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Màu:
-                                                                            each optionColor in item.option
-                                                                                case optionColor.type
-                                                                                    when "Color"
-                                                                                        i.list-inline-item(style=`background-color: ${optionColor.content};width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
+                                                                            i.list-inline-item(style=`background-color: ${pro.product_id.color_code};width: 20px; height: 20px;display: inline-block; vertical-align: middle; margin-left: 5px;border-radius: 50%;`)
+                                                            if (pro.product_id.ram && pro.product_id.rom)
                                                                 li
                                                                     p.text-muted.mb-1.text-truncate.text-center
                                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Ram/Rom:
-                                                                            each optionColor in item.option
-                                                                                case optionColor.type
-                                                                                    when "Ram"
-                                                                                        = optionColor.content +'/'
-                                                                                    when "Rom"
-                                                                                        = optionColor.content
+                                                                            = pro.product_id.ram + ' / '+ pro.product_id.rom
                                                                 li
                                                                     p.text-muted.mb-1.text-truncate.text-center
                                                                         i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Số lượng:
-                                                                            =  item.quantity
+                                                                            =  pro.quantity
                                                     td
                                                         div
                                                             h5.font-size-18.text-center(style='font-size: 18px;')
-                                                                a.text-dark(href='#') #{Intl.NumberFormat('vi-VN').format(pro.price)} VNĐ
+                                                                a.text-dark(href='#') #{Intl.NumberFormat('vi-VN').format(pro.product_id.price)} VNĐ
                             h3.box-title.mt-5.ms-5 Order Info
                                 .col-lg-7.col-md-7.col-sm-6.ms-3
                                     h4.mt-3 Tổng giá đơn hàng:
-                                        span.ms-2 #{Intl.NumberFormat('vi-VN').format(detailOrder.total)} VNĐ
+                                        span.ms-2 #{Intl.NumberFormat('vi-VN').format(order.total_amount)} VNĐ
                                     h4 Trạng thái đơn hàng:
                                         span.ms-2
-                                            if detailOrder.status === 'WaitingGet'
+                                            if order.status === 'WaitingGet'
                                                 | Chờ lấy hàng
-                                            else if detailOrder.status === 'InTransit'
+                                            else if order.status === 'InTransit'
                                                 | Đang giao
-                                            else if detailOrder.status === 'PayComplete'
+                                            else if order.status === 'PayComplete'
                                                 | Đã thanh toán
-                                            else if detailOrder.status === 'WaitConfirm'
+                                            else if order.status === 'WaitConfirm'
                                                 | Chờ xác nhận
-                                            else if detailOrder.status === 'Cancel'
+                                            else if order.status === 'Cancel'
                                                 | Đơn đã hủy
 
                 script(src='https://code.jquery.com/jquery-1.10.2.min.js')

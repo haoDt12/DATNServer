@@ -2,10 +2,21 @@ document.addEventListener("DOMContentLoaded",function () {
     const loginButton = document.getElementById("loginButton");
     // create function
     let type = utils.GetCookie("LoginType");
-    async function login(username, password) {
+    async function loginAdmin(username, password) {
         try {
-            const response = await axios.post('/api/loginUser', {
-                username: username,
+            const response = await axios.post('/apiv2/loginAdmin', {
+                email: username,
+                password: password
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    async function loginEmployee(username, password) {
+        try {
+            const response = await axios.post('/apiv2/loginEmployee', {
+                email: username,
                 password: password
             });
             return response.data;
@@ -44,12 +55,14 @@ document.addEventListener("DOMContentLoaded",function () {
             const user = document.getElementById("username").value;
             const pass = document.getElementById("password").value;
             if (validFormLogin(user, pass)) {
-                login(user, pass).then(data => {
+                loginEmployee(user, pass).then(data => {
                     if (data.code === 1){
                         const Uid = data.id;
                         utils.PushCookie("Uid", Uid);
                         localStorage.setItem("idUser", Uid);
                         utils.PushCookie("typeVerify", "login");
+                        utils.PushCookie("verifyWith", "Employee");
+
                         window.location.assign('/stech.manager/verify');
                     }else {
                         utils.showMessage(data.message);
@@ -60,7 +73,25 @@ document.addEventListener("DOMContentLoaded",function () {
             }
         }
         else if (type === "LoginWithAdmin"){
-            // viết y đúc thay api admin vào
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            if (validFormLogin(user, pass)) {
+                loginAdmin(user, pass).then(data => {
+                    if (data.code === 1){
+                        const Uid = data.id;
+                        utils.PushCookie("Uid", Uid);
+                        localStorage.setItem("idUser", Uid);
+                        utils.PushCookie("typeVerify", "login");
+                        utils.PushCookie("verifyWith", "Admin");
+
+                        window.location.assign('/stech.manager/verify');
+                    }else {
+                        utils.showMessage(data.message);
+                    }
+                }).catch(error => {
+                    console.error('Login error:', error);
+                });
+            }
         }
 
     });

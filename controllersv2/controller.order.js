@@ -274,6 +274,26 @@ exports.getTopProduct = async (req, res) => {
         return res.send({ message: e.message.toString(), code: 0 });
     }
 }
+exports.updateStatusOrder = async (req, res) => {
+    let orderId = req.body.orderId;
+    let employeeId = req.body.employeeId;
+    let status = req.body.status;
+
+    if (orderId == null) {
+        return res.send({message: "order id is required", code: 0})
+    }
+    try {
+        let order = await OrderModel.oderModel.findById(orderId);
+
+        order.employee_id = employeeId;
+        order.status = status;
+        await order.save();
+        return res.send({ message: "edit order success", code: 1 });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
 
 function calculateOneDay(data, fromDate, toDate) {
     const totals = {};

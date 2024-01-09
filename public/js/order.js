@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function(){
 
     const token = utils.GetCookie("token");
+    const Uid = utils.GetCookie("Uid");
 
     const modalUpdateStatusOrder = new bootstrap.Modal(document.getElementById('UpdateStatusOrderModal'));
     //
@@ -32,88 +33,54 @@ document.addEventListener('DOMContentLoaded', function(){
             const orderId = this.getAttribute("data-id");
             const valueStatus = this.getAttribute("data-status");
             inputStatus.value = valueStatus;
-            console.log("Hello " + orderId);
-            console.log("Hello " + valueStatus);
-            const orderUpdateId = {
-                orderId: orderId
-            };
+            inputOrderId.value = orderId;
 
-            await axios.post("/api/getOrderByOrderId", orderUpdateId, {
-                headers: {
-                    'Authorization': token
-                },
-            }).then(function (response) {
-                let jsonData = response.data.order
-                inputOrderId.value = jsonData._id;
-                inputUserId.value = jsonData.userId;
-                // inputAddressId.value = jsonData.addressId;
-                // console.log("Hello " + JSON.stringify(jsonData.product, null,2));
-                // let jsonProduct = JSON.stringify(jsonData.product, null,2);
-                // console.log("Product: "+jsonProduct.title);
-            }).catch(function (error) {
-                console.log(error);
-            });
         });
     });
     confirmUpdateButton.forEach(function (button){
         button.addEventListener("click",async function () {
             const valueId = inputOrderId.value;
-            const valueUserId = inputUserId.value;
-            const valueAddressId = btnGetAddress.getAttribute("data-status");
-            const valueImg = btnGetImg.getAttribute("data-status");
-            const valueFirstTitle = btnGetTitle.getAttribute("data-status");
+
             const valueStatus = inputStatus.value;
 
-            console.log("Hello "+valueStatus);
-            console.log("Hello "+valueUserId);
-            console.log("Hello "+valueAddressId);
-            console.log("Hello "+valueImg);
-            console.log("Hello "+token);
+            // let status;
+            //
+            // if (valueStatus == 'WaitingGet'){
+            //     status = 'Chờ lấy hàng';
+            // } else if (valueStatus == 'InTransit'){
+            //     status = 'Đang giao'
+            // } else if (valueStatus == 'PayComplete'){
+            //     status = 'Đã thanh toán'
+            // } else if (valueStatus == 'WaitConfirm'){
+            //     status = 'Chờ xác nhận'
+            // } else if (valueStatus == 'Cancel'){
+            //     status = 'Đã hủy'
+            // }
+            //var encodedValueIdOrder = btoa(valueId);
 
-            // const formData = new FormData();
-            // formData.append("orderId", valueId);
-            // formData.append("status", valueStatus);
+            // const formData1 = new URLSearchParams();
+            // formData1.append("title", "Trạng thái đơn hàng");
+            // formData1.append("content", "Đơn hàng "+encodedValueIdOrder+" "+valueFirstTitle+" của bạn: "+status);
+            // formData1.append("userId", valueUserId);
+            // formData1.append("img", valueImg);
 
-            let status;
-            if (valueStatus == 'WaitingGet'){
-                status = 'Chờ lấy hàng';
-            } else if (valueStatus == 'InTransit'){
-                status = 'Đang giao'
-            } else if (valueStatus == 'PayComplete'){
-                status = 'Đã thanh toán'
-            } else if (valueStatus == 'WaitConfirm'){
-                status = 'Chờ xác nhận'
-            } else if (valueStatus == 'Cancel'){
-                status = 'Đã hủy'
-            }
-            var encodedValueIdOrder = btoa(valueId);
+            // fetch('/api/addNotificationPrivate', {
+            //     headers: {
+            //         'Authorization': `${token}`,
+            //         "Content-Type": "application/x-www-form-urlencoded",
+            //     },
+            //     method: "POST",
+            //     body: formData1,
+            // }).then((response) => {
+            //     console.log(response)
+            //     console.log("Thanh cong")
+            // }).catch((error) => {
+            //     console.error("Error:", error);
+            // });
 
-            const formData1 = new URLSearchParams();
-            formData1.append("title", "Trạng thái đơn hàng");
-            formData1.append("content", "Đơn hàng "+encodedValueIdOrder+" "+valueFirstTitle+" của bạn: "+status);
-            formData1.append("userId", valueUserId);
-            formData1.append("img", valueImg);
+            const formData = {orderId: valueId, employeeId: Uid, status: valueStatus};
 
-            fetch('/api/addNotificationPrivate', {
-                headers: {
-                    'Authorization': `${token}`,
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                method: "POST",
-                body: formData1,
-            }).then((response) => {
-                console.log(response)
-                console.log("Thanh cong")
-            }).catch((error) => {
-                console.error("Error:", error);
-            });
-
-            const formData = {orderId: valueId, userId: valueUserId, addressId: valueAddressId, status: valueStatus};
-
-            await axios.post("/api/editOrder", formData, {
-                headers:{
-                    'Authorization': token
-                },
+            await axios.post("/apiv2/updateStatusOrder", formData, {
             }).then(function (response) {
                 console.log(response);
                 location.reload();
@@ -128,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function(){
         detailLink.addEventListener("click", function(event) {
             event.preventDefault();
             var orderId = this.getAttribute("data-id");
-            var encodedProductId = btoa(orderId);
+            var encodedProductId = btoa(orderId.toString());
             console.log(encodedProductId); // Xuất mã hóa
             window.location.href = "/stech.manager/detail_order?orderId=" + encodedProductId;
         });
