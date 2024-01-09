@@ -28,7 +28,8 @@ exports.addAdmin = async (req, res) => {
     let phone_number = req.body.phone_number;
     let email = req.body.email;
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (password == null) {
         return res.send({message: "Password is required", code: 0});
     }
