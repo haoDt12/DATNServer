@@ -1,4 +1,4 @@
-const FeedBack = require("../modelsv2/model.feedbackv2");
+const FeedBack = require("../modelsv2/model.feedbackV2");
 const moment = require("moment-timezone");
 exports.addFeedback = async (req, res) => {
   const { customer_id, product_id, rating, comment } = req.body;
