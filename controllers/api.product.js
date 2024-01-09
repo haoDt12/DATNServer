@@ -2,7 +2,7 @@ const ProductModel = require("../models/model.product");
 const fs = require("fs");
 const path = require("path");
 const UploadFile = require("../models/uploadFile");
-const moment = require('moment');
+const moment = require("moment-timezone");
 const matchImg = [
     "image/jpeg",
     "image/png",
@@ -48,7 +48,8 @@ exports.addProduct = async (req, res) => {
     let quantity = req.body.quantity;
     let sold = req.body.sold;
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (category == null) {
         return res.send({ message: "category is required", code: 0 });
     }

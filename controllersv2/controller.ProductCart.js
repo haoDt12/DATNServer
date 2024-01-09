@@ -1,12 +1,13 @@
 const ProductCart = require("../modelsv2/model.ProductCart");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const Product = require("../modelsv2/model.product");
 const CartModel = require("../models/model.cart");
 const CartModelv2 = require("../modelsv2/model.ProductCart");
 exports.addCard = async (req, res) => {
   const { customer_id, product_id, quantity } = req.body;
   let date = new Date();
-  const date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+  let specificTimeZone = 'Asia/Ha_Noi';
+  let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
   if (customer_id === null) {
     return res.send({ message: "customer_id is required", code: 0 });
   }

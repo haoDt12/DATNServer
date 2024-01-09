@@ -2,7 +2,7 @@ const UserModel = require("../models/model.user");
 const UserTempModel = require("../models/model.user.temp");
 const { ObjectId } = require('mongodb');
 const UploadFile = require("../models/uploadFile");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
@@ -34,7 +34,8 @@ exports.addUser = async (req, res) => {
     let role = req.body.role;
 
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (password == null) {
         return res.send({ message: "Password is required", code: 0 });
     }
@@ -399,8 +400,8 @@ exports.verifyOtpLogin = async (req, res) => {
 
 exports.loginWithGoogle = async (req, res) => {
     let date = new Date();
-    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
-
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let id = req.body.id;
     let email = req.body.email;
     let displayName = req.body.displayName;
@@ -744,8 +745,8 @@ exports.checkToken = (req, res) => {
 
 exports.checkEmailExist = async (req, res) => {
     let date = new Date();
-    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
-
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     const email = req.body.email;
     if (!email) {
         return res.send({ message: "email is require", code: 0 });

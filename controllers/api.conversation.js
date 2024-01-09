@@ -2,7 +2,7 @@ const ConversationModel = require("../models/model.conversations")
 const UploadFile = require("../models/uploadFile");
 const fs = require("fs");
 const path = require("path");
-const moment = require('moment');
+const moment = require("moment-timezone");
 const UserModel = require("../models/model.user");
 const match = [
     "image/jpeg",
@@ -23,7 +23,8 @@ exports.createConversation = async (req, res) => {
         return res.send({ message: "wrong token", code: 0 });
     }
     let date = new Date();
-    let timestamp = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let name = req.body.name;
     let idUserSelected = req.body.idUserSelected;
 
@@ -59,7 +60,8 @@ exports.createConversation = async (req, res) => {
 
 exports.editConversation = async (req, res) => {
     let date = new Date();
-    let timestamp = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
     let name = req.body.name;
     let conversationId = req.body.conversationId;
     if (conversationId == null || conversationId.length == 0) {

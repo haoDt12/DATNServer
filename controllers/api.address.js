@@ -1,6 +1,6 @@
 const UserModel = require("../models/model.user");
 const AddressModel = require("../models/model.address");
-const moment = require('moment');
+const moment = require("moment-timezone");
 exports.addAddress = async (req, res, next) => {
     let userId = req.body.userId;
     let name = req.body.name;
@@ -8,7 +8,8 @@ exports.addAddress = async (req, res, next) => {
     let street = req.body.street;
     let phone_number = req.body.phone_number;
     let date = new Date();
-    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
     if (name == null) {
         return res.send({message: "name is required", code: 0});

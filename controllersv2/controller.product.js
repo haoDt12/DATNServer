@@ -4,14 +4,23 @@ const ProductModel = require("../modelsv2/model.product");
 exports.getAllProduct = async (req, res) => {
   try {
     let product = await ProductModel.productModel.find();
-    // await Promise.all(product.map(async item => {
-    //     let img = await ImgModel.productImgModel.find({product_id: item._id});
-    //     let video = await VideoModel.productVideoModel.find({product_id: item._id});
-    //     itemProduct.product = item;
-    //     itemProduct.img = img;
-    //     itemProduct.video = video;
-    //     data.push(itemProduct);
-    // }));
+    return res.send({
+      message: "get product success",
+      product: product,
+      code: 1,
+    });
+  } catch (e) {
+    console.log(e.message);
+    return res.send({ message: e.message.toString(), code: 0 });
+  }
+};
+exports.getProductByCategoryId = async (req, res) => {
+  let categoryId = req.body.categoryId;
+  if(categoryId == null){
+    return res.send({ message: "category id is required", code: 0 });
+  }
+  try {
+    let product = await ProductModel.productModel.find({category_id:categoryId});
     return res.send({
       message: "get product success",
       product: product,

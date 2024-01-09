@@ -1,6 +1,6 @@
 const VoucherModel = require("../models/model.voucher")
 const UserModel = require("../models/model.user");
-const moment = require('moment');
+const moment = require("moment-timezone");
 exports.addVoucherForOneUser = async (req, res) => {
     let userId = req.body.userId;
     let title = req.body.title;
