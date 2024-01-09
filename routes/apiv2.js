@@ -9,7 +9,7 @@ const DeliveryAddressCtrl = require("../controllersv2/controller.deliveryaddress
 const VoucherCtrl = require("../controllersv2/controller.voucher");
 const OrderCtrl = require("../controllersv2/controller.order");
 const FeedBackCtrl = require("../controllersv2/controller.feedback");
-
+const VnPayCtrl = require("../controllers/api.payvnpay");
 //customer
 router.post("/registerCustomer", CusController.registerCustomer);
 router.post("/loginCustomer", CusController.loginCustomer);
@@ -28,6 +28,7 @@ router.post("/getCategory", CategoryController.getCategory);
 router.post("/getAllProduct", ProductController.getAllProduct);
 router.post("/getDetailProduct", ProductController.getDetailProduct);
 router.post("/getProductRunOut", ProductController.getRunOutProducts);
+router.post("/getProductByCategoryId", ProductController.getProductByCategoryId);
 
 
 // cart
@@ -59,6 +60,9 @@ router.post("/getOrderByStatus", OrderCtrl.getOrderByStatus);
 router.post("/cancelOrder", OrderCtrl.cancelOrder);
 router.post("/createOrderGuest", OrderCtrl.createOrderGuest);
 router.post("/getStatic", OrderCtrl.getStatic);
+router.post("/getPriceOrderZaloPay", OrderCtrl.getPriceOrderZaloPay);
+router.post("/createOrderZaloPay", OrderCtrl.createOrderZaloPay);
+router.post("/createPaymentUrl", VnPayCtrl.createPaymentUrl);
 // feedback
 router.post("/addFeedback", FeedBackCtrl.addFeedback);
 router.post("/getFeedBackByProductId", FeedBackCtrl.getFeedBackByProductId);

@@ -48,7 +48,8 @@ exports.addProduct = async (req, res) => {
     let quantity = req.body.quantity;
     let sold = req.body.sold;
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (category == null) {
         return res.send({ message: "category is required", code: 0 });
     }

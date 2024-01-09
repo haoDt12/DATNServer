@@ -31,7 +31,7 @@ const {stat} = require("fs");
 const UploadFile = require("../models/uploadFile");
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
-const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
+const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass} = require("../models/otp");
 
 const axios = require("axios");
 require("dotenv").config();
@@ -83,8 +83,8 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         const sold = req.body.sold;
         const status = req.body.status;
         let date = new Date();
-        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
-
+        let specificTimeZone = 'Asia/Ha_Noi';
+        let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
         if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null) {
             return res.send({message: "All fields are required", code: 0});
         }
@@ -191,7 +191,8 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         const sold = req.body.sold;
         const status = req.body.status;
         let date = new Date();
-        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+        let specificTimeZone = 'Asia/Ha_Noi';
+        let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
         if (productId == null) {
             return res.send({message: "product not found", code: 0});
@@ -489,7 +490,8 @@ router.post('/stech.manager/AddEmployee', upload.fields([{
         const email = req.body.email;
         const phone_number = req.body.phone_number;
         let date = new Date();
-        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+        let specificTimeZone = 'Asia/Ha_Noi';
+        let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
         let employee = new EmployeeModel.employeeModel({
             full_name: full_name,
             email: email,
@@ -941,7 +943,8 @@ router.post("/stech.manager/AddCart", async (req, res) => {
         } else {
             // Nếu sản phẩm chưa tồn tại, tạo mới một item trong giỏ hàng
             let date = new Date();
-            let timestamp = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+            let specificTimeZone = 'Asia/Ha_Noi';
+            let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
             const cart = new CartModelv2.productCartModel({
                 customer_id: userID,
                 product_id: productID,
@@ -1279,7 +1282,8 @@ router.post("/stech.manager/createVoucher", async function (req, res, next) {
         let toDate = req.body.toDate;
         let fromDate = req.body.fromDate;
         let date = new Date();
-        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+        let specificTimeZone = 'Asia/Ha_Noi';
+        let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
         if (name == null) {
             return res.send({message: "title is required", code: 0});
@@ -1423,7 +1427,8 @@ router.post("/stech.manager/createNotification", upload.fields([{
     let title = req.body.title;
     let content = req.body.content;
     let date = new Date();
-    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     if (title == null) {
         return res.send({message: "title is required", code: 0});
@@ -1558,10 +1563,10 @@ router.post("/stech.manager/loginAdmin", async function (req, res, next) {
             } else {
                 adminEmail.otp = index;
                 await adminEmail.save();
-                res.cookie('Uid', adminEmail._id.toString(), { encode: String });
-                res.cookie('typeVerify', "login", { encode: String });
-                res.cookie('verifyWith', "Admin", { encode: String });
-                return res.render("verify",{
+                res.cookie('Uid', adminEmail._id.toString(), {encode: String});
+                res.cookie('typeVerify', "login", {encode: String});
+                res.cookie('verifyWith', "Admin", {encode: String});
+                return res.render("verify", {
                     message: "Please verify your account",
                     id: adminEmail._id,
                     code: 1,

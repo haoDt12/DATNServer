@@ -8,10 +8,10 @@ exports.addCart = async (req, res) => {
     let price = req.body.price;
     let imgCover = req.body.imgCover;
     let title = req.body.title;
-    let date = new Date();
     let option = req.body.option;
-
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (userId == null) {
         return res.send({ message: "userId is required", code: 0 });
     }

@@ -9,7 +9,8 @@ const moment = require("moment");
 // });
 exports.addNotificationPublic = async (req, res) => {
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let title = req.body.title;
     let content = req.body.content;
     if (title == null) {
@@ -41,7 +42,8 @@ exports.addNotificationPublic = async (req, res) => {
 }
 exports.addNotificationPrivate = async (req, res) => {
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let title = req.body.title;
     let content = req.body.content;
     let userId = req.body.userId;

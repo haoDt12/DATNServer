@@ -15,7 +15,8 @@ exports.registerCustomer = async (req, res) => {
     let full_name = req.body.full_name;
     let phone_number = req.body.phone_number;
     let date = new Date();
-    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let ipAddress = process.env.IP_ADDRESS;
     if (password === null) {
         return res.send({message: "Password is required", code: 0});
