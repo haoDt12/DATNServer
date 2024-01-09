@@ -1,5 +1,5 @@
 let $ = require('jquery');
-const moment = require('moment');
+const moment = require("moment-timezone");
 const querystring = require("qs");
 const crypto = require("crypto");
 require("dotenv").config();
@@ -20,12 +20,12 @@ let mDelivery_address_id;
 let ipAddress = process.env.IP_ADDRESS;
 let mData;
 exports.createPaymentUrl = async (req, res) => {
-    process.env.TZ = 'Asia/Ha_Noi';
     let list_order = req.body.list_order;
     let map_voucher_cus_id = req.body.map_voucher_cus_id;
     let employee_id = req.body.employee_id;
     let delivery_address_id = req.body.delivery_address_id;
     let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
     if (delivery_address_id == null) {
         return res.send({message: "Delivery address id is required", code: 0});
     }
@@ -64,7 +64,7 @@ exports.createPaymentUrl = async (req, res) => {
             }
         }
         total_amount = total_amount - voucherPrice;
-        let createDate = moment(date).format('YYYYMMDDHHmmss');
+        let createDate =  moment(date).tz(specificTimeZone).format('YYYYMMDDHHmmss');
         let ipAddr = req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
@@ -74,7 +74,7 @@ exports.createPaymentUrl = async (req, res) => {
         let secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
         let returnUrl = process.env.VNP_RETURN_URL;
-        let orderId = moment(date).format('DDHHmmss');
+        let orderId = moment(date).tz(specificTimeZone).format('DDHHmmss');
         let bankCode = req.body.bankCode;
         let locale = req.body.language;
         if (locale === null || locale === '') {

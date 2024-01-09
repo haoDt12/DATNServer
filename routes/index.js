@@ -20,7 +20,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage});
 
-const moment = require('moment');
+const moment = require("moment-timezone");
 const utils_1 = require('../public/js/ultils_1');
 const path = require("path");
 const mongoose = require('mongoose');

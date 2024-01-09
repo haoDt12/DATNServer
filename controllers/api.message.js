@@ -3,7 +3,7 @@ const MessageModel = require("../models/model.message");
 const fs = require("fs");
 const path = require("path");
 const UploadFile = require("../models/uploadFile");
-const moment = require('moment');
+const moment = require("moment-timezone");
 const { get } = require("http");
 const crypto = require("crypto");
 require("dotenv").config();

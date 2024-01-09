@@ -1,6 +1,6 @@
 const AdminModel = require("../models/model.admin");
 const UploadFile = require("../models/uploadFile");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const {sendOTPByEmail} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");

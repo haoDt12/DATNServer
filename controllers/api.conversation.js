@@ -2,7 +2,7 @@ const ConversationModel = require("../models/model.conversations")
 const UploadFile = require("../models/uploadFile");
 const fs = require("fs");
 const path = require("path");
-const moment = require('moment');
+const moment = require("moment-timezone");
 const UserModel = require("../models/model.user");
 const match = [
     "image/jpeg",

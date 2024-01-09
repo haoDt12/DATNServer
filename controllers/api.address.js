@@ -1,6 +1,6 @@
 const UserModel = require("../models/model.user");
 const AddressModel = require("../models/model.address");
-const moment = require('moment');
+const moment = require("moment-timezone");
 exports.addAddress = async (req, res, next) => {
     let userId = req.body.userId;
     let name = req.body.name;

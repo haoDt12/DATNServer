@@ -2,7 +2,7 @@ const ProductModel = require("../models/model.product");
 const fs = require("fs");
 const path = require("path");
 const UploadFile = require("../models/uploadFile");
-const moment = require('moment');
+const moment = require("moment-timezone");
 const matchImg = [
     "image/jpeg",
     "image/png",
