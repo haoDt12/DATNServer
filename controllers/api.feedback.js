@@ -1,11 +1,12 @@
 const Feedback = require("../models/model.feedback");
 const Oder = require("../models/model.order");
-const moment = require("moment/moment");
+const moment = require("moment-timezone");
 class FeedBackCtrl {
   async addFeedBack(req, res) {
     const { userId, productId, rating, comment, nameUser, avtUser } = req.body;
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (userId == null) {
       return res.send({ message: "userId is required", code: 0 });
     }

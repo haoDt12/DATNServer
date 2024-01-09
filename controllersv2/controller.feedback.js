@@ -1,9 +1,10 @@
 const FeedBack = require("../modelsv2/model.feedbackv2");
-const moment = require("moment");
+const moment = require("moment-timezone");
 exports.addFeedback = async (req, res) => {
   const { customer_id, product_id, rating, comment } = req.body;
   let date = new Date();
-  let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+  let specificTimeZone = 'Asia/Ha_Noi';
+  let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
   if (customer_id == null) {
     return res.send({ message: "customer_id is required", code: 0 });
   }

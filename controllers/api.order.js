@@ -2,7 +2,7 @@ const OrderModel = require("../models/model.order");
 const ProductModel = require("../models/model.product");
 const Cart = require("../models/model.cart");
 let Voucher = require("../models/model.voucher");
-const moment = require("moment/moment");
+const moment = require("moment-timezone");
 exports.creatOrder = async (req, res) => {
     let userId = req.body.userId;
     let product = req.body.product;
@@ -11,7 +11,8 @@ exports.creatOrder = async (req, res) => {
     let voucherId = req.body.voucherId;
     let check = 1;
     let date = new Date();
-    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (userId == null) {
         return res.send({ message: "userId is required", code: 0 });
     }
@@ -103,7 +104,8 @@ exports.creatOrderGuest = async (req, res) => {
     let userId = req.body.userId;
     let status = req.body.status;
     let date = new Date();
-    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (guestPhone == null) {
         return res.send({ message: "guestPhone is required", code: 0 });
     }
@@ -254,7 +256,8 @@ exports.editOrder = async (req, res) => {
     let addressId = req.body.addressId;
     let status = req.body.status;
     let date = new Date();
-    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     try {
         let order = await OrderModel.modelOrder.findById(orderId);
         if (!order) {
@@ -383,7 +386,8 @@ exports.creatOrderZaloPay = async (req, res) => {
     let voucherId = req.body.voucherId;
     let check = 1;
     let date = new Date();
-    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (userId == null) {
         return res.send({ message: "userId is required", code: 0 });
     }

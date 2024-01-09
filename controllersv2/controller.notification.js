@@ -1,6 +1,5 @@
 const NotificationModel = require("../modelsv2/model.notification");
-const moment = require("moment");
-
+const moment = require("moment-timezone");
 exports.getNotification = async (req, res) => {
     try {
         let notification = await  NotificationModel.notificationModel.find();
@@ -16,7 +15,9 @@ exports.addNotification = async (req, res) => {
     let title = req.body.title;
     let content = req.body.content;
     let img = req.body.img;
-    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     if (title == null) {
         return res.send({message: "title is required", code: 0});

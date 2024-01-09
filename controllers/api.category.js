@@ -2,7 +2,7 @@ const CategoryModel = require("../models/model.category");
 const UploadFile = require("../models/uploadFile");
 const fs = require("fs");
 const path = require("path");
-const moment = require('moment');
+const moment = require("moment-timezone");
 const match = [
     "image/jpeg",
     "image/png",
@@ -18,7 +18,8 @@ const match = [
 
 exports.addCategory = async (req, res) => {
     let date = new Date();
-    let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let title = req.body.title;
     let file = req.file;
     if (title == null) {

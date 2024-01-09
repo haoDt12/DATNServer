@@ -3,7 +3,7 @@ const MessageModel = require("../models/model.message");
 const fs = require("fs");
 const path = require("path");
 const UploadFile = require("../models/uploadFile");
-const moment = require('moment');
+const moment = require("moment-timezone");
 const { get } = require("http");
 const crypto = require("crypto");
 require("dotenv").config();
@@ -35,11 +35,9 @@ const matchVideo = [
     "video/mpeg",
 ];
 exports.addMessage = async (req, res) => {
-
-
     let date = new Date();
-    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
-
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let conversation = req.body.conversation;
     let senderId = req.body.senderId;
     let receiverId = req.body.receiverId;
@@ -237,7 +235,8 @@ exports.getMessageById = async (req, res) => {
 
 exports.getMessageByIDConversation = async (req, res) => {
     let date = new Date();
-    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     let conversationID = req.body.conversationID;
     if (conversationID == null || conversationID.length <= 0) {
@@ -258,7 +257,8 @@ exports.getMessageByIDConversation = async (req, res) => {
 }
 exports.getMessageLatest = async (req, res) => {
     let date = new Date();
-    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     let conversationIDs = req.body.conversationIDs;
     if (conversationIDs == null || conversationIDs.length <= 0) {
@@ -289,7 +289,8 @@ exports.getMessageLatest = async (req, res) => {
 
 exports.deleteMessage = async (req, res) => {
     let date = new Date();
-    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     let idMessage = req.body.idMsg;
     if (idMessage == null || idMessage.length <= 0) {
@@ -351,7 +352,8 @@ exports.deleteMessage = async (req, res) => {
 
 exports.updateStatusMessage = async (req, res) => {
     let date = new Date();
-    let timestamp = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     let idMessage = req.body.idMsg;
     let status = req.body.status;

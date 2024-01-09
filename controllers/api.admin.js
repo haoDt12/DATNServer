@@ -1,6 +1,6 @@
 const AdminModel = require("../models/model.admin");
 const UploadFile = require("../models/uploadFile");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const {sendOTPByEmail} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
@@ -28,7 +28,8 @@ exports.addAdmin = async (req, res) => {
     let phone_number = req.body.phone_number;
     let email = req.body.email;
     let date = new Date();
-    let date_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let date_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (password == null) {
         return res.send({message: "Password is required", code: 0});
     }

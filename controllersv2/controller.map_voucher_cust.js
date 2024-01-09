@@ -1,4 +1,5 @@
 const MapVoucherModel = require("../modelsv2/model.map_voucher_cust");
+const moment = require("moment-timezone");
 
 exports.getMapVoucher = async (req, res) => {
     try {
@@ -13,7 +14,9 @@ exports.addMapVoucher = async (req, res) => {
     let voucherId = req.body.voucher_id;
     let customerId = req.body.customer_id;
     let is_used = req.body.is_used;
-    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     if (voucherId == null) {
         return res.send({message: "voucherId is required", code: 0});
