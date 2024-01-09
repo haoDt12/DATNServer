@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function (){
             const dataToInvoice = {
                 guestName: valueName,
                 guestPhone: valuePhone,
-                guestPhone: valuePhone,
                 guestAddress: valueAddress,
                 product: JSON.parse(valueProduct),
             }
@@ -60,7 +59,6 @@ document.addEventListener('DOMContentLoaded', function (){
             document.cookie = `dataToInvoice=${encodeURIComponent(JSON.stringify(dataToInvoice))}`;
 
             window.location.href = "/stech.manager/invoice";
-            location.reload();
         }).catch((error) => {
             console.error("Error:", error);
         });

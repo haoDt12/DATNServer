@@ -14,6 +14,7 @@ const VoucherModel = require("./../modelsv2/model.voucher");
 const NotificationModel = require("./../modelsv2/model.notification");
 const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
 const AdminModel = require("./../modelsv2/model.admin");
+const DetailOrderModel = require("./../modelsv2/model.detailorder");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -42,7 +43,7 @@ router.get("/stech.manager/home", async function (req, res, next) {
         res.render("index");
     } catch (e) {
         console.log(e.message);
-        res.send({message: "product not found", code: 0})
+        res.send({message: "home not found", code: 0})
     }
 });
 router.get("/stech.manager/product_action", async function (req, res, next) {
@@ -330,9 +331,11 @@ router.post('/stech.manager/deleteProduct', async function (req, res, next) {
 router.get('/stech.manager/product', async function (req, res, next) {
     try {
         let listProduct = await ProductModel.productModel.find();
+        let terifyWith = req.cookies.verifyWith;
 
         res.render("product", {
             products: listProduct,
+            terifyWith: terifyWith,
             message: "get list product success",
             code: 1
         });
@@ -871,6 +874,7 @@ router.get("/stech.manager/chat", async function (req, res, next) {
 router.get("/stech.manager/cart", async function (req, res, next) {
     // const userId = req.query.userId;
     const userId = utils_1.getCookie(req, 'Uid');
+    let terifyWith = req.cookies.verifyWith;
     try {
         let cartUser = await CartModelv2.productCartModel.find({customer_id: userId})
         if (cartUser !== null) {
@@ -902,6 +906,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
             }))
             res.render("cart", {
                 dataCart: dataCart,
+                terifyWith: terifyWith,
                 message: "get list cart success",
                 code: 1,
             })
@@ -1026,19 +1031,20 @@ router.post('/stech.manager/DeleteCart', async (req, res) => {
 router.get("/stech.manager/order", async function (req, res, next) {
     try {
         var encodedValueStatus = req.cookies.status;
+        let verifyWith = req.cookies.verifyWith;
 
         if (encodedValueStatus === undefined || Buffer.from(encodedValueStatus, 'base64').toString('utf8') == 'All') {
             let orders = await OrderModel.oderModel.find().populate('customer_id employee_id delivery_address_id');
             orders.reverse();
 
-            res.render("order", {orders: orders, message: "get list order success", code: 1});
+            res.render("order", {orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1});
 
         } else {
             let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
             let orders = await OrderModel.oderModel.find({status: valueStatus}).populate('customer_id employee_id delivery_address_id');
             orders.reverse();
 
-            res.render("order", {orders: orders, message: "get list order success", code: 1});
+            res.render("order", {orders: orders, terifyWith: verifyWith,message: "get list order success", code: 1});
 
 
         }
@@ -1053,18 +1059,13 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
     try {
         var encodedOrderId = req.query.orderId;
         let orderId = Buffer.from(encodedOrderId, 'base64').toString('utf8');
-        //let productId = req.query.productId;
-        console.log("Received orderId from cookie:", orderId);
+        let order = await OrderModel.oderModel.findById(orderId).populate('customer_id employee_id delivery_address_id');
+        let detailOrders = await DetailOrderModel.detailOrderModel.find({order_id: orderId}).populate('product_id');
 
-        let order = await OrderModel.modelOrder.findById(orderId);
         if (order) {
-            const allProductInfo = await order.getAllProductInfo();
-            const userInfo = await order.getUserInfo();
-            console.log('ProductInfo:', allProductInfo);
-            console.log('UserInfo:', userInfo);
-
             res.render("detail_order", {
-                detailOrder: {...order.toObject(), allProductInfo, userInfo},
+                order: order,
+                detailOrders:detailOrders,
                 message: "get order details success",
                 code: 1
             });
@@ -1106,6 +1107,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
     // const userId = utils_1.getCookie(req, 'Uid');
 
     const userId = new mongoose.Types.ObjectId(utils_1.getCookie(req, 'Uid'));
+    let verifyWith = req.cookies.verifyWith;
 
     console.log("id", userId)
     try {
@@ -1118,6 +1120,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
 
         res.render("cart", {
             carts: cartUser,
+            terifyWith: verifyWith,
             message: "get list profile success",
             code: 1,
         })
@@ -1527,55 +1530,4 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
     }
 })
 
-//Login Admin
-router.get("/stech.manager/goLoginAdmin", function (req, res, next) {
-    res.render("loginAdmin");
-});
-
-router.post("/stech.manager/loginAdmin", async function (req, res, next) {
-    try {
-        let email = req.body.email;
-        let pass = req.body.password;
-        if (email == null) {
-            return res.send({message: "email is required", code: 0});
-        }
-        if (pass == null) {
-            return res.send({message: "password is required", code: 0});
-        }
-
-        let adminEmail = await AdminModel.adminModel.findOne({email: email, password: pass});
-        if (!adminEmail) {
-            return res.send({
-                message: "Login fail please check your Email and Password",
-                code: 0,
-            });
-        }
-
-        if (adminEmail) {
-            let index = sendOTPByEmail(adminEmail.email);
-            if (index === 0) {
-                return res.send({message: "Verify admin fail", code: 0});
-            } else {
-                adminEmail.otp = index;
-                await adminEmail.save();
-                res.cookie('Uid', adminEmail._id.toString(), { encode: String });
-                res.cookie('typeVerify', "login", { encode: String });
-                res.cookie('verifyWith', "Admin", { encode: String });
-                return res.render("verify",{
-                    message: "Please verify your account",
-                    id: adminEmail._id,
-                    code: 1,
-                });
-            }
-        }
-    } catch (e) {
-        console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
-    }
-});
-
-//Login Employee
-router.post("/stech.manager/goLoginEmployee", function (req, res, next) {
-    res.render("loginEmployee");
-});
 module.exports = router;
