@@ -16,6 +16,7 @@ const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
 const AdminModel = require("./../modelsv2/model.admin");
 const DetailOrderModel = require("./../modelsv2/model.detailorder");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
+const diliveryaddress = require("./../modelsv2/model.deliveryaddress");
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage});
@@ -415,22 +416,6 @@ router.get("/stech.manager/detail_user", async function (req, res, next) {
     }
 });
 
-router.get('/stech.manager/user', async function (req, res, next) {
-    try {
-
-        let listUser = await UserModel.userModel.find().populate({path: 'address', select: 'city'});
-
-        res.render("user", {
-            users: listUser,
-            message: "get list user success",
-            code: 1,
-        });
-
-    } catch (e) {
-        console.log(e.message);
-        res.send({message: "user not found", code: 0});
-    }
-});
 router.get('/stech.manager/customer', async function (req, res, next) {
     try {
 
