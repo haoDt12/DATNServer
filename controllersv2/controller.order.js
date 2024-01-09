@@ -15,6 +15,8 @@ const ProductImg = require("../modelsv2/model.imgproduct");
 exports.createOrder = async (req, res) => {
     let list_order = req.body.list_order;
     let map_voucher_cus_id = req.body.map_voucher_cus_id;
+    console.log(list_order);
+    console.log(map_voucher_cus_id);
     let employee_id = req.body.employee_id;
     let delivery_address_id = req.body.delivery_address_id;
     let date = new Date();
@@ -41,7 +43,6 @@ exports.createOrder = async (req, res) => {
             return res.send({message: "Product quantity is out of stock", code: 0});
         }
         let order = new OrderModel.oderModel({
-            map_voucher_cus_id: map_voucher_cus_id,
             customer_id: cus._id,
             employee_id: employee_id,
             delivery_address_id: delivery_address_id,
@@ -67,16 +68,26 @@ exports.createOrder = async (req, res) => {
                 is_used: false
             });
             if (mapVoucher) {
-                let voucher = VoucherModel.voucherModel.findById(mapVoucher.vocher_id);
+                let voucher = await VoucherModel.voucherModel.findById(mapVoucher.vocher_id);
                 if (voucher) {
                     voucherPrice = Number(voucher.price);
                     mapVoucher.is_used = true;
+                    order.map_voucher_cus_id = map_voucher_cus_id;
+                    await order.save();
                     await mapVoucher.save();
                 }
             }
         }
         order.total_amount = total_amount - voucherPrice;
         await order.save();
+        await Promise.all(list_order.map(async item => {
+            if(item.productCartId != null){
+                let productCart = await ProductCartModel.productCartModel.findById(item.productCartId);
+                if(productCart){
+                    await ProductCartModel.productCartModel.deleteOne({_id: item.productCartId});
+                }
+            }
+        }))
         return res.send({message: "Create order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -164,22 +175,19 @@ exports.getOrderByStatus = async (req, res) => {
             .populate("delivery_address_id")
         await Promise.all(order.map(async item => {
             let listProduct = [];
-            // if(item.map_voucher_cus_id != null){
-            //     item.map_voucher_cus_id.vocher_id = await VoucherModel.voucherModel.findById(item.map_voucher_cus_id.vocher_id);
-            // }
             let detailOrder = await DetailOrder.detailOrderModel.find({
                 order_id: item._id,
             })
                 .populate("order_id")
                 .populate("product_id")
             await Promise.all(detailOrder.map(async item => {
-                console.log(item)
                 let product = await ProductModel.productModel.findById(item.product_id);
                 product.quantity = item.quantity;
                 listProduct.push(product);
             }))
             listDetailOrder.push({order: item, listProduct: listProduct});
         }))
+        listDetailOrder.sort((b, a) => moment(a.order.create_time, "YYYY-MM-DD-HH:mm:ss") - moment(b.order.create_time, "YYYY-MM-DD-HH:mm:ss"));
         return res.send({message: "get order success", listDetailOrder: listDetailOrder, code: 1})
     } catch (e) {
         console.log(e.message);
@@ -202,8 +210,17 @@ exports.cancelOrder = async (req, res) => {
             mapVoucher.is_used = false;
             await mapVoucher.save();
         }
+        let detailOrder = await DetailOrder.detailOrderModel.find({order_id: orderId});
+        await Promise.all(detailOrder.map(async item => {
+            let product = await ProductModel.productModel.findById(item.product_id);
+            product.quantity = Number(product.quantity) + Number(item.quantity);
+            product.sold = Number(product.sold) - Number(item.quantity);
+            await product.save();
+        }));
         order.status = "Cancel";
         await order.save();
+        return res.send({message: "cancel order success", code: 1})
+
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
@@ -215,14 +232,14 @@ exports.getStatic = async (req, res) => {
     const endDate = req.body.endDate;
 
     if (!startDate) {
-        return res.send({ message: "start date is required", code: 1 });
+        return res.send({message: "start date is required", code: 1});
     }
     if (!endDate) {
-        return res.send({ message: "end date is required", code: 1 });
+        return res.send({message: "end date is required", code: 1});
     }
 
     try {
-        const order = await OrderModel.oderModel.find({ status: "PayComplete" });
+        const order = await OrderModel.oderModel.find({status: "PayComplete"});
 
         const dataOrder = order.map(item => ({
             date: moment(item.date_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD"),
@@ -240,7 +257,7 @@ exports.getStatic = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: e.message.toString(), code: 0 });
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 
@@ -259,7 +276,7 @@ function calculateOneDay(data, fromDate, toDate) {
         totals[date] = (totals[date] || 0) + total;
     }
 
-    return Object.entries(totals).map(([date, total]) => ({ date, total }));
+    return Object.entries(totals).map(([date, total]) => ({date, total}));
 }
 
 function generateDateRange(fromDate, toDate) {
