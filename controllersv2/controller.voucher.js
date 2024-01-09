@@ -15,13 +15,14 @@ exports.getVoucher = async (req, res) => {
 }
 
 exports.addVoucher = async (req, res) => {
-    let date = new Date();
     let name = req.body.name;
     let content = req.body.content;
     let price = req.body.price;
     let toDate = req.body.toDate;
     let fromDate = req.body.fromDate;
-    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     if (name == null) {
         return res.send({message: "title is required", code: 0});
@@ -130,13 +131,14 @@ exports.getVoucherById = async (req, res) => {
     }
 }
 exports.addVoucherAllUser = async (req, res) => {
-    let date = new Date();
     let name = req.body.name;
     let content = req.body.content;
     let price = req.body.price;
     let toDate = req.body.toDate;
     let fromDate = req.body.fromDate;
-    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss");
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (name == null) {
         return res.send({message: "title is required", code: 0});
     }

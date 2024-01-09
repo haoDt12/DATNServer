@@ -1,82 +1,70 @@
 let $ = require('jquery');
-const moment = require('moment');
-const OrderModel = require("../models/model.order");
-const Cart = require("../models/model.cart");
-const ProductModel = require("../models/model.product");
+const moment = require("moment-timezone");
 const querystring = require("qs");
 const crypto = require("crypto");
 require("dotenv").config();
-const sessionConfig = require('../models/session.config');
-const Voucher = require("../models/model.voucher");
-let mUserId;
-let mProduct;
-let mAddress;
-let mDate_time;
-let mVoucherId;
+const jwt = require("jsonwebtoken");
+const CustomerModel = require("../modelsv2/model.customer");
+const EmployeeModel = require("../modelsv2/model.employee");
+const VoucherModel = require("../modelsv2/model.voucher");
+const MapVoucherModel = require("../modelsv2/model.map_voucher_cust")
+const ProductImg = require("../modelsv2/model.imgproduct");
+const OrderModel = require("../modelsv2/model.order");
+const DetailOrder = require("../modelsv2/model.detailorder");
+const ProductModel = require("../modelsv2/model.product");
+const ProductCartModel = require("../modelsv2/model.ProductCart");
+let mList_order;
+let mMap_voucher_cus_id;
+let mEmployee_id;
+let mDelivery_address_id;
 let ipAddress = process.env.IP_ADDRESS;
+let mData;
 exports.createPaymentUrl = async (req, res) => {
-
-    process.env.TZ = 'Asia/Ha_Noi';
-    let userId = req.body.userId;
-    let product = req.body.product;
-    let address = req.body.address;
-    let voucherId = req.body.voucherId;
+    let list_order = req.body.list_order;
+    let map_voucher_cus_id = req.body.map_voucher_cus_id;
+    let employee_id = req.body.employee_id;
+    let delivery_address_id = req.body.delivery_address_id;
     let date = new Date();
-    if (userId == null) {
-        return res.send({ message: "userId is required", code: 0 });
+    let specificTimeZone = 'Asia/Ha_Noi';
+    if (delivery_address_id == null) {
+        return res.send({message: "Delivery address id is required", code: 0});
     }
-    if (product === undefined) {
-        return res.send({ message: "product is required", code: 0 });
-    }
-    if (address == null) {
-        return res.send({ message: "address is required", code: 0 });
+    if (list_order == null || list_order.length === 0) {
+        return res.send({message: "list order is required", code: 0});
     }
     try {
-        let total = 0;
-        let check = 1;
-        await Promise.all(product.map(async item => {
-            let product = await ProductModel.productModel.findById(item.productId);
-            if (!product) {
-                return res.send({ message: "product not found", code: 0 });
-            }
-            let sold = Number(product.sold);
-            let newShold = sold + item.quantity;
-            product.sold = newShold.toString();
-            item.option.map((item2, index) => {
-                product.option.map((item3, index2) => {
-                    if (item3.title == item2.title) {
-                        console.log(`item: ${item.quantity} - item2: ${item2.quantity} - item3: ${item3.quantity}`);
-                        if (item.quantity <= item3.quantity) {
-                            console.log(`item${index}: ${item.option[index].quantity}`);
-                            product.option[index2].quantity -= item.quantity;
-                        } else {
-                            check = 0;
-                        }
-                    }
-                })
-            })
-            let feesArise = 0;
-            item.option.map(item2 => {
-                if (item2.feesArise) {
-                    feesArise += Number(item2.feesArise);
-                }
-            })
-            total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
-        }));
-        if (check === 0) {
-            return res.send({ message: "product is out of stock ", code: 0 });
-        }
         let voucherPrice = 0;
-        if (voucherId != null) {
-            let voucher = await Voucher.voucherModel.findById(voucherId);
-            if (voucher) {
-                total = total - voucherPrice;
-            } else {
-                return res.send({ message: "voucher not found", code: 0 });
+        let errorOccurred = false;
+        let total_amount = 0;
+        let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
+        await Promise.all(list_order.map(async item => {
+            let product = await ProductModel.productModel.findById(item.product_id);
+            if (Number(product.quantity) < Number(item.quantity)) {
+                errorOccurred = true;
+            }
+        }));
+        if (errorOccurred) {
+            return res.send({message: "Product quantity is out of stock", code: 0});
+        }
+        await Promise.all(list_order.map(async item => {
+            let product = await ProductModel.productModel.findById(item.product_id);
+            total_amount = total_amount + (Number(product.price) * Number(item.quantity));
+        }));
+        if (map_voucher_cus_id !== null) {
+            let mapVoucher = await MapVoucherModel.mapVoucherModel.findOne({
+                _id: map_voucher_cus_id,
+                customer_id: data.cus._id,
+                is_used: false
+            });
+            if (mapVoucher) {
+                let voucher = await VoucherModel.voucherModel.findById(mapVoucher.vocher_id);
+                if (voucher) {
+                    voucherPrice = Number(voucher.price);
+                }
             }
         }
-        let createDate = moment(date).format('YYYYMMDDHHmmss');
-        let date_time = moment(date).format('YYYY-MM-DD-HH:mm:ss');
+        total_amount = total_amount - voucherPrice;
+        let createDate =  moment(date).tz(specificTimeZone).format('YYYYMMDDHHmmss');
         let ipAddr = req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
@@ -86,7 +74,7 @@ exports.createPaymentUrl = async (req, res) => {
         let secretKey = process.env.VNP_HASH_SECRET;
         let vnpUrl = process.env.VNP_URL;
         let returnUrl = process.env.VNP_RETURN_URL;
-        let orderId = moment(date).format('DDHHmmss');
+        let orderId = moment(date).tz(specificTimeZone).format('DDHHmmss');
         let bankCode = req.body.bankCode;
         let locale = req.body.language;
         if (locale === null || locale === '') {
@@ -102,7 +90,7 @@ exports.createPaymentUrl = async (req, res) => {
         vnp_Params['vnp_TxnRef'] = orderId;
         vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
         vnp_Params['vnp_OrderType'] = 'other';
-        vnp_Params['vnp_Amount'] = total * 100;
+        vnp_Params['vnp_Amount'] = Number(total_amount) * 100;
         vnp_Params['vnp_ReturnUrl'] = returnUrl;
         vnp_Params['vnp_IpAddr'] = ipAddr;
         vnp_Params['vnp_CreateDate'] = createDate;
@@ -111,28 +99,28 @@ exports.createPaymentUrl = async (req, res) => {
         }
         vnp_Params = sortObject(vnp_Params);
         let querystring = require('qs');
-        let signData = querystring.stringify(vnp_Params, { encode: false });
-        let crypto = require("crypto");
+        let signData = querystring.stringify(vnp_Params, {encode: false});
         let hmac = crypto.createHmac("sha512", secretKey);
         let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
         vnp_Params['vnp_SecureHash'] = signed;
-        vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-        mUserId = userId;
-        mProduct = product;
-        mAddress = address;
-        mDate_time = date_time;
-        return res.send({ message: "get url success", code: 1, url: vnpUrl });
+        vnpUrl += '?' + querystring.stringify(vnp_Params, {encode: false});
+        mList_order = list_order;
+        mMap_voucher_cus_id = map_voucher_cus_id;
+        mEmployee_id = employee_id;
+        mDelivery_address_id = delivery_address_id;
+        mData = data;
+        return res.send({message: "get url success", code: 1, url: vnpUrl});
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: "create order fail", code: 0 });
+        return res.send({message: "create order fail", code: 0});
     }
 }
 
 exports.payFail = (req, res) => {
-    return res.send({ message: "pay fail", code: 0 });
+    return res.send({message: "pay fail", code: 0});
 }
 exports.paySuccess = async (req, res) => {
-    return res.send({ message: "pay success", code: 1 });
+    return res.send({message: "pay success", code: 1});
 
 }
 exports.vnpayReturn = async (req, res) => {
@@ -144,79 +132,78 @@ exports.vnpayReturn = async (req, res) => {
     let tmnCode = process.env.VNP_TMN_CODE;
     let secretKey = process.env.VNP_HASH_SECRET;
     let querystring = require('qs');
-    let signData = querystring.stringify(vnp_Params, { encode: false });
+    let signData = querystring.stringify(vnp_Params, {encode: false});
     let crypto = require("crypto");
     let hmac = crypto.createHmac("sha512", secretKey);
     let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (secureHash === signed) {
         let code = vnp_Params['vnp_ResponseCode'];
         if (code === "00") {
             try {
-                let total = 0;
-                let check = 1;
-                await Promise.all(mProduct.map(async item => {
-                    let product = await ProductModel.productModel.findById(item.productId);
-                    if (!product) {
-                        return res.redirect(`http://${ipAddress}:3000/api/payFail`);
-                    }
-                    let sold = Number(product.sold);
-                    let newShold = sold + item.quantity;
-                    product.sold = newShold.toString();
-                    item.option.map((item2, index) => {
-                        product.option.map((item3, index2) => {
-                            if (item3.title == item2.title) {
-                                console.log(`item: ${item.quantity} - item2: ${item2.quantity} - item3: ${item3.quantity}`);
-                                if (item.quantity <= item3.quantity) {
-                                    console.log(`item${index}: ${item.option[index].quantity}`);
-                                    product.option[index2].quantity -= item.quantity;
-                                } else {
-                                    check = 0;
-                                }
-                            }
-                        })
-                    })
-                    await product.save();
-                    let feesArise = 0;
-                    item.option.map(item2 => {
-                        if (item2.feesArise) {
-                            feesArise += Number(item2.feesArise);
-                        }
-                    })
-                    total += ((Number(product.price) + Number(feesArise))) * Number(item.quantity);
-                }));
-                if (check === 0) {
-                    return res.send({ message: "product is out of stock ", code: 0 });
-                }
                 let voucherPrice = 0;
-                if (mVoucherId != null) {
-                    let voucher = await Voucher.voucherModel.findById(mVoucherId);
-                    if (voucher) {
-                        voucherPrice = Number(voucher.price);
-                        total = total - voucherPrice;
-                        voucher.status = "used";
-                        await voucher.save();
-                    } else {
-                        return res.send({ message: "voucher not found", code: 0 });
+                let errorOccurred = false;
+                let total_amount = 0;
+                let cus = await CustomerModel.customerModel.findById(mData.cus._id);
+                await Promise.all(mList_order.map(async item => {
+                    let product = await ProductModel.productModel.findById(item.product_id);
+                    if (Number(product.quantity) < Number(item.quantity)) {
+                        errorOccurred = true;
+                    }
+                }));
+                if (errorOccurred) {
+                    return res.redirect(`http://${ipAddress}:3000/api/payFail`);
+                }
+                let order = new OrderModel.oderModel({
+                    customer_id: cus._id,
+                    employee_id: mEmployee_id,
+                    delivery_address_id: mDelivery_address_id,
+                    create_time: create_time,
+                    payment_methods: "Thanh qua VnPay",
+                });
+                await Promise.all(mList_order.map(async item => {
+                    let detailOrder = new DetailOrder.detailOrderModel({
+                        order_id: order._id,
+                        product_id: item.product_id,
+                        quantity: item.quantity,
+                    });
+                    let product = await ProductModel.productModel.findById(item.product_id);
+                    total_amount = total_amount + (Number(product.price) * Number(item.quantity));
+                    product.quantity = (Number(product.quantity) - Number(item.quantity)).toString();
+                    product.sold = (Number(product.sold) + Number(item.quantity)).toString();
+                    await product.save();
+                    await detailOrder.save();
+                }));
+                if (mMap_voucher_cus_id !== null) {
+                    let mapVoucher = await MapVoucherModel.mapVoucherModel.findOne({
+                        _id: mMap_voucher_cus_id,
+                        customer_id: mData.cus._id,
+                        is_used: false
+                    });
+                    if (mapVoucher) {
+                        let voucher = await VoucherModel.voucherModel.findById(mapVoucher.vocher_id);
+                        if (voucher) {
+                            voucherPrice = Number(voucher.price);
+                            mapVoucher.is_used = true;
+                            order.map_voucher_cus_id = mMap_voucher_cus_id;
+                            await order.save();
+                            await mapVoucher.save();
+                        }
                     }
                 }
-                let order = new OrderModel.modelOrder({
-                    userId: mUserId,
-                    product: mProduct,
-                    addressId: mAddress,
-                    payment_method: "E-Banking",
-                    total: 0,
-                    date_time: mDate_time,
-                })
-                let cart = await Cart.cartModel.findOne({ userId: mUserId });
-                if (!cart) {
-                    await order.save();
-                    return res.redirect(`http://${ipAddress}:3000/api/paySuccess`);
-                }
-                let currentProduct = cart.product;
-                cart.product = currentProduct.filter(item1 => !product.some(item2 => item2.productId.toString() === item1.productId.toString() && arraysEqual(item2.option, item1.option)));
-                await cart.save();
+                order.total_amount = total_amount - voucherPrice;
                 await order.save();
-                return res.redirect(`http://${ipAddress}:3000/api/paySuccess`);
+                await Promise.all(mList_order.map(async item => {
+                    if (item.productCartId != null) {
+                        let productCart = await ProductCartModel.productCartModel.findById(item.productCartId);
+                        if (productCart) {
+                            await ProductCartModel.productCartModel.deleteOne({_id: item.productCartId});
+                        }
+                    }
+                }))
+            return res.redirect(`http://${ipAddress}:3000/api/paySuccess`);
             } catch (e) {
                 console.log(e.message);
                 return res.redirect(`http://${ipAddress}:3000/api/payFail`);
@@ -243,21 +230,4 @@ function sortObject(obj) {
         sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
     }
     return sorted;
-}
-
-const arraysEqual = (arr1, arr2) => {
-    if (arr1.length !== arr2.length) {
-        return false;
-    }
-
-    for (let i = 0; i < arr1.length; i++) {
-        const obj1 = arr1[i];
-        const obj2 = arr2[i];
-
-        if (obj1.type !== obj2.type || obj1.title !== obj2.title || obj1.content !== obj2.content) {
-            return false;
-        }
-    }
-
-    return true;
 }
