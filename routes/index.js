@@ -38,6 +38,9 @@ const axios = require("axios");
 require("dotenv").config();
 
 /* GET home page. */
+router.get("/",(req,res)=>{
+    res.redirect("/stech.manager/type_login");
+});
 router.get("/stech.manager/home", async function (req, res, next) {
     try {
         res.render("index");

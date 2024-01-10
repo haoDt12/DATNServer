@@ -11,18 +11,22 @@ const OrderCtrl = require("../controllersv2/controller.order");
 const FeedBackCtrl = require("../controllersv2/controller.feedback");
 const AdminCtr = require("../controllersv2/controller.admin");
 const EmployeeCtrl = require("../controllersv2/controller.employee");
-
 const VnPayCtrl = require("../controllers/api.payvnpay");
+
 //customer
 router.post("/registerCustomer", CusController.registerCustomer);
 router.post("/loginCustomer", CusController.loginCustomer);
-router.post("/getInfoCus", CusController.getInfoCus);
-router.post("/addFCM", CusController.addFCM);
+router.post("/getInfoCus", Middleware.authorizationToken, CusController.getInfoCus);
+router.post("/addFCM", Middleware.authorizationToken, CusController.addFCM);
 router.post("/verifyCusLogin", CusController.verifyCusLogin);
 router.get("/verifyCusRegister", CusController.verifyCusRegister);
-router.get("/getInfoCus", CusController.getInfoCus);
-router.post("/editCus", CusController.editCus);
-router.post("/sendOtpEditCus", CusController.sendOtpEditCus);
+router.get("/getInfoCus", Middleware.authorizationToken, CusController.getInfoCus);
+router.post("/editCus", Middleware.authorizationToken, CusController.editCus);
+router.post("/sendOtpEditCus", Middleware.authorizationToken, CusController.sendOtpEditCus);
+router.post("/sendOtpEditPass", Middleware.authorizationToken, CusController.sendOtpEditPass);
+router.post("/editPass", Middleware.authorizationToken, CusController.editPass);
+router.post("/getPassWord", CusController.getPassWord);
+router.get("/resetPassword",CusController.resetPassword);
 
 //Admin
 router.post("/loginAdmin", AdminCtr.loginAdmin);
@@ -34,54 +38,49 @@ router.post("/verifyOtpLoginEmployee", EmployeeCtrl.verifyOtpLoginEmployee);
 
 
 //category
-router.post("/getCategory", CategoryController.getCategory);
+router.post("/getCategory", Middleware.authorizationToken, CategoryController.getCategory);
 
 //product
-router.post("/getAllProduct", ProductController.getAllProduct);
-router.post("/getDetailProduct", ProductController.getDetailProduct);
-router.post("/getProductRunOut", ProductController.getRunOutProducts);
-router.post("/getProductByCategoryId", ProductController.getProductByCategoryId);
+router.post("/getAllProduct", Middleware.authorizationToken, ProductController.getAllProduct);
+router.post("/getDetailProduct", Middleware.authorizationToken, ProductController.getDetailProduct);
+router.post("/getProductRunOut", Middleware.authorizationToken, ProductController.getRunOutProducts);
+router.post("/getProductRunOut", Middleware.authorizationToken, ProductController.getRunOutProducts);
+router.post("/getProductByCategoryId", Middleware.authorizationToken, ProductController.getProductByCategoryId);
+router.post("/searchProductByName", Middleware.authorizationToken, ProductController.searchProductByName);
 
 
 // cart
-router.post("/addCart", ProductCartCtrl.addCard);
-router.post("/getCartByIdCustomer", ProductCartCtrl.getCartByIdCustomer);
-router.post("/updateCart", ProductCartCtrl.updateCart);
-router.post(
-  "/editCartV2",
-  Middleware.authorizationToken,
-  ProductCartCtrl.editCartV2
+router.post("/addCart", Middleware.authorizationToken, ProductCartCtrl.addCard);
+router.post("/getCartByIdCustomer", Middleware.authorizationToken, ProductCartCtrl.getCartByIdCustomer);
+router.post("/updateCart", Middleware.authorizationToken, ProductCartCtrl.updateCart);
+router.post("/editCartV2", Middleware.authorizationToken, ProductCartCtrl.editCartV2
 );
 
 //DeliveryAddress
-router.post("/addDeliveryAddress", DeliveryAddressCtrl.addDeliveryAddress);
-router.post(
-  "/deleteDeliveryAddress",
-  DeliveryAddressCtrl.deleteDeliveryAddress
+router.post("/addDeliveryAddress", Middleware.authorizationToken, DeliveryAddressCtrl.addDeliveryAddress);
+router.post("/deleteDeliveryAddress", Middleware.authorizationToken, DeliveryAddressCtrl.deleteDeliveryAddress
 );
-router.post("/editDeliveryAddress", DeliveryAddressCtrl.editDeliveryAddress);
-router.post("/getDeliveryAddress", DeliveryAddressCtrl.getDeliveryAddress);
+router.post("/editDeliveryAddress", Middleware.authorizationToken, DeliveryAddressCtrl.editDeliveryAddress);
+router.post("/getDeliveryAddress", Middleware.authorizationToken, DeliveryAddressCtrl.getDeliveryAddress);
 
 //voucher
-router.post("/addVoucherAllUser", VoucherCtrl.addVoucherAllUser);
-router.post("/getVoucherByIdV2", VoucherCtrl.getVoucherByIdV2);
+router.post("/addVoucherAllUser", Middleware.authorizationToken, VoucherCtrl.addVoucherAllUser);
+router.post("/getVoucherByIdV2", Middleware.authorizationToken, VoucherCtrl.getVoucherByIdV2);
 
 //order
-router.post("/createOrder", OrderCtrl.createOrder);
-router.post("/getOrderByStatus", OrderCtrl.getOrderByStatus);
-router.post("/cancelOrder", OrderCtrl.cancelOrder);
-router.post("/updateStatusOrder", OrderCtrl.updateStatusOrder);
-router.post("/createOrderGuest", OrderCtrl.createOrderGuest);
-router.post("/getStatic", OrderCtrl.getStatic);
-router.post("/getPriceOrderZaloPay", OrderCtrl.getPriceOrderZaloPay);
-router.post("/createOrderZaloPay", OrderCtrl.createOrderZaloPay);
-router.post("/createPaymentUrl", VnPayCtrl.createPaymentUrl);
+router.post("/createOrder", Middleware.authorizationToken, OrderCtrl.createOrder);
+router.post("/getOrderByStatus", Middleware.authorizationToken, OrderCtrl.getOrderByStatus);
+router.post("/cancelOrder", Middleware.authorizationToken, OrderCtrl.cancelOrder);
+router.post("/updateStatusOrder", Middleware.authorizationToken, OrderCtrl.updateStatusOrder);
+router.post("/createOrderGuest", Middleware.authorizationToken, OrderCtrl.createOrderGuest);
+router.post("/getStatic", Middleware.authorizationToken, OrderCtrl.getStatic);
+router.post("/getPriceOrderZaloPay", Middleware.authorizationToken, OrderCtrl.getPriceOrderZaloPay);
+router.post("/createOrderZaloPay", Middleware.authorizationToken, OrderCtrl.createOrderZaloPay);
+router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.createPaymentUrl);
+
 // feedback
-router.post("/addFeedback", FeedBackCtrl.addFeedback);
-router.post("/getFeedBackByProductId", FeedBackCtrl.getFeedBackByProductId);
-router.post(
-  "/getAllFeedBackByProductId",
-  FeedBackCtrl.getAllFeedBackByProductId
-);
+router.post("/addFeedback", Middleware.authorizationToken, FeedBackCtrl.addFeedback);
+router.post("/getFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getFeedBackByProductId);
+router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getAllFeedBackByProductId);
 
 module.exports = router;
