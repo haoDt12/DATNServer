@@ -43,8 +43,8 @@ router.post("/getCategory", Middleware.authorizationToken, CategoryController.ge
 //product
 router.post("/getAllProduct", Middleware.authorizationToken, ProductController.getAllProduct);
 router.post("/getDetailProduct", Middleware.authorizationToken, ProductController.getDetailProduct);
-router.post("/getProductRunOut", Middleware.authorizationToken, ProductController.getRunOutProducts);
-router.post("/getProductRunOut", Middleware.authorizationToken, ProductController.getRunOutProducts);
+router.post("/getRunOutProducts", Middleware.authorizationToken, ProductController.getRunOutProducts);
+router.post("/getHotSaleProducts", Middleware.authorizationToken, ProductController.getHotSellProducts);
 router.post("/getProductByCategoryId", Middleware.authorizationToken, ProductController.getProductByCategoryId);
 router.post("/searchProductByName", Middleware.authorizationToken, ProductController.searchProductByName);
 
