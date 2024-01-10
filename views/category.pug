@@ -98,7 +98,7 @@ block content
                     #navbarNav.navbar-collapse.justify-content-end.px-0
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
                             //- Add Category
-                            a.btn.btn-outline-primary.mx-3.mt-2.d-block(href='#', id='openCategoryModal') Add Category
+                            a.btn.btn-outline-primary.mx-3.mt-2.d-block(data-bs-toggle="modal" data-bs-target="#addCategoryModal") Thêm thể loại
                             //- script.
 
                             //- End
@@ -136,7 +136,7 @@ block content
                                     a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' id='addToCartButton' data-bs-toggle='modal' data-bs-target='#addToCartModal' data-bs-placement='top' data-bs-title='Add To Cart')
                                         i.ti.ti-basket.fs-4
                                 .card-body.pt-3.p-4
-                                    h6.fw-semibold.fs-4= cate.title
+                                    h6.fw-semibold.fs-4= cate.name
                                     ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
                                         li.nav-item.dropdown
                                             //- .nav-link
@@ -152,7 +152,7 @@ block content
                                                             p.mb-0.fs-3(class="updateCate" data-id=cate._id  data-bs-toggle="modal" data-bs-target="#updateCategoryModal") Sửa thông tin
                                                         a.d-flex.align-items-center.gap-2.dropdown-item(href='javascript:void(0)')
                                                             i.ti.ti-trash.fs-6
-                                                            p.mb-0.fs-3(class='delCate' data-id=cate._id data-bs-toggle="modal" data-bs-target="#confirmDeleteCate") Xoá sản phẩm
+                                                            p.mb-0.fs-3(class='deleteCate' data-id=cate._id data-name=cate.name data-bs-toggle="modal" data-bs-target="#confirmDeleteCate") Xoá thể loại
                                                         //a.btn.btn-outline-primary.mx-3.mt-2.d-block Updating..
                 //- Start Pagination
                 nav(aria-label='Page navigation example')
@@ -175,38 +175,40 @@ block content
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
 
             //- Modal Add Category
-            div#categoryModal.modal.fade
+            div#addCategoryModal.modal.fade
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Thêm thể loại
                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                         .modal-body
-                            form(action="/", method="post")
+                            form(action="/stech.manager/add-category", method="post"  enctype='multipart/form-data')
                                 .mb-4
                                     .form-group
                                         label(for="imageCate") Hình ảnh
-                                        input#imageCate(type="file" name="image" accept="image/*" onchange='previewImage(event)')
+                                        input#image(type="file" name="image" accept="image/*" required onchange='previewImagePlus(event, "image", "imageForm", "imagePreview")')
                                 .mb-4
                                     .form-group#imageForm(style='display: none;')
-                                        label(for="progressCate") Preview
+                                        label.mt-1(for="progressCate") Preview
                                         br
-                                        img#imagePreview(src='' alt='Image Preview'  style='width:150px;height:100px;')
+                                        img#imagePreview(src='' alt='Image Preview'  style='width:150px;height:120px;')
                                 .mb-4
                                     .form-group(hidden)
                                         label(for="progressCate") Tiến trình
                                         p#progressCate
                                 .mb-4
                                     .form-group
-                                        label(for="nameCate") Tên sản phẩm
-                                        input#nameCate(type="text", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+                                        label(for="nameCate") Tên thể loại
+                                        input#nameCate(type="text", name="name", class="form-control", placeholder="", aria-describedby="helpId" required)
                                 .mb-4
                                     .form-group
                                         label(for="dateCate") Date
-                                        input#dateCate(type="datetime-local", name="date", class="form-control", placeholder="", aria-describedby="helpId")
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button.btn.btn-primary(type='button', id='saveCategoryButton') Thêm
+                                        input#dateCate(type="datetime-local", name="create_time", class="form-control", placeholder="", aria-describedby="helpId")
+                                .mt-4
+                                    .form-group
+                                        .modal-footer
+                                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
+                                            button.btn.btn-primary(type='submit') Thêm
 
             //- Modal Update Category
             div#updateCategoryModal.modal.fade
@@ -216,20 +218,27 @@ block content
                             h5.modal-title Sửa thông tin thể loại
                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                         .modal-body
-                            form(action="/", method="post")
+                            form(action="/stech.manager/update-category", method="post" enctype='multipart/form-data')
                                 .mb-4
                                     .form-group
                                         label(for="dateCate") ID
-                                        input#idCate.idCate(type="text", name="idCate", class="form-control", placeholder="", aria-describedby="helpId" readonly)
-                                .mb-4
+                                        input#idCateUpdate.idCateUpdate(type="text", name="idCate", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                                .mb-1
                                     .form-group
                                         label(for="imageCate") Hình ảnh 
-                                        input#imageCateUpdate(type="file" name="image" accept="image/*" onchange='previewImage(event)')
+                                        input#imageCateUpdate(type="file" name="image" accept="image/*" onchange='previewImagePlus(event, "imageCateUpdate", "imageFormNew", "imageNew")')
+                                .mb-4.mt-1
+                                    .form-group
+                                        button.btn.btn-secondary.btn-sm(type='button' id='resetImage' style='display: none;') Reset image
                                 .mb-4
-                                    .form-group#_imageForm(style='display: block;')
-                                        label(for="progressCate") Preview
+                                    .form-group#imageFormNew(style='display: block;')
+                                        label.mt-1(for="progressCate") Preview
                                         br
-                                        img#imageCateUpdatePreview.imageCateUpdatePreview(src='' alt='Image Preview'  style='width:150px;height:100px;')
+                                        div.flex
+                                            a#imageTagNew(style='display: none;') Ảnh mới
+                                            img#imageNew.imageNew( src='' alt='Image Preview new'  style='width:150px;height:120px;display: none;')
+                                            a#imageTagOld(style='display: none;') Ảnh cũ
+                                            img#imageOld.imageOld(src='' alt='Image preview olld'  style='width:150px;height:120px;')
                                 .mb-4
                                     .form-group(hidden)
                                         label(for="progressCate") Tiến trình
@@ -237,41 +246,28 @@ block content
                                 .mb-4
                                     .form-group
                                         label(for="nameCate") Tên sản phẩm
-                                        input#nameCateUpdate.nameCateUpdate(type="text", name="name", class="form-control", placeholder="", aria-describedby="helpId")
+                                        input#nameCateUpdate.nameCateUpdate(type="text", name="name", class="form-control", placeholder="", aria-describedby="helpId" required)
                                 .mb-4
                                     .form-group
-                                        label(for="dateCate") Date
-                                        input#dateCateUpdate.dateCateUpdate(type="text", name="date", class="form-control", placeholder="", aria-describedby="helpId")
-                                
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button.btn.btn-primary(type='button', id='updateCategoryButton') Cập nhật
-            
-            //- Modal Fake Add to Cart
-            div#addToCartModal.modal.fade
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Thêm vào giỏ hàng
-                            button.close(type='button', data-bs-dismiss='modal') &times;
-                        .modal-body
-                            p Sản phẩm đã được thêm vào giỏ hàng.
-                        .modal-footer
-                            button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Tiếp tục mua
-                            button.btn.btn-primary(type='button' data-bs-dismiss='modal' id='goMyCart') Đi tới giỏ hàng
-            
+                                        label(for="dateCate") Create time
+                                        input#dateCateUpdate.dateCateUpdate(type="text", name="date", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                                .mb-4
+                                    .form-group
+                                        .modal-footer
+                                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
+                                            button.btn.btn-primary(type='submit') Cập nhật
             //- Modal Confirm Delete
             #confirmDeleteCate.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Warning!
+                            h5.modal-title Bạn có chắc chắn muốn xoá !
                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                         .modal-body
-                            p Bạn có chắc chắn muốn xoá item này.
+                            div#nameCateDelete
                         .modal-footer
                             button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='confirmDelete') Đồng ý
+                            button.btn.btn-danger(type='button' id='confirmDelete') Xoá
                             
     script(src='/js/category.js')
     script.
