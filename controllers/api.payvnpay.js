@@ -154,7 +154,7 @@ exports.vnpayReturn = async (req, res) => {
                     }
                 }));
                 if (errorOccurred) {
-                    return res.redirect(`http://${ipAddress}:3000/api/payFail`);
+                    return res.redirect(`https://${ipAddress}/api/payFail`);
                 }
                 let order = new OrderModel.oderModel({
                     customer_id: cus._id,
@@ -203,16 +203,16 @@ exports.vnpayReturn = async (req, res) => {
                         }
                     }
                 }))
-            return res.redirect(`http://${ipAddress}:3000/api/paySuccess`);
+            return res.redirect(`https://${ipAddress}/api/paySuccess`);
             } catch (e) {
                 console.log(e.message);
-                return res.redirect(`http://${ipAddress}:3000/api/payFail`);
+                return res.redirect(`https://${ipAddress}/api/payFail`);
             }
         } else {
-            return res.redirect(`http://${ipAddress}:3000/api/payFail`);
+            return res.redirect(`https://${ipAddress}/api/payFail`);
         }
     } else {
-        return res.redirect(`http://${ipAddress}:3000/api/payFail`);
+        return res.redirect(`https://${ipAddress}/api/payFail`);
     }
 }
 

@@ -617,7 +617,7 @@ exports.getPassWord = async (req, res) => {
     let username = req.body.username;
     let ipAddress = process.env.IP_ADDRESS;
     const randomEndLink = generateRandomPassword(12);
-    const link = `http://${ipAddress}:3000/api/resetPassword?key=${randomEndLink}`;
+    const link = `https://${ipAddress}/api/resetPassword?key=${randomEndLink}`;
     const text = `STECH xin chào bạn\n Ấn vào đây để khôi phục lại mật khẩu: ${link}`;
     if (username == null) {
         return res.send({ message: "username is required", code: 0 });
@@ -697,7 +697,7 @@ exports.resetPassword = async (req, res) => {
     if (key == null) {
         return res.send({ message: "key is required", code: 0 });
     }
-    const link = `http://${ipAddress}:3000/api/resetPassword?key=${key}`
+    const link = `https://${ipAddress}/api/resetPassword?key=${key}`
     try {
         let user = await UserModel.userModel.findOne({ link: link });
         let index = sendNewPassByEmailGetPass(user.email, text);
