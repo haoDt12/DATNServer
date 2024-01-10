@@ -2,7 +2,7 @@ const NotificationPrivate = require("../models/model.notification.private");
 const NotificationPublic = require("../models/model.notification.pulic");
 const UserModel = require("../models/model.user");
 const admin = require("firebase-admin");
-const serviceAccount = require("../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-19faa2ce40.json");
+const serviceAccount = require("../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-b859cb4d1d.json");
 const moment = require("moment-timezone");
 // admin.initializeApp({
 //     credential: admin.credential.cert(serviceAccount)

@@ -3,7 +3,6 @@ const moment = require("moment-timezone");
 const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass, sendVerifyCus} = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
-const UserModel = require("../models/model.user");
 require("dotenv").config();
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const passwordRegex =
@@ -70,7 +69,7 @@ exports.registerCustomer = async (req, res) => {
             phone_number: phone_number,
             create_time: create_time,
         })
-        const link = `http://${ipAddress}:3000/apiv2/verifyCusRegister?key=${cus._id.toString()}`;
+        const link = `https://${ipAddress}/apiv2/verifyCusRegister?key=${cus._id.toString()}`;
         const text = `STECH xin chào bạn\nẤn vào đây để xác nhận kích hoặt tài khoản: ${link}`;
         let index = sendVerifyCus(email, text);
         if (index === 0) {
@@ -137,6 +136,12 @@ exports.loginCustomer = async (req, res) => {
             });
         }
         if (cusPhone) {
+            if (cusPhone.status !== "Has been activated") {
+                return res.send({
+                    message: "Your account has not been activated or has been locked, please contact hotline 0999999999 for help.",
+                    code: 0,
+                });
+            }
             const otp = Math.floor(100000 + Math.random() * 900000);
             const apiKey = process.env.API_KEY;
             const baseUrl = process.env.BASE_URL;
@@ -176,6 +181,12 @@ exports.loginCustomer = async (req, res) => {
                 });
         }
         if (cusEmail) {
+            if (cusEmail.status !== "Has been activated") {
+                return res.send({
+                    message: "Your account has not been activated or has been locked, please contact hotline 0999999999 for help.",
+                    code: 0,
+                });
+            }
             let index = sendOTPByEmail(cusEmail.email);
             if (index === 0) {
                 return res.send({message: "Verify cus fail", code: 0});
@@ -317,7 +328,7 @@ exports.getListCustomer = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: e.message.toString(), code: 0 });
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 exports.editCus = async (req, res) => {
@@ -329,7 +340,7 @@ exports.editCus = async (req, res) => {
     try {
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
         let cus = await CustomerModel.customerModel.findOne({_id: data.cus._id, otp: otp});
-        if(cus){
+        if (cus) {
             cus.otp = null;
             if (email !== null) {
                 if (!emailRegex.test(email)) {
@@ -343,10 +354,10 @@ exports.editCus = async (req, res) => {
                     return res.send({message: "The number phone is not in the correct format", code: 0});
                 }
             }
-            if(full_name !== null){
+            if (full_name !== null) {
                 cus.full_name = full_name;
             }
-            if(avatar !== null){
+            if (avatar !== null) {
                 cus.avatar = avatar;
             }
             await cus.save();
@@ -354,7 +365,7 @@ exports.editCus = async (req, res) => {
                 message: "Edit cus success",
                 code: 1,
             });
-        }else {
+        } else {
             return res.send({message: "wrong otp", code: 0});
         }
 
@@ -363,3 +374,192 @@ exports.editCus = async (req, res) => {
         return res.send({message: e.message.toString(), code: 0});
     }
 }
+exports.sendOtpEditPass = async (req, res) => {
+    let currentPass = req.body.currentPass;
+    let newPass = req.body.newPass;
+    if (currentPass === null) {
+        return res.send({message: "current password is required", code: 0});
+    }
+    if (newPass === null) {
+        return res.send({message: "new password is required", code: 0});
+    }
+    if (!passwordRegex.test(newPass)) {
+        return res.send({
+            message:
+                "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
+            code: 0,
+        });
+    }
+    try {
+        let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
+        let cus = await CustomerModel.customerModel.findById(data.cus._id);
+        if (cus.password !== currentPass) {
+            return res.send({message: "current password wrong", code: 0});
+        }
+        let index = sendOTPByEmail(cus.email);
+        if (index === 0) {
+            return res.send({
+                message: "send otp fail",
+                code: 0,
+            });
+        }
+        cus.otp = index;
+        await cus.save();
+        return res.send({
+            message: "Enter the otp code to confirm edit password",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+exports.editPass = async (req, res) => {
+    let otp = req.body.otp;
+    let currentPass = req.body.currentPass;
+    let newPass = req.body.newPass;
+    if (currentPass === null) {
+        return res.send({message: "current password is required", code: 0});
+    }
+    if (newPass === null) {
+        return res.send({message: "new password is required", code: 0});
+    }
+    if (!passwordRegex.test(newPass)) {
+        return res.send({
+            message:
+                "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
+            code: 0,
+        });
+    }
+    try {
+        let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
+        let cus = await CustomerModel.customerModel.findById(data.cus._id);
+        if (cus.otp !== otp) {
+            return res.send({message: "otp wrong", code: 0});
+        }
+        if (cus.password !== currentPass) {
+            return res.send({message: "current password wrong", code: 0});
+        }
+        cus.password = newPass;
+        cus.otp = null;
+        await cus.save();
+        return res.send({
+            message: "edit password success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+exports.getPassWord = async (req, res) => {
+    let username = req.body.username;
+    let ipAddress = process.env.IP_ADDRESS;
+    if (username == null) {
+        return res.send({message: "username is required", code: 0});
+    }
+    if (!phoneNumberRegex.test(username) && isNumeric(username)) {
+        return res.send({message: "The phone number is not in the correct format", code: 0});
+    }
+    if (!emailRegex.test(username) && !isNumeric(username)) {
+        return res.send({message: "The email is not in the correct format", code: 0});
+    }
+    if (phoneNumberRegex.test(username)) {
+        let user = await CustomerModel.customerModel.findOne({phone_number: username});
+        if (!user) {
+            return res.send({message: "user not found", code: 0});
+        }
+        const link = `https://${ipAddress}/api/resetPassword?key=${user._id}`;
+        const text = `STECH xin chào bạn\n Ấn vào đây để khôi phục lại mật khẩu: ${link}`;
+        const apiKey = process.env.API_KEY;
+        const baseUrl = process.env.BASE_URL;
+        const to = formatPhoneNumber(username);
+        const headers = {
+            Authorization: `App ${apiKey}`,
+            "Content-Type": "application/json",
+        };
+        const payload = {
+            messages: [
+                {
+                    destinations: [{to}],
+                    text,
+                },
+            ],
+        };
+        axios
+            .post(baseUrl, payload, {headers})
+            .then(async () => {
+                return res.send({
+                    message: "Please verify your account",
+                    code: 1,
+                });
+            })
+            .catch((error) => {
+                console.error(error.message);
+                return res.send({message: "Fail send code", code: 0});
+            });
+    }
+    if (emailRegex.test(username)) {
+        try {
+            let user = await CustomerModel.customerModel.findOne({email: username});
+            const link = `https://${ipAddress}/apiv2/resetPassword?key=${user._id}`;
+            const text = `STECH xin chào bạn\n Ấn vào đây để khôi phục lại mật khẩu: ${link}`;
+            let index = sendOTPByEmailGetPass(username, text);
+            if (index === 0) {
+                return res.send({message: "Verify user fail", code: 0});
+            } else {
+                return res.send({
+                    message: "Please verify your account",
+                    code: 1,
+                });
+            }
+        } catch (e) {
+            console.log(e.message)
+            return res.send({
+                message: e.message.toString(),
+                code: 0,
+            });
+        }
+    }
+}
+exports.resetPassword = async (req, res) => {
+    const key = req.query.key;
+    const newPass = generateRandomPassword(6);
+    const text = `STECH xin chào bạn\nmật khẩu mới của bạn là: ${newPass}`;
+    if (key == null) {
+        return res.send({ message: "key is required", code: 0 });
+    }
+    try {
+        let user = await CustomerModel.customerModel.findById(key);
+        console.log(key);
+        let index = sendNewPassByEmailGetPass(user.email, text);
+        if (index === 0) {
+            return res.send({ message: "Verify user fail", code: 0 });
+        } else {
+            user.password = newPass;
+            await user.save();
+            return res.send({
+                message: "New password has been sent to your email",
+                code: 1,
+            });
+        }
+    } catch (e) {
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+}
+function isNumeric(str) {
+    if (typeof str != "string") return false // we only process strings!
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+        !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+function generateRandomPassword(length) {
+    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset.charAt(randomIndex);
+    }
+    return password;
+}
+
+

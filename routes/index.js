@@ -16,6 +16,7 @@ const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
 const AdminModel = require("./../modelsv2/model.admin");
 const DetailOrderModel = require("./../modelsv2/model.detailorder");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
+const diliveryaddress = require("./../modelsv2/model.deliveryaddress");
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -38,6 +39,9 @@ const axios = require("axios");
 require("dotenv").config();
 
 /* GET home page. */
+router.get("/",(req,res)=>{
+    res.redirect("/stech.manager/type_login");
+});
 router.get("/stech.manager/home", async function (req, res, next) {
     try {
         res.render("index");
