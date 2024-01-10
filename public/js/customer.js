@@ -3,9 +3,10 @@
 document.addEventListener('DOMContentLoaded', function () {
     const token = utils.GetCookie("token");
 
-    var myModal = new bootstrap.Modal(document.getElementById('UserModal'));
-    var myModalUp = new bootstrap.Modal(document.getElementById('UpdateUserModal'));
-    var myModalDe = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+   // var myModal = new bootstrap.Modal(document.getElementById('UserModal'));
+    // var myModalUp = new bootstrap.Modal(document.getElementById('UpdateUserModal'));
+    var myModalBan = new bootstrap.Modal(document.getElementById('banCustomerModal'));
+    const banButtons = document.querySelectorAll('.banCus');
     const addUserButton = document.getElementById("addUserButton");
 
 
@@ -25,12 +26,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmDeleteButton = document.getElementById("deleteUser");
     let roleAU;
 
-
-    document.getElementById('openUserModal').addEventListener('click', function () {
-        myModal.show();
+    //
+    // document.getElementById('openUserModal').addEventListener('click', function () {
+    //     myModal.show();
+    // });
+    document.getElementById('banCustomerBtn').addEventListener('click', function () {
+        myModalBan.show();
     });
-    document.getElementById('deleteUserBtn').addEventListener('click', function () {
-        myModalDe.show();
+    banButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const customerId = this.getAttribute('data-id');
+            document.getElementById('idCustomerBan').value = customerId;
+        });
     });
 
     deleteProButtons.forEach(function (button) {

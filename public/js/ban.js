@@ -2,11 +2,12 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     const token = utils.GetCookie("token");
-    var myModal = new bootstrap.Modal(document.getElementById('EmployeeModal'));
 
-    var myModalBan = new bootstrap.Modal(document.getElementById('banEmployeeModal'));
-    const banButtons = document.querySelectorAll('.banEmployee');
-    const detailLinks = document.querySelectorAll(".DetailUser");
+    // var myModal = new bootstrap.Modal(document.getElementById('UserModal'));
+    // var myModalUp = new bootstrap.Modal(document.getElementById('UpdateUserModal'));
+    var myModalUnBan = new bootstrap.Modal(document.getElementById('unbanCusModal'));
+    const UnbanButtons = document.querySelectorAll('.unbanCus');
+
 
     const logout = document.getElementById("logout");
     logout.addEventListener("click", function () {
@@ -14,19 +15,16 @@ document.addEventListener('DOMContentLoaded', function () {
         utils.DeleteAllCookies();
     });
 
+    const detailLinks = document.querySelectorAll(".DetailUser");
 
-    document.getElementById('openEmployeeModal').addEventListener('click', function () {
-        myModal.show();
+    document.getElementById('unbanCusBtn').addEventListener('click', function () {
+        myModalUnBan.show();
     });
-
-
-    document.getElementById('banEmployeeBtn').addEventListener('click', function () {
-        myModalBan.show();
-    });
-    banButtons.forEach(button => {
+    UnbanButtons.forEach(button => {
         button.addEventListener('click', function () {
-            const employeeId = this.getAttribute('data-id');
-            document.getElementById('idEmployeeBan').value = employeeId;
+            const unbanId = this.getAttribute('data-id');
+            document.getElementById('idUnBan').value = unbanId;
+            console.log(unbanId);
         });
     });
 
@@ -40,5 +38,4 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = "/stech.manager/detail_user?userId=" + encodedUserId;
         });
     });
-
 });

@@ -19,7 +19,7 @@ const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const diliveryaddress = require("./../modelsv2/model.deliveryaddress");
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({storage: storage});
 
 const moment = require("moment-timezone");
 const utils_1 = require('../public/js/ultils_1');
@@ -590,43 +590,23 @@ router.get('/stech.manager/user', async function (req, res, next) {
 });
 router.get('/stech.manager/customer', async function (req, res, next) {
     try {
-
-        let listCus = await CustomerModel.customerModel.find();
+        let listCus = await CustomerModel.customerModel.find({ status: { $ne: 'banned' } });
 
         res.render("customer", {
             customers: listCus,
-            message: "get list customer success",
+            message: "Get list of non-banned customers success",
             code: 1,
         });
 
     } catch (e) {
         console.log(e.message);
-        res.send({ message: "user not found", code: 0 });
+        res.send({ message: "Error getting customers", code: 0 });
     }
-});
-router.post('/stech.manager/deleteCustomer', async function (req, res, next) {
-    let customerId = req.body._id;
-    console.log('cusId', customerId)
-    if (customerId == null) {
-        return res.send({ message: "product not found", code: 0 });
-    }
-    // try {
-    //     await CustomerModel.customerModel.findByIdAndDelete(customerId);
-    //     await CustomerModel.customerModel.deleteMany({_id: customerId});
-    //     await CustomerModel.customerModel.findOneAndDelete({_id: customerId});
-    //
-    //     const customerFirebase = `Customer/${customerId}`;
-    //     await UploadFileFirebase.deleteFolderAndFiles(res, customerFirebase);
-    //     res.redirect(req.get('referer'));
-    // } catch (e) {
-    //     console.log(e);
-    //     return res.send({message: e.message.toString(), code: 0});
-    // }
 });
 router.get('/stech.manager/employee', async function (req, res, next) {
     try {
 
-        let listEmployee = await EmployeeModel.employeeModel.find();
+        let listEmployee = await EmployeeModel.employeeModel.find({ status: { $ne: 'banned' } });
 
         res.render("employee", {
             employees: listEmployee,
@@ -639,10 +619,110 @@ router.get('/stech.manager/employee', async function (req, res, next) {
         res.send({ message: "user not found", code: 0 });
     }
 });
-router.post('/stech.manager/AddEmployee', upload.fields([{
-    name: "avatar",
-    maxCount: 1
-}]), async function (req, res, next) {
+router.get('/stech.manager/ban', async function (req, res, next) {
+    try {
+        let listCustomer = await CustomerModel.customerModel.find({ status: 'banned' });
+        let listEmployee = await EmployeeModel.employeeModel.find({ status: 'banned' });
+
+        let banned = [...listCustomer, ...listEmployee];
+        res.render("ban", {
+            banned: banned,
+            message: "Get list of banned users and employees success",
+            code: 1,
+        });
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "Error getting banned users and employees", code: 0 });
+    }
+});
+router.post('/stech.manager/banCustomer', async function (req, res, next) {
+    try {
+        const customerId = req.body.customerId;
+
+        const updatedCustomer = await CustomerModel.customerModel.findByIdAndUpdate(
+            customerId,
+            { $set: { status: 'banned' } },
+            { new: true }
+        );
+
+        if (updatedCustomer) {
+            res.redirect('/stech.manager/customer');
+        } else {
+            console.log(`Customer ${customerId} not found.`);
+            res.send({ message: "Customer not found", code: 0 });
+        }
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "Error banning customer", code: 0 });
+    }
+});
+router.post('/stech.manager/banEmployee', async function (req, res, next) {
+    try {
+        const EmployeeId = req.body.EmployeeId;
+
+        const updatedEmployee = await EmployeeModel.employeeModel.findByIdAndUpdate(
+            EmployeeId,
+            { $set: { status: 'banned' } },
+            { new: true }
+        );
+
+        if (updatedEmployee) {
+            res.redirect('/stech.manager/employee');
+        } else {
+            console.log(`Employee ${EmployeeId} not found.`);
+            res.send({ message: "Employee not found", code: 0 });
+        }
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "Error banning Employee", code: 0 });
+    }
+});
+router.post('/stech.manager/unban', async function (req, res, next) {
+    try {
+        const unbanId = req.body.unbanId;
+
+        // Kiểm tra xem unbanId thuộc về Customer hay Employee
+        const isCustomer = await CustomerModel.customerModel.exists({ _id: unbanId });
+        const isEmployee = await EmployeeModel.employeeModel.exists({ _id: unbanId });
+
+        if (isCustomer) {
+            // Unban Customer
+            const updatedCustomer = await CustomerModel.customerModel.findByIdAndUpdate(
+                unbanId,
+                { $set: { status: 'Not verified' } },
+                { new: true }
+            );
+
+            if (updatedCustomer) {
+                res.redirect('/stech.manager/customer');
+            } else {
+                console.log(`Customer ${unbanId} not found.`);
+                res.send({ message: "Customer not found", code: 0 });
+            }
+        } else if (isEmployee) {
+            const updatedEmployee = await EmployeeModel.employeeModel.findByIdAndUpdate(
+                unbanId,
+                { $set: { status: 'Not verified' } },
+                { new: true }
+            );
+
+            if (updatedEmployee) {
+                res.redirect('/stech.manager/employee');
+            } else {
+                console.log(`Customer ${unbanId} not found.`);
+                res.send({ message: "Customer not found", code: 0 });
+            }
+        } else {
+            console.log(`User with ID ${unbanId} not found.`);
+            res.send({ message: "User not found", code: 0 });
+        }
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "Error unbanning user", code: 0 });
+    }
+});
+
+router.post('/stech.manager/AddEmployee',upload.fields([{name: "avatar", maxCount: 1}]), async function (req, res, next) {
     try {
         const full_name = req.body.full_name;
         const password = req.body.password;
