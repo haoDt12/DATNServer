@@ -109,7 +109,7 @@ block content
                             li.page-item(style='margin-right: 10px')
                                 a.btn.btn-primary(class='statusButton' href='/stech.manager/employee') Employee
                             li.page-item(style='margin-right: 10px' id = 'getAllOrder')
-                                a.btn.btn-primary( href='#' class='statusButton' data-status = 'All') Baned
+                                a.btn.btn-primary( href='/stech.manager/ban' class='statusButton' data-status = 'All') Baned
 
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
                             li.nav-item.dropdown
@@ -135,65 +135,39 @@ block content
                             thead
                                 tr
                                     th.col-2 Candidate Name
-                                    th.text-center.col-2 Role
+                                    th.text-center.col-2 Status
                                     th.text-start.col-1  Action
                             tbody
-                                each user in users
+                                each ban in banned
                                     tr.candidates-list
                                         td.title
                                             .thumb
-                                                img.img-fluid(src=user.avatar, alt='')
+                                                img.img-fluid(src=ban.avatar, alt='')
                                                 a.bg-primary.rounded-circle.p-2.text-white.d-inline-flex.position-absolute.bottom-0.end-0.mb-n3.me-3(href='javascript:void(0)' id='addToCartButton' data-bs-toggle='modal' data-bs-target='#addToCartModal' data-bs-placement='top' data-bs-title='Add To Cart')
                                             .candidate-list-details
                                                 .candidate-list-info
                                                     .candidate-list-title
                                                         h5.mb-0
-                                                            a(href='#')=user.full_name
+                                                            a(href='#')=ban.full_name
                                                     .candidate-list-option
                                                         ul.list-unstyled
                                                             li(style="margin-right: 20px")
                                                                 i.fas.fa-envelope.pr-1
-                                                                span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= user.email
-                                                                div
-                                                                    each address in user.address.slice(0,1)
-                                                                        i.fas.fa-map-marker-alt.pr-1
-                                                                        span(style="margin-left: 5px; font-size: 14px; color: black; padding-top:15px;")= address.city
+                                                                span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= ban.email
+                                                                //div
+                                                                //    each address in user.address.slice(0,1)
+                                                                //        i.fas.fa-map-marker-alt.pr-1
+                                                                //        span(style="margin-left: 5px; font-size: 14px; color: black; padding-top:15px;")= address.city
 
                                         td.candidate-list-favourite-time.text-center
                                             a.candidate-list-favourite.order-2.text-danger(href='#')
-                                                i.fas.fa-user(style="color: green;")
-                                            span=user.role
+                                            span=ban.status
                                         td
                                             ul.list-unstyled.mb-0.d-flex
                                                 li
-                                                    a.text-primary(class='chatUser' title='' data-id=user._id)
-                                                        i.bx.bx-message-dots
-                                                li
-                                                    a#Detail.text-primary.DetailUser( data-toggle='tooltip', title='', data-original-title='View' data-id=user._id)
-                                                        i.far.fa-eye
-                                                li
-                                                    a.text-info(class="updateUs" id="updateUserBtn" data-id=user._id  data-bs-toggle="modal" data-bs-target="#UpdateUserModal")
-                                                        i.fas.fa-pencil-alt
-                                                li
-                                                    a.text-danger(class="deleteUs" id="deleteUserBtn" data-id=user._id  data-bs-toggle="modal" data-bs-target="#deleteUserModal")
-                                                        i.far.fa-trash-alt
-                        .text-center.mt-3.mt-sm-3
-                            ul.pagination.justify-content-center.mb-0
-                                li.page-item.disabled
-                                    span.page-link Prev
-                                li.page-item.active(aria-current='page')
-                                    span.page-link 1
-                                    span.sr-only (current)
-                                li.page-item
-                                    a.page-link(href='#') 2
-                                li.page-item
-                                    a.page-link(href='#') 3
-                                li.page-item
-                                    a.page-link(href='#') ...
-                                li.page-item
-                                    a.page-link(href='#') 25
-                                li.page-item
-                                    a.page-link(href='#') Next
+                                                    a.text-danger(class="unbanCus" id="unbanCusBtn" data-id=ban._id  data-bs-toggle="modal" data-bs-target="#unbanCusModal")
+                                                        i.fa.fa-unlock
+
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
                         | Design and Developed by&nbsp;
@@ -233,57 +207,23 @@ block content
                         .modal-footer
                             button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
                             button.btn.btn-primary#addUserButton(type="button") Add User
-            div#UpdateUserModal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="userModalLabel", aria-hidden="true")
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Sửa Người Dùng
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                        .modal-body
-                            form(action="/", method="post")
-                                .mb-3
-                                    .form-group
-                                        //label(for='idUser') id
-                                        input#idUser(type="text", name="idUser", class="form-control", placeholder="", aria-describedby="helpId" readonly style="display: none")
-                                .mb-3
-                                    label.form-label(for='email') Email
-                                    input#emailUp.form-control(type='text' name="email" aria-describedby='textHelp' readonly)
-                                .mb-3
-                                    label.form-label(for='password') Password
-                                    input#passwordUp.form-control(type='text' name="password" aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='full_name') Name
-                                    input#full_nameUp.form-control(type='text' name="full_name"  aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label(for='phone') Phone
-                                    input#phone_numberUp.form-control(type='text' name="phone" aria-describedby='textHelp')
-                                .mb-3
-                                    label.form-label Role
-                                        input.form-check-input(class='roleUp' type='radio' name='role' value='User')
-                                        label.form-check-label User
 
-                                        input.form-check-input(class='roleUp' type='radio' name='role' value='Admin')
-                                        label.form-check-label Admin
-                                .mb-3
-                                    .form-group
-                                        label(for="avatar") Hình ảnh
-                                        input#avatarUp(type="file", name="avatar", accept="image/*")
-                        .modal-footer
-                            button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
-                            button.btn.btn-primary#UpdateUser(type="button") Update User
 
-            #deleteUserModal.modal(tabindex='-1')
+            #unbanCusModal.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Warning!
                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                         .modal-body
-                            p Bạn có chắc chắn muốn xoá item này.
+                            p Bạn có chắc chắn muốn hủy chặn này.
                         .modal-footer
-                            button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                            button.btn.btn-danger(type='button' id='deleteUser') Đồng ý
-    script(src='/js/user.js')
+                            form(action="/stech.manager/unban" method="post")
+                                .mb-3.d-none
+                                    input#idUnBan.form-control(name='unbanId', type='text', aria-describedby='textHelp')
+                                button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                button.btn.btn-danger(type='submit' id='unbanCus') Đồng ý
+    script(src='/js/ban.js')
     script.
         function removeDiacritics(str) {
             return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");

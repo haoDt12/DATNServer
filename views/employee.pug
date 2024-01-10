@@ -109,8 +109,8 @@ block content
                                 a.btn.btn-primary(class='statusButton' href='/stech.manager/customer') Customer
                             li.page-item(style='margin-right: 10px')
                                 a.btn.btn-primary(class='statusButton' href='/stech.manager/employee') Employee
-                                li.page-item(style='margin-right: 10px' id = 'getAllOrder')
-                                    a.btn.btn-primary( href='#' class='statusButton' data-status = 'All') Baned
+                            li.page-item(style='margin-right: 10px' id = 'getAllOrder')
+                                a.btn.btn-primary( href='/stech.manager/ban' class='statusButton' data-status = 'All') Baned
 
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
                             li.nav-item.dropdown
@@ -164,31 +164,12 @@ block content
                                         td
                                             ul.list-unstyled.mb-0.d-flex
                                                 li
-                                                    a.text-primary(class='chatUser' title='' data-id=employee._id)
-                                                        i.bx.bx-message-dots
-                                                li
                                                     a#Detail.text-primary.DetailUser( data-toggle='tooltip', title='', data-original-title='View' data-id=employee._id)
                                                         i.far.fa-eye
                                                 li
-                                                    a.text-danger(href='' class="deleteUs" id="deleteUserBtn" data-id=employee._id  data-bs-toggle="modal" data-bs-target="#deleteUserModal")
-                                                        i.far.fa-trash-alt
-                        .text-center.mt-3.mt-sm-3
-                            ul.pagination.justify-content-center.mb-0
-                                li.page-item.disabled
-                                    span.page-link Prev
-                                li.page-item.active(aria-current='page')
-                                    span.page-link 1
-                                    span.sr-only (current)
-                                li.page-item
-                                    a.page-link(href='#') 2
-                                li.page-item
-                                    a.page-link(href='#') 3
-                                li.page-item
-                                    a.page-link(href='#') ...
-                                li.page-item
-                                    a.page-link(href='#') 25
-                                li.page-item
-                                    a.page-link(href='#') Next
+                                                    a.text-danger(class="banEmployee" id="banEmployeeBtn" data-id=employee._id  data-bs-toggle="modal" data-bs-target="#banEmployeeModal")
+                                                        i.fa.fa-ban
+
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
                         | Design and Developed by&nbsp;
@@ -222,20 +203,20 @@ block content
                                     button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
                                     button.btn.btn-primary#addEmployeeButton(type="submit") Add employe
 
-            #deleteUserModal.modal(tabindex='-1')
+            #banEmployeeModal.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Warning!
                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                         .modal-body
-                            p Bạn có chắc chắn muốn xoá item này.
+                            p Bạn có chắc chắn muốn chặn người dùng  này.
                         .modal-footer
-                            form(action="/stech.manager/deleteEmployee" method="post")
+                            form(action="/stech.manager/banEmployee" method="post")
                                 .mb-3.d-none
-                                    input#idEmployeeDelete.form-control(name='employeeId', type='text', aria-describedby='textHelp')
+                                    input#idEmployeeBan.form-control(name='EmployeeId', type='text', aria-describedby='textHelp')
                                 button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                                button.btn.btn-danger(type='button' id='deleteUser') Đồng ý
+                                button.btn.btn-danger(type='submit' id='banEmployee') Đồng ý
     script(src='/js/employee.js')
     script.
         function removeDiacritics(str) {
