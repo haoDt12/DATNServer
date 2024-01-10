@@ -170,6 +170,9 @@ block content
                                                     a#Detail.text-primary.DetailUser( data-toggle='tooltip', title='', data-original-title='View' data-id=employee._id)
                                                         i.far.fa-eye
                                                 li
+                                                    a.text-primary(class='EditUser' data-id=employee._id  data-bs-toggle="modal" data-bs-target="#UpdateEmployeeModal")
+                                                        i.bx.bx-edit-alt(style='color:#6b7aec')
+                                                li
                                                     a.text-danger(href='' class="deleteUs" id="deleteUserBtn" data-id=employee._id  data-bs-toggle="modal" data-bs-target="#deleteUserModal")
                                                         i.far.fa-trash-alt
                         .text-center.mt-3.mt-sm-3
@@ -221,7 +224,36 @@ block content
                                             input#avatar(type="file", name="avatar", accept="image/*")
                                     button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
                                     button.btn.btn-primary#addEmployeeButton(type="submit") Add employe
-
+            div#UpdateEmployeeModal.modal.fade
+                .modal-dialog
+                    form(method="post" action="/stech.manager/UpdateEmployee" enctype='multipart/form-data')
+                        .modal-content
+                            .modal-header
+                                h5.modal-title ửa nhân viên
+                                button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                            .modal-body
+                                .mb-2
+                                    .form-group
+                                        label(for="idEmployeUp") ID
+                                        input#idEmployeUp(type="text", name="idEmployee", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                                .mb-3
+                                    label.form-label(for='email') Email
+                                    input#emailUp.form-control(type='text' name="email" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='password') Password
+                                    input#passwordUp.form-control(type='text' name="password" aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='full_name') Name
+                                    input#full_nameUp.form-control(type='text' name="full_name"  aria-describedby='textHelp')
+                                .mb-3
+                                    label.form-label(for='phone_number') Phone
+                                    input#phone_numberUp.form-control(type='text' name="phone_number" aria-describedby='textHelp')
+                                .mb-3
+                                    .form-group
+                                        label(for="avatar") Hình ảnh
+                                        input#avatarUp(type="file", name="avatar", accept="image/*")
+                                button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
+                                button.btn.btn-primary#updateEmployeeButton(type="submit") Update employe
             #deleteUserModal.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content

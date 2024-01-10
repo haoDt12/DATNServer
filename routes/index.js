@@ -38,6 +38,23 @@ const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass} = requi
 const axios = require("axios");
 require("dotenv").config();
 
+const match = [
+    "image/jpeg",
+    "image/*",
+    "image/png",
+    "image/gif",
+    "image/bmp",
+    "image/tiff",
+    "image/webp",
+    "image/svg+xml",
+    "image/x-icon",
+    "image/jp2",
+    "image/heif",
+];
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+const passwordRegex =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
 /* GET home page. */
 router.get("/stech.manager/home", async function (req, res, next) {
     try {
@@ -508,22 +525,109 @@ router.post('/stech.manager/AddEmployee', upload.fields([{
         res.send({message: "Error adding employee", code: 0});
     }
 });
+router.post('/stech.manager/get-employee', async function (req, res, next){
+    if (!req.body.idEmployee) {
+        return res.status(400).send('can not id employee');
+    }
 
+    const idEmployee = req.body.idEmployee;
+    if (idEmployee == null) {
+        return res.send({ message: "employee not found", code: 0 });
+    }
+    try {
+        let dataEmployeeByID = await EmployeeModel.employeeModel.findById(idEmployee)
+        return res.status(200).send({
+            dataEmployeeByID,
+            code: 'GET_SUCCESS',
+            message: "get employee success",
+        })
+    } catch (e) {
+        console.log(e);
+        return res.send({ message: "error get data employee", code: 0 });
+    }
+})
+router.post('/stech.manager/UpdateEmployee', upload.fields([{
+    name: "avatar",
+    maxCount: 1
+}]), async function (req, res, next) {
+    try {
+        const idEmployee= req.body.idEmployee;
+        const full_name = req.body.full_name;
+        const password = req.body.password;
+        const fileAvatar = req.files["avatar"];
+        const email = req.body.email;
+        const phone_number = req.body.phone_number;
+        let date = new Date();
+        if (idEmployee == null) {
+            return res.send({ message: "employee not found", code: 0 });
+        }
+        let employee = await EmployeeModel.employeeModel.findById(idEmployee);
+        if (!employee) {
+            return res.send({ message: "employee not found", code: 0 });
+        }
+        // let employee = new EmployeeModel.employeeModel({
+        //     full_name: full_name,
+        //     email: email,
+        //     password: password,
+        //     phone_number: phone_number,
+        //     create_time: create_time,
+        // });
+        if (fileAvatar === undefined) {
+            const result = await EmployeeModel.employeeModel.updateOne({ _id: idEmployee}, { full_name: full_name, password: password, email: email, phone_number: phone_number });
+            if (result.nModified > 0) {
+                return res.json({ success: false, message: 'Failed to update employee' });
+            } else {
+                return res.redirect('employee')
+            }
+        }
+        // console.log("img", fileimg);
+        // xoá ảnh cũ ...
+        const imgEmployeeFolder = `Employees/${idEmployee}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, imgEmployeeFolder);
+        let avatar = await UploadFileFirebase.uploadFile(
+            req,
+            employee._id.toString(),
+            "avatar",
+            "Employees",
+            fileAvatar[0]
+        );
 
+        if (avatar === 0) {
+            return res.send({message: "Failed to upload avatar", code: 0});
+        }
+
+        employee.avatar = avatar;
+        await employee.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        res.send({message: "Error adding employee", code: 0});
+    }
+});
 router.get("/stech.manager/verify", async function (req, res, next) {
     res.render("verify");
 });
 router.get("/stech.manager/profile", async function (req, res, next) {
     const id = utils_1.getCookie(req, 'Uid');
-    console.log(id);
+    const verifyWith = utils_1.getCookie(req, 'verifyWith');
     try {
-        let listprofile = await UserModel.userModel.findById(id).populate({path: 'address', select: 'city'});
+        if (verifyWith == "Employee"){
+            let listprofile = await EmployeeModel.employeeModel.findById(id);
 
-        res.render("profile", {
-            profiles: listprofile,
-            message: "get list profile success",
-            code: 1,
-        });
+            res.render("profile", {
+                profiles: listprofile,
+                message: "get list profile success",
+                code: 1,
+            });
+        }
+        else if (verifyWith == "Admin"){
+            let listAdmin = await AdminModel.adminModel.findById(id);
+            res.render("profile", {
+                profiles: listAdmin,
+                message: "get list profile success",
+                code: 1,
+            });
+        }
     } catch (e) {
         console.log(e.message);
         res.send({message: "profile not found", code: 0});
@@ -1517,6 +1621,85 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
+    }
+})
+router.post("/stech.manager/editUser",upload.single('avatar'),async function (req, res, next) {
+    let file = req.file;
+    let password = req.body.password;
+    let full_name = req.body.full_name;
+    let phone_number = req.body.phone_number;
+    let email = req.body.email;
+
+    let idUser = req.cookies.Uid;
+    let verifyWith = req.cookies.verifyWith;
+    if (idUser == null) {
+        return res.send({ message: "Admin not found", code: 0 });
+    }
+
+    try {
+        let user ;
+        if (verifyWith == "Admin"){
+            user = await AdminModel.adminModel.findById({_id: idUser});
+        }
+        else if (verifyWith =="Employee"){
+            user = await EmployeeModel.employeeModel.findById({_id: idUser});
+        }
+
+        if (user == null) {
+            return res.send({ message: "Admin not found", code: 0 });
+        }
+        if (password != null) {
+            if (!passwordRegex.test(password)) {
+                return res.send({
+                    message:
+                        "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
+                    code: 0,
+                });
+            }
+            user.password = password;
+        }
+        if (full_name != null) {
+            user.full_name = full_name;
+        }
+        if (phone_number != null) {
+            if (!phoneNumberRegex.test(phone_number)) {
+                return res.send({
+                    message: "The phone number is not in the correct format",
+                    code: 0,
+                });
+            }
+            user.phone_number = phone_number;
+        }
+        if (email != null) {
+            if (!emailRegex.test(email)) {
+                return res.send({
+                    message: "The email is not in the correct format",
+                    code: 0,
+                });
+            }
+            user.email = email;
+        }
+        if (file != null) {
+            const imgFirebase = `admins/${idUser}`;
+            await UploadFileFirebase.deleteFolderAndFiles(res, imgFirebase);
+
+            let imgProfile = await UploadFileFirebase.uploadFileProfile(
+                req,
+                user._id.toString(),
+                "avatar",
+                "admins",
+                file
+            );
+            if (imgProfile === 0) {
+                return res.send({message: "upload file img fail", code: 0});
+            }
+            user.avatar = imgProfile;
+        }
+        await user.save();
+        return res.redirect("profile");
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 })
 
