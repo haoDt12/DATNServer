@@ -151,69 +151,39 @@ exports.cancelOrder = async (req, res) => {
 }
 
 exports.getStatic = async (req, res) => {
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
+    const { startDate, endDate } = req.body;
 
     if (!startDate) {
-        return res.send({message: "start date is required", code: 1});
+        return res.send({ message: "start date is required", code: 1 });
     }
     if (!endDate) {
-        return res.send({message: "end date is required", code: 1});
+        return res.send({ message: "end date is required", code: 1 });
     }
-
     try {
-        const order = await OrderModel.oderModel.find({status: "PayComplete"});
-
-        const dataOrder = order.map(item => ({
-            create_time: moment(item.create_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD"),
-            total_amount: item.total_amount
-        }));
-
-        const dataStatic = calculateOneDay(dataOrder, startDate, endDate);
-
-        const data = dataStatic.map(item => item.total);
-
+        let dataOrder = [];
+        let dataGetFromDateToDate = [];
+        let data = [];
+        let order = await OrderModel.oderModel.find({ status: "PayComplete" });
+        order.map(item => {
+            const formattedDate = moment(item.create_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
+            dataOrder.push({ date: formattedDate, total: item.total_amount })
+        })
+        dataGetFromDateToDate = calculateTotal(dataOrder, startDate, endDate);
+        dataGetFromDateToDate.map(item => {
+            data.push(item.total)
+        })
         return res.send({
             message: "get order from date to date success",
             code: 1,
+            name: "OrderFromDateToDate",
             data: data
-        });
+        })
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 
-exports.getTopProduct = async (req, res) => {
-    try {
-        let order = await OrderModel.oderModel.find({status: "PayComplete"});
-        let arrIdPro = [];
-        let data = []
-        order.map(item => {
-            item.product.map(data => {
-                arrIdPro.push(data.productId);
-            });
-        })
-        let top10Product = getTopFrequencies(arrIdPro);
-        await Promise.all(top10Product.map(async item => {
-            let product = await ProductModel.productModel.findById(item.productId);
-            data.push({
-                productId: item.productId,
-                img: product.img_cover,
-                count: item.count
-            })
-        }));
-        return res.send({
-            message: "get top 10 success",
-            code: 1,
-            name: "top10Product",
-            data: data
-        })
-    } catch (e) {
-        console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
-    }
-}
 exports.updateStatusOrder = async (req, res) => {
     let orderId = req.body.orderId;
     let employeeId = req.body.employeeId;
@@ -235,47 +205,35 @@ exports.updateStatusOrder = async (req, res) => {
     }
 }
 
-function calculateOneDay(data, fromDate, toDate) {
+function calculateTotal(data, fromDate, toDate) {
     const totals = {};
     const dateRange = generateDateRange(fromDate, toDate);
-
-    for (const date of dateRange) {
+    dateRange.forEach(date => {
         totals[date] = 0;
-    }
+    });
+    data.forEach(item => {
+        const date = item.date;
+        const total = Number(item.total);
 
-    for (const item of data) {
-        const date = item.create_time;
-        const total = item.total_amount;
-
-        totals[date] = (totals[date] || 0) + total;
-    }
-
-    return Object.entries(totals).map(([date, total]) => ({date, total}));
+        if (!totals[date]) {
+            totals[date] = 0;
+        }
+        totals[date] += total;
+    });
+    return Object.keys(totals).map(date => ({
+        date,
+        total: totals[date],
+    }));
 }
 
 function generateDateRange(fromDate, toDate) {
     const dateRange = [];
-    const startDate = new Date(fromDate);
-    const endDate = new Date(toDate);
-
-    for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+    const currentDate = new Date(fromDate);
+    while (currentDate <= new Date(toDate)) {
         dateRange.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
     }
-
     return dateRange;
-}
-
-function getTopFrequencies(array) {
-    const _frequencies = {};
-    array.forEach(item => {
-        _frequencies[item] = (_frequencies[item] || 0) + 1;
-    });
-    const frequencyArray = Object.entries(_frequencies);
-    frequencyArray.sort((a, b) => b[1] - a[1]);
-    return frequencyArray.slice(0, 10).map(entry => ({
-        productId: entry[0],
-        count: entry[1],
-    }));
 }
 
 exports.getPriceOrderZaloPay = async (req, res) => {

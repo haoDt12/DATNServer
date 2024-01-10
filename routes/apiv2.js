@@ -39,7 +39,8 @@ router.post("/getCategory", CategoryController.getCategory);
 //product
 router.post("/getAllProduct", ProductController.getAllProduct);
 router.post("/getDetailProduct", ProductController.getDetailProduct);
-router.post("/getProductRunOut", ProductController.getRunOutProducts);
+router.post("/getRunOutProducts", ProductController.getRunOutProducts);
+router.post("/getHotSaleProducts", ProductController.getHotSellProducts);
 router.post("/getProductByCategoryId", ProductController.getProductByCategoryId);
 
 

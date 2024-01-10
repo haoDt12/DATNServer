@@ -1,6 +1,7 @@
 extends layout
 
 block content
+    link(rel='stylesheet', href='/css/table.css')
     #main-wrapper.page-wrapper(data-layout='vertical' data-navbarbg='skin6' data-sidebartype='full' data-sidebar-position='fixed' data-header-position='fixed')
         // Sidebar Start
         aside.left-sidebar
@@ -190,6 +191,59 @@ block content
                                     .mb-3.mb-sm-0
                                         h5.card-title.fw-semibold Overview
                                 #chart_custom
+                .row
+                    .col-lg-12.d-flex.align-items-strech
+                        .card.w-100
+                            .card-body
+                                .d-sm-flex.d-block.align-items-center.justify-content-between.mb-9
+                                    .mb-3.mb-sm-0
+                                        h5.card-title.fw-semibold Top Sale
+                                .row
+                                    .col-xl-12
+                                        .card
+                                            .card-body
+                                                .table-responsive
+                                                    table.table.table-hover.mb-0
+                                                        thead
+                                                            tr.align-self-center
+                                                                th Product
+                                                                th Detail
+                                                                th Sold
+                                                                th Quantity
+                                                                th Price
+                                                                th Status
+                                                        tbody#TopSaleTable
+                                                            tr
+                                                                td
+                                                                    img.thumb-sm.rounded-circle.mr-2(src='https://img3.thuthuatphanmem.vn/uploads/2019/06/13/anh-nen-anime-cho-may-tinh-dep_095239016.jpg' alt='')
+                                                                    |  Kevin Heal
+                                                                td
+                                                                    | Ram: 8,
+                                                                    | Rom:512,
+                                                                    | Color: red
+                                                                td 18
+                                                                td 1000
+                                                                td $15,000
+                                                                td
+                                                                    span.badge.badge-boxed.badge-soft-warning Stoking
+                .row
+                    .col-lg-12.d-flex.align-items-strech
+                        .card.w-100
+                            .card-body
+                                .d-sm-flex.d-block.align-items-center.justify-content-between.mb-9
+                                    .mb-3.mb-sm-0
+                                        h5.card-title.fw-semibold Running Out
+                                .row
+                                    .col-sm-6.col-xl-3
+                                        .card.overflow-hidden.rounded-2
+                                            .position-relative
+                                                a(href='#')
+                                                    img.card-img-top.rounded-0(src="https://img3.thuthuatphanmem.vn/uploads/2019/06/13/anh-nen-anime-cho-may-tinh-dep_095239016.jpg" alt='...' style='max-width: 100%; height: 180px;')
+                                            .card-body.pt-3.p-4
+                                                h6.fw-semibold.fs-4 21312
+                                                h6.fw-medium.fs-2 2100000 VNĐ
+                                                h6.fw-light.fs-1.float-end 21 sold
+
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
                         | Design and Developed by
