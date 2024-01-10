@@ -10,34 +10,40 @@ document.addEventListener("DOMContentLoaded", function() {
     window.location.assign("/stech.manager/login");
     utils.DeleteAllCookies();
   });
-  const token = utils.GetCookie("token");
   const date = new Date();
-  
   let data_chart = [];
-  async function GetStatisticsCusTom(from_date,to_date) {
+  async function getStatic(startDate,endDate) {
     try {
       const response = await axios.post(`/apiv2/getStatic`, {
-        fromDate: from_date,
-        toDate: to_date
+        startDate: startDate,
+        endDate: endDate
       });
       return response.data;
     } catch (error) {
       console.log(error);
     }
   }
-  async function GetTop10Product() {
+  async function GetHotSaleProducts(number) {
     try {
-      const response = await axios.post(`/api/getOrderTop10`,
-        {
-        headers: {
-          'Authorization': `${token}`
-        }
+      const response = await axios.post(`/apiv2/getHotSaleProducts`, {
+        topNumber: number
       });
       return response.data;
     } catch (error) {
       console.log(error);
     }
   }
+  async function GetRunOutProducts(number) {
+    try {
+      const response = await axios.post(`/apiv2/getRunOutProducts`, {
+        topNumber: number
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   function findMax(arr) {
     let max = arr[0];
     for (let i = 1; i < arr.length; i++) {
@@ -79,10 +85,11 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   save.addEventListener('click', function (){
-    GetStatisticsCusTom(from_input.value, to_input.value).then(data =>{
+    getStatic(from_input.value, to_input.value).then(data =>{
       const startDate = new Date(from_input.value);
       const endDate = new Date(to_input.value);
       let dateArray = createArrayOfDates(startDate,endDate);
+      console.log(data.data)
       chartCustom = {
         series: [
           { name: "Earnings this day:", data: data.data },
@@ -179,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let year_selected = dataSelect[0];
   select_year.addEventListener('change', function (){
     year_selected = select_year.value;
-    console.log(year_selected)
+    reloadChart(data_chart)
   });
 
   let data_date = [];
@@ -203,15 +210,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const first_date = year_selected+"/"+data_date[0];
   const last_date = year_selected+"/"+data_date[data_date.length - 1];
-  console.log(last_date)
-  console.log(data_date)
-  GetStatisticsCusTom(first_date, last_date).then(data =>{
+  getStatic(first_date, last_date).then(data =>{
     if (data.code === 1){
-      data_chart = data.data;
-      console.log(data_chart)
+      // data_chart = data.data;
+      console.log(data.data)
       let chartData = {
         series: [
-          { name: "Earnings this day:", data: data_chart.reverse()},
+          { name: "Earnings this day:", data: data_chart},
         ],
         chart: {
           type: "bar",
@@ -250,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         xaxis: {
           type: "category",
-          categories: data_date_ui.reverse(),
+          categories: data_date_ui,
           labels: {
             style: { cssClass: "grey--text lighten-2--text fill-color" },
           },
@@ -295,6 +300,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   });
 
+//Thông kê doanh thu trong 1 năm
+  //Tạo hàm rage ra 1 năm
   function getYearTime(year) {
     const startDate = new Date(year, 0, 1);
     const endDate = new Date(year, 11, 31);
@@ -310,11 +317,14 @@ document.addEventListener("DOMContentLoaded", function() {
     return days;
   }
 
+//Khởi tạo biến
   const currentYear = new Date().getFullYear();
   const yearTime = getYearTime(currentYear);
   const formattedYear = yearTime.map(date => date.toLocaleDateString('en-US', options_full));
   let data_year = [];
-  GetStatisticsCusTom(formattedYear[0], formattedYear[formattedYear.length-1]).then(data =>{
+
+  //Gọi API và render ra dữ liệu
+  getStatic(formattedYear[0], formattedYear[formattedYear.length-1]).then(data =>{
     if (data.code === 1){
       data_year = data.data;
       let total = calculateSum(data_year);
@@ -374,6 +384,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
+//Thông kê doanh thu trong 1 tháng
+  //Tạo hàm rage ra 1 tháng
   function getCurrentMonthTime() {
     const currentDate = new Date();
     const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -390,10 +402,13 @@ document.addEventListener("DOMContentLoaded", function() {
     return dates;
   }
 
+//Khởi tạo biến
   const oneMonthTime = getCurrentMonthTime();
   const formattedDates = oneMonthTime.map(date => date.toLocaleDateString('en-US', options_full));
   let data_month = [];
-  GetStatisticsCusTom(formattedDates[0], formattedDates[formattedDates.length - 1]).then(data =>{
+
+  //Gọi API và render ra dữ liệu
+  getStatic(formattedDates[0], formattedDates[formattedDates.length - 1]).then(data =>{
     if (data.code === 1){
       data_month = data.data;
       let total = calculateSum(data_month);
