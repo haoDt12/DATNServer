@@ -18,7 +18,7 @@ const DetailOrderModel = require("./../modelsv2/model.detailorder");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({storage: storage});
+const upload = multer({ storage: storage });
 
 const moment = require("moment-timezone");
 const utils_1 = require('../public/js/ultils_1');
@@ -28,11 +28,11 @@ const mongoose = require('mongoose');
 
 const crypto = require("crypto");
 
-const {stat} = require("fs");
+const { stat } = require("fs");
 const UploadFile = require("../models/uploadFile");
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
-const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass} = require("../models/otp");
+const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
 
 const axios = require("axios");
 require("dotenv").config();
@@ -43,7 +43,7 @@ router.get("/stech.manager/home", async function (req, res, next) {
         res.render("index");
     } catch (e) {
         console.log(e.message);
-        res.send({message: "home not found", code: 0})
+        res.send({ message: "home not found", code: 0 })
     }
 });
 router.get("/stech.manager/product_action", async function (req, res, next) {
@@ -60,13 +60,13 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "product not found", code: 0})
+        res.send({ message: "product not found", code: 0 })
     }
 });
-router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxCount: 1}, {
+router.post("/stech.manager/AddProduct", upload.fields([{ name: "img_cover", maxCount: 1 }, {
     name: "video",
     maxCount: 1
-}, {name: "list_img", maxCount: 10}]), async function (req, res, next) {
+}, { name: "list_img", maxCount: 10 }]), async function (req, res, next) {
     try {
         const name = req.body.name;
         const category_id = req.body.category_id;
@@ -87,11 +87,11 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         let specificTimeZone = 'Asia/Ha_Noi';
         let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
         if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null) {
-            return res.send({message: "All fields are required", code: 0});
+            return res.send({ message: "All fields are required", code: 0 });
         }
 
         if (isNaN(price) || isNaN(quantity)) {
-            return res.send({message: "Price and quantity must be numbers", code: 0});
+            return res.send({ message: "Price and quantity must be numbers", code: 0 });
         }
 
         let product = new ProductModel.productModel({
@@ -118,7 +118,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         );
 
         if (img_cover === 0) {
-            return res.send({message: "Failed to upload img_cover", code: 0});
+            return res.send({ message: "Failed to upload img_cover", code: 0 });
         }
 
         product.img_cover = img_cover;
@@ -136,7 +136,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         );
 
         if (video === 0) {
-            return res.send({message: "Failed to upload video", code: 0});
+            return res.send({ message: "Failed to upload video", code: 0 });
         }
 
         productVideo.video = video;
@@ -155,7 +155,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
             );
 
             if (img === 0) {
-                return res.send({message: "Failed to upload list_img", code: 0});
+                return res.send({ message: "Failed to upload list_img", code: 0 });
             }
 
             productListImg.img = img;
@@ -167,13 +167,13 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error adding product", code: 0});
+        res.send({ message: "Error adding product", code: 0 });
     }
 });
-router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", maxCount: 1}, {
+router.post("/stech.manager/EditProduct", upload.fields([{ name: "img_cover", maxCount: 1 }, {
     name: "video",
     maxCount: 1
-}, {name: "list_img", maxCount: 10}]), async function (req, res, next) {
+}, { name: "list_img", maxCount: 10 }]), async function (req, res, next) {
     try {
         let productId = req.body.productId;
         const name = req.body.name;
@@ -196,12 +196,12 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
         if (productId == null) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
 
         let product = await ProductModel.productModel.findById(productId);
         if (!product) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
 
         if (category_id !== undefined) {
@@ -246,12 +246,12 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         // Upload file mới cho img_cover
         let img_cover = await UploadFileFirebase.uploadFile(req, product._id.toString(), "img_cover", "products", fileimg_cover[0]);
         if (img_cover === 0) {
-            return res.send({message: "upload file fail", code: 0});
+            return res.send({ message: "upload file fail", code: 0 });
         }
         product.img_cover = img_cover;
 
         // Xóa thư mục video cũ
-        let productVideo = await ProductVideo.productVideoModel.findOne({product_id: productId});
+        let productVideo = await ProductVideo.productVideoModel.findOne({ product_id: productId });
 
         const videoFolder = `products/${productId}/video`;
         await UploadFileFirebase.deleteFolderAndFiles(res, videoFolder);
@@ -265,12 +265,12 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
             filevideo[0]
         );
         if (video === 0) {
-            return res.send({message: "upload file fail", code: 0});
+            return res.send({ message: "upload file fail", code: 0 });
         }
         productVideo.video = video;
 
         // Xóa thư mục list_img cũ và xóa dữ liệu cũ trong MongoDB
-        let productListImgs = await ProductImg.productImgModel.find({product_id: productId});
+        let productListImgs = await ProductImg.productImgModel.find({ product_id: productId });
         for (const productListImg of productListImgs) {
             const listImgFolder = `products/${productId}/list_img`;
             await UploadFileFirebase.deleteFolderAndFiles(res, listImgFolder);
@@ -289,7 +289,7 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
             );
 
             if (img === 0) {
-                return res.send({message: "upload file fail", code: 0});
+                return res.send({ message: "upload file fail", code: 0 });
             }
 
             const newProductListImg = new ProductImg.productImgModel({
@@ -305,19 +305,19 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         return res.redirect('/stech.manager/product');
     } catch (e) {
         console.log(e);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 router.post('/stech.manager/deleteProduct', async function (req, res, next) {
     let productId = req.body.productId;
     if (productId == null) {
-        return res.send({message: "product not found", code: 0});
+        return res.send({ message: "product not found", code: 0 });
     }
     try {
 
         await ProductModel.productModel.findByIdAndDelete(productId);
-        await ProductImg.productImgModel.deleteMany({product_id: productId});
-        await ProductVideo.productVideoModel.findOneAndDelete({product_id: productId});
+        await ProductImg.productImgModel.deleteMany({ product_id: productId });
+        await ProductVideo.productVideoModel.findOneAndDelete({ product_id: productId });
 
 
         const productFirebase = `products/${productId}`;
@@ -325,7 +325,7 @@ router.post('/stech.manager/deleteProduct', async function (req, res, next) {
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 
@@ -342,24 +342,177 @@ router.get('/stech.manager/product', async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.render("error", {message: "product not found", code: 0});
+        res.render("error", { message: "product not found", code: 0 });
     }
 });
+router.post(
+    "/stech.manager/add-category",
+    upload.single('image'),
+    async function (req, res, next) {
+        // console.log(req.body);
+        // console.log(req.file);
+        // console.log(req.files);
+        try {
+            const name = req.body.name;
+            if (!req.file) {
+                return res.status(400).send('Error: not receiving file');
+            }
+            const fileimg = req.file;
+            let date = new Date();
+            let specificTimeZone = 'Asia/Ha_Noi';
+            let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
+
+            if (name == null || name.toString().trim().length === 0) {
+                return res.send({ message: "name category require", code: 0 });
+            }
+            if (fileimg == null) {
+                return res.send({ message: "image category require", code: 0 });
+            }
+
+            // '2023-12-05-21:42:38'
+            let category = new CategoryModel.categoryModel({
+                name,
+                create_time,
+            });
+
+            let img = await UploadFileFirebase.uploadFileCategory(
+                req,
+                category._id.toString(),
+                "",
+                "categories",
+                fileimg
+            );
+            if (img === 0) {
+                return res.send({ message: "Failed to upload image category", code: 0 });
+            }
+            category.img = img;
+            await category.save();
+            return res.redirect("category")
+        } catch (e) {
+            console.log(e.message);
+            return res.send({ message: "Error add category", code: 0 });
+        }
+    });
+router.post("/stech.manager/delete-cate", async function (req, res, next) {
+
+    const CODE_DELETE = 1;
+
+    if (!req.body.idCate) {
+        return res.status(400).send('can not id category');
+    }
+
+    const idCate = req.body.idCate;
+    if (idCate == null) {
+        return res.send({ message: "category not found", code: 0 });
+    }
+    try {
+        let message = req.body.message == null ? -1 : req.body.message;
+        let dataProductByCate = await ProductModel.productModel.find({ category_id: idCate })
+        if (dataProductByCate.length > 0 && message != CODE_DELETE) {
+            return res.status(200).send({
+                code: 'CATEGORY_USED',
+                message: CODE_DELETE
+            });
+        }
+
+        await CategoryModel.categoryModel.findByIdAndDelete(idCate);
+        const categoryFirebase = `categories/${idCate}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, categoryFirebase);
+        return res.status(200).send({
+            code: 'SUCCESS',
+            message: "Delete category success"
+        })
+    } catch (e) {
+        console.log(e);
+        return res.send({ message: "error get data product", code: 0 });
+    }
+
+});
+
+router.post("/stech.manager/get-cate", async function (req, res, next) {
+    if (!req.body.idCate) {
+        return res.status(400).send('can not id category');
+    }
+
+    const idCate = req.body.idCate;
+    if (idCate == null) {
+        return res.send({ message: "category not found", code: 0 });
+    }
+    try {
+        let dataCategoryByID = await CategoryModel.categoryModel.findById(idCate)
+        return res.status(200).send({
+            dataCategoryByID,
+            code: 'GET_SUCCESS',
+            message: "get category success",
+        })
+    } catch (e) {
+        console.log(e);
+        return res.send({ message: "error get data category", code: 0 });
+    }
+});
+
+router.post("/stech.manager/update-category",
+    upload.single('image'),
+    async function (req, res, next) {
+        if (!req.body.idCate) {
+            return res.status(400).send('can not id category');
+        }
+
+        const idCate = req.body.idCate;
+        const name = req.body.name;
+        const fileimg = req.file;
+
+        let date = new Date();
+        // let specificTimeZone = 'Asia/Ha_Noi';
+        // let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
+
+        if (idCate == null) {
+            return res.send({ message: "category not found", code: 0 });
+        }
+        let category = await CategoryModel.categoryModel.findById(idCate);
+        if (!category) {
+            return res.send({ message: "category not found", code: 0 });
+        }
+        if (fileimg === undefined) {
+            const result = await CategoryModel.categoryModel.updateOne({ _id: idCate }, { name: name });
+            if (result.nModified > 0) {
+                return res.json({ success: false, message: 'Failed to update category' });
+            } else {
+                return res.redirect('category')
+            }
+        }
+        // console.log("img", fileimg);
+        // xoá ảnh cũ ...
+        const imgCateFolder = `categories/${idCate}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, imgCateFolder);
+        // Upload file mới cho category
+        let img = await UploadFileFirebase.uploadFileCategory(
+            req,
+            category._id.toString(),
+            "",
+            "categories",
+            fileimg
+        );
+        if (img === 0) {
+            return res.send({ message: "upload file category fail", code: 0 });
+        }
+        category.name = name
+        category.img = img;
+        await category.save();
+        return res.redirect('category');
+    });
 
 router.get("/stech.manager/category", async function (req, res, next) {
     try {
         let listCategory = await CategoryModel.categoryModel.find();
-
         res.render("category", {
             category: listCategory,
             message: "get list category success",
             code: 1,
         });
-
-
     } catch (e) {
         console.log(e.message);
-        res.send({message: "category not found", code: 0});
+        res.send({ message: "category not found", code: 0 });
     }
 });
 router.get("/stech.manager/login", function (req, res, next) {
@@ -384,14 +537,14 @@ router.get("/stech.manager/detail_product", async function (req, res, next) {
         });
 
         if (product) {
-            res.render("detail_product", {detailProduct: product, message: "get product details success", code: 1});
+            res.render("detail_product", { detailProduct: product, message: "get product details success", code: 1 });
         } else {
-            res.send({message: "Product not found", code: 0});
+            res.send({ message: "Product not found", code: 0 });
 
         }
     } catch (e) {
         console.error("Error fetching:", e.message);
-        res.send({message: "Error ", code: 0});
+        res.send({ message: "Error ", code: 0 });
     }
 });
 router.get("/stech.manager/detail_user", async function (req, res, next) {
@@ -401,24 +554,24 @@ router.get("/stech.manager/detail_user", async function (req, res, next) {
         //let productId = req.query.productId;
         console.log("Received userId from cookie:", userId);
 
-        let user = await UserModel.userModel.findById(userId).populate({path: 'address', select: 'city'});
+        let user = await UserModel.userModel.findById(userId).populate({ path: 'address', select: 'city' });
 
         if (user) {
-            res.render("detail_user", {detailUser: user, message: "get user details success", code: 1});
+            res.render("detail_user", { detailUser: user, message: "get user details success", code: 1 });
             console.log(user)
         } else {
-            res.send({message: "user not found", code: 0});
+            res.send({ message: "user not found", code: 0 });
         }
     } catch (e) {
         console.error("Error fetching user details:", e.message);
-        res.send({message: "Error fetching user details", code: 0});
+        res.send({ message: "Error fetching user details", code: 0 });
     }
 });
 
 router.get('/stech.manager/user', async function (req, res, next) {
     try {
 
-        let listUser = await UserModel.userModel.find().populate({path: 'address', select: 'city'});
+        let listUser = await UserModel.userModel.find().populate({ path: 'address', select: 'city' });
 
         res.render("user", {
             users: listUser,
@@ -428,7 +581,7 @@ router.get('/stech.manager/user', async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "user not found", code: 0});
+        res.send({ message: "user not found", code: 0 });
     }
 });
 router.get('/stech.manager/customer', async function (req, res, next) {
@@ -444,14 +597,14 @@ router.get('/stech.manager/customer', async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "user not found", code: 0});
+        res.send({ message: "user not found", code: 0 });
     }
 });
 router.post('/stech.manager/deleteCustomer', async function (req, res, next) {
     let customerId = req.body._id;
     console.log('cusId', customerId)
     if (customerId == null) {
-        return res.send({message: "product not found", code: 0});
+        return res.send({ message: "product not found", code: 0 });
     }
     // try {
     //     await CustomerModel.customerModel.findByIdAndDelete(customerId);
@@ -479,7 +632,7 @@ router.get('/stech.manager/employee', async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "user not found", code: 0});
+        res.send({ message: "user not found", code: 0 });
     }
 });
 router.post('/stech.manager/AddEmployee', upload.fields([{
@@ -512,7 +665,7 @@ router.post('/stech.manager/AddEmployee', upload.fields([{
         );
 
         if (avatar === 0) {
-            return res.send({message: "Failed to upload avatar", code: 0});
+            return res.send({ message: "Failed to upload avatar", code: 0 });
         }
 
         employee.avatar = avatar;
@@ -520,7 +673,7 @@ router.post('/stech.manager/AddEmployee', upload.fields([{
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error adding employee", code: 0});
+        res.send({ message: "Error adding employee", code: 0 });
     }
 });
 
@@ -532,7 +685,7 @@ router.get("/stech.manager/profile", async function (req, res, next) {
     const id = utils_1.getCookie(req, 'Uid');
     console.log(id);
     try {
-        let listprofile = await UserModel.userModel.findById(id).populate({path: 'address', select: 'city'});
+        let listprofile = await UserModel.userModel.findById(id).populate({ path: 'address', select: 'city' });
 
         res.render("profile", {
             profiles: listprofile,
@@ -541,7 +694,7 @@ router.get("/stech.manager/profile", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "profile not found", code: 0});
+        res.send({ message: "profile not found", code: 0 });
     }
 });
 
@@ -558,12 +711,12 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
         let encodedConversation = req.params.id
         let idConversation = req.params.id
         // let idConversation = Buffer.from(encodedConversation, 'base64').toString('utf8');
-        let listConversation = await ConversationModel.conversationModel.find().populate({path: 'user'});
-        let dataUserLoged = await UserModel.userModel.find({_id: idUserLoged}).populate({
+        let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
+        let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({
             path: 'address',
             select: 'city'
         });
-        let dataMessage = await MessageModel.messageModel.find({conversation: idConversation}).populate({path: 'conversation'});
+        let dataMessage = await MessageModel.messageModel.find({ conversation: idConversation }).populate({ path: 'conversation' });
 
 
         // console.log("=======================");
@@ -702,7 +855,7 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
         let listUserIDInChat = []
 
         if (dataMessage.length <= 0) {
-            conversationNoMessage = await ConversationModel.conversationModel.find({_id: idConversation}).populate({path: 'user'});
+            conversationNoMessage = await ConversationModel.conversationModel.find({ _id: idConversation }).populate({ path: 'user' });
             conversationNoMessage.map((item) => {
                 item.user.map((user) => {
                     if (!listUserIDInChat.includes(user._id)) {
@@ -724,7 +877,7 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
         let dataOtherUser = []
         await Promise.all(listUserIDInChat.map(async (userID) => {
             if (userID != idUserLoged) {
-                const userData = await UserModel.userModel.find({_id: userID}).populate({
+                const userData = await UserModel.userModel.find({ _id: userID }).populate({
                     path: 'address',
                     select: 'city'
                 });
@@ -746,7 +899,7 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "conversation not found", code: 0});
+        res.send({ message: "conversation not found", code: 0 });
     }
 });
 router.get("/stech.manager/chat", async function (req, res, next) {
@@ -757,12 +910,12 @@ router.get("/stech.manager/chat", async function (req, res, next) {
             return res.redirect('/stech.manager/login')
         }
 
-        let dataUserLoged = await UserModel.userModel.find({_id: idUserLoged}).populate({
+        let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({
             path: 'address',
             select: 'city'
         });
-        let listConversation = await ConversationModel.conversationModel.find().populate({path: 'user'});
-        let dataMessage = await MessageModel.messageModel.find().populate({path: 'conversation'});
+        let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
+        let dataMessage = await MessageModel.messageModel.find().populate({ path: 'conversation' });
 
         let dataLastMessage = []
         let latestMessages = {};
@@ -870,7 +1023,7 @@ router.get("/stech.manager/chat", async function (req, res, next) {
 
     } catch (e) {
         console.log(`error get chat: ${e.message}`);
-        return res.send({message: "conversation not found", code: 0});
+        return res.send({ message: "conversation not found", code: 0 });
     }
 });
 router.get("/stech.manager/cart", async function (req, res, next) {
@@ -878,7 +1031,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
     const userId = utils_1.getCookie(req, 'Uid');
     let terifyWith = req.cookies.verifyWith;
     try {
-        let cartUser = await CartModelv2.productCartModel.find({customer_id: userId})
+        let cartUser = await CartModelv2.productCartModel.find({ customer_id: userId })
         if (cartUser !== null) {
             let dataProduct = [];
             await Promise.all(cartUser.map(async (cart) => {
@@ -917,7 +1070,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "cart not found", code: 0})
+        res.send({ message: "cart not found", code: 0 })
     }
 });
 router.post("/stech.manager/AddCart", async (req, res) => {
@@ -941,7 +1094,7 @@ router.post("/stech.manager/AddCart", async (req, res) => {
             if ('quantity' in existingCartItem) {
                 gt1 += gt2; // Chuyển đổi quantity thành số trước khi cộng
                 console.log(gt1);
-                await CartModelv2.productCartModel.findByIdAndUpdate(existingCartItem._id, {$set: {quantity: gt1}});
+                await CartModelv2.productCartModel.findByIdAndUpdate(existingCartItem._id, { $set: { quantity: gt1 } });
             } else {
                 console.error('Error adding to cart: "quantity" property not found in existingCartItem');
             }
@@ -976,16 +1129,16 @@ router.post('/apiv2/editCartV2/:cartId', async (req, res) => {
     try {
         // TODO: Thực hiện cập nhật quantity trong MongoDB sử dụng cartId
         // Ví dụ:
-        const result = await CartModelv2.productCartModel.updateOne({_id: cartId}, {quantity: quantity});
+        const result = await CartModelv2.productCartModel.updateOne({ _id: cartId }, { quantity: quantity });
 
         if (result.nModified > 0) {
-            return res.json({success: false, message: 'Failed to update quantity'});
+            return res.json({ success: false, message: 'Failed to update quantity' });
         } else {
-            return res.json({success: true, message: 'Quantity updated successfully'});
+            return res.json({ success: true, message: 'Quantity updated successfully' });
         }
     } catch (error) {
         console.error('Error updating quantity:', error.message);
-        return res.json({success: false, message: 'Error updating quantity'});
+        return res.json({ success: false, message: 'Error updating quantity' });
     }
 });
 
@@ -999,14 +1152,14 @@ const deleteProductFromCart = async (customerId, cartId) => {
         console.log(customerId)
         if (result.deletedCount > 0) {
             // Sản phẩm đã được xoá thành công
-            return {success: true, message: 'Product removed from cart successfully'};
+            return { success: true, message: 'Product removed from cart successfully' };
         } else {
             // Không có sản phẩm nào được xoá (productId không tồn tại trong giỏ hàng của người dùng)
-            return {success: false, message: 'Product not found in the cart'};
+            return { success: false, message: 'Product not found in the cart' };
         }
     } catch (error) {
         console.error('Error deleting product from cart:', error.message);
-        return {success: false, message: 'Error deleting product from cart'};
+        return { success: false, message: 'Error deleting product from cart' };
     }
 };
 router.post('/stech.manager/DeleteCart', async (req, res) => {
@@ -1040,14 +1193,14 @@ router.get("/stech.manager/order", async function (req, res, next) {
             let orders = await OrderModel.oderModel.find().populate('customer_id employee_id delivery_address_id');
             orders.reverse();
 
-            res.render("order", {orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1});
+            res.render("order", { orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1 });
 
         } else {
             let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
-            let orders = await OrderModel.oderModel.find({status: valueStatus}).populate('customer_id employee_id delivery_address_id');
+            let orders = await OrderModel.oderModel.find({ status: valueStatus }).populate('customer_id employee_id delivery_address_id');
             orders.reverse();
 
-            res.render("order", {orders: orders, terifyWith: verifyWith,message: "get list order success", code: 1});
+            res.render("order", { orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1 });
 
 
         }
@@ -1055,7 +1208,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
         // res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "order not found", code: 0})
+        res.send({ message: "order not found", code: 0 })
     }
 });
 router.get("/stech.manager/detail_order", async function (req, res, next) {
@@ -1063,21 +1216,21 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
         var encodedOrderId = req.query.orderId;
         let orderId = Buffer.from(encodedOrderId, 'base64').toString('utf8');
         let order = await OrderModel.oderModel.findById(orderId).populate('customer_id employee_id delivery_address_id');
-        let detailOrders = await DetailOrderModel.detailOrderModel.find({order_id: orderId}).populate('product_id');
+        let detailOrders = await DetailOrderModel.detailOrderModel.find({ order_id: orderId }).populate('product_id');
 
         if (order) {
             res.render("detail_order", {
                 order: order,
-                detailOrders:detailOrders,
+                detailOrders: detailOrders,
                 message: "get order details success",
                 code: 1
             });
         } else {
-            res.send({message: "Order not found", code: 0});
+            res.send({ message: "Order not found", code: 0 });
         }
     } catch (e) {
         console.error("Error fetching order details:", e.message);
-        res.send({message: "Error fetching order details", code: 0});
+        res.send({ message: "Error fetching order details", code: 0 });
     }
 });
 router.get("/stech.manager/invoice", function (req, res, next) {
@@ -1102,7 +1255,7 @@ router.get("/stech.manager/invoice", function (req, res, next) {
         });
     } else {
         // Xử lý khi không có giá trị cookie
-        res.send({message: "No order data found in the cookie", code: 0});
+        res.send({ message: "No order data found in the cookie", code: 0 });
     }
 });
 router.get("/stech.manager/cart", async function (req, res, next) {
@@ -1114,7 +1267,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
 
     console.log("id", userId)
     try {
-        let cartUser = await CartModel.cartModel.findOne({userId}).populate({
+        let cartUser = await CartModel.cartModel.findOne({ userId }).populate({
             path: 'product',
             select: 'productId quantity'
         });
@@ -1131,7 +1284,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "cart not found", code: 0})
+        res.send({ message: "cart not found", code: 0 })
     }
 });
 router.post('/updateQuantity/:productId', async (req, res) => {
@@ -1141,20 +1294,20 @@ router.post('/updateQuantity/:productId', async (req, res) => {
     try {
         // Tìm và cập nhật số lượng trong cơ sở dữ liệu
         const updatedProduct = await CartModel.updateOne(
-            {'product._id': productId},
-            {$set: {'product.$.quantity': newQuantity}}
+            { 'product._id': productId },
+            { $set: { 'product.$.quantity': newQuantity } }
         );
 
         if (updatedProduct.nModified > 0) {
             // Cập nhật thành công
-            res.json({success: true, message: 'Quantity updated successfully'});
+            res.json({ success: true, message: 'Quantity updated successfully' });
         } else {
             // Không có bản ghi nào được cập nhật (productId không tồn tại)
-            res.status(404).json({success: false, message: 'Product not found'});
+            res.status(404).json({ success: false, message: 'Product not found' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({success: false, message: 'Error updating quantity'});
+        res.status(500).json({ success: false, message: 'Error updating quantity' });
     }
 });
 
@@ -1162,12 +1315,12 @@ router.get("/stech.manager/banner", async function (req, res, next) {
     try {
         let listbanner = await BannerModel.bannerModel.find();
 
-        res.render("banner", {banners: listbanner, message: "get list banner success", code: 1});
+        res.render("banner", { banners: listbanner, message: "get list banner success", code: 1 });
 
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "banner not found", code: 0})
+        res.send({ message: "banner not found", code: 0 })
     }
 });
 router.get("/stech.manager/pay", function (req, res, next) {
@@ -1175,11 +1328,11 @@ router.get("/stech.manager/pay", function (req, res, next) {
         var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)selectedProducts\s*=\s*([^;]*).*$)|^.*$/, "$1");
         var listProduct = JSON.parse(decodeURIComponent(cookieValue));
 
-        return res.render("pay", {products: listProduct})
+        return res.render("pay", { products: listProduct })
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "pay not found", code: 0})
+        res.send({ message: "pay not found", code: 0 })
     }
 });
 router.get("/stech.manager/edit_product_action", async function (req, res, next) {
@@ -1202,7 +1355,7 @@ router.get("/stech.manager/edit_product_action", async function (req, res, next)
             })
     } catch (e) {
         console.log(e.message);
-        res.send({message: "product not found", code: 0})
+        res.send({ message: "product not found", code: 0 })
     }
 });
 
@@ -1219,11 +1372,11 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
             {
                 $group: {
                     _id: "$vocher_id",
-                    count: {$sum: 1}
+                    count: { $sum: 1 }
                 }
             },
             {
-                $sort: {count: -1} // Sắp xếp theo số lần sử dụng giảm dần
+                $sort: { count: -1 } // Sắp xếp theo số lần sử dụng giảm dần
             },
             {
                 $limit: 1
@@ -1238,16 +1391,16 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
 
         let mostVoucher = await VoucherModel.voucherModel.findById(mostVoucherValue[0]._id);
 
-// Voucher được sử dụng ít nhất
+        // Voucher được sử dụng ít nhất
         let lessVoucherValue = await MapVoucherCus.mapVoucherModel.aggregate([
             {
                 $group: {
                     _id: "$vocher_id",
-                    count: {$sum: {$cond: [{$eq: ["$is_used", true]}, 1, 0]}}
+                    count: { $sum: { $cond: [{ $eq: ["$is_used", true] }, 1, 0] } }
                 }
             },
             {
-                $sort: {count: 1} // Sắp xếp theo số lần sử dụng tăng dần
+                $sort: { count: 1 } // Sắp xếp theo số lần sử dụng tăng dần
             },
             {
                 $limit: 1
@@ -1274,7 +1427,7 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "voucher not found", code: 0});
+        res.send({ message: "voucher not found", code: 0 });
     }
 });
 router.post("/stech.manager/createVoucher", async function (req, res, next) {
@@ -1289,22 +1442,22 @@ router.post("/stech.manager/createVoucher", async function (req, res, next) {
         let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
         if (name == null) {
-            return res.send({message: "title is required", code: 0});
+            return res.send({ message: "title is required", code: 0 });
         }
         if (content == null) {
-            return res.send({message: "content is required", code: 0});
+            return res.send({ message: "content is required", code: 0 });
         }
         if (price == null) {
-            return res.send({message: "price is required", code: 0});
+            return res.send({ message: "price is required", code: 0 });
         }
         if (toDate == null) {
-            return res.send({message: "toDate is required", code: 0});
+            return res.send({ message: "toDate is required", code: 0 });
         }
         if (fromDate == null) {
-            return res.send({message: "fromDate is required", code: 0});
+            return res.send({ message: "fromDate is required", code: 0 });
         }
         if (create_time == null) {
-            return res.send({message: "create_time is required", code: 0});
+            return res.send({ message: "create_time is required", code: 0 });
         }
 
         let voucher = new VoucherModel.voucherModel({
@@ -1319,7 +1472,7 @@ router.post("/stech.manager/createVoucher", async function (req, res, next) {
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        res.send({message: "create voucher fail", code: 0});
+        res.send({ message: "create voucher fail", code: 0 });
     }
 });
 router.post("/stech.manager/updateVoucher", async function (req, res, next) {
@@ -1331,7 +1484,7 @@ router.post("/stech.manager/updateVoucher", async function (req, res, next) {
         let fromDate = req.body.fromDate;
         let voucherId = req.body.voucherId;
         if (voucherId == null) {
-            return res.send({message: "voucherId is required", code: 0});
+            return res.send({ message: "voucherId is required", code: 0 });
         }
         try {
             let voucher = await VoucherModel.voucherModel.findById(voucherId);
@@ -1358,15 +1511,15 @@ router.post("/stech.manager/updateVoucher", async function (req, res, next) {
             if (fromDate !== null) {
                 newVoucher.fromDate = fromDate;
             }
-            await VoucherModel.voucherModel.updateMany({_id: voucherId}, {$set: newVoucher});
+            await VoucherModel.voucherModel.updateMany({ _id: voucherId }, { $set: newVoucher });
             res.redirect(req.get('referer'));
         } catch (e) {
             console.log(e.message);
-            return res.send({message: e.message.toString(), code: 0});
+            return res.send({ message: e.message.toString(), code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        res.send({message: "create voucher fail", code: 0});
+        res.send({ message: "create voucher fail", code: 0 });
     }
 })
 
@@ -1390,18 +1543,18 @@ function formatDateTime(dateTimeString) {
 router.post("/stech.manager/deleteVoucher", async function (req, res, next) {
     let voucherId = req.body.voucherId;
     if (voucherId === null) {
-        return res.send({message: "voucher id is required", code: 0})
+        return res.send({ message: "voucher id is required", code: 0 })
     }
     try {
         let voucher = await VoucherModel.voucherModel.findById(voucherId);
         if (!voucher) {
-            return res.send({message: "voucher not found", code: 0})
+            return res.send({ message: "voucher not found", code: 0 })
         }
-        await VoucherModel.voucherModel.deleteMany({_id: voucherId});
+        await VoucherModel.voucherModel.deleteMany({ _id: voucherId });
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 //Notification
@@ -1418,7 +1571,7 @@ router.get("/stech.manager/notification", async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "notification not found", code: 0});
+        res.send({ message: "notification not found", code: 0 });
     }
 });
 
@@ -1434,10 +1587,10 @@ router.post("/stech.manager/createNotification", upload.fields([{
     let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     if (title == null) {
-        return res.send({message: "title is required", code: 0});
+        return res.send({ message: "title is required", code: 0 });
     }
     if (content == null) {
-        return res.send({message: "content is required", code: 0});
+        return res.send({ message: "content is required", code: 0 });
     }
     try {
         let notification = new NotificationModel.notificationModel({
@@ -1453,13 +1606,13 @@ router.post("/stech.manager/createNotification", upload.fields([{
             img[0]
         );
         if (imgNoti === 0) {
-            return res.send({message: "upload file img fail", code: 0});
+            return res.send({ message: "upload file img fail", code: 0 });
         }
         notification.img = imgNoti;
         await notification.save();
         res.redirect(req.get('referer'));
     } catch (e) {
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 
 });
@@ -1474,7 +1627,7 @@ router.post("/stech.manager/updateNotification", upload.fields([{
     let notificationId = req.body.notificationId;
 
     if (notificationId == null) {
-        return res.send({message: "notificationId is required", code: 0});
+        return res.send({ message: "notificationId is required", code: 0 });
     }
     try {
         let notification = await NotificationModel.notificationModel.findById(notificationId);
@@ -1502,16 +1655,16 @@ router.post("/stech.manager/updateNotification", upload.fields([{
                 img[0]
             );
             if (imgNoti === 0) {
-                return res.send({message: "upload file img fail", code: 0});
+                return res.send({ message: "upload file img fail", code: 0 });
             }
             newNotification.img = imgNoti;
         }
 
-        await NotificationModel.notificationModel.updateMany({_id: notificationId}, {$set: newNotification});
+        await NotificationModel.notificationModel.updateMany({ _id: notificationId }, { $set: newNotification });
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 
@@ -1519,10 +1672,10 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
     try {
         let notificationId = req.body.NotifiId;
         if (notificationId == null) {
-            return res.send({message: "notificationId is required", code: 0});
+            return res.send({ message: "notificationId is required", code: 0 });
         }
 
-        await NotificationModel.notificationModel.deleteMany({_id: notificationId});
+        await NotificationModel.notificationModel.deleteMany({ _id: notificationId });
 
         const productFirebase = `notifications/${notificationId}`;
         await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
@@ -1531,7 +1684,7 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
 
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 })
 

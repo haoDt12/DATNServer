@@ -1,174 +1,198 @@
 document.addEventListener("DOMContentLoaded", function () {
+    let confirmDeleteCate = new bootstrap.Modal(document.getElementById('confirmDeleteCate'));
 
-    const token = utils.GetCookie("token");
-    const openCategoryModalButton = document.getElementById("openCategoryModal");
-    const openEditCategoryModal = document.getElementById("openEditCategoryModal");
-    const categoryModal = new bootstrap.Modal(document.getElementById("categoryModal"));
-    const updateCategoryModal = new bootstrap.Modal(document.getElementById("updateCategoryModal"));
-    const addToCartModal = new bootstrap.Modal(document.getElementById("addToCartModal"));
-    const confirmDeleteModal = new bootstrap.Modal(document.getElementById("confirmDeleteCate"));
-    const saveCategoryButton = document.getElementById("saveCategoryButton");
-    const updateCategoryButton = document.getElementById("updateCategoryButton");
-    const confirmDeleteButton = document.getElementById("confirmDelete");
-    const goCart = document.getElementById("goMyCart");
+    let deleteCate = document.querySelectorAll('.deleteCate');
+    let updateCate = document.querySelectorAll('.updateCate');
 
-    const imgCateUpdatePreview = document.getElementById("imageCateUpdatePreview");
-    const idCateInput = document.getElementById('idCate');
-    const nameCateInput = document.getElementById('nameCateUpdate');
-    const dateCateInput = document.getElementById('dateCateUpdate');
-
-    const deleteCateButtons = document.querySelectorAll(".delCate");
-    const editCateButton = document.querySelectorAll(".updateCate");
-    const logout = document.getElementById("logout");
-    logout.addEventListener("click", function (){
-        window.location.assign("/stech.manager/login");
-        utils.DeleteAllCookies();
-    });
-    deleteCateButtons.forEach(function (deleteCateBtn) {
-        deleteCateBtn.addEventListener("click", function () {
-            confirmDeleteModal.show()
-            const cateId = this.getAttribute("data-id");
-            //- console.log(cateId);
-
-            const dataDelete = new URLSearchParams();
-            dataDelete.append("categoryId", cateId);
-            confirmDeleteButton.addEventListener('click', function () {
-                //- Delete data
-                fetch('/api/deleteCategory', {
-                    headers: {
-                        'Authorization': `${token}`,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    method: "POST",
-                    body: dataDelete,
-                })
-                    .then((response) => {
-                        console.log(response)
-                        location.reload();
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    });
+    // DELETE
+    deleteCate.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const categoryID = this.getAttribute('data-id');
+            const categoryName = this.getAttribute('data-name');
+            let nameCateDelete = document.getElementById('nameCateDelete');
+            displayModal(nameCateDelete, categoryName);
+            let confirmDelete = document.getElementById('confirmDelete');
+            confirmDelete.addEventListener('click', () => {
+                deleteCategory(categoryID, null);
             })
-        });
-    });
-
-    editCateButton.forEach(function (editCateBtn) {
-        editCateBtn.addEventListener("click", function () {
-            const cateId = this.getAttribute("data-id");
-            console.log(cateId);
-            const dateCategorYSelected = {
-                categoryId: cateId
-            };
-
-            axios.post("/api/getCategoryById", dateCategorYSelected, {
-                headers: {
-                    'Authorization': token
-                },
-            }).then(function (response) {
-                let jsonData = response.data.category
-                idCateInput.value = jsonData._id
-                imgCateUpdatePreview.src = jsonData.img
-                nameCateInput.value = jsonData.title
-                dateCateInput.value = jsonData.date
-            })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        });
-    });
-
-    goCart.addEventListener("click", function () {
-        alert("Updating")
-    });
-
-    saveCategoryButton.addEventListener("click", function () {
-        const categoryName = document.getElementById("nameCate").value;
-        const dateTime = document.getElementById("dateCate").value;
-        const file = document.getElementById("imageCate").files[0];
-        const addToCartButton = document.getElementById("addToCartButton");
-        // Form Data
-        const formData = new FormData();
-        formData.append("title", categoryName);
-        formData.append("date", dateTime);
-        formData.append("file", file);
-        //- Push data
-        fetch('/api/addCategory', {
-            headers: {
-                'Authorization': `${token}`
-            },
-            method: "POST",
-            body: formData,
         })
-            .then((response) => {
-                console.log(response)
-                location.reload();
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-        categoryModal.hide();
-    });
+    })
+    // UPDATE
+    updateCate.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const categoryID = this.getAttribute('data-id');
+            getCategoryByID(categoryID);
 
-    updateCategoryButton.addEventListener("click", function () {
-        const idCate = document.getElementById("idCate").value;
-        const categoryName = document.getElementById("nameCateUpdate").value;
-        const dateTime = document.getElementById("dateCateUpdate").value;
-        const file = document.getElementById("imageCateUpdate").files[0];
-
-
-        console.log(idCate);
-        console.log(categoryName);
-        console.log(dateTime);
-        console.log(file);
-
-        // Form Data
-        const formDataUpdate = new FormData();
-        formDataUpdate.append("categoryId", idCate);
-        formDataUpdate.append("title", categoryName);
-        formDataUpdate.append("date", dateTime);
-        formDataUpdate.append("file", file);
-        //- Push data
-        fetch('/api/editCategory', {
-            headers: {
-                'Authorization': `${token}`
-            },
-            method: "POST",
-            body: formDataUpdate,
+            // let confirmUpdate = document.getElementById('confirmUpdate');
+            // confirmUpdate.addEventListener('click', () => {
+            //     updateCategory(categoryID);
+            // })
         })
-            .then((response) => {
-                console.log(response)
-                location.reload();
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            });
-        categoryModal.hide();
-    });
-
-    openCategoryModalButton.addEventListener("click", function () {
-        categoryModal.show();
-    });
-    // openEditCategoryModal.addEventListener("click", function () {
-    //     updateCategoryModal.show();
-    // });
+    })
 });
 
-function previewImage(event) {
-    const fileInput = document.getElementById("imageCate");
-    const imageForm = document.getElementById("imageForm");
-    const imagePreview = document.getElementById("imagePreview");
+// function updateCategory(categoryID) {
+//     let nameCate = document.getElementById('nameCateUpdate').value.trim();
+//     let imageNew = document.getElementById('imageNew').value;
+//     let imageCateOld = document.getElementById('imageOld').value;
+//     let dateCate = document.getElementById('dateCateUpdate').value.trim();
+
+//     if (nameCate.length == 0) {
+//         return;
+//     }
+
+//     let xhr = new XMLHttpRequest();
+//     let endPoint = "/stech.manager/update-category";
+//     xhr.open('POST', endPoint, true);
+//     xhr.setRequestHeader('Content-Type', 'application/json');
+//     xhr.send(JSON.stringify({ idCate: categoryID }));
+
+//     xhr.onload = function () {
+//         if (xhr.status === 200) {
+//             let myData = JSON.parse(xhr.response);
+//             switch (myData.code) {
+//                 case "GET_SUCCESS":
+                    
+//                     break;
+
+//                 default:
+//                     break;
+//             }
+//         }
+//     };
+// }
+
+function displayModal(nameCateDelete, categoryName) {
+    nameCateDelete.style.display = 'flex'
+    let nameTag = document.createElement('p');
+    nameTag.textContent = `${categoryName}`;
+    nameTag.style.fontWeight = 'bold';
+    let msgTag = document.createElement('p');
+    msgTag.innerHTML = '&nbsp;&nbsp;' + 'khỏi danh sách.';
+    nameCateDelete.appendChild(nameTag);
+    nameCateDelete.appendChild(msgTag);
+}
+
+function displayModalUpdate(dataCate) {
+    let idCate = document.getElementById('idCateUpdate');
+    let nameCate = document.getElementById('nameCateUpdate');
+    let imageCateOld = document.getElementById('imageOld');
+    let dateCate = document.getElementById('dateCateUpdate');
+
+    idCate.value = dataCate._id;
+    imageCateOld.src = dataCate.img;
+    nameCate.value = dataCate.name;
+    dateCate.value = dataCate.create_time;
+
+    // let imageCate = document.getElementById('imageNew');
+    // imageCate.src = dataCate.img;
+
+}
+function getCategoryByID(categoryID) {
+    let xhr = new XMLHttpRequest();
+    let endPoint = "/stech.manager/get-cate";
+    xhr.open('POST', endPoint, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({ idCate: categoryID }));
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            let myData = JSON.parse(xhr.response);
+            switch (myData.code) {
+                case "GET_SUCCESS":
+                    let dataCate = myData.dataCategoryByID
+                    displayModalUpdate(dataCate)
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
+}
+function deleteCategory(categoryID, message) {
+    console.log(`param message: ${message}`);
+    // Tạo một đối tượng XMLHttpRequest để gửi dữ liệu đến server
+    let xhr = new XMLHttpRequest();
+    let endPoint = "/stech.manager/delete-cate";
+    xhr.open('POST', endPoint, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({ idCate: categoryID, message }));
+
+    // Xử lý phản hồi từ server
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            let myData = JSON.parse(xhr.response);
+            console.log(`CODE: ${myData.code}`);
+            switch (myData.code) {
+                case "CATEGORY_USED":
+                    let text = "Thể loại này đang được sử dụng.\nBạn có chắc chắn muốn xoá";
+                    if (confirm(text) == true) {
+                        // delete
+                        text = "Vẫn xoá"
+                        deleteCategory(categoryID, myData.message);
+                        return;
+                    }
+                    else {
+                        // cancel
+                        text = "Huỷ xoá";
+                        window.location.reload();
+                    }
+                    console.log(text);
+                    break;
+                case "SUCCESS":
+                    window.location.reload();
+                    break;
+                default:
+                    window.location.reload();
+                    break;
+            }
+        } else if (xhr.status === 400) {
+            console.log(xhr.responseText);
+        } else {
+            console.log(`status: ${xhr.status}`);
+            // window.location.reload();
+        }
+    };
+}
+
+function previewImagePlus(event, _fileInput, _imageForm, _imagePreview) {
+    let imageTagNew = document.getElementById('imageTagNew');
+    let imageTagOld = document.getElementById('imageTagOld');
+    let btnRest = document.getElementById('resetImage');
+
+    const fileInput = document.getElementById(_fileInput);
+    const imageForm = document.getElementById(_imageForm);
+    const imagePreview = document.getElementById(_imagePreview);
 
     const selectedFile = fileInput.files[0];
     if (selectedFile) {
         const reader = new FileReader();
         reader.onload = function (e) {
             imagePreview.src = e.target.result;
-            imageForm.style.display = "block"; // Hiển thị phần tử
+            imageForm.style.display = "block";
+            imagePreview.style.display = ""
+            imageTagOld.style.display = ''
+            imageTagNew.style.display = ''
+            btnRest.style.display = 'block'
+
+            btnRest.addEventListener('click', () => {
+                fileInput.value = "";
+                imagePreview.src = "";
+                imageForm.style.display = "";
+                imagePreview.style.display = "none"
+                imageTagOld.style.display = 'none'
+                imageTagNew.style.display = 'none'
+                btnRest.style.display = 'none'
+            })
         };
         reader.readAsDataURL(selectedFile);
     } else {
         imagePreview.src = "";
-        imageForm.style.display = "none"; // Ẩn phần tử
+        imageForm.style.display = "";
+        imagePreview.style.display = "none"
+        imageTagOld.style.display = 'none'
+        imageTagNew.style.display = 'none'
+        btnRest.style.display = 'none'
     }
 }
