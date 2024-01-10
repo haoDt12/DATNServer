@@ -43,8 +43,8 @@ router.post("/getCategory", Middleware.authorizationToken, CategoryController.ge
 //product
 router.post("/getAllProduct", Middleware.authorizationToken, ProductController.getAllProduct);
 router.post("/getDetailProduct", Middleware.authorizationToken, ProductController.getDetailProduct);
-router.post("/getRunOutProducts", Middleware.authorizationToken, ProductController.getRunOutProducts);
-router.post("/getHotSaleProducts", Middleware.authorizationToken, ProductController.getHotSellProducts);
+router.post("/getRunOutProducts", ProductController.getRunOutProducts);
+router.post("/getHotSaleProducts", ProductController.getHotSellProducts);
 router.post("/getProductByCategoryId", Middleware.authorizationToken, ProductController.getProductByCategoryId);
 router.post("/searchProductByName", Middleware.authorizationToken, ProductController.searchProductByName);
 
@@ -73,7 +73,7 @@ router.post("/getOrderByStatus", Middleware.authorizationToken, OrderCtrl.getOrd
 router.post("/cancelOrder", Middleware.authorizationToken, OrderCtrl.cancelOrder);
 router.post("/updateStatusOrder", Middleware.authorizationToken, OrderCtrl.updateStatusOrder);
 router.post("/createOrderGuest", Middleware.authorizationToken, OrderCtrl.createOrderGuest);
-router.post("/getStatic", Middleware.authorizationToken, OrderCtrl.getStatic);
+router.post("/getStatic", OrderCtrl.getStatic);
 router.post("/getPriceOrderZaloPay", Middleware.authorizationToken, OrderCtrl.getPriceOrderZaloPay);
 router.post("/createOrderZaloPay", Middleware.authorizationToken, OrderCtrl.createOrderZaloPay);
 router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.createPaymentUrl);
