@@ -49,7 +49,7 @@ app.use(session(sessionConfig));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api", apiRouter);
-app.use("/apiv2",apiRouterV2);
+app.use("/apiv2", apiRouterV2);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

@@ -235,24 +235,28 @@ block content
                                                                     p.margin-auto.fw-400.text-dark-75
                                                                         | #{conversation.name}
                                                                         .d-flex.flex-row.mt-1
-                                                                            span
-                                                                                .svg15.double-check
-                                                                            |
-                                                                            span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" data-id=conversation.conversation_id class="content-msg" data-status=conversation.status)
-                                                                                if userLoged._id+ "" === conversation.sender_id + ""
-                                                                                    | Bạn: #{conversation.message}
-                                                                                else
-                                                                                    | #{conversation.message}
+                                                                            if conversation.message
+                                                                                if conversation.message.length > 0
+                                                                                    span
+                                                                                        .svg15.double-check
+                                                                                    |
+                                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" data-id=conversation.conversation_id class="content-msg" data-status=conversation.status)
+                                                                                    if userLoged._id+ "" === conversation.sender_id + ""
+                                                                                        | Bạn: #{conversation.message}
+                                                                                    else
+                                                                                        | #{conversation.message}
                                                                         span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
                                                                         |
                                                         |
                                                         .flex-shrink-0.margin-auto.pl-2.pr-3
                                                             .d-flex.flex-column
                                                                 p.text-muted.text-right.fs-13.mb-2
-                                                                    if typeof(conversation.created_at) !== 'undefined'
-                                                                        | #{conversation.created_at.slice(conversation.created_at.length-8, conversation.created_at.length-3)}
-                                                                    else
-                                                                        | 99:99
+                                                                    if conversation.message
+                                                                        if conversation.message.length > 0
+                                                                            if typeof(conversation.created_at) !== 'undefined'
+                                                                                | #{conversation.created_at.slice(conversation.created_at.length-8, conversation.created_at.length-3)}
+                                                                            else
+                                                                                | ??:??
                                                                 |
                                                                 //- Tin nhắm ghim
                                                                 //- .text-right.d-flex.flex-row
