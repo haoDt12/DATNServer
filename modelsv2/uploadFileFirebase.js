@@ -1,10 +1,9 @@
 const admin = require('firebase-admin');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
-
+const serviceAccount = require("../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json");
 // Cấu hình Firebase Admin SDK
 if (admin.apps.length === 0) {
-    const serviceAccount = require('../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-b859cb4d1d.json');
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
     });

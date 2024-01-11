@@ -19,6 +19,7 @@ const AdminModel = require("./../modelsv2/model.admin");
 const DetailOrderModel = require("./../modelsv2/model.detailorder");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const diliveryaddress = require("./../modelsv2/model.deliveryaddress");
+const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -36,7 +37,13 @@ const UploadFile = require("../models/uploadFile");
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
 const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
-
+const admin = require('firebase-admin');
+const serviceAccount = require('../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json');
+if (admin.apps.length === 0) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
 const axios = require("axios");
 const CusModel = require("../modelsv2/model.customer");
 const MapVoucherModel = require("../modelsv2/model.map_voucher_cust");
@@ -746,7 +753,10 @@ router.post('/stech.manager/unban', async function (req, res, next) {
     }
 });
 
-router.post('/stech.manager/AddEmployee', upload.fields([{ name: "avatar", maxCount: 1 }]), async function (req, res, next) {
+router.post('/stech.manager/AddEmployee', upload.fields([{
+    name: "avatar",
+    maxCount: 1
+}]), async function (req, res, next) {
     try {
         const full_name = req.body.full_name;
         const password = req.body.password;
@@ -832,7 +842,13 @@ router.post('/stech.manager/UpdateEmployee', upload.fields([{
         //     create_time: create_time,
         // });
         if (fileAvatar === undefined) {
-            const result = await EmployeeModel.employeeModel.updateOne({ _id: idEmployee }, { full_name: full_name, password: password, email: email, phone_number: phone_number });
+            const result = await EmployeeModel.employeeModel.updateOne({ _id: idEmployee }, {
+                full_name: full_name,
+                password: password,
+                email: email,
+                phone_number: phone_number
+            });
+
             if (result.nModified > 0) {
                 return res.json({ success: false, message: 'Failed to update employee' });
             } else {
@@ -880,6 +896,7 @@ router.get("/stech.manager/profile", async function (req, res, next) {
             });
         }
         else if (verifyWith == "Admin") {
+
             let listAdmin = await AdminModel.adminModel.findById(id);
             res.render("profile", {
                 profiles: listAdmin,
@@ -1822,6 +1839,21 @@ router.post("/stech.manager/createNotification", upload.fields([{
         }
         notification.img = imgNoti;
         await notification.save();
+        let cus = await CustomerModel.customerModel.find();
+        await Promise.all(cus.map(async item => {
+            let mapNotiCus = new MapNotiCus.mapNotificationModel({
+                notification_id: notification._id,
+                customer_id: item._id,
+                create_time: create_time,
+            });
+            await mapNotiCus.save();
+
+        }));
+        await Promise.all(cus.map(item => {
+            if (item.fcm !== null) {
+                sendMessage(item.fcm, title, content);
+            }
+        }));
         res.redirect(req.get('referer'));
     } catch (e) {
         return res.send({ message: e.message.toString(), code: 0 });
@@ -1978,5 +2010,23 @@ router.post("/stech.manager/editUser", upload.single('avatar'), async function (
         return res.send({ message: e.message.toString(), code: 0 });
     }
 })
+const sendMessage = (registrationToken, title, body) => {
+    console.log(title);
+    console.log(body);
+    let message = {
+        data: {
+            title: title,
+            body: body,
+        },
+        token: registrationToken,
+    };
 
+    admin.messaging().send(message)
+        .then((response) => {
+            console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+            console.error('Error sending message:', error);
+        });
+}
 module.exports = router;
