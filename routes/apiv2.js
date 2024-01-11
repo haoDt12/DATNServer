@@ -17,7 +17,7 @@ const VnPayCtrl = require("../controllers/api.payvnpay");
 router.post("/registerCustomer", CusController.registerCustomer);
 router.post("/loginCustomer", CusController.loginCustomer);
 router.post("/getInfoCus", Middleware.authorizationToken, CusController.getInfoCus);
-router.post("/addFCM", Middleware.authorizationToken, CusController.addFCM);
+router.post("/addFCM", CusController.addFCM);
 router.post("/verifyCusLogin", CusController.verifyCusLogin);
 router.get("/verifyCusRegister", CusController.verifyCusRegister);
 router.get("/getInfoCus", Middleware.authorizationToken, CusController.getInfoCus);
