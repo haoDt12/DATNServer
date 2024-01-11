@@ -15,7 +15,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage});
 const VnPayCtrl = require("../controllers/api.payvnpay");
-
+const NotificationCtrl = require("../controllersv2/controller.notification");
 //customer
 router.post("/registerCustomer", CusController.registerCustomer);
 router.post("/loginCustomer", CusController.loginCustomer);
@@ -29,7 +29,7 @@ router.post("/sendOtpEditCus", Middleware.authorizationToken, CusController.send
 router.post("/sendOtpEditPass", Middleware.authorizationToken, CusController.sendOtpEditPass);
 router.post("/editPass", Middleware.authorizationToken, CusController.editPass);
 router.post("/getPassWord", CusController.getPassWord);
-router.get("/resetPassword",CusController.resetPassword);
+router.get("/resetPassword", CusController.resetPassword);
 
 //Admin
 router.post("/loginAdmin", AdminCtr.loginAdmin);
@@ -86,5 +86,8 @@ router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.create
 router.post("/addFeedback", Middleware.authorizationToken, FeedBackCtrl.addFeedback);
 router.post("/getFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getFeedBackByProductId);
 router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getAllFeedBackByProductId);
+
+//notification
+router.post("/getNotificationByUser", NotificationCtrl.getNotificationByUser);
 
 module.exports = router;
