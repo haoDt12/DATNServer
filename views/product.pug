@@ -15,7 +15,7 @@ block content
                 // Sidebar navigation
                 nav.sidebar-nav.scroll-sidebar(data-simplebar='')
                     ul#sidebarnav
-                        if terifyWith == "Admin"
+                         if terifyWith == "Admin"
                             li.nav-small-cap
                                 i.ti.ti-dots.nav-small-cap-icon.fs-4
                                 span.hide-menu Home
@@ -85,7 +85,7 @@ block content
                                     span
                                         i.ti.ti-user-plus
                                     span.hide-menu Register
-                        if terifyWith == "Employee"
+                         else
                             li.sidebar-item
                                 a.sidebar-link(href='/stech.manager/product' aria-expanded='false')
                                     span

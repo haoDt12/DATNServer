@@ -20,6 +20,12 @@ exports.loginEmployee = async (req, res)=>{
                 code: 0,
             });
         }
+        if (adminEmail.status =="banned") {
+            return res.send({
+                message: "The account has been blocked and cannot log in",
+                code: 0,
+            });
+        }
 
         if (adminEmail) {
             let index = sendOTPByEmail(adminEmail.email);
