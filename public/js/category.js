@@ -2,44 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let confirmDeleteCate = new bootstrap.Modal(document.getElementById('confirmDeleteCate'));
 
 
-    async function createConversation(idUserSelected) {
-        try {
-            let xhr = new XMLHttpRequest();
-            let endPoint = "/stech.manager/create-conversation";
-            xhr.open('POST', endPoint, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify({ idUserSelected }));
-
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    let myData = JSON.parse(xhr.response);
-                    console.log(myData.message);
-                    switch (myData.code) {
-                        case "REDIRECT":
-                        case "CREATE_SUCCESS":
-                            window.location.href = "/stech.manager/chat";
-                            break;
-                        default:
-                            console.log(xhr.responseText);
-                            break;
-                    }
-                }
-            };
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    let chatUser = document.querySelectorAll('.chatUser');
-    chatUser.forEach(function (item) {
-        item.addEventListener('click', () => {
-            let idUserSelected = item.getAttribute("data-id");
-            let arrayID = []
-            arrayID.push(idUserSelected)
-            createConversation(idUserSelected);
-        })
-    })
-
     let deleteCate = document.querySelectorAll('.deleteCate');
     let updateCate = document.querySelectorAll('.updateCate');
 
