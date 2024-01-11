@@ -8,8 +8,10 @@ const CategoryModel = require("./../modelsv2/model.category");
 const CartModelv2 = require("../modelsv2/model.ProductCart");
 const UserModel = require("./../models/model.user");
 const BannerModel = require("./../models/model.banner");
-const ConversationModel = require("./../models/model.conversations");
-const MessageModel = require("./../models/model.message");
+const ConversationModel = require("./../modelsv2/model.conversation");
+const MessageModel = require("./../modelsv2/model.message");
+
+
 const VoucherModel = require("./../modelsv2/model.voucher");
 const NotificationModel = require("./../modelsv2/model.notification");
 const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
@@ -39,7 +41,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 /* GET home page. */
-router.get("/",(req,res)=>{
+router.get("/", (req, res) => {
     res.redirect("/stech.manager/type_login");
 });
 router.get("/stech.manager/home", async function (req, res, next) {
@@ -353,9 +355,6 @@ router.post(
     "/stech.manager/add-category",
     upload.single('image'),
     async function (req, res, next) {
-        // console.log(req.body);
-        // console.log(req.file);
-        // console.log(req.files);
         try {
             const name = req.body.name;
             if (!req.file) {
@@ -507,9 +506,15 @@ router.post("/stech.manager/update-category",
     });
 
 router.get("/stech.manager/category", async function (req, res, next) {
+    let terifyWith = req.cookies.verifyWith;
+    if (terifyWith == null || terifyWith.length == 0) {
+        return res.redirect('/stech.manager/type_login')
+    }
     try {
         let listCategory = await CategoryModel.categoryModel.find();
+
         res.render("category", {
+            terifyWith: terifyWith,
             category: listCategory,
             message: "get list category success",
             code: 1,
@@ -702,327 +707,575 @@ router.get("/stech.manager/profile", async function (req, res, next) {
     }
 });
 
-router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
-    try {
-
-
-        // Check login
-        let idUserLoged = req.cookies.Uid
-        if (idUserLoged == null || idUserLoged.length <= 0) {
-            res.redirect('/stech.manager/login')
-        }
-
-        let encodedConversation = req.params.id
-        let idConversation = req.params.id
-        // let idConversation = Buffer.from(encodedConversation, 'base64').toString('utf8');
-        let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
-        let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({
-            path: 'address',
-            select: 'city'
-        });
-        let dataMessage = await MessageModel.messageModel.find({ conversation: idConversation }).populate({ path: 'conversation' });
-
-
-        // console.log("=======================");
-        // console.log(dataMessage);
-        let newDataMessage = []
-        dataMessage.map((msg) => {
-
-            let message = ''
-            if (msg.message.length <= 0) {
-                return msg.message
-            }
-
-            const algorithm = process.env.ALGORITHM;
-            const ENCRYPTION_KEY = process.env.API_KEY;
-            const hash = crypto.createHash("sha1");
-            hash.update(ENCRYPTION_KEY)
-            const digestResult = hash.digest();
-            const uint8Array = new Uint8Array(digestResult);
-            const keyUint8Array = uint8Array.slice(0, 16);
-            const keyBuffer = Buffer.from(keyUint8Array);
-            let textParts = msg.message.split(':');
-            let iv = Buffer.from(textParts.shift(), 'hex');
-            let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-            let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
-            let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
-            decrypted += decipher.final('utf8');
-
-            message = decrypted;
-
-            let itemMsg = {
-                _id: msg._id,
-                conversation: msg.conversation,
-                senderId: msg.senderId,
-                receiverId: msg.receiverId,
-                message: message,
-                filess: msg.filess,
-                images: msg.images,
-                video: msg.video,
-                status: msg.status,
-                deleted: msg.deleted,
-                timestamp: msg.timestamp
-            }
-            newDataMessage.push(itemMsg);
+router.post("/stech.manager/create-conversation", async function (req, res, next) {
+    let idUserLoged = req.cookies.Uid;
+    if (idUserLoged == null || idUserLoged.length <= 0) {
+        return res.redirect('/stech.manager/type_login')
+    }
+    let idUserSelected = req.body.idUserSelected;
+    if (idUserSelected === undefined) {
+        return res.status(200).send({
+            code: "",
+            message: "ID user selected not found"
         })
-
-        // console.log("+++++++++++++++++");
-        // console.log(newDataMessage);
-
-        let dataLastMessage = []
-        let latestMessages = {};
-        listConversation.map((con) => {
-            dataMessage.map((msg) => {
-                if (con._id + "" == msg.conversation._id + "") {
-                    if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
-                        latestMessages[con._id] = {
-                            id: msg._id,
-                            conversationID: con._id,
-                            senderID: msg.senderId,
-                            status: msg.status,
-                            message: msg.message,
-                            timestamp: msg.timestamp
-                        };
-                    }
-                }
-            })
-        })
-
-        for (let conversationID in latestMessages) {
-            dataLastMessage.push(latestMessages[conversationID]);
-        }
-
-        let dataConversation = []
-        listConversation.map((con) => {
-            dataLastMessage.map((msg) => {
-                if (con._id + "" == msg.conversationID + "") {
-                    let idMessage = msg.id
-                    let message = ''
-                    if (msg.message.length <= 0) {
-                        return msg.message
-                    }
-                    const algorithm = process.env.ALGORITHM;
-                    const ENCRYPTION_KEY = process.env.API_KEY;
-                    const hash = crypto.createHash("sha1");
-                    hash.update(ENCRYPTION_KEY)
-                    const digestResult = hash.digest();
-                    const uint8Array = new Uint8Array(digestResult);
-                    const keyUint8Array = uint8Array.slice(0, 16);
-                    const keyBuffer = Buffer.from(keyUint8Array);
-                    let textParts = msg.message.split(':');
-                    let iv = Buffer.from(textParts.shift(), 'hex');
-                    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-                    let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
-                    let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
-                    decrypted += decipher.final('utf8');
-
-                    message = decrypted
-
-                    let time = msg.timestamp
-                    let senderID = msg.senderID
-                    let status = msg.status
-
-                    dataConversation.push({
-                        _id: con._id,
-                        idMsg: idMessage,
-                        name: con.name,
-                        user: con.user,
-                        timestamp: con.timestamp,
-                        lastmessage: message,
-                        lastSender: senderID,
-                        status: status,
-                        lasttime: time
-                    })
-                }
-            })
-        })
-
-        const conversationNoMessageContent = listConversation.filter(obj1 =>
-            !dataConversation.some(obj2 => obj1._id === obj2._id)
-        );
-
-        conversationNoMessageContent.map((con) => {
-            dataConversation.push({
-                _id: con._id,
-                idMessage: "",
-                name: con.name,
-                user: con.user,
-                timestamp: con.timestamp,
-                lastmessage: "",
-                lastSender: "",
-                status: "",
-                lasttime: ""
-            })
-        })
-
-        let conversationNoMessage = []
-        let listUserIDInChat = []
-
-        if (dataMessage.length <= 0) {
-            conversationNoMessage = await ConversationModel.conversationModel.find({ _id: idConversation }).populate({ path: 'user' });
-            conversationNoMessage.map((item) => {
-                item.user.map((user) => {
-                    if (!listUserIDInChat.includes(user._id)) {
-                        listUserIDInChat.push(user._id);
-                    }
-                })
-            })
+    }
+    let date = new Date();
+    await ConversationModel.conversationModel.findOne({
+        $or: [
+            { creator_id: idUserLoged },
+            { receive_id: idUserSelected }
+        ]
+    }).then(async existingRecord1 => {
+        if (existingRecord1) {
+            return res.status(200).send({ ode: "REDIRECT", message: "conversation exist" });
         } else {
-            await Promise.all(dataMessage.map((message) => {
-                if (!listUserIDInChat.includes(message.senderId)) {
-                    listUserIDInChat.push(message.senderId);
+            await ConversationModel.conversationModel.findOne({
+                $or: [
+                    { creator_id: idUserSelected },
+                    { receive_id: idUserLoged }
+                ]
+            }).then(async existingRecord2 => {
+                if (existingRecord2) {
+                    return res.status(200).send({ code: "REDIRECT", message: "conversation exist" });
+                } else {
+                    let conversatopn = new ConversationModel.conversationModel({
+                        creator_id: idUserLoged,
+                        receive_id: idUserSelected,
+                        created_at: date,
+                        updated_at: date,
+                        deleted_at: date
+                    });
+                    await conversatopn.save();
+                    return res.status(200).send({ code: "CREATE_SUCCESS", message: "create conversation" });
                 }
-                if (!listUserIDInChat.includes(message.receiverId)) {
-                    listUserIDInChat.push(message.receiverId);
-                }
-            }));
+            })
+                .catch(error => { return res.status(200).send({ code: "", message: error }); });
         }
+    })
+        .catch(error => {
+            return res.status(200).send({ code: "", message: error })
+        });
+})
 
-        let dataOtherUser = []
-        await Promise.all(listUserIDInChat.map(async (userID) => {
-            if (userID != idUserLoged) {
-                const userData = await UserModel.userModel.find({ _id: userID }).populate({
-                    path: 'address',
-                    select: 'city'
-                });
-                dataOtherUser = userData
-            }
-        }));
+router.get("/stech.manager/chat/c/", async function (req, res, next) {
+    const ADMIN_ROLE = "LoginWithAdmin";
+    const EMPLOYEE_ROLE = "LoginWithEmployee";
 
-        res.render("chat", {
-            conversations: dataConversation.length > 0 ? dataConversation : [],
-            userLoged: dataUserLoged[0],
-            dataMessage: newDataMessage,
-            // dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
-            dataHeaderMsg: dataOtherUser,
+
+    let dataChat = req.cookies.dataChat;
+    let myData = Buffer.from(dataChat, 'base64').toString('utf8');
+    let mData = JSON.parse(myData);
+    let idConversation = mData.idConSelected;
+    let idMsg = mData.idMsg;
+    let idUserSelected = mData.idUserSelected;
+
+    try {
+        let idUserLoged = req.cookies.Uid;
+        if (idUserLoged == null || idUserLoged.length <= 0) {
+            return res.redirect('/stech.manager/type_login')
+        }
+        const typeLogin = req.cookies.LoginType;
+
+        // Start Data User
+        let dataUserLoged;
+        let dataUserSelected;
+        if (typeLogin === ADMIN_ROLE) {
+            dataUserLoged = await AdminModel.adminModel.findById({ _id: idUserLoged });
+        } else if (typeLogin === EMPLOYEE_ROLE) {
+            dataUserLoged = await EmployeeModel.employeeModel.findById({ _id: idUserLoged });
+        }
+        dataUserSelected = await EmployeeModel.employeeModel.findById({ _id: idUserSelected });
+        if (dataUserSelected == null) {
+            dataUserSelected = await AdminModel.adminModel.findById({ _id: idUserSelected });
+        }
+        if (dataUserSelected == null) {
+            dataUserSelected = await CustomerModel.customerModel.findById({ _id: idUserSelected });
+        }
+        // End Data User
+
+        let dataMessage = await MessageModel.messageModel.find({ conversation_id: idConversation });
+
+        return res.render("chat", {
+            conversations: [],
+            userLoged: dataUserLoged,
+            dataMessage: dataMessage,
+            dataHeaderMsg: dataUserSelected,
             idConversation: idConversation,
             isOpenChat: true,
-            message: "get data chat success",
-            code: 1,
         });
 
     } catch (e) {
         console.log(e.message);
         res.send({ message: "conversation not found", code: 0 });
     }
+
+
+
+
+
+    // return res.status(200).redirect('/stech.manager/chat/c')
+})
+router.post("/stech.manager/chat/c/", async function (req, res, next) {
+    console.log("zzzzzzzzzzzzzzzzzzzzz");
+    return res.status(200).redirect('/stech.manager/chat/c')
+
+
+    const ADMIN_ROLE = "LoginWithAdmin";
+    const EMPLOYEE_ROLE = "LoginWithEmployee";
+    try {
+        // Check login
+        let idUserLoged = req.body.idConSelected;
+        if (idUserLoged == null || idUserLoged.length <= 0) {
+            return res.redirect('/stech.manager/type_login')
+        }
+        const typeLogin = req.cookies.LoginType;
+
+        // let encodedConversation = req.params.id
+        let idConversation = req.params.id
+        // let idConversation = Buffer.from(encodedConversation, 'base64').toString('utf8');
+        let conversation = await ConversationModel.conversationModel.findById({ _id: idConversation });
+        let listMessage = await MessageModel.messageModel.find({ conversation_id: idConversation });
+        const latestMessage = listMessage.reduce((acc, current) => {
+            const accDate = new Date(acc.created_at);
+            const currentDate = new Date(current.created_at);
+            return accDate > currentDate ? acc : current;
+        });
+        // return res.status(200).send(latestMessage)
+
+        let dataUserLoged;
+        if (typeLogin === ADMIN_ROLE) {
+            dataUserLoged = await AdminModel.adminModel.findById({ _id: idUserLoged });
+        } else if (typeLogin === EMPLOYEE_ROLE) {
+            dataUserLoged = await EmployeeModel.employeeModel.findById({ _id: idUserLoged });
+        }
+        // console.log(conversation);
+        return res.render("chat", {
+            conversations: [],
+            userLoged: dataUserLoged,
+            // dataMessage: [],
+            // dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
+            dataHeaderMsg: dataUserLoged,
+            idConversation: idConversation,
+            isOpenChat: true,
+        });
+
+
+
+        // let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({
+        //     path: 'address',
+        //     select: 'city'
+        // });
+        // let dataMessage = await MessageModel.messageModel.find({ conversation: idConversation }).populate({ path: 'conversation' });
+
+
+        // // console.log("=======================");
+        // // console.log(dataMessage);
+        // let newDataMessage = []
+        // dataMessage.map((msg) => {
+
+        //     let message = ''
+        //     if (msg.message.length <= 0) {
+        //         return msg.message
+        //     }
+
+        //     const algorithm = process.env.ALGORITHM;
+        //     const ENCRYPTION_KEY = process.env.API_KEY;
+        //     const hash = crypto.createHash("sha1");
+        //     hash.update(ENCRYPTION_KEY)
+        //     const digestResult = hash.digest();
+        //     const uint8Array = new Uint8Array(digestResult);
+        //     const keyUint8Array = uint8Array.slice(0, 16);
+        //     const keyBuffer = Buffer.from(keyUint8Array);
+        //     let textParts = msg.message.split(':');
+        //     let iv = Buffer.from(textParts.shift(), 'hex');
+        //     let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+        //     let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+        //     let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+        //     decrypted += decipher.final('utf8');
+
+        //     message = decrypted;
+
+        //     let itemMsg = {
+        //         _id: msg._id,
+        //         conversation: msg.conversation,
+        //         senderId: msg.senderId,
+        //         receiverId: msg.receiverId,
+        //         message: message,
+        //         filess: msg.filess,
+        //         images: msg.images,
+        //         video: msg.video,
+        //         status: msg.status,
+        //         deleted: msg.deleted,
+        //         timestamp: msg.timestamp
+        //     }
+        //     newDataMessage.push(itemMsg);
+        // })
+
+        // // console.log("+++++++++++++++++");
+        // // console.log(newDataMessage);
+
+        // let dataLastMessage = []
+        // let latestMessages = {};
+        // listConversation.map((con) => {
+        //     dataMessage.map((msg) => {
+        //         if (con._id + "" == msg.conversation._id + "") {
+        //             if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
+        //                 latestMessages[con._id] = {
+        //                     id: msg._id,
+        //                     conversationID: con._id,
+        //                     senderID: msg.senderId,
+        //                     status: msg.status,
+        //                     message: msg.message,
+        //                     timestamp: msg.timestamp
+        //                 };
+        //             }
+        //         }
+        //     })
+        // })
+
+        // for (let conversationID in latestMessages) {
+        //     dataLastMessage.push(latestMessages[conversationID]);
+        // }
+
+        // let dataConversation = []
+        // listConversation.map((con) => {
+        //     dataLastMessage.map((msg) => {
+        //         if (con._id + "" == msg.conversationID + "") {
+        //             let idMessage = msg.id
+        //             let message = ''
+        //             if (msg.message.length <= 0) {
+        //                 return msg.message
+        //             }
+        //             const algorithm = process.env.ALGORITHM;
+        //             const ENCRYPTION_KEY = process.env.API_KEY;
+        //             const hash = crypto.createHash("sha1");
+        //             hash.update(ENCRYPTION_KEY)
+        //             const digestResult = hash.digest();
+        //             const uint8Array = new Uint8Array(digestResult);
+        //             const keyUint8Array = uint8Array.slice(0, 16);
+        //             const keyBuffer = Buffer.from(keyUint8Array);
+        //             let textParts = msg.message.split(':');
+        //             let iv = Buffer.from(textParts.shift(), 'hex');
+        //             let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+        //             let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+        //             let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+        //             decrypted += decipher.final('utf8');
+
+        //             message = decrypted
+
+        //             let time = msg.timestamp
+        //             let senderID = msg.senderID
+        //             let status = msg.status
+
+        //             dataConversation.push({
+        //                 _id: con._id,
+        //                 idMsg: idMessage,
+        //                 name: con.name,
+        //                 user: con.user,
+        //                 timestamp: con.timestamp,
+        //                 lastmessage: message,
+        //                 lastSender: senderID,
+        //                 status: status,
+        //                 lasttime: time
+        //             })
+        //         }
+        //     })
+        // })
+
+        // const conversationNoMessageContent = listConversation.filter(obj1 =>
+        //     !dataConversation.some(obj2 => obj1._id === obj2._id)
+        // );
+
+        // conversationNoMessageContent.map((con) => {
+        //     dataConversation.push({
+        //         _id: con._id,
+        //         idMessage: "",
+        //         name: con.name,
+        //         user: con.user,
+        //         timestamp: con.timestamp,
+        //         lastmessage: "",
+        //         lastSender: "",
+        //         status: "",
+        //         lasttime: ""
+        //     })
+        // })
+
+        // let conversationNoMessage = []
+        // let listUserIDInChat = []
+
+        // if (dataMessage.length <= 0) {
+        //     conversationNoMessage = await ConversationModel.conversationModel.find({ _id: idConversation }).populate({ path: 'user' });
+        //     conversationNoMessage.map((item) => {
+        //         item.user.map((user) => {
+        //             if (!listUserIDInChat.includes(user._id)) {
+        //                 listUserIDInChat.push(user._id);
+        //             }
+        //         })
+        //     })
+        // } else {
+        //     await Promise.all(dataMessage.map((message) => {
+        //         if (!listUserIDInChat.includes(message.senderId)) {
+        //             listUserIDInChat.push(message.senderId);
+        //         }
+        //         if (!listUserIDInChat.includes(message.receiverId)) {
+        //             listUserIDInChat.push(message.receiverId);
+        //         }
+        //     }));
+        // }
+
+        // let dataOtherUser = []
+        // await Promise.all(listUserIDInChat.map(async (userID) => {
+        //     if (userID != idUserLoged) {
+        //         const userData = await UserModel.userModel.find({ _id: userID }).populate({
+        //             path: 'address',
+        //             select: 'city'
+        //         });
+        //         dataOtherUser = userData
+        //     }
+        // }));
+
+        // res.render("chat", {
+        //     conversations: dataConversation.length > 0 ? dataConversation : [],
+        //     userLoged: dataUserLoged[0],
+        //     dataMessage: newDataMessage,
+        //     // dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
+        //     dataHeaderMsg: dataOtherUser,
+        //     idConversation: idConversation,
+        //     isOpenChat: true,
+        //     message: "get data chat success",
+        //     code: 1,
+        // });
+
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "conversation not found", code: 0 });
+    }
 });
+
 router.get("/stech.manager/chat", async function (req, res, next) {
+    const ADMIN_ROLE = "LoginWithAdmin";
+    const EMPLOYEE_ROLE = "LoginWithEmployee";
     try {
         // Check login
         let idUserLoged = req.cookies.Uid
         if (idUserLoged == null || idUserLoged.length <= 0) {
-            return res.redirect('/stech.manager/login')
+            return res.redirect('/stech.manager/type_login')
         }
-
-        let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({
-            path: 'address',
-            select: 'city'
+        const typeLogin = req.cookies.LoginType;
+        let dataUserLoged;
+        // let listConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
+        let listConversation = await ConversationModel.conversationModel.find({
+            $or: [
+                { creator_id: idUserLoged },
+                { receive_id: idUserLoged }
+            ]
         });
-        let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
-        let dataMessage = await MessageModel.messageModel.find().populate({ path: 'conversation' });
-
-        let dataLastMessage = []
-        let latestMessages = {};
-        listConversation.map((con) => {
-            dataMessage.map((msg) => {
-                if (con._id + "" == msg.conversation._id + "") {
-                    if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
-                        let message = ''
-                        if (msg.message.length <= 0) {
-                            return msg.message
-                        }
-                        const ENCRYPTION_KEY = process.env.API_KEY;
-                        const algorithm = process.env.ALGORITHM;
-                        const hash = crypto.createHash("sha1");
-                        hash.update(ENCRYPTION_KEY)
-                        const digestResult = hash.digest();
-                        const uint8Array = new Uint8Array(digestResult);
-                        const keyUint8Array = uint8Array.slice(0, 16);
-                        const keyBuffer = Buffer.from(keyUint8Array);
-                        let textParts = msg.message.split(':');
-                        let iv = Buffer.from(textParts.shift(), 'hex');
-                        let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-                        let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
-                        let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
-                        decrypted += decipher.final('utf8');
-
-                        message = decrypted;
-                        latestMessages[con._id] = {
-                            id: msg._id,
-                            conversationID: con._id,
-                            senderID: msg.senderId,
-                            status: msg.status,
-                            message: message,
-                            images: msg.images,
-                            video: msg.video,
-                            timestamp: msg.timestamp
-                        };
-                    }
-                }
-            })
-        })
-
-        for (let conversationID in latestMessages) {
-            dataLastMessage.push(latestMessages[conversationID]);
+        // return res.status(200).send(listConversation)
+        if (typeLogin === ADMIN_ROLE) {
+            dataUserLoged = await AdminModel.adminModel.findById({ _id: idUserLoged });
+        } else if (typeLogin === EMPLOYEE_ROLE) {
+            dataUserLoged = await EmployeeModel.employeeModel.findById({ _id: idUserLoged });
         }
+        // return res.status(200).send(dataUserLoged)
 
-        let dataConversation = []
+        let dataIDuser = []
         listConversation.map((con) => {
-            dataLastMessage.map((msg) => {
-                if (con._id + "" == msg.conversationID + "") {
-                    let idMessage = msg.id
-                    let message = msg.deleted ? " đã gỡ 1 tin nhắn" : msg.message.length > 0 ? msg.message : msg.images.length > 0 ? ` đã gửi ${msg.images.length} ảnh` : msg.video.length > 0 ? `Bạn đã gửi 1 video` : ''
-                    let time = msg.timestamp
-                    let senderID = msg.senderID
-                    let status = msg.status
-
-                    dataConversation.push({
-                        _id: con._id,
-                        idMsg: idMessage,
-                        name: con.name,
-                        user: con.user,
-                        timestamp: con.timestamp,
-                        lastmessage: message,
-                        lastSender: senderID,
-                        status: status,
-                        lasttime: time
-                    })
+            if (con.creator_id != idUserLoged) {
+                dataIDuser.push(con.creator_id);
+            }
+            if (con.creator_id == idUserLoged) {
+                dataIDuser.push(con.receive_id);
+            }
+        })
+        let dataUser = [];
+        await Promise.all(
+            dataIDuser.map(async (id) => {
+                let user;
+                try {
+                    user = await EmployeeModel.employeeModel.findById(id);
+                    if (user == null) {
+                        user = await CustomerModel.customerModel.findById(id);
+                    }
+                    dataUser.push(user);
+                } catch (error) {
+                    console.log(`get data user: ${error}`);
                 }
             })
-        })
-
-        const conversationNoMessage = listConversation.filter(obj1 =>
-            !dataConversation.some(obj2 => obj1._id === obj2._id)
+        );
+        let dataUserRender = []
+        let userRender = {};
+        await Promise.all(
+            dataUser.map(async (user) => {
+                userRender[user._id] = {
+                    id: user._id,
+                    name: user.full_name,
+                    avatar: user.avatar,
+                    email: user.email,
+                    phone: user.phone_number
+                }
+            })
         );
 
-        conversationNoMessage.map((con) => {
-            dataConversation.push({
-                _id: con._id,
-                idMessage: "",
-                name: con.name,
-                user: con.user,
-                timestamp: con.timestamp,
-                lastmessage: "",
-                lastSender: "",
-                status: "",
-                lasttime: ""
+        for (let userID in userRender) {
+            dataUserRender.push(userRender[userID]);
+        }
+
+
+        let dataLastMessage = [];
+        await Promise.all(
+            listConversation.map(async (con) => {
+                let listMessage = await MessageModel.messageModel.find({ conversation_id: con._id });
+                if (listMessage.length > 0) {
+                    const latestMessage = listMessage.reduce((acc, current) => {
+                        const accDate = new Date(acc.created_at);
+                        const currentDate = new Date(current.created_at);
+                        return accDate > currentDate ? acc : current;
+                    });
+                    // console.log(latestMessage);
+                    dataLastMessage.push(latestMessage);
+                }
             })
-        })
+        );
 
+        let dataConversation = [];
+        for (let i = 0; i < Math.min(listConversation.length, dataUserRender.length); i++) {
+            let { creator_id, receive_id, updated_at, __v } = listConversation[i];
+            let { id, name, avatar, email, phone } = dataUserRender[i];
+            let { _id, conversation_id, sender_id, message, message_type, created_at, deleted_at } = dataLastMessage[i];
+            let mergedObject = {
+                conversation_id,
+                sender_id,
+                message,
+                message_type,
+                idMsg: _id,
+                creator_id,
+                receive_id,
+                created_at,
+                updated_at,
+                deleted_at,
+                __v,
+                userID: id,
+                name,
+                avatar,
+                email,
+                phone
+            };
+            dataConversation.push(mergedObject);
+        }
         // console.log(dataConversation);
-        // console.log("==================");
-        // console.log(dataLastMessage);
-
         return res.render("chat", {
             conversations: dataConversation.length > 0 ? dataConversation : [],
-            userLoged: dataUserLoged[0],
-            dataMessage: {},
-            dataLastMessage: dataLastMessage.length > 0 ? dataLastMessage : [],
+            userLoged: dataUserLoged,
+            // dataMessage: {},
             isOpenChat: false,
             idConversation: "",
-            message: "get data chat success",
-            code: 1,
         });
+
+
+        // let dataMessage = await MessageModel.messageModel.find().populate({ path: 'conversations' });
+
+        // let dataLastMessage = []
+        // let latestMessages = {};
+        // listConversation.map((con) => {
+        //     dataMessage.map((msg) => {
+        //         if (con._id + "" == msg.conversation._id + "") {
+        //             if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
+        //                 let message = ''
+        //                 if (msg.message.length <= 0) {
+        //                     return msg.message
+        //                 }
+        //                 const ENCRYPTION_KEY = process.env.API_KEY;
+        //                 const algorithm = process.env.ALGORITHM;
+        //                 const hash = crypto.createHash("sha1");
+        //                 hash.update(ENCRYPTION_KEY)
+        //                 const digestResult = hash.digest();
+        //                 const uint8Array = new Uint8Array(digestResult);
+        //                 const keyUint8Array = uint8Array.slice(0, 16);
+        //                 const keyBuffer = Buffer.from(keyUint8Array);
+        //                 let textParts = msg.message.split(':');
+        //                 let iv = Buffer.from(textParts.shift(), 'hex');
+        //                 let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+        //                 let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+        //                 let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+        //                 decrypted += decipher.final('utf8');
+
+        //                 message = decrypted;
+        //                 latestMessages[con._id] = {
+        //                     id: msg._id,
+        //                     conversationID: con._id,
+        //                     senderID: msg.senderId,
+        //                     status: msg.status,
+        //                     message: message,
+        //                     images: msg.images,
+        //                     video: msg.video,
+        //                     timestamp: msg.timestamp
+        //                 };
+        //             }
+        //         }
+        //     })
+        // })
+
+        // for (let conversationID in latestMessages) {
+        //     dataLastMessage.push(latestMessages[conversationID]);
+        // }
+
+        // let dataConversation = []
+        // listConversation.map((con) => {
+        //     dataLastMessage.map((msg) => {
+        //         if (con._id + "" == msg.conversationID + "") {
+        //             let idMessage = msg.id
+        //             let message = msg.deleted ? " đã gỡ 1 tin nhắn" : msg.message.length > 0 ? msg.message : msg.images.length > 0 ? ` đã gửi ${msg.images.length} ảnh` : msg.video.length > 0 ? `Bạn đã gửi 1 video` : ''
+        //             let time = msg.timestamp
+        //             let senderID = msg.senderID
+        //             let status = msg.status
+
+        //             dataConversation.push({
+        //                 _id: con._id,
+        //                 idMsg: idMessage,
+        //                 name: con.name,
+        //                 user: con.user,
+        //                 timestamp: con.timestamp,
+        //                 lastmessage: message,
+        //                 lastSender: senderID,
+        //                 status: status,
+        //                 lasttime: time
+        //             })
+        //         }
+        //     })
+        // })
+
+        // const conversationNoMessage = listConversation.filter(obj1 =>
+        //     !dataConversation.some(obj2 => obj1._id === obj2._id)
+        // );
+
+        // conversationNoMessage.map((con) => {
+        //     dataConversation.push({
+        //         _id: con._id,
+        //         idMessage: "",
+        //         name: con.name,
+        //         user: con.user,
+        //         timestamp: con.timestamp,
+        //         lastmessage: "",
+        //         lastSender: "",
+        //         status: "",
+        //         lasttime: ""
+        //     })
+        // })
+
+        // // console.log(dataConversation);
+        // // console.log("==================");
+        // // console.log(dataLastMessage);
+
+        // return res.render("chat", {
+        //     conversations: dataConversation.length > 0 ? dataConversation : [],
+        //     userLoged: dataUserLoged,
+        //     dataMessage: {},
+        //     dataLastMessage: dataLastMessage.length > 0 ? dataLastMessage : [],
+        //     isOpenChat: false,
+        //     idConversation: "",
+        //     message: "get data chat success",
+        //     code: 1,
+        // });
 
 
     } catch (e) {
