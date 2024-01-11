@@ -11,6 +11,9 @@ const OrderCtrl = require("../controllersv2/controller.order");
 const FeedBackCtrl = require("../controllersv2/controller.feedback");
 const AdminCtr = require("../controllersv2/controller.admin");
 const EmployeeCtrl = require("../controllersv2/controller.employee");
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 const VnPayCtrl = require("../controllers/api.payvnpay");
 
 //customer
@@ -31,6 +34,7 @@ router.get("/resetPassword",CusController.resetPassword);
 //Admin
 router.post("/loginAdmin", AdminCtr.loginAdmin);
 router.post("/verifyOtpLoginAdmin", AdminCtr.verifyOtpLoginAdmin);
+
 
 //Employee
 router.post("/loginEmployee", EmployeeCtrl.loginEmployee);
