@@ -75,7 +75,7 @@ router.post("/getVoucherByIdV2", Middleware.authorizationToken, VoucherCtrl.getV
 router.post("/createOrder", Middleware.authorizationToken, OrderCtrl.createOrder);
 router.post("/getOrderByStatus", Middleware.authorizationToken, OrderCtrl.getOrderByStatus);
 router.post("/cancelOrder", Middleware.authorizationToken, OrderCtrl.cancelOrder);
-router.post("/updateStatusOrder", Middleware.authorizationToken, OrderCtrl.updateStatusOrder);
+router.post("/updateStatusOrder", OrderCtrl.updateStatusOrder);
 router.post("/createOrderGuest", Middleware.authorizationToken, OrderCtrl.createOrderGuest);
 router.post("/getStatic", OrderCtrl.getStatic);
 router.post("/getPriceOrderZaloPay", Middleware.authorizationToken, OrderCtrl.getPriceOrderZaloPay);

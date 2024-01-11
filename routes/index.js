@@ -36,6 +36,8 @@ const EmployeeModel = require("../modelsv2/model.employee");
 const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
 
 const axios = require("axios");
+const CusModel = require("../modelsv2/model.customer");
+const MapVoucherModel = require("../modelsv2/model.map_voucher_cust");
 require("dotenv").config();
 
 const match = [
@@ -1619,48 +1621,55 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
     }
 });
 router.post("/stech.manager/createVoucher", async function (req, res, next) {
+    let name = req.body.name;
+    let content = req.body.content;
+    let price = req.body.price;
+    let toDate = req.body.toDate;
+    let fromDate = req.body.fromDate;
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
+    if (name == null) {
+        return res.send({message: "title is required", code: 0});
+    }
+    if (content == null) {
+        return res.send({message: "content is required", code: 0});
+    }
+    if (price == null) {
+        return res.send({message: "price is required", code: 0});
+    }
+    if (toDate == null) {
+        return res.send({message: "toDate is required", code: 0});
+    }
+    if (fromDate == null) {
+        return res.send({message: "fromDate is required", code: 0});
+    }
+    if (create_time == null) {
+        return res.send({message: "create_time is required", code: 0});
+    }
     try {
-        let name = req.body.name;
-        let content = req.body.content;
-        let price = req.body.price;
-        let toDate = req.body.toDate;
-        let fromDate = req.body.fromDate;
-        let date = new Date();
-        let specificTimeZone = 'Asia/Ha_Noi';
-        let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
-
-        if (name == null) {
-            return res.send({ message: "title is required", code: 0 });
-        }
-        if (content == null) {
-            return res.send({ message: "content is required", code: 0 });
-        }
-        if (price == null) {
-            return res.send({ message: "price is required", code: 0 });
-        }
-        if (toDate == null) {
-            return res.send({ message: "toDate is required", code: 0 });
-        }
-        if (fromDate == null) {
-            return res.send({ message: "fromDate is required", code: 0 });
-        }
-        if (create_time == null) {
-            return res.send({ message: "create_time is required", code: 0 });
-        }
-
         let voucher = new VoucherModel.voucherModel({
             name: name,
             content: content,
             price: price,
-            toDate: formatDateTime(toDate),
-            fromDate: formatDateTime(fromDate),
+            toDate: moment(toDate).tz(specificTimeZone).format('YYYY-M-D'),
+            fromDate: moment(fromDate).tz(specificTimeZone).format('YYYY-M-D'),
             create_time: create_time,
         });
         await voucher.save();
+        let cus = await CusModel.customerModel.find();
+        await Promise.all(cus.map(async item => {
+            let mapVoucher = new MapVoucherModel.mapVoucherModel({
+                vocher_id: voucher._id,
+                customer_id: item._id,
+                is_used: false,
+                create_time: create_time,
+            });
+            await mapVoucher.save();
+        }));
         res.redirect(req.get('referer'));
     } catch (e) {
-        console.log(e.message);
-        res.send({ message: "create voucher fail", code: 0 });
+        return res.send({message: e.message.toString(), code: 0});
     }
 });
 router.post("/stech.manager/updateVoucher", async function (req, res, next) {
