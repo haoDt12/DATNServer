@@ -163,6 +163,7 @@ exports.getStatic = async (req, res) => {
         let dataOrder = [];
         let dataGetFromDateToDate = [];
         let data = [];
+        let date = [];
         let order = await OrderModel.oderModel.find({ status: "PayComplete" });
         order.map(item => {
             const formattedDate = moment(item.create_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
@@ -171,12 +172,14 @@ exports.getStatic = async (req, res) => {
         dataGetFromDateToDate = calculateTotal(dataOrder, startDate, endDate);
         dataGetFromDateToDate.map(item => {
             data.push(item.total)
+            date.push(item.date)
         })
         return res.send({
             message: "get order from date to date success",
             code: 1,
             name: "OrderFromDateToDate",
-            data: data
+            data: data,
+            date: date
         })
     } catch (e) {
         console.log(e.message);

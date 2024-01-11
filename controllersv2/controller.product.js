@@ -126,13 +126,14 @@ function sortProductsBySold(products) {
 
 function getProductsInRange(products) {
   let limit =
-  products.reduce((max, product) => (product.quantity > max ? product.quantity : max), -Infinity);
-  return products.filter(product => product.quantity >= 1 && product.quantity <= Number(limit));
+  products.reduce((max, product) => (Number(product.quantity) > max ? Number(product.quantity) : max), -Infinity);
+  return products.filter(product => Number(product.quantity) >= 0 && Number(product.quantity) <= Number(limit));
 }
 function getProductsInRangeSale(products) {
   let limit =
-  products.reduce((max, product) => (product.sold > max ? product.sold : max), -Infinity);
-  return products.filter(product => product.sold >= 1 && product.sold <= Number(limit));
+  products.reduce((max, product) => (Number(product.sold) > max ? Number(product.sold) : max), -Infinity);
+    console.log(limit)
+  return products.filter(product => Number(product.sold) >= 1 && Number(product.sold) <= Number(limit));
 }
 
 function searchProductsByName(query, products) {
