@@ -115,10 +115,10 @@ block content
                                         a#logout.btn.btn-outline-primary.mx-3.mt-2.d-block(href='/stech.manager/login') Logout
             // Header End
             .container-fluid
-                form#searchForm(action='/search', method='GET')
-                    .input-group.mb-3
-                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...')
-                        button#searchButton.btn.btn-outline-secondary(type='submit') Search
+                form#searchForm(action='javascript:void(0)', onsubmit='return false;')
+                    .input-group.m-lg-auto
+                        input#searchInput.form-control(type='text', name='query', placeholder='Enter your search query...' oninput='searchVoucher()')
+                        button#searchButton.btn.btn-outline-secondary(type='button') Search
                 .row
                     .col-md-6
                         .card.rounded-3.p-3.ps-5
@@ -148,7 +148,7 @@ block content
                                 tr
                                     td(style='width: 300px;')
                                         div
-                                            h5.font-size-15.text-center(style='font-size: 14px;')
+                                            h5.font-size-15.text-center(style='font-size: 14px;')(data-info="name")
                                                 a.text-dark(href='#')= voucher.name
                                     td(style='width: 550px;')
                                         div
@@ -156,7 +156,7 @@ block content
                                                 a.text-dark(href='#')= voucher.content
                                     td(style='width: 200px')
                                         div
-                                            h5.text-center(style='font-size: 14px;')
+                                            h5.text-center(style='font-size: 14px;')(data-info="price")
                                                 a.text-dark(href='#')= voucher.price
                                     td(style='width: 500px')
                                         p.text-muted.mb-1.text-truncate.text-center
@@ -246,3 +246,23 @@ block content
                                 button.mt-3.ms-2.btn.btn-outline-dark-light(type='submit') Save
 
     script(src='/js/voucher.js')
+    script.
+        function searchVoucher() {
+            const query = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
+            const voucherRows = document.querySelectorAll('tbody tr');
+
+            voucherRows.forEach(function (row) {
+                const voucherName = removeDiacritics(row.querySelector('[data-info="name"]').innerText.toLowerCase());
+                const voucherPrice = removeDiacritics(row.querySelector('[data-info="price"]').innerText.toLowerCase());
+
+                // Check if either the name or price contains the query
+                const isMatch = voucherName.includes(query) || voucherPrice.includes(query);
+
+                // Display or hide the row based on the search result
+                row.style.display = isMatch ? '' : 'none';
+            });
+        }
+
+        function removeDiacritics(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
