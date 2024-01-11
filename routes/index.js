@@ -689,7 +689,7 @@ router.post('/stech.manager/unban', async function (req, res, next) {
             // Unban Customer
             const updatedCustomer = await CustomerModel.customerModel.findByIdAndUpdate(
                 unbanId,
-                { $set: { status: 'Not verified' } },
+                { $set: { status: 'Has been activated' } },
                 { new: true }
             );
 
@@ -702,7 +702,7 @@ router.post('/stech.manager/unban', async function (req, res, next) {
         } else if (isEmployee) {
             const updatedEmployee = await EmployeeModel.employeeModel.findByIdAndUpdate(
                 unbanId,
-                { $set: { status: 'Not verified' } },
+                { $set: { status: 'Has been activated' } },
                 { new: true }
             );
 
