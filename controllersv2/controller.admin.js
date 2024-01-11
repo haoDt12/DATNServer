@@ -2,6 +2,25 @@ const AdminModel = require("../modelsv2/model.admin");
 const {sendOTPByEmail} = require("../models/otp");
 const CustomerModel = require("../modelsv2/model.customer");
 const jwt = require("jsonwebtoken");
+const EmployeeModel = require("../modelsv2/model.employee");
+const UploadFileFirebase = require("../modelsv2/uploadFileFirebase");
+const match = [
+    "image/jpeg",
+    "image/*",
+    "image/png",
+    "image/gif",
+    "image/bmp",
+    "image/tiff",
+    "image/webp",
+    "image/svg+xml",
+    "image/x-icon",
+    "image/jp2",
+    "image/heif",
+];
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+const passwordRegex =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
 exports.loginAdmin = async (req, res)=>{
     try {
         let email = req.body.email;

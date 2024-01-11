@@ -204,7 +204,7 @@ block content
                             p Bạn có chắc chắn muốn chặn người dùng  này.
                         .modal-footer
                             form(action="/stech.manager/banCustomer" method="post")
-                                .mb-3
+                                .mb-3.d-none
                                     input#idCustomerBan.form-control(name='customerId', type='text', aria-describedby='textHelp')
                                 button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                                 button.btn.btn-danger(type='submit' id='banCustomer') Đồng ý

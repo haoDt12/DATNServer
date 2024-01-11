@@ -11,6 +11,9 @@ const OrderCtrl = require("../controllersv2/controller.order");
 const FeedBackCtrl = require("../controllersv2/controller.feedback");
 const AdminCtr = require("../controllersv2/controller.admin");
 const EmployeeCtrl = require("../controllersv2/controller.employee");
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 const VnPayCtrl = require("../controllers/api.payvnpay");
 
 //customer
@@ -31,6 +34,7 @@ router.get("/resetPassword",CusController.resetPassword);
 //Admin
 router.post("/loginAdmin", AdminCtr.loginAdmin);
 router.post("/verifyOtpLoginAdmin", AdminCtr.verifyOtpLoginAdmin);
+
 
 //Employee
 router.post("/loginEmployee", EmployeeCtrl.loginEmployee);
@@ -71,7 +75,7 @@ router.post("/getVoucherByIdV2", Middleware.authorizationToken, VoucherCtrl.getV
 router.post("/createOrder", Middleware.authorizationToken, OrderCtrl.createOrder);
 router.post("/getOrderByStatus", Middleware.authorizationToken, OrderCtrl.getOrderByStatus);
 router.post("/cancelOrder", Middleware.authorizationToken, OrderCtrl.cancelOrder);
-router.post("/updateStatusOrder", Middleware.authorizationToken, OrderCtrl.updateStatusOrder);
+router.post("/updateStatusOrder", OrderCtrl.updateStatusOrder);
 router.post("/createOrderGuest", Middleware.authorizationToken, OrderCtrl.createOrderGuest);
 router.post("/getStatic", OrderCtrl.getStatic);
 router.post("/getPriceOrderZaloPay", Middleware.authorizationToken, OrderCtrl.getPriceOrderZaloPay);
