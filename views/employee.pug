@@ -135,7 +135,8 @@ block content
                         table.table.manage-candidates-top.mb-0
                             thead
                                 tr
-                                    th.col-2 Candidate Name
+                                    th.col-4 Candidate Name
+                                    th.text-center Status
                                     th.text-start.col-1  Action
                             tbody
                                 each employee in employees
@@ -157,10 +158,9 @@ block content
                                                                 i.fas.fa-map-marker-alt.pr-1
                                                                 span(style="margin-left: 5px; font-size: 14px; color: black; padding-top:15px;")= employee.address
 
-                                        //td.candidate-list-favourite-time.text-center
-                                        //    a.candidate-list-favourite.order-2.text-danger(href='#')
-                                        //        i.fas.fa-user(style="color: green;")
-                                        //    span=user.role
+                                        td
+                                            p.text-muted.text-truncate.text-center
+                                                | #{employee.status}
                                         td
                                             ul.list-unstyled.mb-0.d-flex
                                                 li

@@ -134,7 +134,8 @@ block content
                         table.table.manage-candidates-top.mb-0
                             thead
                                 tr
-                                    th.col-2 Candidate Name
+                                    th.col-4 Candidate Name
+                                    th.text-center Status
                                     th.text-start.col-1  Action
                             tbody
                                 each customer in customers
@@ -152,14 +153,10 @@ block content
                                                         ul.list-unstyled
                                                             li(style="margin-right: 20px")
                                                                 i.fas.fa-envelope.pr-1
-                                                                span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= customer.email
-                                                                i.fas.fa-map-marker-alt.pr-1
-                                                                span(style="margin-left: 5px; font-size: 14px; color: black; padding-top:15px;")= customer.address
-
-                                        //td.candidate-list-favourite-time.text-center
-                                        //    a.candidate-list-favourite.order-2.text-danger(href='#')
-                                        //        i.fas.fa-user(style="color: green;")
-                                        //    span=user.role
+                                                                    span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= customer.email
+                                        td
+                                            p.text-muted.text-truncate.text-center
+                                                | #{customer.status}
                                         td
                                             ul.list-unstyled.mb-0.d-flex
                                                 li
@@ -171,6 +168,8 @@ block content
                                                 li
                                                     a.text-danger(class="banCus" id="banCustomerBtn" data-id=customer._id  data-bs-toggle="modal" data-bs-target="#banCustomerModal")
                                                         i.fa.fa-ban
+
+
                         .text-center.mt-3.mt-sm-3
                             ul.pagination.justify-content-center.mb-0
                                 li.page-item.disabled
