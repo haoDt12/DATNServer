@@ -61,27 +61,35 @@ exports.getDetailProduct = async (req, res) => {
 };
 
 exports.getRunOutProducts = async (req, res) => {
+  let topNumber = req.body.topNumber;
+  if (topNumber === null) {
+    return res.send({ message: "topNumber is required", code: 0 });
+  }
+  try {
     let products = await ProductModel.productModel.find();
-    let productsRunOut = getProductsInRange(products)
-    const ProductsRunOut = getTopProducts(10, productsRunOut);
-    try {
-        return res.send({message: "get product is running out success", data: ProductsRunOut, code: 1});
-    } catch (e) {
-        console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
-    }
+    let productsRunOut = getProductsInRange(products);
+    const ProductsRunOut = getTopProducts(topNumber, productsRunOut);
+    return res.send({ message: "get product is running out success", data: ProductsRunOut, code: 1 });
+  }catch (e) {
+    console.log(e.message);
+    return res.send({ message: e.message.toString(), code: 0 });
+  }
 }
 
 exports.getHotSellProducts = async (req, res) => {
+  let topNumber = req.body.topNumber;
+  if (topNumber === null) {
+    return res.send({ message: "topNumber is required", code: 0 });
+  }
+  try {
     let products = await ProductModel.productModel.find();
-    let productsRunOut = getProductsInRange(products)
-    const ProductsRunOut = getTopProducts(10, productsRunOut);
-    try {
-        return res.send({message: "get product is running out success", data: ProductsRunOut, code: 1});
-    } catch (e) {
-        console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
-    }
+    let productsHotSale = getProductsInRangeSale(products)
+    const ProductsRunOut = getTopSaleProducts(topNumber, productsHotSale);
+    return res.send({ message: "get product is running out success", data: ProductsRunOut, code: 1 });
+  }catch (e) {
+    console.log(e.message);
+    return res.send({ message: e.message.toString(), code: 0 });
+  }
 }
 exports.searchProductByName = async (req, res) => {
     let txtSearch = req.body.txtSearch;
@@ -117,8 +125,15 @@ function sortProductsBySold(products) {
 }
 
 function getProductsInRange(products) {
-    let limit = Math.min(products.quantity);
-    return products.filter(product => product.quantity >= 1 && product.quantity <= limit);
+  let limit =
+  products.reduce((max, product) => (Number(product.quantity) > max ? Number(product.quantity) : max), -Infinity);
+  return products.filter(product => Number(product.quantity) >= 0 && Number(product.quantity) <= Number(limit));
+}
+function getProductsInRangeSale(products) {
+  let limit =
+  products.reduce((max, product) => (Number(product.sold) > max ? Number(product.sold) : max), -Infinity);
+    console.log(limit)
+  return products.filter(product => Number(product.sold) >= 1 && Number(product.sold) <= Number(limit));
 }
 
 function searchProductsByName(query, products) {

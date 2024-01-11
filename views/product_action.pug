@@ -62,7 +62,7 @@ head
                             div#categoryDropdown.dropdown-content(style='display: none')
                                  each cate in categories
                                      div.dropdown-item(class="dropdown_item" data-id=cate._id )
-                                         img(src=`${cate.img_cover}` alt=`${cate.name}` style='width:40px')
+                                         img(src=`${cate.img}` alt=`${cate.name}` style='width:40px')
                                          span #{cate.name}
                     .card.mb-4
                         .card-body

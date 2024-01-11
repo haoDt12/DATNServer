@@ -177,20 +177,20 @@ block content
                                             if order.customer_id
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
-                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1(data-info="full_name") Name:
                                                             =  order.customer_id.full_name
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
-                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1(data-info="phone_number") Phone:
                                                             = order.customer_id.phone_number
                                             if !order.customer_id
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
-                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Name:
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1(data-info="full_name") Name:
                                                             = order.guest_name
                                                 li
                                                     p.text-muted.mb-1.text-truncate.text-center
-                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1 Phone:
+                                                        i.mdi.mdi-circle-medium.align-middle.text-primary.me-1(data-info="phone_number") Phone:
                                                             = order.guest_phoneNumber
                                     td
                                         ul.list-unstyled.ps-0.mb-0
@@ -262,18 +262,7 @@ block content
                             a.page-link(href='#') 25
                         li.page-item
                             a.page-link(href='#') Next
-                //.text-center.mt-3.mt-sm-3
-                //    ul.pagination.justify-content-center.mb-0
-                //        if (currentPage > 1)
-                //            li.page-item
-                //                a.page-link(href=`/stech.manager/orders?page=${currentPage - 1}`) Prev
-                //            each page in Array.from({ length: totalPages }, (_, i) => i + 1)
-                //                li.page-item(class=currentPage === page ? 'active' : '')
-                //                    a.page-link(href=`/stech.manager/orders?page=${page}`) #{page}
-                //        if (currentPage < totalPages)
-                //            li.page-item
-                //                a.page-link(href=`/stech.manager/orders?page=${currentPage + 1}`) Next
-                //- End Pagination
+
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
                         | Design and Developed by&nbsp;
@@ -317,17 +306,18 @@ block content
         function removeDiacritics(str) {
             return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
+
         function searchOrder() {
             const query = removeDiacritics(document.getElementById('searchInput').value.toLowerCase());
             const orderRows = document.querySelectorAll('tbody tr');
 
             orderRows.forEach(function (row) {
-                const productTitle = removeDiacritics(row.querySelector('.list-unstyled.ps-0.mb-0 a').innerText.toLowerCase());
-                const userName = removeDiacritics(row.querySelector('.list-unstyled.ps-0.mb-0 i').innerText.toLowerCase());
+                const fullName = removeDiacritics(row.querySelector('.list-unstyled.ps-0.mb-0 [data-info="full_name"]').innerText.toLowerCase());
+                const phoneNumber = removeDiacritics(row.querySelector('.list-unstyled.ps-0.mb-0 [data-info="phone_number"]').innerText.toLowerCase());
 
                 // Nếu không có thông tin tìm kiếm hoặc tìm thấy kết quả, hiển thị lại dòng
-                if (!query || productTitle.includes(query) || userName.includes(query)) {
-                    row.style.display = 'table-row';
+                if (!query || fullName.includes(query) || phoneNumber.includes(query)) {
+                    row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
