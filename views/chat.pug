@@ -221,93 +221,45 @@ block content
                                         .pt-1.pb-3.d-flex.flex-column.navigation-mobile.pagination-scrool.chat-user-scroll(style="max-height: 400px; min-height: 250px;")
                                             //- list conversation
                                             each conversation in conversations
-                                                each user in conversation.user
-                                                    if user._id + "" == userLoged._id + ""
-                                                        a.text-decoration-none(href=`/stech.manager/chat/c/${conversation._id}/`)
-                                                            .chat-item.d-flex.pl-3.pr-0.pt-3.pb-1(class="conversation" data-id=conversation._id data-id-msg=conversation.idMsg data-id-selected=idConversation)
-                                                                .w-100
-                                                                    - var dataSize = conversation.user.length;
-                                                                        //- group.size() = 2
-                                                                        if dataSize <= 2 
-                                                                            .d-flex.pl-0
-                                                                                if conversation.user[0]._id + "" == userLoged._id + ""
-                                                                                    img.rounded-circle.shadow.avatar-sm.mr-3(src=`${conversation.user[1].avatar}`)
-                                                                                    |
-                                                                                    div
-                                                                                        p.margin-auto.fw-400.text-dark-75
-                                                                                            | #{conversation.user[1].full_name}
-
-                                                                                            if typeof(conversation.lastmessage) !== 'undefined'
-                                                                                                .d-flex.flex-row.mt-1
-                                                                                                    span
-                                                                                                        .svg15.double-check
-                                                                                                    |
-                                                                                                    if userLoged._id + "" === conversation.lastSender + ""
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" data-id=conversation._id class="content-msg" data-status=conversation.status)
-                                                                                                            | Bạn: #{conversation.lastmessage}
-                                                                                                    else 
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-id=conversation._id data-status=conversation.status)
-                                                                                                            | #{conversation.lastmessage}
-                                                                                            else
-                                                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
-                                                                                                |
-                                                                                else 
-                                                                                    img.rounded-circle.shadow.avatar-sm.mr-3(src=`${conversation.user[0].avatar}`)
-                                                                                    |
-                                                                                    div
-                                                                                        p.margin-auto.fw-400.text-dark-75
-                                                                                            | #{conversation.user[0].full_name}
-
-                                                                                            if typeof(conversation.lastmessage) !== 'undefined'
-                                                                                                .d-flex.flex-row.mt-1
-                                                                                                    span
-                                                                                                        .svg15.double-check
-                                                                                                    |
-                                                                                                    if userLoged._id + "" === conversation.lastSender + ""
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" data-id=conversation._id class="content-msg" data-status=conversation.status)
-                                                                                                            | Bạn: #{conversation.lastmessage}
-                                                                                                    else 
-                                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-id=conversation._id data-status=conversation.status)
-                                                                                                            | #{conversation.lastmessage}
-                                                                                            else
-                                                                                                span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
-                                                                                                |
-
-                                                                        //- group.size() >=3
-                                                                        else  
-                                                                            .d-flex.pl-0
-                                                                                img.rounded-circle.shadow.avatar-sm.mr-3(src='/images/logos/group-chat.png')
-                                                                                |
-                                                                                div
-                                                                                    p.margin-auto.fw-400.text-dark-75
-                                                                                        | #{conversation.name}
-                                                                                    .d-flex.flex-row.mt-1
-                                                                                        span
-                                                                                            .svg15.double-check
-                                                                                        |
-                                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(class="content-msg" data-status=conversation.status)
-                                                                                            if userLoged._id + "" === conversation.lastSender + ""                  
-                                                                                                | Bạn: #{conversation.lastmessage}
-                                                                                            else 
-                                                                                                | #{conversation.lastmessage}
+                                                //- /stech.manager/chat/c/${conversation.conversation_id}/ 
+                                                a.text-decoration-none()
+                                                    .chat-item.d-flex.pl-3.pr-0.pt-3.pb-1(class="conversation" data-id=conversation.conversation_id data-id-msg=conversation.idMsg data-id-selected=idConversation data-id-user=conversation.userID)
+                                                        .w-100
+                                                            .d-flex.pl-0
+                                                                if conversation.avatar
+                                                                    img.rounded-circle.shadow.avatar-sm.mr-3(src=`${conversation.avatar}`)
+                                                                else 
+                                                                    img.rounded-circle.shadow.avatar-sm.mr-3(src='/images/logos/avatar-default.jpg')
                                                                 |
-                                                                .flex-shrink-0.margin-auto.pl-2.pr-3
-                                                                    .d-flex.flex-column
-                                                                        p.text-muted.text-right.fs-13.mb-2
-                                                                            if typeof(conversation.lasttime) !== 'undefined'
-                                                                                | #{conversation.lasttime.slice(conversation.lasttime.length-8, conversation.lasttime.length-3)}
-                                                                            else
-                                                                                |
+                                                                div
+                                                                    p.margin-auto.fw-400.text-dark-75
+                                                                        | #{conversation.name}
+                                                                        .d-flex.flex-row.mt-1
+                                                                            span
+                                                                                .svg15.double-check
+                                                                            |
+                                                                            span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4(style="color: red;" data-id=conversation.conversation_id class="content-msg" data-status=conversation.status)
+                                                                                if userLoged._id+ "" === conversation.sender_id + ""
+                                                                                    | Bạn: #{conversation.message}
+                                                                                else
+                                                                                    | #{conversation.message}
+                                                                        span.message-shortcut.margin-auto.text-muted.fs-13.ml-1.mr-4
                                                                         |
-                                                                        //- Tin nhắm ghim
-                                                                        //- .text-right.d-flex.flex-row
-                                                                        //-     span
-                                                                        //-         .svg18.pinned
-                                                                        //-     |
-                                                                        //-     i.text-muted.la.la-angle-down.ml-1.fs-15
-                                                                    
-                                                            |
-                                            
+                                                        |
+                                                        .flex-shrink-0.margin-auto.pl-2.pr-3
+                                                            .d-flex.flex-column
+                                                                p.text-muted.text-right.fs-13.mb-2
+                                                                    if typeof(conversation.created_at) !== 'undefined'
+                                                                        | #{conversation.created_at.slice(conversation.created_at.length-8, conversation.created_at.length-3)}
+                                                                    else
+                                                                        | 99:99
+                                                                |
+                                                                //- Tin nhắm ghim
+                                                                //- .text-right.d-flex.flex-row
+                                                                //-     span
+                                                                //-         .svg18.pinned
+                                                                //-     |
+                                                                //-     i.text-muted.la.la-angle-down.ml-1.fs-15
                             |
                             include content_chat.pug
     script(src=`https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js`)
