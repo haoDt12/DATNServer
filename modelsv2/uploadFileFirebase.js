@@ -168,3 +168,35 @@ exports.uploadFiles = async (req, id, folder, files, fileExtension) => {
     });
 
 };
+exports.uploadFileProfile = async (req, id, fileType, folder, fileItem) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!fileItem) {
+                return reject("0");
+            }
+
+            const productFolder = `${folder}/${id}`;
+            const typeFolder = `${productFolder}/${fileType}`;
+
+            // Tạo các thư mục nếu chưa tồn tại
+            await createFoldersIfNotExist(folder, productFolder, typeFolder);
+
+            // Lưu trữ file vào đúng thư mục
+            const destinationPath = `${typeFolder}/${fileItem.originalname}`; // Sử dụng tên gốc của file
+            const file = bucket.file(destinationPath);
+
+            await file.save(fileItem.buffer, {
+                metadata: { contentType: fileItem.mimetype },
+            });
+
+            const token = uuidv4();
+            const encodedPath = encodeURIComponent(destinationPath);
+            const fileUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${token}`;
+
+            resolve(fileUrl);
+        } catch (e) {
+            console.log(e.message);
+            reject("0");
+        }
+    });
+};

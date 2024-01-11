@@ -11,13 +11,16 @@ const OrderCtrl = require("../controllersv2/controller.order");
 const FeedBackCtrl = require("../controllersv2/controller.feedback");
 const AdminCtr = require("../controllersv2/controller.admin");
 const EmployeeCtrl = require("../controllersv2/controller.employee");
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 const VnPayCtrl = require("../controllers/api.payvnpay");
 
 //customer
 router.post("/registerCustomer", CusController.registerCustomer);
 router.post("/loginCustomer", CusController.loginCustomer);
 router.post("/getInfoCus", Middleware.authorizationToken, CusController.getInfoCus);
-router.post("/addFCM", Middleware.authorizationToken, CusController.addFCM);
+router.post("/addFCM", CusController.addFCM);
 router.post("/verifyCusLogin", CusController.verifyCusLogin);
 router.get("/verifyCusRegister", CusController.verifyCusRegister);
 router.get("/getInfoCus", Middleware.authorizationToken, CusController.getInfoCus);
@@ -32,6 +35,7 @@ router.get("/resetPassword",CusController.resetPassword);
 router.post("/loginAdmin", AdminCtr.loginAdmin);
 router.post("/verifyOtpLoginAdmin", AdminCtr.verifyOtpLoginAdmin);
 
+
 //Employee
 router.post("/loginEmployee", EmployeeCtrl.loginEmployee);
 router.post("/verifyOtpLoginEmployee", EmployeeCtrl.verifyOtpLoginEmployee);
@@ -43,8 +47,8 @@ router.post("/getCategory", Middleware.authorizationToken, CategoryController.ge
 //product
 router.post("/getAllProduct", Middleware.authorizationToken, ProductController.getAllProduct);
 router.post("/getDetailProduct", Middleware.authorizationToken, ProductController.getDetailProduct);
-router.post("/getProductRunOut", Middleware.authorizationToken, ProductController.getRunOutProducts);
-router.post("/getProductRunOut", Middleware.authorizationToken, ProductController.getRunOutProducts);
+router.post("/getRunOutProducts", ProductController.getRunOutProducts);
+router.post("/getHotSaleProducts", ProductController.getHotSellProducts);
 router.post("/getProductByCategoryId", Middleware.authorizationToken, ProductController.getProductByCategoryId);
 router.post("/searchProductByName", Middleware.authorizationToken, ProductController.searchProductByName);
 
@@ -71,9 +75,9 @@ router.post("/getVoucherByIdV2", Middleware.authorizationToken, VoucherCtrl.getV
 router.post("/createOrder", Middleware.authorizationToken, OrderCtrl.createOrder);
 router.post("/getOrderByStatus", Middleware.authorizationToken, OrderCtrl.getOrderByStatus);
 router.post("/cancelOrder", Middleware.authorizationToken, OrderCtrl.cancelOrder);
-router.post("/updateStatusOrder", Middleware.authorizationToken, OrderCtrl.updateStatusOrder);
+router.post("/updateStatusOrder", OrderCtrl.updateStatusOrder);
 router.post("/createOrderGuest", Middleware.authorizationToken, OrderCtrl.createOrderGuest);
-router.post("/getStatic", Middleware.authorizationToken, OrderCtrl.getStatic);
+router.post("/getStatic", OrderCtrl.getStatic);
 router.post("/getPriceOrderZaloPay", Middleware.authorizationToken, OrderCtrl.getPriceOrderZaloPay);
 router.post("/createOrderZaloPay", Middleware.authorizationToken, OrderCtrl.createOrderZaloPay);
 router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.createPaymentUrl);

@@ -109,7 +109,7 @@ block content
                             li.page-item(style='margin-right: 10px')
                                 a.btn.btn-primary(class='statusButton' href='/stech.manager/employee') Employee
                             li.page-item(style='margin-right: 10px' id = 'getAllOrder')
-                                a.btn.btn-primary( href='#' class='statusButton' data-status = 'All') Baned
+                                a.btn.btn-primary( href='/stech.manager/ban' class='statusButton' data-status = 'All') Baned
 
                         ul.navbar-nav.flex-row.ms-auto.align-items-center.justify-content-end
                             li.nav-item.dropdown
@@ -134,7 +134,8 @@ block content
                         table.table.manage-candidates-top.mb-0
                             thead
                                 tr
-                                    th.col-2 Candidate Name
+                                    th.col-4 Candidate Name
+                                    th.text-center Status
                                     th.text-start.col-1  Action
                             tbody
                                 each customer in customers
@@ -152,25 +153,23 @@ block content
                                                         ul.list-unstyled
                                                             li(style="margin-right: 20px")
                                                                 i.fas.fa-envelope.pr-1
-                                                                span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= customer.email
-                                                                i.fas.fa-map-marker-alt.pr-1
-                                                                span(style="margin-left: 5px; font-size: 14px; color: black; padding-top:15px;")= customer.address
-
-                                        //td.candidate-list-favourite-time.text-center
-                                        //    a.candidate-list-favourite.order-2.text-danger(href='#')
-                                        //        i.fas.fa-user(style="color: green;")
-                                        //    span=user.role
+                                                                    span.fas(style="margin-left: 5px; font-size: 15px; color: #2d2d2d;")= customer.email
+                                        td
+                                            p.text-muted.text-truncate.text-center
+                                                | #{customer.status}
                                         td
                                             ul.list-unstyled.mb-0.d-flex
                                                 li
                                                     a.text-primary(class='chatUser' title='' data-id=customer._id)
                                                         i.bx.bx-message-dots
                                                 li
-                                                    a#Detail.text-primary.DetailUser( data-toggle='tooltip', title='', data-original-title='View' data-id=customer._id)
+                                                    a#Detail.text-primary.DetailUser(data-toggle='tooltip', title='', data-original-title='View' data-id=customer._id)
                                                         i.far.fa-eye
                                                 li
-                                                    a.text-danger(href='' class="deleteUs" id="deleteUserBtn" data-id=customer._id  data-bs-toggle="modal" data-bs-target="#deleteUserModal")
-                                                        i.far.fa-trash-alt
+                                                    a.text-danger(class="banCus" id="banCustomerBtn" data-id=customer._id  data-bs-toggle="modal" data-bs-target="#banCustomerModal")
+                                                        i.fa.fa-ban
+
+
                         .text-center.mt-3.mt-sm-3
                             ul.pagination.justify-content-center.mb-0
                                 li.page-item.disabled
@@ -194,20 +193,20 @@ block content
                         a.pe-1.text-primary.text-decoration-underline(href='https://trinh-dien-203.onrender.com' target='_blank') STECH
                 //Modal add pro duct
 
-            #deleteUserModal.modal(tabindex='-1')
+            #banCustomerModal.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content
                         .modal-header
                             h5.modal-title Warning!
                             button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                         .modal-body
-                            p Bạn có chắc chắn muốn xoá item này.
+                            p Bạn có chắc chắn muốn chặn người dùng  này.
                         .modal-footer
-                            form(action="/stech.manager/deleteCustomer" method="post")
+                            form(action="/stech.manager/banCustomer" method="post")
                                 .mb-3.d-none
-                                    input#idCustomerDelete.form-control(name='customerId', type='text', aria-describedby='textHelp')
+                                    input#idCustomerBan.form-control(name='customerId', type='text', aria-describedby='textHelp')
                                 button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                                button.btn.btn-danger(type='button' id='deleteUser') Đồng ý
+                                button.btn.btn-danger(type='submit' id='banCustomer') Đồng ý
     script(src='/js/customer.js')
     script.
         function removeDiacritics(str) {
