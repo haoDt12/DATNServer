@@ -7,11 +7,11 @@ const OrderModel = require("./../modelsv2/model.order");
 const CategoryModel = require("./../modelsv2/model.category");
 const CartModelv2 = require("../modelsv2/model.ProductCart");
 const UserModel = require("./../models/model.user");
-const BannerModel = require("./../models/model.banner");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
 const VoucherModel = require("./../modelsv2/model.voucher");
 const NotificationModel = require("./../modelsv2/model.notification");
+const BannerModel = require("./../modelsv2/model.banner");
 const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
 const AdminModel = require("./../modelsv2/model.admin");
 const DetailOrderModel = require("./../modelsv2/model.detailorder");
@@ -1658,6 +1658,99 @@ router.get("/stech.manager/notification", async function (req, res, next) {
         res.send({ message: "notification not found", code: 0 });
     }
 });
+
+router.post("/stech.manager/addBanner", upload.fields([{
+    name: "img",
+    maxCount: 1
+}]), async function (req, res, next) {
+    const img = req.files["img"];
+    let date = new Date();
+    let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss")
+    let admin_id = req.cookies.Uid;
+
+    try {
+        let banner = new BannerModel.bannerModel({
+            admin_id: admin_id,
+            create_time: create_time
+        });
+        let imgBanner = await UploadFileFirebase.uploadFileBanner(
+            req,
+            banner._id.toString(),
+            "img",
+            "banners",
+            img[0]
+        );
+        if (imgBanner === 0) {
+            return res.send({ message: "upload file img fail", code: 0 });
+        }
+        banner.img = imgBanner;
+        await banner.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+
+});
+router.post("/stech.manager/updateBanner", upload.fields([{
+    name: "img",
+    maxCount: 1
+}]), async function (req, res, next) {
+    const img = req.files["img"];
+    let bannerId = req.body.bannerId;
+
+    if (bannerId == null) {
+        return res.send({ message: "bannerId is required", code: 0 });
+    }
+    try {
+        let banner = await BannerModel.bannerModel.findById(bannerId);
+        let newBanner = {
+            admin_id:banner.admin_id,
+            create_time: banner.create_time
+        }
+        if (img != null) {
+            const productFirebase = `banners/${bannerId}`;
+            await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
+
+            let imgBanner = await UploadFileFirebase.uploadFileBanner(
+                req,
+                banner._id.toString(),
+                "img",
+                "banners",
+                img[0]
+            );
+            if (imgBanner === 0) {
+                return res.send({ message: "upload file img fail", code: 0 });
+            }
+            newBanner.img = imgBanner;
+        }
+
+        await BannerModel.bannerModel.updateMany({ _id: bannerId }, { $set: newBanner });
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+});
+router.post("/stech.manager/deleteBanner", async function (req, res, next) {
+    try {
+        let bannerId = req.body.bannerId;
+        if (bannerId == null) {
+            return res.send({ message: "bannerId is required", code: 0 });
+        }
+
+        await BannerModel.bannerModel.deleteMany({ _id: bannerId });
+
+        const productFirebase = `banners/${bannerId}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
+
+        res.redirect(req.get('referer'));
+
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+})
+
 
 router.post("/stech.manager/createNotification", upload.fields([{
     name: "img",

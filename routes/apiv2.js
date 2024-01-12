@@ -8,10 +8,12 @@ const ProductCartCtrl = require("../controllersv2/controller.ProductCart");
 const DeliveryAddressCtrl = require("../controllersv2/controller.deliveryaddress");
 const VoucherCtrl = require("../controllersv2/controller.voucher");
 const OrderCtrl = require("../controllersv2/controller.order");
+const BannerCtrl = require("../controllersv2/controller.banner");
 const FeedBackCtrl = require("../controllersv2/controller.feedback");
 const AdminCtr = require("../controllersv2/controller.admin");
 const EmployeeCtrl = require("../controllersv2/controller.employee");
 const VnPayCtrl = require("../controllers/api.payvnpay");
+const ApiBanner = require("../controllers/api.banner");
 
 //customer
 router.post("/registerCustomer", CusController.registerCustomer);
@@ -82,5 +84,13 @@ router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.create
 router.post("/addFeedback", Middleware.authorizationToken, FeedBackCtrl.addFeedback);
 router.post("/getFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getFeedBackByProductId);
 router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getAllFeedBackByProductId);
+
+// banner
+router.post(
+    "/getListBanner",
+    Middleware.authorizationToken,
+    BannerCtrl.getLisBanner
+);
+
 
 module.exports = router;
