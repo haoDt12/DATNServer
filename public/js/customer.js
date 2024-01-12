@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const token = utils.GetCookie("token");
 
-   // var myModal = new bootstrap.Modal(document.getElementById('UserModal'));
+    // var myModal = new bootstrap.Modal(document.getElementById('UserModal'));
     // var myModalUp = new bootstrap.Modal(document.getElementById('UpdateUserModal'));
     var myModalBan = new bootstrap.Modal(document.getElementById('banCustomerModal'));
     const banButtons = document.querySelectorAll('.banCus');
@@ -59,4 +59,45 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = "/stech.manager/detail_user?userId=" + encodedUserId;
         });
     });
+
+
+    let chatUser = document.querySelectorAll('.chatUser');
+    chatUser.forEach(function (item) {
+        item.addEventListener('click', () => {
+            let idUserSelected = item.getAttribute("data-id");
+            let arrayID = []
+            arrayID.push(idUserSelected)
+            // console.log(idUserSelected);
+            createConversation(idUserSelected);
+        })
+    })
+
+    // 
+    async function createConversation(idUserSelected) {
+        try {
+            let xhr = new XMLHttpRequest();
+            let endPoint = "/stech.manager/create-conversation";
+            xhr.open('POST', endPoint, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ idUserSelected }));
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    let myData = JSON.parse(xhr.response);
+                    console.log(myData.message);
+                    switch (myData.code) {
+                        case "REDIRECT":
+                        case "CREATE_SUCCESS":
+                            window.location.href = "/stech.manager/chat";
+                            break;
+                        default:
+                            console.log(xhr.responseText);
+                            break;
+                    }
+                }
+            };
+        } catch (error) {
+            console.error(error);
+        }
+    }
 });

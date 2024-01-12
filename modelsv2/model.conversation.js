@@ -1,11 +1,19 @@
 const db = require("../models/database");
 const conversationSchema = db.mongoose.Schema(
     {
-        creator_id: { type: String, required: true },
-        receive_id: { type: String, required: true },
+        creator_id: {
+            type: db.mongoose.Schema.Types.ObjectId,
+            ref: "admins",
+            required: true
+        },
+        receive_id: {
+            type: db.mongoose.Schema.Types.ObjectId,
+            ref: "customer",
+            required: true
+        },
         created_at: { type: String, required: true },
-        updated_at: { type: String, required: true },
-        deleted_at: { type: String, required: true }
+        updated_at: { type: String, required: false },
+        deleted_at: { type: String, required: false }
     },
     {
         collection: "Conversations",
