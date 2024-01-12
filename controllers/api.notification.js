@@ -186,8 +186,6 @@ exports.getPublicNotification = async (req, res) => {
     }
 }
 const sendMessage = (registrationToken, title, body) => {
-    console.log(title);
-    console.log(body);
     let message = {
         data: {
             title: title,
