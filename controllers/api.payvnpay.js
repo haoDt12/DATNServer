@@ -213,7 +213,7 @@ exports.vnpayReturn = async (req, res) => {
                     }
                 }))
                 let product = await ProductModel.productModel.findById(mList_order[0].product_id);
-                await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id} với phương thức thanh toán thanh toán qua VnPay`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} phương thức thanh toán thanh toán qua VnPay với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
                 return res.redirect(`https://${ipAddress}/apiv2/paySuccess`);
             } catch (e) {
                 console.log(e.message);
