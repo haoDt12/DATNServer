@@ -13,9 +13,9 @@ const app = express();
 const cors = require('cors');
 const http = require('http');
 const server = http.createServer(app)
-const {Server} = require('socket.io')
-const {readFileSync} = require("fs");
-const {createServer} = require("http");
+const { Server } = require('socket.io')
+const { readFileSync } = require("fs");
+const { createServer } = require("http");
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json');
 if (admin.apps.length === 0) {
@@ -48,7 +48,7 @@ app.set("view engine", "pug");
 app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(session(sessionConfig));
@@ -85,9 +85,11 @@ io.on("connection", (socket) => {
         console.log(`disconnect ${socket.id} due to ${reason}`);
     });
 
+    // New message
     socket.on('on-chat', data => {
         // console.log(data);
-        const {message} = data.message
+        // return
+        const { message } = data.message;
         // decrypt message
         let messageDecrypted = message;
         if (message.length <= 0) {
@@ -112,7 +114,7 @@ io.on("connection", (socket) => {
             messageDecrypted = decrypted
         }
 
-        let newData = {...data.message, message: messageDecrypted};
+        let newData = { ...data.message, message: messageDecrypted };
         io.emit('user-chat', newData)
     })
 
