@@ -127,9 +127,9 @@ process.on('warning', (warning) => {
 });
 
 
-const post = process.env.PORT || 80;
+const post = process.env.PORT || 3000;
 // httpServer.listen(3333);
 server.listen(post, (req, res) => {
-    console.log("connect to port 80");
+    console.log("connect to port " + post);
 });
 module.exports = server;
