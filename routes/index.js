@@ -2245,8 +2245,6 @@ router.post("/stech.manager/editUser", upload.single('avatar'), async function (
     }
 })
 const sendMessage = (registrationToken, title, body) => {
-    console.log(title);
-    console.log(body);
     let message = {
         data: {
             title: title,
