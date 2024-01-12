@@ -70,6 +70,7 @@ router.post("/getDeliveryAddress", Middleware.authorizationToken, DeliveryAddres
 //voucher
 router.post("/addVoucherAllUser", Middleware.authorizationToken, VoucherCtrl.addVoucherAllUser);
 router.post("/getVoucherByIdV2", Middleware.authorizationToken, VoucherCtrl.getVoucherByIdV2);
+router.post("/getVoucherByVoucherId", Middleware.authorizationToken, VoucherCtrl.getVoucherByVoucherId);
 
 //order
 router.post("/createOrder", Middleware.authorizationToken, OrderCtrl.createOrder);
@@ -80,6 +81,7 @@ router.post("/createOrderGuest", Middleware.authorizationToken, OrderCtrl.create
 router.post("/getStatic", OrderCtrl.getStatic);
 router.post("/getPriceOrderZaloPay", Middleware.authorizationToken, OrderCtrl.getPriceOrderZaloPay);
 router.post("/createOrderZaloPay", Middleware.authorizationToken, OrderCtrl.createOrderZaloPay);
+router.post("/getOrderByOrderId", Middleware.authorizationToken, OrderCtrl.getOrderByOrderId);
 router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.createPaymentUrl);
 
 // feedback
@@ -88,6 +90,6 @@ router.post("/getFeedBackByProductId", Middleware.authorizationToken, FeedBackCt
 router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getAllFeedBackByProductId);
 
 //notification
-router.post("/getNotificationByUser", NotificationCtrl.getNotificationByUser);
+router.post("/getNotificationByUser", Middleware.authorizationToken, NotificationCtrl.getNotificationByUser);
 
 module.exports = router;

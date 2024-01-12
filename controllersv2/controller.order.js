@@ -223,19 +223,19 @@ exports.updateStatusOrder = async (req, res) => {
         let cus = await CustomerModel.customerModel.findById(order.customer_id);
         switch (status) {
             case "PayComplete":
-                await createNotifi("Thanh toán đơn hàng", `Bạn đã nhận một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                await createNotifi("Thanh toán đơn hàng", `Bạn đã nhận một đơn hàng vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
                 break;
             case "Cancel":
-                await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
                 break;
             case "WaitConfirm":
-                await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
                 break;
             case "WaitingGet":
-                await createNotifi("Đơn hàng đang được chuẩn bị", `Đơn hàng của bạn đang được nhân viên chuẩn bị vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                await createNotifi("Đơn hàng đang được chuẩn bị", `Đơn hàng của bạn đang được nhân viên chuẩn bị vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
                 break;
             case "InTransit":
-                await createNotifi("Đơn hàng đang được vận chuyển", `Đơn hàng đang được đơn vị vận chuyển giao đến bạn vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                await createNotifi("Đơn hàng đang được vận chuyển", `Đơn hàng đang được đơn vị vận chuyển giao đến bạn vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
                 break;
         }
         return res.send({message: "edit order success", code: 1});
@@ -440,4 +440,42 @@ const createNotifi = async (title, content, img, create_time, customer_id, regis
     await notification.save();
     await mapNotiCus.save();
     sendMessage(registrationToken, title, content);
+}
+exports.getOrderByOrderId = async (req, res) => {
+    let orderId = req.body.orderId;
+    if (orderId == null) {
+        return res.send({message: "orderId is required", code: 0})
+    }
+    try {
+        let listDetailOrder = [];
+        let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
+        let cus = await CustomerModel.customerModel.findById(data.cus._id);
+        let order = await OrderModel.oderModel.find({
+            customer_id: cus._id,
+            _id: orderId
+        })
+            .populate("map_voucher_cus_id")
+            .populate("customer_id")
+            .populate("employee_id")
+            .populate("delivery_address_id")
+        await Promise.all(order.map(async item => {
+            let listProduct = [];
+            let detailOrder = await DetailOrder.detailOrderModel.find({
+                order_id: item._id,
+            })
+                .populate("order_id")
+                .populate("product_id")
+            await Promise.all(detailOrder.map(async item => {
+                let product = await ProductModel.productModel.findById(item.product_id);
+                product.quantity = item.quantity;
+                listProduct.push(product);
+            }))
+            listDetailOrder.push({order: item, listProduct: listProduct});
+        }))
+        listDetailOrder.sort((b, a) => moment(a.order.create_time, "YYYY-MM-DD-HH:mm:ss") - moment(b.order.create_time, "YYYY-MM-DD-HH:mm:ss"));
+        return res.send({message: "get order success", listDetailOrder: listDetailOrder, code: 1})
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
 }

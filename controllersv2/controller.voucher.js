@@ -191,8 +191,9 @@ exports.getVoucherByIdV2 = async (req, res) => {
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
-    }x
+    }
 }
+
 function filterVouchersForUser(listVoucher) {
     const currentDate = moment();
 
@@ -214,4 +215,15 @@ function filterVouchersForUser(listVoucher) {
             return false;
         }
     });
+}
+
+exports.getVoucherByVoucherId = async (req, res) => {
+    let voucherId = req.body.voucherId;
+    try {
+        let voucher = await VoucherModel.voucherModel.findById(voucherId);
+        return res.send({message: "get voucher success", voucher: voucher, code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
 }
