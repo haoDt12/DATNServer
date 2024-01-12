@@ -16,6 +16,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const VnPayCtrl = require("../controllers/api.payvnpay");
 const NotificationCtrl = require("../controllersv2/controller.notification");
+const ConversationCtrl = require("../controllersv2/controller.conversation");
 const MessageCtrl = require("../controllersv2/controller.message");
 //customer
 router.post("/registerCustomer", CusController.registerCustomer);
@@ -96,16 +97,24 @@ router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBac
 //notification
 router.post("/getNotificationByUser", Middleware.authorizationToken, NotificationCtrl.getNotificationByUser);
 
+// conversation
+router.post("/createConversation", Middleware.authorizationToken, ConversationCtrl.createConversation);
+router.post("/getConversationByIDUser", Middleware.authorizationToken, ConversationCtrl.getConversationByIDUser);
+
+
 // chat
 router.post("/addMessage",
-    Middleware.authorizationToken,
-    upload.fields([
-        { name: "filess", maxCount: 3 },
-        { name: "images", maxCount: 3 },
-        { name: "video", maxCount: 1 },
-    ]),
-    MessageCtrl.addMessage
+Middleware.authorizationToken,
+upload.fields([
+    { name: "filess", maxCount: 3 },
+    { name: "images", maxCount: 3 },
+    { name: "video", maxCount: 1 },
+]),
+MessageCtrl.addMessage
 );
+router.post("/getMessageByIDConversation", Middleware.authorizationToken, MessageCtrl.getMessageByIDConversation);
+router.post("/updateStatusMessage", Middleware.authorizationToken, MessageCtrl.updateStatusMessage);
+router.post("/deleteMessage", Middleware.authorizationToken, MessageCtrl.deleteMessage);
 
 
 module.exports = router;
