@@ -11,6 +11,15 @@ const OrderModel = require("../modelsv2/model.order");
 const DetailOrder = require("../modelsv2/model.detailorder");
 const ProductModel = require("../modelsv2/model.product");
 const ProductCartModel = require("../modelsv2/model.ProductCart");
+const admin = require('firebase-admin');
+const serviceAccount = require('../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json');
+const NotificationModel = require("../modelsv2/model.notification");
+const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
+if (admin.apps.length === 0) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
 
 exports.createOrder = async (req, res) => {
     await createOrderPaymentMethod(req, res, "Thanh toán khi nhận hàng");
@@ -142,6 +151,8 @@ exports.cancelOrder = async (req, res) => {
         }));
         order.status = "Cancel";
         await order.save();
+        
+        // createNotifi("Đơn hàng đã được huỷ","Bạn đã huỷ một đơn hàng",)
         return res.send({message: "cancel order success", code: 1})
 
     } catch (e) {
@@ -151,23 +162,23 @@ exports.cancelOrder = async (req, res) => {
 }
 
 exports.getStatic = async (req, res) => {
-    const { startDate, endDate } = req.body;
+    const {startDate, endDate} = req.body;
 
     if (!startDate) {
-        return res.send({ message: "start date is required", code: 1 });
+        return res.send({message: "start date is required", code: 1});
     }
     if (!endDate) {
-        return res.send({ message: "end date is required", code: 1 });
+        return res.send({message: "end date is required", code: 1});
     }
     try {
         let dataOrder = [];
         let dataGetFromDateToDate = [];
         let data = [];
         let date = [];
-        let order = await OrderModel.oderModel.find({ status: "PayComplete" });
+        let order = await OrderModel.oderModel.find({status: "PayComplete"});
         order.map(item => {
             const formattedDate = moment(item.create_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
-            dataOrder.push({ date: formattedDate, total: item.total_amount })
+            dataOrder.push({date: formattedDate, total: item.total_amount})
         })
         dataGetFromDateToDate = calculateTotal(dataOrder, startDate, endDate);
         dataGetFromDateToDate.map(item => {
@@ -183,7 +194,7 @@ exports.getStatic = async (req, res) => {
         })
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: e.message.toString(), code: 0 });
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 
@@ -201,7 +212,7 @@ exports.updateStatusOrder = async (req, res) => {
         order.employee_id = employeeId;
         order.status = status;
         await order.save();
-        return res.send({ message: "edit order success", code: 1 });
+        return res.send({message: "edit order success", code: 1});
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
@@ -368,4 +379,37 @@ const createOrderPaymentMethod = async (req, res, paymentMethod) => {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
     }
+}
+const sendMessage = (registrationToken, title, body) => {
+    let message = {
+        data: {
+            title: title,
+            body: body,
+        },
+        token: registrationToken,
+    };
+
+    admin.messaging().send(message)
+        .then((response) => {
+            console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+            console.error('Error sending message:', error);
+        });
+}
+const createNotifi = async (title, content, img, create_time, customer_id, registrationToken) => {
+    let notification = new NotificationModel.notificationModel({
+        title: title,
+        content: content,
+        img: img,
+        create_time: create_time,
+    });
+    let mapNotiCus = new MapNotiCus.mapNotificationModel({
+        notification_id: notification._id,
+        customer_id: customer_id,
+        create_time: create_time,
+    });
+    await notification.save();
+    await mapNotiCus.save();
+    sendMessage(registrationToken, title, content);
 }
