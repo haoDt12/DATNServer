@@ -154,7 +154,7 @@ exports.vnpayReturn = async (req, res) => {
                     }
                 }));
                 if (errorOccurred) {
-                    return res.redirect(`https://${ipAddress}/api/payFail`);
+                    return res.redirect(`https://${ipAddress}/apiv2/payFail`);
                 }
                 let order = new OrderModel.oderModel({
                     customer_id: cus._id,
@@ -205,16 +205,16 @@ exports.vnpayReturn = async (req, res) => {
                 }))
                 let product = await ProductModel.productModel.findById(mList_order[0].product_id);
                 await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id} với phương thức thanh toán thanh toán qua VnPay`, product.img_cover, create_time, order.customer_id, cus.fcm);
-            return res.redirect(`https://${ipAddress}/api/paySuccess`);
+            return res.redirect(`https://${ipAddress}/apiv2/paySuccess`);
             } catch (e) {
                 console.log(e.message);
-                return res.redirect(`https://${ipAddress}/api/payFail`);
+                return res.redirect(`https://${ipAddress}/apiv2/payFail`);
             }
         } else {
-            return res.redirect(`https://${ipAddress}/api/payFail`);
+            return res.redirect(`https://${ipAddress}/apiv2/payFail`);
         }
     } else {
-        return res.redirect(`https://${ipAddress}/api/payFail`);
+        return res.redirect(`https://${ipAddress}/apiv2/payFail`);
     }
 }
 
