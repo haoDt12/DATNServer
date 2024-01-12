@@ -20,13 +20,17 @@ block content
                                         else
                                             | {username}
                                 |
-                                p.sub-caption.text-muted.text-small.mb-0
+                                p.sub-caption.text-muted.text-small.mb-0(id="conversationFocus" data-id=idConversation data-id-user=dataHeaderMsg._id)
                                     i.la.la-clock.mr-1
                                     | last seen today at
                                     | {time} {A || PM}
                         |
                         //- top icon
-                        .flex-shrink-0.margin-auto
+                        .flex-shrink-0.margin-auto             
+                            a 
+                                label.switch
+                                    input(type='checkbox' id='fake-chat')
+                                    span.slider.round
                             a.btn.btn-sm.btn-icon.btn-light.active.text-dark.ml-2(href='#')
                                 svg.feather(viewBox='0 0 24 24', width='15', height='15', stroke='currentColor', stroke-width='2', fill='none', stroke-linecap='round', stroke-linejoin='round')
                                     circle(cx='12', cy='12', r='10')
