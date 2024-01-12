@@ -1,6 +1,7 @@
 const db = require("../models/database");
 
 const status = "unseen";
+
 const messageSchema = db.mongoose.Schema(
     {
         conversation_id: {
