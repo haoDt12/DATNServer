@@ -98,6 +98,7 @@ exports.getNotificationByUser = async (req, res) => {
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
         let cus = await CustomerModel.customerModel.findById(data.cus._id);
         let notification = await MapNotiCus.mapNotificationModel.find({customer_id: cus._id}).populate("notification_id");
+        notification.sort((b, a) => moment(a.create_time, "YYYY-MM-DD-HH:mm:ss") - moment(b.create_time, "YYYY-MM-DD-HH:mm:ss"));
         return res.send({message: "get Notification success", data: notification, code: 1})
     } catch (e) {
         console.log(e.message);

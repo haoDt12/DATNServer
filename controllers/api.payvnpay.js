@@ -161,7 +161,7 @@ exports.vnpayReturn = async (req, res) => {
                     employee_id: mEmployee_id,
                     delivery_address_id: mDelivery_address_id,
                     create_time: create_time,
-                    payment_methods: "Thanh qua VnPay",
+                    payment_methods: "Thanh toán qua VnPay",
                 });
                 await Promise.all(mList_order.map(async item => {
                     let detailOrder = new DetailOrder.detailOrderModel({
@@ -203,6 +203,8 @@ exports.vnpayReturn = async (req, res) => {
                         }
                     }
                 }))
+                let product = await ProductModel.productModel.findById(mList_order[0].product_id);
+                await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id} với phương thức thanh toán thanh toán qua VnPay`, product.img_cover, create_time, order.customer_id, cus.fcm);
             return res.redirect(`https://${ipAddress}/api/paySuccess`);
             } catch (e) {
                 console.log(e.message);
