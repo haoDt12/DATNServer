@@ -13,12 +13,21 @@ const OrderModel = require("../modelsv2/model.order");
 const DetailOrder = require("../modelsv2/model.detailorder");
 const ProductModel = require("../modelsv2/model.product");
 const ProductCartModel = require("../modelsv2/model.ProductCart");
+const NotificationModel = require("../modelsv2/model.notification");
+const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
+const admin = require("firebase-admin");
+const serviceAccount = require("../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json");
 let mList_order;
 let mMap_voucher_cus_id;
 let mEmployee_id;
 let mDelivery_address_id;
 let ipAddress = process.env.IP_ADDRESS;
 let mData;
+if (admin.apps.length === 0) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
 exports.createPaymentUrl = async (req, res) => {
     let list_order = req.body.list_order;
     let map_voucher_cus_id = req.body.map_voucher_cus_id;
@@ -64,7 +73,7 @@ exports.createPaymentUrl = async (req, res) => {
             }
         }
         total_amount = total_amount - voucherPrice;
-        let createDate =  moment(date).tz(specificTimeZone).format('YYYYMMDDHHmmss');
+        let createDate = moment(date).tz(specificTimeZone).format('YYYYMMDDHHmmss');
         let ipAddr = req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
@@ -205,7 +214,7 @@ exports.vnpayReturn = async (req, res) => {
                 }))
                 let product = await ProductModel.productModel.findById(mList_order[0].product_id);
                 await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id} với phương thức thanh toán thanh toán qua VnPay`, product.img_cover, create_time, order.customer_id, cus.fcm);
-            return res.redirect(`https://${ipAddress}/apiv2/paySuccess`);
+                return res.redirect(`https://${ipAddress}/apiv2/paySuccess`);
             } catch (e) {
                 console.log(e.message);
                 return res.redirect(`https://${ipAddress}/apiv2/payFail`);
@@ -232,4 +241,37 @@ function sortObject(obj) {
         sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
     }
     return sorted;
+}
+const sendMessage = (registrationToken, title, body) => {
+    let message = {
+        data: {
+            title: title,
+            body: body,
+        },
+        token: registrationToken,
+    };
+
+    admin.messaging().send(message)
+        .then((response) => {
+            console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+            console.error('Error sending message:', error);
+        });
+}
+const createNotifi = async (title, content, img, create_time, customer_id, registrationToken) => {
+    let notification = new NotificationModel.notificationModel({
+        title: title,
+        content: content,
+        img: img,
+        create_time: create_time,
+    });
+    let mapNotiCus = new MapNotiCus.mapNotificationModel({
+        notification_id: notification._id,
+        customer_id: customer_id,
+        create_time: create_time,
+    });
+    await notification.save();
+    await mapNotiCus.save();
+    sendMessage(registrationToken, title, content);
 }
