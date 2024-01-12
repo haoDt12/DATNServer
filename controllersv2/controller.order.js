@@ -128,6 +128,9 @@ exports.getOrderByStatus = async (req, res) => {
 }
 
 exports.cancelOrder = async (req, res) => {
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let orderId = req.body.orderId;
     if (orderId == null) {
         return res.send({message: "order id is required", code: 0})
@@ -151,8 +154,9 @@ exports.cancelOrder = async (req, res) => {
         }));
         order.status = "Cancel";
         await order.save();
-        
-        // createNotifi("Đơn hàng đã được huỷ","Bạn đã huỷ một đơn hàng",)
+        let product = await ProductModel.productModel.findById(detailOrder[0].product_id);
+        let cus = await CustomerModel.customerModel.findById(order.customer_id);
+        await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time}  mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
         return res.send({message: "cancel order success", code: 1})
 
     } catch (e) {
@@ -202,7 +206,9 @@ exports.updateStatusOrder = async (req, res) => {
     let orderId = req.body.orderId;
     let employeeId = req.body.employeeId;
     let status = req.body.status;
-
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (orderId == null) {
         return res.send({message: "order id is required", code: 0})
     }
@@ -212,6 +218,26 @@ exports.updateStatusOrder = async (req, res) => {
         order.employee_id = employeeId;
         order.status = status;
         await order.save();
+        let detailOrder = await DetailOrder.detailOrderModel.find({order_id: orderId});
+        let product = await ProductModel.productModel.findById(detailOrder[0].product_id);
+        let cus = await CustomerModel.customerModel.findById(order.customer_id);
+        switch (status) {
+            case "PayComplete":
+                await createNotifi("Thanh toán đơn hàng", `Bạn đã nhận một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "Cancel":
+                await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "WaitConfirm":
+                await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "WaitingGet":
+                await createNotifi("Đơn hàng đang được chuẩn bị", `Đơn hàng của bạn đang được nhân viên chuẩn bị vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "InTransit":
+                await createNotifi("Đơn hàng đang được vận chuyển", `Đơn hàng đang được đơn vị vận chuyển giao đến bạn vào lúc ${create_time} mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+        }
         return res.send({message: "edit order success", code: 1});
     } catch (e) {
         console.log(e.message);
@@ -374,6 +400,8 @@ const createOrderPaymentMethod = async (req, res, paymentMethod) => {
                 }
             }
         }))
+        let product = await ProductModel.productModel.findById(list_order[0].product_id);
+        await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} mã đơn hàng ${order._id} với phương thức thanh toán ${paymentMethod}`, product.img_cover, create_time, order.customer_id, cus.fcm);
         return res.send({message: "Create order success", code: 1});
     } catch (e) {
         console.log(e.message);
