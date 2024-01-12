@@ -121,8 +121,7 @@ exports.getMessageByIDConversation = async (req, res) => {
     }
 
     try {
-        const dataMessage = await MessageModel.messageModel.find({ conversation: conversationID })
-            .populate("conversation")
+        const dataMessage = await MessageModel.messageModel.find({ conversation_id: conversationID })
         if (!dataMessage) {
             return res.send({ message: "message not found", code: 0, time: timestamp });
         }
@@ -169,58 +168,24 @@ exports.deleteMessage = async (req, res) => {
     let specificTimeZone = 'Asia/Ha_Noi';
     let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
-    let idMessage = req.body.idMsg;
+    let idMessage = req.body.msgID;
+    let userLoggedID = req.body.userLoggedID;
     if (idMessage == null || idMessage.length <= 0) {
         return res.send({ message: "idMessage is required" })
     }
 
     try {
-        let message = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { deleted: true });
-        if (!message) {
-            return res.send({ message: "message not found" })
+        let message = await MessageModel.messageModel.findById({ _id: idMessage });
+        if (message.sender_id != userLoggedID) {
+            return res.send({ message: "You can only delete your messages", code: 0 });
         }
-        let filess = message.filess;
-        let images = message.images;
-        let video = message.video;
-
-        let pathFolderDelete = images.split("/")[5];
-        let isRemove = true;
-        images.map((item) => {
-            if (item.split("3000")[1] !== undefined) {
-                fs.unlink(
-                    path.join(__dirname, "../public" + item.split("3000")[1]),
-                    (err) => {
-                        if (err) {
-                            console.log(err.message);
-                            isRemove = false;
-                        }
-                    }
-                );
+        else {
+            let message = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { deleted_at: timestamp });
+            if (!message) {
+                return res.send({ message: "message not found", code: 0 })
             }
-        });
-
-        if (isRemove === false) {
-            return res.send({ message: "delete product fail", code: 0 });
+            return res.send({ message: message._id, code: 1 });
         }
-
-        if (pathFolderDelete !== undefined) {
-            fs.rmdir(
-                path.join(__dirname, "../public/images/images/" + pathFolderDelete),
-                async (err) => {
-                    if (err) {
-                        isRemove = false;
-                        console.log(err.message);
-                    } else {
-                        await MessageModel.messageModel.deleteOne({ _id: idMessage });
-                        return res.send({ message: "Delete messages success", code: 1, time: timestamp });
-                    }
-                }
-            );
-        }
-        if (isRemove === false) {
-            return res.send({ message: "delete product fail", code: 0, time: timestamp });
-        }
-
     } catch (e) {
         console.log(e.message);
         return res.send({ message: e.message.toString(), code: 0, time: timestamp });
@@ -232,7 +197,7 @@ exports.updateStatusMessage = async (req, res) => {
     let specificTimeZone = 'Asia/Ha_Noi';
     let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
-    let idMessage = req.body.idMsg;
+    let idMessage = req.body.msgID;
     let status = req.body.status;
     if (idMessage == null || idMessage.length <= 0) {
         return res.send({ message: "idMessage is required" })
@@ -240,9 +205,19 @@ exports.updateStatusMessage = async (req, res) => {
     if (status == null || status.length <= 0) {
         return res.send({ message: "status is required" })
     }
+    let newStatus = '';
+    switch (status) {
+        case "unseen":
+            newStatus = "seen"
+            break;
+
+        default:
+            newStatus = status
+            break;
+    }
 
     try {
-        let messageUpdate = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { status: status });
+        let messageUpdate = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { status: newStatus });
         if (!messageUpdate) {
             return res.send({ message: "message not found" })
         }

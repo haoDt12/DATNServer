@@ -22,7 +22,7 @@ const diliveryaddress = require("./../modelsv2/model.deliveryaddress");
 const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({storage: storage});
+const upload = multer({ storage: storage });
 
 const moment = require("moment-timezone");
 const utils_1 = require('../public/js/ultils_1');
@@ -32,11 +32,11 @@ const mongoose = require('mongoose');
 
 const crypto = require("crypto");
 
-const {stat} = require("fs");
+const { stat } = require("fs");
 const UploadFile = require("../models/uploadFile");
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
-const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass} = require("../models/otp");
+const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
 const admin = require('firebase-admin');
 const serviceAccount = require('../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json');
 if (admin.apps.length === 0) {
@@ -75,7 +75,7 @@ router.get("/stech.manager/home", async function (req, res, next) {
         res.render("index");
     } catch (e) {
         console.log(e.message);
-        res.send({message: "home not found", code: 0})
+        res.send({ message: "home not found", code: 0 })
     }
 });
 router.get("/stech.manager/product_action", async function (req, res, next) {
@@ -92,13 +92,13 @@ router.get("/stech.manager/product_action", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "product not found", code: 0})
+        res.send({ message: "product not found", code: 0 })
     }
 });
-router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxCount: 1}, {
+router.post("/stech.manager/AddProduct", upload.fields([{ name: "img_cover", maxCount: 1 }, {
     name: "video",
     maxCount: 1
-}, {name: "list_img", maxCount: 10}]), async function (req, res, next) {
+}, { name: "list_img", maxCount: 10 }]), async function (req, res, next) {
     try {
         const name = req.body.name;
         const category_id = req.body.category_id;
@@ -119,11 +119,11 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         let specificTimeZone = 'Asia/Ha_Noi';
         let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
         if (category_id == null || name == null || description == null || fileimg_cover === undefined || filelist_img === undefined || filevideo === undefined || price == null || quantity == null || color == null || color_code == null) {
-            return res.send({message: "All fields are required", code: 0});
+            return res.send({ message: "All fields are required", code: 0 });
         }
 
         if (isNaN(price) || isNaN(quantity)) {
-            return res.send({message: "Price and quantity must be numbers", code: 0});
+            return res.send({ message: "Price and quantity must be numbers", code: 0 });
         }
 
         let product = new ProductModel.productModel({
@@ -150,7 +150,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         );
 
         if (img_cover === 0) {
-            return res.send({message: "Failed to upload img_cover", code: 0});
+            return res.send({ message: "Failed to upload img_cover", code: 0 });
         }
 
         product.img_cover = img_cover;
@@ -168,7 +168,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         );
 
         if (video === 0) {
-            return res.send({message: "Failed to upload video", code: 0});
+            return res.send({ message: "Failed to upload video", code: 0 });
         }
 
         productVideo.video = video;
@@ -187,7 +187,7 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
             );
 
             if (img === 0) {
-                return res.send({message: "Failed to upload list_img", code: 0});
+                return res.send({ message: "Failed to upload list_img", code: 0 });
             }
 
             productListImg.img = img;
@@ -199,13 +199,13 @@ router.post("/stech.manager/AddProduct", upload.fields([{name: "img_cover", maxC
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error adding product", code: 0});
+        res.send({ message: "Error adding product", code: 0 });
     }
 });
-router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", maxCount: 1}, {
+router.post("/stech.manager/EditProduct", upload.fields([{ name: "img_cover", maxCount: 1 }, {
     name: "video",
     maxCount: 1
-}, {name: "list_img", maxCount: 10}]), async function (req, res, next) {
+}, { name: "list_img", maxCount: 10 }]), async function (req, res, next) {
     try {
         let productId = req.body.productId;
         const name = req.body.name;
@@ -228,12 +228,12 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
         if (productId == null) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
 
         let product = await ProductModel.productModel.findById(productId);
         if (!product) {
-            return res.send({message: "product not found", code: 0});
+            return res.send({ message: "product not found", code: 0 });
         }
 
         if (category_id !== undefined) {
@@ -278,12 +278,12 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         // Upload file mới cho img_cover
         let img_cover = await UploadFileFirebase.uploadFile(req, product._id.toString(), "img_cover", "products", fileimg_cover[0]);
         if (img_cover === 0) {
-            return res.send({message: "upload file fail", code: 0});
+            return res.send({ message: "upload file fail", code: 0 });
         }
         product.img_cover = img_cover;
 
         // Xóa thư mục video cũ
-        let productVideo = await ProductVideo.productVideoModel.findOne({product_id: productId});
+        let productVideo = await ProductVideo.productVideoModel.findOne({ product_id: productId });
 
         const videoFolder = `products/${productId}/video`;
         await UploadFileFirebase.deleteFolderAndFiles(res, videoFolder);
@@ -297,12 +297,12 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
             filevideo[0]
         );
         if (video === 0) {
-            return res.send({message: "upload file fail", code: 0});
+            return res.send({ message: "upload file fail", code: 0 });
         }
         productVideo.video = video;
 
         // Xóa thư mục list_img cũ và xóa dữ liệu cũ trong MongoDB
-        let productListImgs = await ProductImg.productImgModel.find({product_id: productId});
+        let productListImgs = await ProductImg.productImgModel.find({ product_id: productId });
         for (const productListImg of productListImgs) {
             const listImgFolder = `products/${productId}/list_img`;
             await UploadFileFirebase.deleteFolderAndFiles(res, listImgFolder);
@@ -321,7 +321,7 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
             );
 
             if (img === 0) {
-                return res.send({message: "upload file fail", code: 0});
+                return res.send({ message: "upload file fail", code: 0 });
             }
 
             const newProductListImg = new ProductImg.productImgModel({
@@ -337,19 +337,19 @@ router.post("/stech.manager/EditProduct", upload.fields([{name: "img_cover", max
         return res.redirect('/stech.manager/product');
     } catch (e) {
         console.log(e);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 router.post('/stech.manager/deleteProduct', async function (req, res, next) {
     let productId = req.body.productId;
     if (productId == null) {
-        return res.send({message: "product not found", code: 0});
+        return res.send({ message: "product not found", code: 0 });
     }
     try {
 
         await ProductModel.productModel.findByIdAndDelete(productId);
-        await ProductImg.productImgModel.deleteMany({product_id: productId});
-        await ProductVideo.productVideoModel.findOneAndDelete({product_id: productId});
+        await ProductImg.productImgModel.deleteMany({ product_id: productId });
+        await ProductVideo.productVideoModel.findOneAndDelete({ product_id: productId });
 
 
         const productFirebase = `products/${productId}`;
@@ -357,7 +357,7 @@ router.post('/stech.manager/deleteProduct', async function (req, res, next) {
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 
@@ -374,7 +374,7 @@ router.get('/stech.manager/product', async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.render("error", {message: "product not found", code: 0});
+        res.render("error", { message: "product not found", code: 0 });
     }
 });
 router.post(
@@ -392,10 +392,10 @@ router.post(
             let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
 
             if (name == null || name.toString().trim().length === 0) {
-                return res.send({message: "name category require", code: 0});
+                return res.send({ message: "name category require", code: 0 });
             }
             if (fileimg == null) {
-                return res.send({message: "image category require", code: 0});
+                return res.send({ message: "image category require", code: 0 });
             }
 
             // '2023-12-05-21:42:38'
@@ -412,14 +412,14 @@ router.post(
                 fileimg
             );
             if (img === 0) {
-                return res.send({message: "Failed to upload image category", code: 0});
+                return res.send({ message: "Failed to upload image category", code: 0 });
             }
             category.img = img;
             await category.save();
             return res.redirect("category")
         } catch (e) {
             console.log(e.message);
-            return res.send({message: "Error add category", code: 0});
+            return res.send({ message: "Error add category", code: 0 });
         }
     });
 router.post("/stech.manager/delete-cate", async function (req, res, next) {
@@ -432,11 +432,11 @@ router.post("/stech.manager/delete-cate", async function (req, res, next) {
 
     const idCate = req.body.idCate;
     if (idCate == null) {
-        return res.send({message: "category not found", code: 0});
+        return res.send({ message: "category not found", code: 0 });
     }
     try {
         let message = req.body.message == null ? -1 : req.body.message;
-        let dataProductByCate = await ProductModel.productModel.find({category_id: idCate})
+        let dataProductByCate = await ProductModel.productModel.find({ category_id: idCate })
         if (dataProductByCate.length > 0 && message != CODE_DELETE) {
             return res.status(200).send({
                 code: 'CATEGORY_USED',
@@ -453,7 +453,7 @@ router.post("/stech.manager/delete-cate", async function (req, res, next) {
         })
     } catch (e) {
         console.log(e);
-        return res.send({message: "error get data product", code: 0});
+        return res.send({ message: "error get data product", code: 0 });
     }
 
 });
@@ -465,7 +465,7 @@ router.post("/stech.manager/get-cate", async function (req, res, next) {
 
     const idCate = req.body.idCate;
     if (idCate == null) {
-        return res.send({message: "category not found", code: 0});
+        return res.send({ message: "category not found", code: 0 });
     }
     try {
         let dataCategoryByID = await CategoryModel.categoryModel.findById(idCate)
@@ -476,7 +476,7 @@ router.post("/stech.manager/get-cate", async function (req, res, next) {
         })
     } catch (e) {
         console.log(e);
-        return res.send({message: "error get data category", code: 0});
+        return res.send({ message: "error get data category", code: 0 });
     }
 });
 
@@ -496,16 +496,16 @@ router.post("/stech.manager/update-category",
         // let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
 
         if (idCate == null) {
-            return res.send({message: "category not found", code: 0});
+            return res.send({ message: "category not found", code: 0 });
         }
         let category = await CategoryModel.categoryModel.findById(idCate);
         if (!category) {
-            return res.send({message: "category not found", code: 0});
+            return res.send({ message: "category not found", code: 0 });
         }
         if (fileimg === undefined) {
-            const result = await CategoryModel.categoryModel.updateOne({_id: idCate}, {name: name});
+            const result = await CategoryModel.categoryModel.updateOne({ _id: idCate }, { name: name });
             if (result.nModified > 0) {
-                return res.json({success: false, message: 'Failed to update category'});
+                return res.json({ success: false, message: 'Failed to update category' });
             } else {
                 return res.redirect('category')
             }
@@ -523,7 +523,7 @@ router.post("/stech.manager/update-category",
             fileimg
         );
         if (img === 0) {
-            return res.send({message: "upload file category fail", code: 0});
+            return res.send({ message: "upload file category fail", code: 0 });
         }
         category.name = name
         category.img = img;
@@ -547,7 +547,7 @@ router.get("/stech.manager/category", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "category not found", code: 0});
+        res.send({ message: "category not found", code: 0 });
     }
 });
 router.get("/stech.manager/login", function (req, res, next) {
@@ -572,14 +572,14 @@ router.get("/stech.manager/detail_product", async function (req, res, next) {
         });
 
         if (product) {
-            res.render("detail_product", {detailProduct: product, message: "get product details success", code: 1});
+            res.render("detail_product", { detailProduct: product, message: "get product details success", code: 1 });
         } else {
-            res.send({message: "Product not found", code: 0});
+            res.send({ message: "Product not found", code: 0 });
 
         }
     } catch (e) {
         console.error("Error fetching:", e.message);
-        res.send({message: "Error ", code: 0});
+        res.send({ message: "Error ", code: 0 });
     }
 });
 router.get("/stech.manager/detail_user", async function (req, res, next) {
@@ -589,24 +589,24 @@ router.get("/stech.manager/detail_user", async function (req, res, next) {
         //let productId = req.query.productId;
         console.log("Received userId from cookie:", userId);
 
-        let user = await UserModel.userModel.findById(userId).populate({path: 'address', select: 'city'});
+        let user = await UserModel.userModel.findById(userId).populate({ path: 'address', select: 'city' });
 
         if (user) {
-            res.render("detail_user", {detailUser: user, message: "get user details success", code: 1});
+            res.render("detail_user", { detailUser: user, message: "get user details success", code: 1 });
             console.log(user)
         } else {
-            res.send({message: "user not found", code: 0});
+            res.send({ message: "user not found", code: 0 });
         }
     } catch (e) {
         console.error("Error fetching user details:", e.message);
-        res.send({message: "Error fetching user details", code: 0});
+        res.send({ message: "Error fetching user details", code: 0 });
     }
 });
 
 router.get('/stech.manager/user', async function (req, res, next) {
     try {
 
-        let listUser = await UserModel.userModel.find().populate({path: 'address', select: 'city'});
+        let listUser = await UserModel.userModel.find().populate({ path: 'address', select: 'city' });
 
         res.render("user", {
             users: listUser,
@@ -616,12 +616,12 @@ router.get('/stech.manager/user', async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "user not found", code: 0});
+        res.send({ message: "user not found", code: 0 });
     }
 });
 router.get('/stech.manager/customer', async function (req, res, next) {
     try {
-        let listCus = await CustomerModel.customerModel.find({status: {$ne: 'banned'}});
+        let listCus = await CustomerModel.customerModel.find({ status: { $ne: 'banned' } });
 
         res.render("customer", {
             customers: listCus,
@@ -631,13 +631,13 @@ router.get('/stech.manager/customer', async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error getting customers", code: 0});
+        res.send({ message: "Error getting customers", code: 0 });
     }
 });
 router.get('/stech.manager/employee', async function (req, res, next) {
     try {
 
-        let listEmployee = await EmployeeModel.employeeModel.find({status: {$ne: 'banned'}});
+        let listEmployee = await EmployeeModel.employeeModel.find({ status: { $ne: 'banned' } });
 
         res.render("employee", {
             employees: listEmployee,
@@ -647,13 +647,13 @@ router.get('/stech.manager/employee', async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "user not found", code: 0});
+        res.send({ message: "user not found", code: 0 });
     }
 });
 router.get('/stech.manager/ban', async function (req, res, next) {
     try {
-        let listCustomer = await CustomerModel.customerModel.find({status: 'banned'});
-        let listEmployee = await EmployeeModel.employeeModel.find({status: 'banned'});
+        let listCustomer = await CustomerModel.customerModel.find({ status: 'banned' });
+        let listEmployee = await EmployeeModel.employeeModel.find({ status: 'banned' });
 
         let banned = [...listCustomer, ...listEmployee];
         res.render("ban", {
@@ -663,7 +663,7 @@ router.get('/stech.manager/ban', async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error getting banned users and employees", code: 0});
+        res.send({ message: "Error getting banned users and employees", code: 0 });
     }
 });
 router.post('/stech.manager/banCustomer', async function (req, res, next) {
@@ -672,19 +672,19 @@ router.post('/stech.manager/banCustomer', async function (req, res, next) {
 
         const updatedCustomer = await CustomerModel.customerModel.findByIdAndUpdate(
             customerId,
-            {$set: {status: 'banned'}},
-            {new: true}
+            { $set: { status: 'banned' } },
+            { new: true }
         );
 
         if (updatedCustomer) {
             res.redirect('/stech.manager/customer');
         } else {
             console.log(`Customer ${customerId} not found.`);
-            res.send({message: "Customer not found", code: 0});
+            res.send({ message: "Customer not found", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error banning customer", code: 0});
+        res.send({ message: "Error banning customer", code: 0 });
     }
 });
 router.post('/stech.manager/banEmployee', async function (req, res, next) {
@@ -693,19 +693,19 @@ router.post('/stech.manager/banEmployee', async function (req, res, next) {
 
         const updatedEmployee = await EmployeeModel.employeeModel.findByIdAndUpdate(
             EmployeeId,
-            {$set: {status: 'banned'}},
-            {new: true}
+            { $set: { status: 'banned' } },
+            { new: true }
         );
 
         if (updatedEmployee) {
             res.redirect('/stech.manager/employee');
         } else {
             console.log(`Employee ${EmployeeId} not found.`);
-            res.send({message: "Employee not found", code: 0});
+            res.send({ message: "Employee not found", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error banning Employee", code: 0});
+        res.send({ message: "Error banning Employee", code: 0 });
     }
 });
 router.post('/stech.manager/unban', async function (req, res, next) {
@@ -713,43 +713,43 @@ router.post('/stech.manager/unban', async function (req, res, next) {
         const unbanId = req.body.unbanId;
 
         // Kiểm tra xem unbanId thuộc về Customer hay Employee
-        const isCustomer = await CustomerModel.customerModel.exists({_id: unbanId});
-        const isEmployee = await EmployeeModel.employeeModel.exists({_id: unbanId});
+        const isCustomer = await CustomerModel.customerModel.exists({ _id: unbanId });
+        const isEmployee = await EmployeeModel.employeeModel.exists({ _id: unbanId });
 
         if (isCustomer) {
             // Unban Customer
             const updatedCustomer = await CustomerModel.customerModel.findByIdAndUpdate(
                 unbanId,
-                {$set: {status: 'Has been activated'}},
-                {new: true}
+                { $set: { status: 'Has been activated' } },
+                { new: true }
             );
 
             if (updatedCustomer) {
                 res.redirect('/stech.manager/customer');
             } else {
                 console.log(`Customer ${unbanId} not found.`);
-                res.send({message: "Customer not found", code: 0});
+                res.send({ message: "Customer not found", code: 0 });
             }
         } else if (isEmployee) {
             const updatedEmployee = await EmployeeModel.employeeModel.findByIdAndUpdate(
                 unbanId,
-                {$set: {status: 'Has been activated'}},
-                {new: true}
+                { $set: { status: 'Has been activated' } },
+                { new: true }
             );
 
             if (updatedEmployee) {
                 res.redirect('/stech.manager/employee');
             } else {
                 console.log(`Customer ${unbanId} not found.`);
-                res.send({message: "Customer not found", code: 0});
+                res.send({ message: "Customer not found", code: 0 });
             }
         } else {
             console.log(`User with ID ${unbanId} not found.`);
-            res.send({message: "User not found", code: 0});
+            res.send({ message: "User not found", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error unbanning user", code: 0});
+        res.send({ message: "Error unbanning user", code: 0 });
     }
 });
 
@@ -783,7 +783,7 @@ router.post('/stech.manager/AddEmployee', upload.fields([{
         );
 
         if (avatar === 0) {
-            return res.send({message: "Failed to upload avatar", code: 0});
+            return res.send({ message: "Failed to upload avatar", code: 0 });
         }
 
         employee.avatar = avatar;
@@ -791,7 +791,7 @@ router.post('/stech.manager/AddEmployee', upload.fields([{
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error adding employee", code: 0});
+        res.send({ message: "Error adding employee", code: 0 });
     }
 });
 router.post('/stech.manager/get-employee', async function (req, res, next) {
@@ -801,7 +801,7 @@ router.post('/stech.manager/get-employee', async function (req, res, next) {
 
     const idEmployee = req.body.idEmployee;
     if (idEmployee == null) {
-        return res.send({message: "employee not found", code: 0});
+        return res.send({ message: "employee not found", code: 0 });
     }
     try {
         let dataEmployeeByID = await EmployeeModel.employeeModel.findById(idEmployee)
@@ -812,7 +812,7 @@ router.post('/stech.manager/get-employee', async function (req, res, next) {
         })
     } catch (e) {
         console.log(e);
-        return res.send({message: "error get data employee", code: 0});
+        return res.send({ message: "error get data employee", code: 0 });
     }
 })
 router.post('/stech.manager/UpdateEmployee', upload.fields([{
@@ -828,11 +828,11 @@ router.post('/stech.manager/UpdateEmployee', upload.fields([{
         const phone_number = req.body.phone_number;
         let date = new Date();
         if (idEmployee == null) {
-            return res.send({message: "employee not found", code: 0});
+            return res.send({ message: "employee not found", code: 0 });
         }
         let employee = await EmployeeModel.employeeModel.findById(idEmployee);
         if (!employee) {
-            return res.send({message: "employee not found", code: 0});
+            return res.send({ message: "employee not found", code: 0 });
         }
         // let employee = new EmployeeModel.employeeModel({
         //     full_name: full_name,
@@ -842,7 +842,7 @@ router.post('/stech.manager/UpdateEmployee', upload.fields([{
         //     create_time: create_time,
         // });
         if (fileAvatar === undefined) {
-            const result = await EmployeeModel.employeeModel.updateOne({_id: idEmployee}, {
+            const result = await EmployeeModel.employeeModel.updateOne({ _id: idEmployee }, {
                 full_name: full_name,
                 password: password,
                 email: email,
@@ -850,7 +850,7 @@ router.post('/stech.manager/UpdateEmployee', upload.fields([{
             });
 
             if (result.nModified > 0) {
-                return res.json({success: false, message: 'Failed to update employee'});
+                return res.json({ success: false, message: 'Failed to update employee' });
             } else {
                 return res.redirect('employee')
             }
@@ -868,7 +868,7 @@ router.post('/stech.manager/UpdateEmployee', upload.fields([{
         );
 
         if (avatar === 0) {
-            return res.send({message: "Failed to upload avatar", code: 0});
+            return res.send({ message: "Failed to upload avatar", code: 0 });
         }
 
         employee.avatar = avatar;
@@ -876,7 +876,7 @@ router.post('/stech.manager/UpdateEmployee', upload.fields([{
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        res.send({message: "Error adding employee", code: 0});
+        res.send({ message: "Error adding employee", code: 0 });
     }
 });
 router.get("/stech.manager/verify", async function (req, res, next) {
@@ -905,7 +905,7 @@ router.get("/stech.manager/profile", async function (req, res, next) {
         }
     } catch (e) {
         console.log(e.message);
-        res.send({message: "profile not found", code: 0});
+        res.send({ message: "profile not found", code: 0 });
     }
 });
 
@@ -928,7 +928,7 @@ router.post("/stech.manager/create-conversation", async function (req, res, next
     let specificTimeZone = 'Asia/Ha_Noi';
     let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
 
-    let conversation = await ConversationModel.conversationModel.findOne({receive_id: idSelected})
+    let conversation = await ConversationModel.conversationModel.findOne({ receive_id: idSelected })
     if (conversation == null) {
         let newConversation = new ConversationModel.conversationModel({
             creator_id: idLoged,
@@ -938,10 +938,10 @@ router.post("/stech.manager/create-conversation", async function (req, res, next
             deleted_at: ""
         });
         await newConversation.save();
-        return res.status(200).send({code: "CREATE_SUCCESS", message: "create conversation"});
+        return res.status(200).send({ code: "CREATE_SUCCESS", message: "create conversation" });
     }
 
-    return res.status(200).send({code: "REDIRECT", message: "conversation exist"});
+    return res.status(200).send({ code: "REDIRECT", message: "conversation exist" });
 })
 
 
@@ -958,7 +958,7 @@ router.post("/stech.manager/create-message", async function (req, res, next) {
 
     let message = req.body.message;
     if (message === undefined) {
-        return res.status(200).send({code: "ERROR", message: "can not get message"})
+        return res.status(200).send({ code: "ERROR", message: "can not get message" })
     }
 
     try {
@@ -1002,7 +1002,7 @@ router.post("/stech.manager/create-message", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e);
-        return res.status(200).send({code: "", message: "create message error"})
+        return res.status(200).send({ code: "", message: "create message error" })
     }
 });
 
@@ -1032,7 +1032,7 @@ async function decryptedMessage(encryptedMessage) {
 }
 
 async function getDataConversation(idUserLoged) {
-    let listConversation = await ConversationModel.conversationModel.find({creator_id: idUserLoged});
+    let listConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
 
     let dataIDuser = []
     listConversation.map((con) => {
@@ -1077,7 +1077,7 @@ async function getDataConversation(idUserLoged) {
     let dataLastMessage = [];
     await Promise.all(
         listConversation.map(async (con) => {
-            let listMessage = await MessageModel.messageModel.find({conversation_id: con._id});
+            let listMessage = await MessageModel.messageModel.find({ conversation_id: con._id });
             if (listMessage.length > 0) {
                 const latestMessage = listMessage.reduce((acc, current) => {
                     const accDate = new Date(acc.created_at);
@@ -1097,21 +1097,22 @@ async function getDataConversation(idUserLoged) {
         // Tìm thông tin last message trong dataLastMessage
         let lastMessage = dataLastMessage.find(message => message.conversation_id.toString() === conversation._id.toString());
         // Tạo đối tượng mới với thông tin kết hợp từ ba mảng
-        let messaage = await decryptedMessage(lastMessage ? lastMessage.message : '');
+        let message = await decryptedMessage(lastMessage ? lastMessage.message : '');
         let combinedData = {
             conversation_id: conversation._id,
-            sender_id: lastMessage ? lastMessage.sender_id : null,
-            message: messaage,
+            sender_id: lastMessage ? lastMessage.sender_id : "",
+            message: lastMessage ? lastMessage.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message : "",
             message_type: lastMessage ? lastMessage.message_type : '',
-            idMsg: lastMessage ? lastMessage._id : null,
+            idMsg: lastMessage ? lastMessage._id : "",
             status: lastMessage ? lastMessage.status : 'unseen',
             creator_id: conversation.creator_id,
             receive_id: conversation.receive_id,
+            msg_deleted_at: lastMessage ? lastMessage.deleted_at : "",
             created_at: lastMessage ? lastMessage.created_at : conversation.created_at,
             updated_at: conversation.updated_at,
             deleted_at: conversation.deleted_at,
             __v: conversation.__v,
-            userID: userData ? userData.id : null,
+            userID: userData ? userData.id : "",
             name: userData ? userData.name : '',
             avatar: userData ? userData.avatar : '',
             email: userData ? userData.email : '',
@@ -1150,11 +1151,11 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
         // const typeLogin = req.cookies.LoginType;
 
         // Start Data User
-        let dataUserLoged = await AdminModel.adminModel.findById({_id: idUserLoged});
+        let dataUserLoged = await AdminModel.adminModel.findById({ _id: idUserLoged });
         if (dataUserLoged == null) {
-            dataUserLoged = await EmployeeModel.employeeModel.findById({_id: idUserLoged});
+            dataUserLoged = await EmployeeModel.employeeModel.findById({ _id: idUserLoged });
         }
-        let dataUserSelected = await CustomerModel.customerModel.findById({_id: idUserSelected});
+        let dataUserSelected = await CustomerModel.customerModel.findById({ _id: idUserSelected });
         // End Data User
 
         // Update status message
@@ -1168,14 +1169,14 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
                 }
             } catch (e) {
                 console.log(e);
-                return res.send({message: "update status message fail", code: 0});
+                return res.send({ message: "update status message fail", code: 0 });
             }
         }
 
         let dataConversation = await getDataConversation(idUserLoged);
         // let dataConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
         // let dataConversation = await ConversationModel.conversationModel.find();
-        let dataMessage = await MessageModel.messageModel.find({conversation_id: idConversation});
+        let dataMessage = await MessageModel.messageModel.find({ conversation_id: idConversation });
 
         let newDataMessage = []
         dataMessage.map((msg) => {
@@ -1204,7 +1205,7 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
                 _id: msg._id,
                 conversation_id: msg.conversation_id,
                 sender_id: msg.sender_id,
-                message: message,
+                message: msg.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message,
                 message_type: msg.message_type,
                 created_at: msg.created_at,
                 deleted_at: msg.deleted_at
@@ -1222,7 +1223,7 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "conversation not found", code: 0});
+        res.send({ message: "conversation not found", code: 0 });
     }
 });
 
@@ -1233,15 +1234,14 @@ router.get("/stech.manager/chat", async function (req, res, next) {
         if (idUserLoged == null || idUserLoged.length <= 0) {
             return res.redirect('/stech.manager/type_login')
         }
-        let dataUserLoged = await AdminModel.adminModel.findById({_id: idUserLoged});
+        let dataUserLoged = await AdminModel.adminModel.findById({ _id: idUserLoged });
         if (dataUserLoged == null) {
-            dataUserLoged = await EmployeeModel.employeeModel.findById({_id: idUserLoged});
+            dataUserLoged = await EmployeeModel.employeeModel.findById({ _id: idUserLoged });
         }
 
-        console.log(idUserLoged);
         let dataConversation = await getDataConversation(idUserLoged);
         // let dataConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
-        console.log(dataConversation.length);
+        console.log(dataConversation);
         return res.render("chat", {
             conversations: dataConversation.length > 0 ? dataConversation : [],
             userLoged: dataUserLoged,
@@ -1251,7 +1251,7 @@ router.get("/stech.manager/chat", async function (req, res, next) {
         });
     } catch (e) {
         console.log(`error get chat: ${e.message}`);
-        return res.send({message: "conversation not found", code: 0});
+        return res.send({ message: "conversation not found", code: 0 });
     }
 });
 
@@ -1260,7 +1260,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
     const userId = utils_1.getCookie(req, 'Uid');
     let terifyWith = req.cookies.verifyWith;
     try {
-        let cartUser = await CartModelv2.productCartModel.find({customer_id: userId})
+        let cartUser = await CartModelv2.productCartModel.find({ customer_id: userId })
         if (cartUser !== null) {
             let dataProduct = [];
             await Promise.all(cartUser.map(async (cart) => {
@@ -1297,7 +1297,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
         }
     } catch (e) {
         console.log(e.message);
-        res.send({message: "cart not found", code: 0})
+        res.send({ message: "cart not found", code: 0 })
     }
 });
 
@@ -1322,7 +1322,7 @@ router.post("/stech.manager/AddCart", async (req, res) => {
             if ('quantity' in existingCartItem) {
                 gt1 += gt2; // Chuyển đổi quantity thành số trước khi cộng
                 console.log(gt1);
-                await CartModelv2.productCartModel.findByIdAndUpdate(existingCartItem._id, {$set: {quantity: gt1}});
+                await CartModelv2.productCartModel.findByIdAndUpdate(existingCartItem._id, { $set: { quantity: gt1 } });
             } else {
                 console.error('Error adding to cart: "quantity" property not found in existingCartItem');
             }
@@ -1357,16 +1357,16 @@ router.post('/apiv2/editCartV2/:cartId', async (req, res) => {
     try {
         // TODO: Thực hiện cập nhật quantity trong MongoDB sử dụng cartId
         // Ví dụ:
-        const result = await CartModelv2.productCartModel.updateOne({_id: cartId}, {quantity: quantity});
+        const result = await CartModelv2.productCartModel.updateOne({ _id: cartId }, { quantity: quantity });
 
         if (result.nModified > 0) {
-            return res.json({success: false, message: 'Failed to update quantity'});
+            return res.json({ success: false, message: 'Failed to update quantity' });
         } else {
-            return res.json({success: true, message: 'Quantity updated successfully'});
+            return res.json({ success: true, message: 'Quantity updated successfully' });
         }
     } catch (error) {
         console.error('Error updating quantity:', error.message);
-        return res.json({success: false, message: 'Error updating quantity'});
+        return res.json({ success: false, message: 'Error updating quantity' });
     }
 });
 
@@ -1380,14 +1380,14 @@ const deleteProductFromCart = async (customerId, cartId) => {
         console.log(customerId)
         if (result.deletedCount > 0) {
             // Sản phẩm đã được xoá thành công
-            return {success: true, message: 'Product removed from cart successfully'};
+            return { success: true, message: 'Product removed from cart successfully' };
         } else {
             // Không có sản phẩm nào được xoá (productId không tồn tại trong giỏ hàng của người dùng)
-            return {success: false, message: 'Product not found in the cart'};
+            return { success: false, message: 'Product not found in the cart' };
         }
     } catch (error) {
         console.error('Error deleting product from cart:', error.message);
-        return {success: false, message: 'Error deleting product from cart'};
+        return { success: false, message: 'Error deleting product from cart' };
     }
 };
 router.post('/stech.manager/DeleteCart', async (req, res) => {
@@ -1421,14 +1421,14 @@ router.get("/stech.manager/order", async function (req, res, next) {
             let orders = await OrderModel.oderModel.find().populate('customer_id employee_id delivery_address_id');
             orders.reverse();
 
-            res.render("order", {orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1});
+            res.render("order", { orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1 });
 
         } else {
             let valueStatus = Buffer.from(encodedValueStatus, 'base64').toString('utf8');
-            let orders = await OrderModel.oderModel.find({status: valueStatus}).populate('customer_id employee_id delivery_address_id');
+            let orders = await OrderModel.oderModel.find({ status: valueStatus }).populate('customer_id employee_id delivery_address_id');
             orders.reverse();
 
-            res.render("order", {orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1});
+            res.render("order", { orders: orders, terifyWith: verifyWith, message: "get list order success", code: 1 });
 
 
         }
@@ -1436,7 +1436,7 @@ router.get("/stech.manager/order", async function (req, res, next) {
         // res.render("order", { orders: ordersWithProductInfo, message: "get list order success", code: 1 });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "order not found", code: 0})
+        res.send({ message: "order not found", code: 0 })
     }
 });
 router.get("/stech.manager/detail_order", async function (req, res, next) {
@@ -1444,7 +1444,7 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
         var encodedOrderId = req.query.orderId;
         let orderId = Buffer.from(encodedOrderId, 'base64').toString('utf8');
         let order = await OrderModel.oderModel.findById(orderId).populate('customer_id employee_id delivery_address_id');
-        let detailOrders = await DetailOrderModel.detailOrderModel.find({order_id: orderId}).populate('product_id');
+        let detailOrders = await DetailOrderModel.detailOrderModel.find({ order_id: orderId }).populate('product_id');
 
         if (order) {
             res.render("detail_order", {
@@ -1454,11 +1454,11 @@ router.get("/stech.manager/detail_order", async function (req, res, next) {
                 code: 1
             });
         } else {
-            res.send({message: "Order not found", code: 0});
+            res.send({ message: "Order not found", code: 0 });
         }
     } catch (e) {
         console.error("Error fetching order details:", e.message);
-        res.send({message: "Error fetching order details", code: 0});
+        res.send({ message: "Error fetching order details", code: 0 });
     }
 });
 router.get("/stech.manager/invoice", function (req, res, next) {
@@ -1483,7 +1483,7 @@ router.get("/stech.manager/invoice", function (req, res, next) {
         });
     } else {
         // Xử lý khi không có giá trị cookie
-        res.send({message: "No order data found in the cookie", code: 0});
+        res.send({ message: "No order data found in the cookie", code: 0 });
     }
 });
 router.get("/stech.manager/cart", async function (req, res, next) {
@@ -1495,7 +1495,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
 
     console.log("id", userId)
     try {
-        let cartUser = await CartModel.cartModel.findOne({userId}).populate({
+        let cartUser = await CartModel.cartModel.findOne({ userId }).populate({
             path: 'product',
             select: 'productId quantity'
         });
@@ -1512,7 +1512,7 @@ router.get("/stech.manager/cart", async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "cart not found", code: 0})
+        res.send({ message: "cart not found", code: 0 })
     }
 });
 router.post('/updateQuantity/:productId', async (req, res) => {
@@ -1522,20 +1522,20 @@ router.post('/updateQuantity/:productId', async (req, res) => {
     try {
         // Tìm và cập nhật số lượng trong cơ sở dữ liệu
         const updatedProduct = await CartModel.updateOne(
-            {'product._id': productId},
-            {$set: {'product.$.quantity': newQuantity}}
+            { 'product._id': productId },
+            { $set: { 'product.$.quantity': newQuantity } }
         );
 
         if (updatedProduct.nModified > 0) {
             // Cập nhật thành công
-            res.json({success: true, message: 'Quantity updated successfully'});
+            res.json({ success: true, message: 'Quantity updated successfully' });
         } else {
             // Không có bản ghi nào được cập nhật (productId không tồn tại)
-            res.status(404).json({success: false, message: 'Product not found'});
+            res.status(404).json({ success: false, message: 'Product not found' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({success: false, message: 'Error updating quantity'});
+        res.status(500).json({ success: false, message: 'Error updating quantity' });
     }
 });
 
@@ -1543,12 +1543,12 @@ router.get("/stech.manager/banner", async function (req, res, next) {
     try {
         let listbanner = await BannerModel.bannerModel.find();
 
-        res.render("banner", {banners: listbanner, message: "get list banner success", code: 1});
+        res.render("banner", { banners: listbanner, message: "get list banner success", code: 1 });
 
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "banner not found", code: 0})
+        res.send({ message: "banner not found", code: 0 })
     }
 });
 router.get("/stech.manager/pay", function (req, res, next) {
@@ -1556,11 +1556,11 @@ router.get("/stech.manager/pay", function (req, res, next) {
         var cookieValue = req.headers.cookie.replace(/(?:(?:^|.*;\s*)selectedProducts\s*=\s*([^;]*).*$)|^.*$/, "$1");
         var listProduct = JSON.parse(decodeURIComponent(cookieValue));
 
-        return res.render("pay", {products: listProduct})
+        return res.render("pay", { products: listProduct })
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "pay not found", code: 0})
+        res.send({ message: "pay not found", code: 0 })
     }
 });
 router.get("/stech.manager/edit_product_action", async function (req, res, next) {
@@ -1583,7 +1583,7 @@ router.get("/stech.manager/edit_product_action", async function (req, res, next)
             })
     } catch (e) {
         console.log(e.message);
-        res.send({message: "product not found", code: 0})
+        res.send({ message: "product not found", code: 0 })
     }
 });
 
@@ -1600,11 +1600,11 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
             {
                 $group: {
                     _id: "$vocher_id",
-                    count: {$sum: 1}
+                    count: { $sum: 1 }
                 }
             },
             {
-                $sort: {count: -1} // Sắp xếp theo số lần sử dụng giảm dần
+                $sort: { count: -1 } // Sắp xếp theo số lần sử dụng giảm dần
             },
             {
                 $limit: 1
@@ -1624,11 +1624,11 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
             {
                 $group: {
                     _id: "$vocher_id",
-                    count: {$sum: {$cond: [{$eq: ["$is_used", true]}, 1, 0]}}
+                    count: { $sum: { $cond: [{ $eq: ["$is_used", true] }, 1, 0] } }
                 }
             },
             {
-                $sort: {count: 1} // Sắp xếp theo số lần sử dụng tăng dần
+                $sort: { count: 1 } // Sắp xếp theo số lần sử dụng tăng dần
             },
             {
                 $limit: 1
@@ -1655,7 +1655,7 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
         });
     } catch (e) {
         console.log(e.message);
-        res.send({message: "voucher not found", code: 0});
+        res.send({ message: "voucher not found", code: 0 });
     }
 });
 router.post("/stech.manager/createVoucher", async function (req, res, next) {
@@ -1668,22 +1668,22 @@ router.post("/stech.manager/createVoucher", async function (req, res, next) {
     let specificTimeZone = 'Asia/Ha_Noi';
     let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (name == null) {
-        return res.send({message: "title is required", code: 0});
+        return res.send({ message: "title is required", code: 0 });
     }
     if (content == null) {
-        return res.send({message: "content is required", code: 0});
+        return res.send({ message: "content is required", code: 0 });
     }
     if (price == null) {
-        return res.send({message: "price is required", code: 0});
+        return res.send({ message: "price is required", code: 0 });
     }
     if (toDate == null) {
-        return res.send({message: "toDate is required", code: 0});
+        return res.send({ message: "toDate is required", code: 0 });
     }
     if (fromDate == null) {
-        return res.send({message: "fromDate is required", code: 0});
+        return res.send({ message: "fromDate is required", code: 0 });
     }
     if (create_time == null) {
-        return res.send({message: "create_time is required", code: 0});
+        return res.send({ message: "create_time is required", code: 0 });
     }
     try {
         let voucher = new VoucherModel.voucherModel({
@@ -1710,7 +1710,7 @@ router.post("/stech.manager/createVoucher", async function (req, res, next) {
         }));
         res.redirect(req.get('referer'));
     } catch (e) {
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 router.post("/stech.manager/updateVoucher", async function (req, res, next) {
@@ -1722,7 +1722,7 @@ router.post("/stech.manager/updateVoucher", async function (req, res, next) {
         let fromDate = req.body.fromDate;
         let voucherId = req.body.voucherId;
         if (voucherId == null) {
-            return res.send({message: "voucherId is required", code: 0});
+            return res.send({ message: "voucherId is required", code: 0 });
         }
         try {
             let voucher = await VoucherModel.voucherModel.findById(voucherId);
@@ -1749,15 +1749,15 @@ router.post("/stech.manager/updateVoucher", async function (req, res, next) {
             if (fromDate !== null) {
                 newVoucher.fromDate = fromDate;
             }
-            await VoucherModel.voucherModel.updateMany({_id: voucherId}, {$set: newVoucher});
+            await VoucherModel.voucherModel.updateMany({ _id: voucherId }, { $set: newVoucher });
             res.redirect(req.get('referer'));
         } catch (e) {
             console.log(e.message);
-            return res.send({message: e.message.toString(), code: 0});
+            return res.send({ message: e.message.toString(), code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        res.send({message: "create voucher fail", code: 0});
+        res.send({ message: "create voucher fail", code: 0 });
     }
 })
 
@@ -1781,18 +1781,18 @@ function formatDateTime(dateTimeString) {
 router.post("/stech.manager/deleteVoucher", async function (req, res, next) {
     let voucherId = req.body.voucherId;
     if (voucherId === null) {
-        return res.send({message: "voucher id is required", code: 0})
+        return res.send({ message: "voucher id is required", code: 0 })
     }
     try {
         let voucher = await VoucherModel.voucherModel.findById(voucherId);
         if (!voucher) {
-            return res.send({message: "voucher not found", code: 0})
+            return res.send({ message: "voucher not found", code: 0 })
         }
-        await VoucherModel.voucherModel.deleteMany({_id: voucherId});
+        await VoucherModel.voucherModel.deleteMany({ _id: voucherId });
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 //Notification
@@ -1809,7 +1809,7 @@ router.get("/stech.manager/notification", async function (req, res, next) {
 
     } catch (e) {
         console.log(e.message);
-        res.send({message: "notification not found", code: 0});
+        res.send({ message: "notification not found", code: 0 });
     }
 });
 
@@ -1825,10 +1825,10 @@ router.post("/stech.manager/createNotification", upload.fields([{
     let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
 
     if (title == null) {
-        return res.send({message: "title is required", code: 0});
+        return res.send({ message: "title is required", code: 0 });
     }
     if (content == null) {
-        return res.send({message: "content is required", code: 0});
+        return res.send({ message: "content is required", code: 0 });
     }
     try {
         let notification = new NotificationModel.notificationModel({
@@ -1844,7 +1844,7 @@ router.post("/stech.manager/createNotification", upload.fields([{
             img[0]
         );
         if (imgNoti === 0) {
-            return res.send({message: "upload file img fail", code: 0});
+            return res.send({ message: "upload file img fail", code: 0 });
         }
         notification.img = imgNoti;
         await notification.save();
@@ -1865,7 +1865,7 @@ router.post("/stech.manager/createNotification", upload.fields([{
         }));
         res.redirect(req.get('referer'));
     } catch (e) {
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 
 });
@@ -1880,7 +1880,7 @@ router.post("/stech.manager/updateNotification", upload.fields([{
     let notificationId = req.body.notificationId;
 
     if (notificationId == null) {
-        return res.send({message: "notificationId is required", code: 0});
+        return res.send({ message: "notificationId is required", code: 0 });
     }
     try {
         let notification = await NotificationModel.notificationModel.findById(notificationId);
@@ -1908,16 +1908,16 @@ router.post("/stech.manager/updateNotification", upload.fields([{
                 img[0]
             );
             if (imgNoti === 0) {
-                return res.send({message: "upload file img fail", code: 0});
+                return res.send({ message: "upload file img fail", code: 0 });
             }
             newNotification.img = imgNoti;
         }
 
-        await NotificationModel.notificationModel.updateMany({_id: notificationId}, {$set: newNotification});
+        await NotificationModel.notificationModel.updateMany({ _id: notificationId }, { $set: newNotification });
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 
@@ -1925,10 +1925,10 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
     try {
         let notificationId = req.body.NotifiId;
         if (notificationId == null) {
-            return res.send({message: "notificationId is required", code: 0});
+            return res.send({ message: "notificationId is required", code: 0 });
         }
 
-        await NotificationModel.notificationModel.deleteMany({_id: notificationId});
+        await NotificationModel.notificationModel.deleteMany({ _id: notificationId });
 
         const productFirebase = `notifications/${notificationId}`;
         await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
@@ -1937,7 +1937,7 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
 
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 })
 router.post("/stech.manager/editUser", upload.single('avatar'), async function (req, res, next) {
@@ -1950,19 +1950,19 @@ router.post("/stech.manager/editUser", upload.single('avatar'), async function (
     let idUser = req.cookies.Uid;
     let verifyWith = req.cookies.verifyWith;
     if (idUser == null) {
-        return res.send({message: "Admin not found", code: 0});
+        return res.send({ message: "Admin not found", code: 0 });
     }
 
     try {
         let user;
         if (verifyWith == "Admin") {
-            user = await AdminModel.adminModel.findById({_id: idUser});
+            user = await AdminModel.adminModel.findById({ _id: idUser });
         } else if (verifyWith == "Employee") {
-            user = await EmployeeModel.employeeModel.findById({_id: idUser});
+            user = await EmployeeModel.employeeModel.findById({ _id: idUser });
         }
 
         if (user == null) {
-            return res.send({message: "Admin not found", code: 0});
+            return res.send({ message: "Admin not found", code: 0 });
         }
         if (password != null) {
             if (!passwordRegex.test(password)) {
@@ -2007,7 +2007,7 @@ router.post("/stech.manager/editUser", upload.single('avatar'), async function (
                 file
             );
             if (imgProfile === 0) {
-                return res.send({message: "upload file img fail", code: 0});
+                return res.send({ message: "upload file img fail", code: 0 });
             }
             user.avatar = imgProfile;
         }
@@ -2015,7 +2015,7 @@ router.post("/stech.manager/editUser", upload.single('avatar'), async function (
         return res.redirect("profile");
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 })
 const sendMessage = (registrationToken, title, body) => {
