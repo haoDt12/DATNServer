@@ -13,9 +13,10 @@ const AdminCtr = require("../controllersv2/controller.admin");
 const EmployeeCtrl = require("../controllersv2/controller.employee");
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({storage: storage});
+const upload = multer({ storage: storage });
 const VnPayCtrl = require("../controllers/api.payvnpay");
 const NotificationCtrl = require("../controllersv2/controller.notification");
+const MessageCtrl = require("../controllersv2/controller.message");
 //customer
 router.post("/registerCustomer", CusController.registerCustomer);
 router.post("/loginCustomer", CusController.loginCustomer);
@@ -85,7 +86,7 @@ router.post("/getOrderByOrderId", Middleware.authorizationToken, OrderCtrl.getOr
 router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.createPaymentUrl);
 router.get("/payFail", VnPayCtrl.payFail);
 router.get("/paySuccess", VnPayCtrl.paySuccess);
-router.get("/paySuccess", VnPayCtrl.vnpayReturn);
+router.get("/vnpayReturn", VnPayCtrl.vnpayReturn);
 
 // feedback
 router.post("/addFeedback", Middleware.authorizationToken, FeedBackCtrl.addFeedback);
@@ -94,5 +95,17 @@ router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBac
 
 //notification
 router.post("/getNotificationByUser", Middleware.authorizationToken, NotificationCtrl.getNotificationByUser);
+
+// chat
+router.post("/addMessage",
+    Middleware.authorizationToken,
+    upload.fields([
+        { name: "filess", maxCount: 3 },
+        { name: "images", maxCount: 3 },
+        { name: "video", maxCount: 1 },
+    ]),
+    MessageCtrl.addMessage
+);
+
 
 module.exports = router;

@@ -13,6 +13,8 @@ const OrderModel = require("../modelsv2/model.order");
 const DetailOrder = require("../modelsv2/model.detailorder");
 const ProductModel = require("../modelsv2/model.product");
 const ProductCartModel = require("../modelsv2/model.ProductCart");
+const NotificationModel = require("../modelsv2/model.notification");
+const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
 let mList_order;
 let mMap_voucher_cus_id;
 let mEmployee_id;
@@ -232,4 +234,20 @@ function sortObject(obj) {
         sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
     }
     return sorted;
+}
+const createNotifi = async (title, content, img, create_time, customer_id, registrationToken) => {
+    let notification = new NotificationModel.notificationModel({
+        title: title,
+        content: content,
+        img: img,
+        create_time: create_time,
+    });
+    let mapNotiCus = new MapNotiCus.mapNotificationModel({
+        notification_id: notification._id,
+        customer_id: customer_id,
+        create_time: create_time,
+    });
+    await notification.save();
+    await mapNotiCus.save();
+    sendMessage(registrationToken, title, content);
 }
