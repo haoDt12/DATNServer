@@ -86,7 +86,7 @@ router.post("/getOrderByOrderId", Middleware.authorizationToken, OrderCtrl.getOr
 router.post("/createPaymentUrl", Middleware.authorizationToken, VnPayCtrl.createPaymentUrl);
 router.get("/payFail", VnPayCtrl.payFail);
 router.get("/paySuccess", VnPayCtrl.paySuccess);
-router.get("/paySuccess", VnPayCtrl.vnpayReturn);
+router.get("/vnpayReturn", VnPayCtrl.vnpayReturn);
 
 // feedback
 router.post("/addFeedback", Middleware.authorizationToken, FeedBackCtrl.addFeedback);
