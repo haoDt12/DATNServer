@@ -1160,7 +1160,7 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
         // Update status message
         if (idMsg != null) {
             try {
-                let message = await MessageModel.messageModel.findByIdAndUpdate(idMsg, {status: "seen"});
+                let message = await MessageModel.messageModel.findByIdAndUpdate(idMsg, { status: "seen" });
                 if (message.nModified > 0) {
                     console.log("321");
                 } else {
@@ -1173,6 +1173,7 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
         }
 
         let dataConversation = await getDataConversation(idUserLoged);
+        // let dataConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
         // let dataConversation = await ConversationModel.conversationModel.find();
         let dataMessage = await MessageModel.messageModel.find({conversation_id: idConversation});
 
@@ -1237,9 +1238,10 @@ router.get("/stech.manager/chat", async function (req, res, next) {
             dataUserLoged = await EmployeeModel.employeeModel.findById({_id: idUserLoged});
         }
 
+        console.log(idUserLoged);
         let dataConversation = await getDataConversation(idUserLoged);
-        // let dataConversation = await ConversationModel.conversationModel.find();
-
+        // let dataConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
+        console.log(dataConversation.length);
         return res.render("chat", {
             conversations: dataConversation.length > 0 ? dataConversation : [],
             userLoged: dataUserLoged,
