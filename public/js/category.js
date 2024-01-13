@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     let confirmDeleteCate = new bootstrap.Modal(document.getElementById('confirmDeleteCate'));
 
+
     let deleteCate = document.querySelectorAll('.deleteCate');
     let updateCate = document.querySelectorAll('.updateCate');
 
@@ -22,45 +23,9 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener('click', function () {
             const categoryID = this.getAttribute('data-id');
             getCategoryByID(categoryID);
-
-            // let confirmUpdate = document.getElementById('confirmUpdate');
-            // confirmUpdate.addEventListener('click', () => {
-            //     updateCategory(categoryID);
-            // })
         })
     })
 });
-
-// function updateCategory(categoryID) {
-//     let nameCate = document.getElementById('nameCateUpdate').value.trim();
-//     let imageNew = document.getElementById('imageNew').value;
-//     let imageCateOld = document.getElementById('imageOld').value;
-//     let dateCate = document.getElementById('dateCateUpdate').value.trim();
-
-//     if (nameCate.length == 0) {
-//         return;
-//     }
-
-//     let xhr = new XMLHttpRequest();
-//     let endPoint = "/stech.manager/update-category";
-//     xhr.open('POST', endPoint, true);
-//     xhr.setRequestHeader('Content-Type', 'application/json');
-//     xhr.send(JSON.stringify({ idCate: categoryID }));
-
-//     xhr.onload = function () {
-//         if (xhr.status === 200) {
-//             let myData = JSON.parse(xhr.response);
-//             switch (myData.code) {
-//                 case "GET_SUCCESS":
-                    
-//                     break;
-
-//                 default:
-//                     break;
-//             }
-//         }
-//     };
-// }
 
 function displayModal(nameCateDelete, categoryName) {
     nameCateDelete.style.display = 'flex'
@@ -105,13 +70,14 @@ function getCategoryByID(categoryID) {
                     break;
 
                 default:
+                    console.log(xhr.responseText);
                     break;
             }
         }
     };
 }
 function deleteCategory(categoryID, message) {
-    console.log(`param message: ${message}`);
+    // console.log(`param message: ${message}`);
     // Tạo một đối tượng XMLHttpRequest để gửi dữ liệu đến server
     let xhr = new XMLHttpRequest();
     let endPoint = "/stech.manager/delete-cate";

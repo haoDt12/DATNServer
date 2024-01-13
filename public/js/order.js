@@ -42,42 +42,6 @@ document.addEventListener('DOMContentLoaded', function(){
             const valueId = inputOrderId.value;
 
             const valueStatus = inputStatus.value;
-
-            // let status;
-            //
-            // if (valueStatus == 'WaitingGet'){
-            //     status = 'Chờ lấy hàng';
-            // } else if (valueStatus == 'InTransit'){
-            //     status = 'Đang giao'
-            // } else if (valueStatus == 'PayComplete'){
-            //     status = 'Đã thanh toán'
-            // } else if (valueStatus == 'WaitConfirm'){
-            //     status = 'Chờ xác nhận'
-            // } else if (valueStatus == 'Cancel'){
-            //     status = 'Đã hủy'
-            // }
-            //var encodedValueIdOrder = btoa(valueId);
-
-            // const formData1 = new URLSearchParams();
-            // formData1.append("title", "Trạng thái đơn hàng");
-            // formData1.append("content", "Đơn hàng "+encodedValueIdOrder+" "+valueFirstTitle+" của bạn: "+status);
-            // formData1.append("userId", valueUserId);
-            // formData1.append("img", valueImg);
-
-            // fetch('/api/addNotificationPrivate', {
-            //     headers: {
-            //         'Authorization': `${token}`,
-            //         "Content-Type": "application/x-www-form-urlencoded",
-            //     },
-            //     method: "POST",
-            //     body: formData1,
-            // }).then((response) => {
-            //     console.log(response)
-            //     console.log("Thanh cong")
-            // }).catch((error) => {
-            //     console.error("Error:", error);
-            // });
-
             const formData = {orderId: valueId, employeeId: Uid, status: valueStatus};
 
             await axios.post("/apiv2/updateStatusOrder", formData, {

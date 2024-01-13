@@ -9,6 +9,9 @@ const CartModelv2 = require("../modelsv2/model.ProductCart");
 const UserModel = require("./../models/model.user");
 const ConversationModel = require("./../models/model.conversations");
 const MessageModel = require("./../models/model.message");
+const BannerModel = require("./../models/model.banner");
+const ConversationModel = require("./../modelsv2/model.conversation");
+const MessageModel = require("./../modelsv2/model.message");
 const VoucherModel = require("./../modelsv2/model.voucher");
 const NotificationModel = require("./../modelsv2/model.notification");
 const BannerModel = require("./../modelsv2/model.banner");
@@ -17,9 +20,10 @@ const AdminModel = require("./../modelsv2/model.admin");
 const DetailOrderModel = require("./../modelsv2/model.detailorder");
 const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
 const diliveryaddress = require("./../modelsv2/model.deliveryaddress");
+const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
 const multer = require('multer');
 const storage = multer.memoryStorage();
-const upload = multer({storage: storage});
+const upload = multer({ storage: storage });
 
 const moment = require("moment-timezone");
 const utils_1 = require('../public/js/ultils_1');
@@ -34,12 +38,37 @@ const UploadFile = require("../models/uploadFile");
 const CustomerModel = require("../modelsv2/model.customer");
 const EmployeeModel = require("../modelsv2/model.employee");
 const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass } = require("../models/otp");
-
+const admin = require('firebase-admin');
+const serviceAccount = require('../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json');
+if (admin.apps.length === 0) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
 const axios = require("axios");
+const CusModel = require("../modelsv2/model.customer");
+const MapVoucherModel = require("../modelsv2/model.map_voucher_cust");
 require("dotenv").config();
 
+const match = [
+    "image/jpeg",
+    "image/*",
+    "image/png",
+    "image/gif",
+    "image/bmp",
+    "image/tiff",
+    "image/webp",
+    "image/svg+xml",
+    "image/x-icon",
+    "image/jp2",
+    "image/heif",
+];
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+const passwordRegex =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const phoneNumberRegex = /^(?:\+84|0)[1-9]\d{8}$/;
 /* GET home page. */
-router.get("/",(req,res)=>{
+router.get("/", (req, res) => {
     res.redirect("/stech.manager/type_login");
 });
 router.get("/stech.manager/home", async function (req, res, next) {
@@ -353,9 +382,6 @@ router.post(
     "/stech.manager/add-category",
     upload.single('image'),
     async function (req, res, next) {
-        // console.log(req.body);
-        // console.log(req.file);
-        // console.log(req.files);
         try {
             const name = req.body.name;
             if (!req.file) {
@@ -507,9 +533,15 @@ router.post("/stech.manager/update-category",
     });
 
 router.get("/stech.manager/category", async function (req, res, next) {
+    let terifyWith = req.cookies.verifyWith;
+    if (terifyWith == null || terifyWith.length == 0) {
+        return res.redirect('/stech.manager/type_login')
+    }
     try {
         let listCategory = await CategoryModel.categoryModel.find();
+
         res.render("category", {
+            terifyWith: terifyWith,
             category: listCategory,
             message: "get list category success",
             code: 1,
@@ -722,7 +754,10 @@ router.post('/stech.manager/unban', async function (req, res, next) {
     }
 });
 
-router.post('/stech.manager/AddEmployee',upload.fields([{name: "avatar", maxCount: 1}]), async function (req, res, next) {
+router.post('/stech.manager/AddEmployee', upload.fields([{
+    name: "avatar",
+    maxCount: 1
+}]), async function (req, res, next) {
     try {
         const full_name = req.body.full_name;
         const password = req.body.password;
@@ -760,59 +795,396 @@ router.post('/stech.manager/AddEmployee',upload.fields([{name: "avatar", maxCoun
         res.send({ message: "Error adding employee", code: 0 });
     }
 });
+router.post('/stech.manager/get-employee', async function (req, res, next) {
+    if (!req.body.idEmployee) {
+        return res.status(400).send('can not id employee');
+    }
 
+    const idEmployee = req.body.idEmployee;
+    if (idEmployee == null) {
+        return res.send({ message: "employee not found", code: 0 });
+    }
+    try {
+        let dataEmployeeByID = await EmployeeModel.employeeModel.findById(idEmployee)
+        return res.status(200).send({
+            dataEmployeeByID,
+            code: 'GET_SUCCESS',
+            message: "get employee success",
+        })
+    } catch (e) {
+        console.log(e);
+        return res.send({ message: "error get data employee", code: 0 });
+    }
+})
+router.post('/stech.manager/UpdateEmployee', upload.fields([{
+    name: "avatar",
+    maxCount: 1
+}]), async function (req, res, next) {
+    try {
+        const idEmployee = req.body.idEmployee;
+        const full_name = req.body.full_name;
+        const password = req.body.password;
+        const fileAvatar = req.files["avatar"];
+        const email = req.body.email;
+        const phone_number = req.body.phone_number;
+        let date = new Date();
+        if (idEmployee == null) {
+            return res.send({ message: "employee not found", code: 0 });
+        }
+        let employee = await EmployeeModel.employeeModel.findById(idEmployee);
+        if (!employee) {
+            return res.send({ message: "employee not found", code: 0 });
+        }
+        // let employee = new EmployeeModel.employeeModel({
+        //     full_name: full_name,
+        //     email: email,
+        //     password: password,
+        //     phone_number: phone_number,
+        //     create_time: create_time,
+        // });
+        if (fileAvatar === undefined) {
+            const result = await EmployeeModel.employeeModel.updateOne({ _id: idEmployee }, {
+                full_name: full_name,
+                password: password,
+                email: email,
+                phone_number: phone_number
+            });
 
+            if (result.nModified > 0) {
+                return res.json({ success: false, message: 'Failed to update employee' });
+            } else {
+                return res.redirect('employee')
+            }
+        }
+        // console.log("img", fileimg);
+        // xoá ảnh cũ ...
+        const imgEmployeeFolder = `Employees/${idEmployee}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, imgEmployeeFolder);
+        let avatar = await UploadFileFirebase.uploadFile(
+            req,
+            employee._id.toString(),
+            "avatar",
+            "Employees",
+            fileAvatar[0]
+        );
+
+        if (avatar === 0) {
+            return res.send({ message: "Failed to upload avatar", code: 0 });
+        }
+
+        employee.avatar = avatar;
+        await employee.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "Error adding employee", code: 0 });
+    }
+});
 router.get("/stech.manager/verify", async function (req, res, next) {
     res.render("verify");
 });
 router.get("/stech.manager/profile", async function (req, res, next) {
     const id = utils_1.getCookie(req, 'Uid');
-    console.log(id);
+    const verifyWith = utils_1.getCookie(req, 'verifyWith');
     try {
-        let listprofile = await UserModel.userModel.findById(id).populate({ path: 'address', select: 'city' });
+        if (verifyWith == "Employee") {
+            let listprofile = await EmployeeModel.employeeModel.findById(id);
 
-        res.render("profile", {
-            profiles: listprofile,
-            message: "get list profile success",
-            code: 1,
-        });
+            res.render("profile", {
+                profiles: listprofile,
+                message: "get list profile success",
+                code: 1,
+            });
+        } else if (verifyWith == "Admin") {
+
+            let listAdmin = await AdminModel.adminModel.findById(id);
+            res.render("profile", {
+                profiles: listAdmin,
+                message: "get list profile success",
+                code: 1,
+            });
+        }
     } catch (e) {
         console.log(e.message);
         res.send({ message: "profile not found", code: 0 });
     }
 });
 
-router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
+router.post("/stech.manager/create-conversation", async function (req, res, next) {
+    let idUserLoged = req.cookies.Uid;
+    if (idUserLoged == null || idUserLoged.length <= 0) {
+        return res.redirect('/stech.manager/type_login')
+    }
+    let idUserSelected = req.body.idUserSelected;
+    if (idUserSelected === undefined) {
+        return res.status(200).send({
+            code: "",
+            message: "ID user selected not found"
+        })
+    }
+
+    let idLoged = new mongoose.Types.ObjectId(idUserLoged);
+    let idSelected = new mongoose.Types.ObjectId(idUserSelected);
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
+
+    let conversation = await ConversationModel.conversationModel.findOne({ receive_id: idSelected })
+    if (conversation == null) {
+        let newConversation = new ConversationModel.conversationModel({
+            creator_id: idLoged,
+            receive_id: idSelected,
+            created_at: create_time,
+            updated_at: "",
+            deleted_at: ""
+        });
+        await newConversation.save();
+        return res.status(200).send({ code: "CREATE_SUCCESS", message: "create conversation" });
+    }
+
+    return res.status(200).send({ code: "REDIRECT", message: "conversation exist" });
+})
+
+
+router.post("/stech.manager/create-message", async function (req, res, next) {
+    let idUserLoged = req.cookies.Uid;
+    if (idUserLoged == null || idUserLoged.length <= 0) {
+        return res.redirect('/stech.manager/type_login')
+    }
+
+    let dataChat = req.cookies.dataChat;
+    let myData = Buffer.from(dataChat, 'base64').toString('utf8');
+    let mData = JSON.parse(myData);
+    let idConversation = mData.idConSelected;
+
+    let message = req.body.message;
+    if (message === undefined) {
+        return res.status(200).send({ code: "ERROR", message: "can not get message" })
+    }
+
     try {
+        let date = new Date();
+        let specificTimeZone = 'Asia/Ha_Noi';
+        let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
+
+        let messageEncrypted = ''
+        const algorithm = 'aes-128-cbc';
+        const IV_LENGTH = 16;
+        const ENCRYPTION_KEY = process.env.API_KEY;
+        const hash = crypto.createHash("sha1");
+        hash.update(ENCRYPTION_KEY)
+        const digestResult = hash.digest();
+        // Chuyển đổi kết quả digest thành Uint8Array
+        const uint8Array = new Uint8Array(digestResult);
+        // Sử dụng slice từ Uint8Array.prototype
+        const keyUint8Array = uint8Array.slice(0, 16);
+        // Chuyển đổi kết quả Uint8Array về Buffer nếu cần
+        const keyBuffer = Buffer.from(keyUint8Array);
+
+        let iv = crypto.randomBytes(IV_LENGTH);
+        let cipher = crypto.createCipheriv(algorithm, keyBuffer, iv);
+        let encrypted = cipher.update(message, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+        messageEncrypted = iv.toString('hex') + ':' + encrypted;
+
+        let newMessage = new MessageModel.messageModel({
+            conversation_id: idConversation,
+            sender_id: idUserLoged,
+            message: messageEncrypted,
+            message_type: "text",
+            status: "unseen",
+            created_at: create_time,
+        });
+        await newMessage.save();
+        return res.status(200).send({
+            dataMessage: newMessage,
+            code: "CREATE_SUCCESS",
+            message: "create message success"
+        });
+    } catch (e) {
+        console.log(e);
+        return res.status(200).send({ code: "", message: "create message error" })
+    }
+});
 
 
-        // Check login
-        let idUserLoged = req.cookies.Uid
+async function decryptedMessage(encryptedMessage) {
+    let message = ''
+    if (encryptedMessage.length <= 0) {
+        return encryptedMessage
+    }
+    const ENCRYPTION_KEY = process.env.API_KEY;
+    const algorithm = process.env.ALGORITHM;
+    const hash = crypto.createHash("sha1");
+    hash.update(ENCRYPTION_KEY)
+    const digestResult = hash.digest();
+    const uint8Array = new Uint8Array(digestResult);
+    const keyUint8Array = uint8Array.slice(0, 16);
+    const keyBuffer = Buffer.from(keyUint8Array);
+    let textParts = encryptedMessage.split(':');
+    let iv = Buffer.from(textParts.shift(), 'hex');
+    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
+    let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
+    decrypted += decipher.final('utf8');
+    message = decrypted;
+
+    return message;
+}
+
+async function getDataConversation(idUserLoged) {
+    let listConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
+
+    let dataIDuser = []
+    listConversation.map((con) => {
+        if (con.creator_id != idUserLoged) {
+            dataIDuser.push(con.creator_id);
+        }
+        if (con.creator_id == idUserLoged) {
+            dataIDuser.push(con.receive_id);
+        }
+    })
+
+    let dataUser = [];
+    await Promise.all(
+        dataIDuser.map(async (id) => {
+            try {
+                let user = await CustomerModel.customerModel.findById(id);
+                dataUser.push(user);
+            } catch (error) {
+                console.log(`get data user: ${error}`);
+            }
+        })
+    );
+
+    let dataUserRender = []
+    let userRender = {};
+    await Promise.all(
+        dataUser.map(async (user) => {
+            userRender[user._id] = {
+                id: user._id,
+                name: user.full_name,
+                avatar: user.avatar,
+                email: user.email,
+                phone: user.phone_number
+            }
+        })
+    );
+
+    for (let userID in userRender) {
+        dataUserRender.push(userRender[userID]);
+    }
+
+    let dataLastMessage = [];
+    await Promise.all(
+        listConversation.map(async (con) => {
+            let listMessage = await MessageModel.messageModel.find({ conversation_id: con._id });
+            if (listMessage.length > 0) {
+                const latestMessage = listMessage.reduce((acc, current) => {
+                    const accDate = new Date(acc.created_at);
+                    const currentDate = new Date(current.created_at);
+                    return accDate > currentDate ? acc : current;
+                });
+                dataLastMessage.push(latestMessage);
+            }
+        })
+    );
+
+    let dataConversation = [];
+    // Lặp qua mảng listConversation
+    for (let conversation of listConversation) {
+        // Tìm thông tin user trong dataUserRender
+        let userData = dataUserRender.find(user => user.id.toString() === conversation.receive_id.toString());
+        // Tìm thông tin last message trong dataLastMessage
+        let lastMessage = dataLastMessage.find(message => message.conversation_id.toString() === conversation._id.toString());
+        // Tạo đối tượng mới với thông tin kết hợp từ ba mảng
+        let message = await decryptedMessage(lastMessage ? lastMessage.message : '');
+        let combinedData = {
+            conversation_id: conversation._id,
+            sender_id: lastMessage ? lastMessage.sender_id : "",
+            message: lastMessage ? lastMessage.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message : "",
+            message_type: lastMessage ? lastMessage.message_type : '',
+            idMsg: lastMessage ? lastMessage._id : "",
+            status: lastMessage ? lastMessage.status : 'unseen',
+            creator_id: conversation.creator_id,
+            receive_id: conversation.receive_id,
+            msg_deleted_at: lastMessage ? lastMessage.deleted_at : "",
+            created_at: lastMessage ? lastMessage.created_at : conversation.created_at,
+            updated_at: conversation.updated_at,
+            deleted_at: conversation.deleted_at,
+            __v: conversation.__v,
+            userID: userData ? userData.id : "",
+            name: userData ? userData.name : '',
+            avatar: userData ? userData.avatar : '',
+            email: userData ? userData.email : '',
+            phone: userData ? userData.phone : ''
+        };
+        dataConversation.push(combinedData);
+    }
+
+    /* Data Preview
+        console.log(listConversation);
+        console.log(dataUserRender);
+        console.log(dataLastMessage);
+        console.log(dataConversation);
+        */
+
+    return dataConversation;
+}
+
+router.get("/stech.manager/chat/c/", async function (req, res, next) {
+    const ADMIN_ROLE = "LoginWithAdmin";
+    const EMPLOYEE_ROLE = "LoginWithEmployee";
+
+
+    let dataChat = req.cookies.dataChat;
+    let myData = Buffer.from(dataChat, 'base64').toString('utf8');
+    let mData = JSON.parse(myData);
+    let idConversation = mData.idConSelected;
+    let idMsg = mData.idMsg;
+    let idUserSelected = mData.idUserSelected;
+
+    try {
+        let idUserLoged = req.cookies.Uid;
         if (idUserLoged == null || idUserLoged.length <= 0) {
-            res.redirect('/stech.manager/login')
+            return res.redirect('/stech.manager/type_login')
+        }
+        // const typeLogin = req.cookies.LoginType;
+
+        // Start Data User
+        let dataUserLoged = await AdminModel.adminModel.findById({ _id: idUserLoged });
+        if (dataUserLoged == null) {
+            dataUserLoged = await EmployeeModel.employeeModel.findById({ _id: idUserLoged });
+        }
+        let dataUserSelected = await CustomerModel.customerModel.findById({ _id: idUserSelected });
+        // End Data User
+
+        // Update status message
+        if (idMsg != null) {
+            try {
+                let message = await MessageModel.messageModel.findByIdAndUpdate(idMsg, { status: "seen" });
+                if (message.nModified > 0) {
+                    console.log("321");
+                } else {
+                    console.log("123");
+                }
+            } catch (e) {
+                console.log(e);
+                return res.send({ message: "update status message fail", code: 0 });
+            }
         }
 
-        let encodedConversation = req.params.id
-        let idConversation = req.params.id
-        // let idConversation = Buffer.from(encodedConversation, 'base64').toString('utf8');
-        let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
-        let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({
-            path: 'address',
-            select: 'city'
-        });
-        let dataMessage = await MessageModel.messageModel.find({ conversation: idConversation }).populate({ path: 'conversation' });
+        let dataConversation = await getDataConversation(idUserLoged);
+        // let dataConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
+        // let dataConversation = await ConversationModel.conversationModel.find();
+        let dataMessage = await MessageModel.messageModel.find({ conversation_id: idConversation });
 
-
-        // console.log("=======================");
-        // console.log(dataMessage);
         let newDataMessage = []
         dataMessage.map((msg) => {
-
             let message = ''
             if (msg.message.length <= 0) {
                 return msg.message
             }
-
             const algorithm = process.env.ALGORITHM;
             const ENCRYPTION_KEY = process.env.API_KEY;
             const hash = crypto.createHash("sha1");
@@ -832,284 +1204,58 @@ router.get("/stech.manager/chat/c/:id", async function (req, res, next) {
 
             let itemMsg = {
                 _id: msg._id,
-                conversation: msg.conversation,
-                senderId: msg.senderId,
-                receiverId: msg.receiverId,
-                message: message,
-                filess: msg.filess,
-                images: msg.images,
-                video: msg.video,
-                status: msg.status,
-                deleted: msg.deleted,
-                timestamp: msg.timestamp
+                conversation_id: msg.conversation_id,
+                sender_id: msg.sender_id,
+                message: msg.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message,
+                message_type: msg.message_type,
+                created_at: msg.created_at,
+                deleted_at: msg.deleted_at
             }
             newDataMessage.push(itemMsg);
         })
 
-        // console.log("+++++++++++++++++");
-        // console.log(newDataMessage);
-
-        let dataLastMessage = []
-        let latestMessages = {};
-        listConversation.map((con) => {
-            dataMessage.map((msg) => {
-                if (con._id + "" == msg.conversation._id + "") {
-                    if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
-                        latestMessages[con._id] = {
-                            id: msg._id,
-                            conversationID: con._id,
-                            senderID: msg.senderId,
-                            status: msg.status,
-                            message: msg.message,
-                            timestamp: msg.timestamp
-                        };
-                    }
-                }
-            })
-        })
-
-        for (let conversationID in latestMessages) {
-            dataLastMessage.push(latestMessages[conversationID]);
-        }
-
-        let dataConversation = []
-        listConversation.map((con) => {
-            dataLastMessage.map((msg) => {
-                if (con._id + "" == msg.conversationID + "") {
-                    let idMessage = msg.id
-                    let message = ''
-                    if (msg.message.length <= 0) {
-                        return msg.message
-                    }
-                    const algorithm = process.env.ALGORITHM;
-                    const ENCRYPTION_KEY = process.env.API_KEY;
-                    const hash = crypto.createHash("sha1");
-                    hash.update(ENCRYPTION_KEY)
-                    const digestResult = hash.digest();
-                    const uint8Array = new Uint8Array(digestResult);
-                    const keyUint8Array = uint8Array.slice(0, 16);
-                    const keyBuffer = Buffer.from(keyUint8Array);
-                    let textParts = msg.message.split(':');
-                    let iv = Buffer.from(textParts.shift(), 'hex');
-                    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-                    let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
-                    let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
-                    decrypted += decipher.final('utf8');
-
-                    message = decrypted
-
-                    let time = msg.timestamp
-                    let senderID = msg.senderID
-                    let status = msg.status
-
-                    dataConversation.push({
-                        _id: con._id,
-                        idMsg: idMessage,
-                        name: con.name,
-                        user: con.user,
-                        timestamp: con.timestamp,
-                        lastmessage: message,
-                        lastSender: senderID,
-                        status: status,
-                        lasttime: time
-                    })
-                }
-            })
-        })
-
-        const conversationNoMessageContent = listConversation.filter(obj1 =>
-            !dataConversation.some(obj2 => obj1._id === obj2._id)
-        );
-
-        conversationNoMessageContent.map((con) => {
-            dataConversation.push({
-                _id: con._id,
-                idMessage: "",
-                name: con.name,
-                user: con.user,
-                timestamp: con.timestamp,
-                lastmessage: "",
-                lastSender: "",
-                status: "",
-                lasttime: ""
-            })
-        })
-
-        let conversationNoMessage = []
-        let listUserIDInChat = []
-
-        if (dataMessage.length <= 0) {
-            conversationNoMessage = await ConversationModel.conversationModel.find({ _id: idConversation }).populate({ path: 'user' });
-            conversationNoMessage.map((item) => {
-                item.user.map((user) => {
-                    if (!listUserIDInChat.includes(user._id)) {
-                        listUserIDInChat.push(user._id);
-                    }
-                })
-            })
-        } else {
-            await Promise.all(dataMessage.map((message) => {
-                if (!listUserIDInChat.includes(message.senderId)) {
-                    listUserIDInChat.push(message.senderId);
-                }
-                if (!listUserIDInChat.includes(message.receiverId)) {
-                    listUserIDInChat.push(message.receiverId);
-                }
-            }));
-        }
-
-        let dataOtherUser = []
-        await Promise.all(listUserIDInChat.map(async (userID) => {
-            if (userID != idUserLoged) {
-                const userData = await UserModel.userModel.find({ _id: userID }).populate({
-                    path: 'address',
-                    select: 'city'
-                });
-                dataOtherUser = userData
-            }
-        }));
-
-        res.render("chat", {
+        return res.render("chat", {
             conversations: dataConversation.length > 0 ? dataConversation : [],
-            userLoged: dataUserLoged[0],
+            userLoged: dataUserLoged,
             dataMessage: newDataMessage,
-            // dataHeaderMsg: dataMessage.length <= 0 ? conversationNoMessage : dataOtherUser,
-            dataHeaderMsg: dataOtherUser,
+            dataHeaderMsg: dataUserSelected,
             idConversation: idConversation,
             isOpenChat: true,
-            message: "get data chat success",
-            code: 1,
         });
-
     } catch (e) {
         console.log(e.message);
         res.send({ message: "conversation not found", code: 0 });
     }
 });
+
 router.get("/stech.manager/chat", async function (req, res, next) {
     try {
         // Check login
         let idUserLoged = req.cookies.Uid
         if (idUserLoged == null || idUserLoged.length <= 0) {
-            return res.redirect('/stech.manager/login')
+            return res.redirect('/stech.manager/type_login')
+        }
+        let dataUserLoged = await AdminModel.adminModel.findById({ _id: idUserLoged });
+        if (dataUserLoged == null) {
+            dataUserLoged = await EmployeeModel.employeeModel.findById({ _id: idUserLoged });
         }
 
-        let dataUserLoged = await UserModel.userModel.find({ _id: idUserLoged }).populate({
-            path: 'address',
-            select: 'city'
-        });
-        let listConversation = await ConversationModel.conversationModel.find().populate({ path: 'user' });
-        let dataMessage = await MessageModel.messageModel.find().populate({ path: 'conversation' });
-
-        let dataLastMessage = []
-        let latestMessages = {};
-        listConversation.map((con) => {
-            dataMessage.map((msg) => {
-                if (con._id + "" == msg.conversation._id + "") {
-                    if (!(con._id in latestMessages) || msg.timestamp > latestMessages[con._id].timestamp) {
-                        let message = ''
-                        if (msg.message.length <= 0) {
-                            return msg.message
-                        }
-                        const ENCRYPTION_KEY = process.env.API_KEY;
-                        const algorithm = process.env.ALGORITHM;
-                        const hash = crypto.createHash("sha1");
-                        hash.update(ENCRYPTION_KEY)
-                        const digestResult = hash.digest();
-                        const uint8Array = new Uint8Array(digestResult);
-                        const keyUint8Array = uint8Array.slice(0, 16);
-                        const keyBuffer = Buffer.from(keyUint8Array);
-                        let textParts = msg.message.split(':');
-                        let iv = Buffer.from(textParts.shift(), 'hex');
-                        let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-                        let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
-                        let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
-                        decrypted += decipher.final('utf8');
-
-                        message = decrypted;
-                        latestMessages[con._id] = {
-                            id: msg._id,
-                            conversationID: con._id,
-                            senderID: msg.senderId,
-                            status: msg.status,
-                            message: message,
-                            images: msg.images,
-                            video: msg.video,
-                            timestamp: msg.timestamp
-                        };
-                    }
-                }
-            })
-        })
-
-        for (let conversationID in latestMessages) {
-            dataLastMessage.push(latestMessages[conversationID]);
-        }
-
-        let dataConversation = []
-        listConversation.map((con) => {
-            dataLastMessage.map((msg) => {
-                if (con._id + "" == msg.conversationID + "") {
-                    let idMessage = msg.id
-                    let message = msg.deleted ? " đã gỡ 1 tin nhắn" : msg.message.length > 0 ? msg.message : msg.images.length > 0 ? ` đã gửi ${msg.images.length} ảnh` : msg.video.length > 0 ? `Bạn đã gửi 1 video` : ''
-                    let time = msg.timestamp
-                    let senderID = msg.senderID
-                    let status = msg.status
-
-                    dataConversation.push({
-                        _id: con._id,
-                        idMsg: idMessage,
-                        name: con.name,
-                        user: con.user,
-                        timestamp: con.timestamp,
-                        lastmessage: message,
-                        lastSender: senderID,
-                        status: status,
-                        lasttime: time
-                    })
-                }
-            })
-        })
-
-        const conversationNoMessage = listConversation.filter(obj1 =>
-            !dataConversation.some(obj2 => obj1._id === obj2._id)
-        );
-
-        conversationNoMessage.map((con) => {
-            dataConversation.push({
-                _id: con._id,
-                idMessage: "",
-                name: con.name,
-                user: con.user,
-                timestamp: con.timestamp,
-                lastmessage: "",
-                lastSender: "",
-                status: "",
-                lasttime: ""
-            })
-        })
-
-        // console.log(dataConversation);
-        // console.log("==================");
-        // console.log(dataLastMessage);
-
+        let dataConversation = await getDataConversation(idUserLoged);
+        // let dataConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
+        console.log(dataConversation);
         return res.render("chat", {
             conversations: dataConversation.length > 0 ? dataConversation : [],
-            userLoged: dataUserLoged[0],
-            dataMessage: {},
-            dataLastMessage: dataLastMessage.length > 0 ? dataLastMessage : [],
+            userLoged: dataUserLoged,
+            // dataMessage: {},
             isOpenChat: false,
             idConversation: "",
-            message: "get data chat success",
-            code: 1,
         });
-
-
     } catch (e) {
         console.log(`error get chat: ${e.message}`);
         return res.send({ message: "conversation not found", code: 0 });
     }
 });
+
 router.get("/stech.manager/cart", async function (req, res, next) {
     // const userId = req.query.userId;
     const userId = utils_1.getCookie(req, 'Uid');
@@ -1149,14 +1295,13 @@ router.get("/stech.manager/cart", async function (req, res, next) {
                 message: "get list cart success",
                 code: 1,
             })
-
         }
-
     } catch (e) {
         console.log(e.message);
         res.send({ message: "cart not found", code: 0 })
     }
 });
+
 router.post("/stech.manager/AddCart", async (req, res) => {
     const userID = req.cookies.Uid;
     const productID = req.body.productId;
@@ -1515,48 +1660,58 @@ router.get("/stech.manager/voucher", async function (req, res, next) {
     }
 });
 router.post("/stech.manager/createVoucher", async function (req, res, next) {
+    let name = req.body.name;
+    let content = req.body.content;
+    let price = req.body.price;
+    let toDate = req.body.toDate;
+    let fromDate = req.body.fromDate;
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
+    if (name == null) {
+        return res.send({ message: "title is required", code: 0 });
+    }
+    if (content == null) {
+        return res.send({ message: "content is required", code: 0 });
+    }
+    if (price == null) {
+        return res.send({ message: "price is required", code: 0 });
+    }
+    if (toDate == null) {
+        return res.send({ message: "toDate is required", code: 0 });
+    }
+    if (fromDate == null) {
+        return res.send({ message: "fromDate is required", code: 0 });
+    }
+    if (create_time == null) {
+        return res.send({ message: "create_time is required", code: 0 });
+    }
     try {
-        let name = req.body.name;
-        let content = req.body.content;
-        let price = req.body.price;
-        let toDate = req.body.toDate;
-        let fromDate = req.body.fromDate;
-        let date = new Date();
-        let specificTimeZone = 'Asia/Ha_Noi';
-        let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
-
-        if (name == null) {
-            return res.send({ message: "title is required", code: 0 });
-        }
-        if (content == null) {
-            return res.send({ message: "content is required", code: 0 });
-        }
-        if (price == null) {
-            return res.send({ message: "price is required", code: 0 });
-        }
-        if (toDate == null) {
-            return res.send({ message: "toDate is required", code: 0 });
-        }
-        if (fromDate == null) {
-            return res.send({ message: "fromDate is required", code: 0 });
-        }
-        if (create_time == null) {
-            return res.send({ message: "create_time is required", code: 0 });
-        }
-
         let voucher = new VoucherModel.voucherModel({
             name: name,
             content: content,
             price: price,
-            toDate: formatDateTime(toDate),
-            fromDate: formatDateTime(fromDate),
+            toDate: moment(toDate).tz(specificTimeZone).format('YYYY-M-D'),
+            fromDate: moment(fromDate).tz(specificTimeZone).format('YYYY-M-D'),
             create_time: create_time,
         });
         await voucher.save();
+        let cus = await CusModel.customerModel.find();
+        await Promise.all(cus.map(async item => {
+            let mapVoucher = new MapVoucherModel.mapVoucherModel({
+                vocher_id: voucher._id,
+                customer_id: item._id,
+                is_used: false,
+                create_time: create_time,
+            });
+            await mapVoucher.save();
+        }));
+        await Promise.all(cus.map(async item => {
+            await createNotifi(name, content, create_time, item._id, item.fcm, voucher._id);
+        }));
         res.redirect(req.get('referer'));
     } catch (e) {
-        console.log(e.message);
-        res.send({ message: "create voucher fail", code: 0 });
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 });
 router.post("/stech.manager/updateVoucher", async function (req, res, next) {
@@ -1787,6 +1942,21 @@ router.post("/stech.manager/createNotification", upload.fields([{
         }
         notification.img = imgNoti;
         await notification.save();
+        let cus = await CustomerModel.customerModel.find();
+        await Promise.all(cus.map(async item => {
+            let mapNotiCus = new MapNotiCus.mapNotificationModel({
+                notification_id: notification._id,
+                customer_id: item._id,
+                create_time: create_time,
+            });
+            await mapNotiCus.save();
+
+        }));
+        await Promise.all(cus.map(item => {
+            if (item.fcm !== null) {
+                sendMessage(item.fcm, title, content);
+            }
+        }));
         res.redirect(req.get('referer'));
     } catch (e) {
         return res.send({ message: e.message.toString(), code: 0 });
@@ -1864,5 +2034,115 @@ router.post("/stech.manager/deleteNotification", async function (req, res, next)
         return res.send({ message: e.message.toString(), code: 0 });
     }
 })
+router.post("/stech.manager/editUser", upload.single('avatar'), async function (req, res, next) {
+    let file = req.file;
+    let password = req.body.password;
+    let full_name = req.body.full_name;
+    let phone_number = req.body.phone_number;
+    let email = req.body.email;
 
+    let idUser = req.cookies.Uid;
+    let verifyWith = req.cookies.verifyWith;
+    if (idUser == null) {
+        return res.send({ message: "Admin not found", code: 0 });
+    }
+
+    try {
+        let user;
+        if (verifyWith == "Admin") {
+            user = await AdminModel.adminModel.findById({ _id: idUser });
+        } else if (verifyWith == "Employee") {
+            user = await EmployeeModel.employeeModel.findById({ _id: idUser });
+        }
+
+        if (user == null) {
+            return res.send({ message: "Admin not found", code: 0 });
+        }
+        if (password != null) {
+            if (!passwordRegex.test(password)) {
+                return res.send({
+                    message:
+                        "Minimum password 8 characters, at least 1 capital letter, 1 number and 1 special character",
+                    code: 0,
+                });
+            }
+            user.password = password;
+        }
+        if (full_name != null) {
+            user.full_name = full_name;
+        }
+        if (phone_number != null) {
+            if (!phoneNumberRegex.test(phone_number)) {
+                return res.send({
+                    message: "The phone number is not in the correct format",
+                    code: 0,
+                });
+            }
+            user.phone_number = phone_number;
+        }
+        if (email != null) {
+            if (!emailRegex.test(email)) {
+                return res.send({
+                    message: "The email is not in the correct format",
+                    code: 0,
+                });
+            }
+            user.email = email;
+        }
+        if (file != null) {
+            const imgFirebase = `admins/${idUser}`;
+            await UploadFileFirebase.deleteFolderAndFiles(res, imgFirebase);
+
+            let imgProfile = await UploadFileFirebase.uploadFileProfile(
+                req,
+                user._id.toString(),
+                "avatar",
+                "admins",
+                file
+            );
+            if (imgProfile === 0) {
+                return res.send({ message: "upload file img fail", code: 0 });
+            }
+            user.avatar = imgProfile;
+        }
+        await user.save();
+        return res.redirect("profile");
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+})
+const sendMessage = (registrationToken, title, body) => {
+    let message = {
+        data: {
+            title: title,
+            body: body,
+        },
+        token: registrationToken,
+    };
+
+    admin.messaging().send(message)
+        .then((response) => {
+            console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+            console.error('Error sending message:', error);
+        });
+}
+const createNotifi = async (title, content, create_time, customer_id, registrationToken, voucher_id) => {
+    let notification = new NotificationModel.notificationModel({
+        title: title,
+        content: `${content} với mã giảm giá ${voucher_id}`,
+        img: "https://firebasestorage.googleapis.com/v0/b/datn-789e4.appspot.com/o/voucher%2F246797237_113729601098160_3073863297711986973_n.jpg?alt=media&token=42b7b8f1-45ba-444f-b7f8-09af65e75db5",
+        create_time: create_time,
+    });
+    let mapNotiCus = new MapNotiCus.mapNotificationModel({
+        notification_id: notification._id,
+        customer_id: customer_id,
+        create_time: create_time,
+    });
+    await notification.save();
+    await mapNotiCus.save();
+    sendMessage(registrationToken, title, `${content} với mã giảm giá ${voucher_id}`);
+}
 module.exports = router;

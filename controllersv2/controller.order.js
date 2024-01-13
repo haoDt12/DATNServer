@@ -11,6 +11,15 @@ const OrderModel = require("../modelsv2/model.order");
 const DetailOrder = require("../modelsv2/model.detailorder");
 const ProductModel = require("../modelsv2/model.product");
 const ProductCartModel = require("../modelsv2/model.ProductCart");
+const admin = require('firebase-admin');
+const serviceAccount = require('../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json');
+const NotificationModel = require("../modelsv2/model.notification");
+const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
+if (admin.apps.length === 0) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
 
 exports.createOrder = async (req, res) => {
     await createOrderPaymentMethod(req, res, "Thanh toán khi nhận hàng");
@@ -119,6 +128,9 @@ exports.getOrderByStatus = async (req, res) => {
 }
 
 exports.cancelOrder = async (req, res) => {
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let orderId = req.body.orderId;
     if (orderId == null) {
         return res.send({message: "order id is required", code: 0})
@@ -142,6 +154,9 @@ exports.cancelOrder = async (req, res) => {
         }));
         order.status = "Cancel";
         await order.save();
+        let product = await ProductModel.productModel.findById(detailOrder[0].product_id);
+        let cus = await CustomerModel.customerModel.findById(order.customer_id);
+        await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time}  mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
         return res.send({message: "cancel order success", code: 1})
 
     } catch (e) {
@@ -151,23 +166,23 @@ exports.cancelOrder = async (req, res) => {
 }
 
 exports.getStatic = async (req, res) => {
-    const { startDate, endDate } = req.body;
+    const {startDate, endDate} = req.body;
 
     if (!startDate) {
-        return res.send({ message: "start date is required", code: 1 });
+        return res.send({message: "start date is required", code: 1});
     }
     if (!endDate) {
-        return res.send({ message: "end date is required", code: 1 });
+        return res.send({message: "end date is required", code: 1});
     }
     try {
         let dataOrder = [];
         let dataGetFromDateToDate = [];
         let data = [];
         let date = [];
-        let order = await OrderModel.oderModel.find({ status: "PayComplete" });
+        let order = await OrderModel.oderModel.find({status: "PayComplete"});
         order.map(item => {
             const formattedDate = moment(item.create_time, "YYYY-MM-DD-HH:mm:ss").format("YYYY-MM-DD");
-            dataOrder.push({ date: formattedDate, total: item.total_amount })
+            dataOrder.push({date: formattedDate, total: item.total_amount})
         })
         dataGetFromDateToDate = calculateTotal(dataOrder, startDate, endDate);
         dataGetFromDateToDate.map(item => {
@@ -183,7 +198,7 @@ exports.getStatic = async (req, res) => {
         })
     } catch (e) {
         console.log(e.message);
-        return res.send({ message: e.message.toString(), code: 0 });
+        return res.send({message: e.message.toString(), code: 0});
     }
 };
 
@@ -191,7 +206,9 @@ exports.updateStatusOrder = async (req, res) => {
     let orderId = req.body.orderId;
     let employeeId = req.body.employeeId;
     let status = req.body.status;
-
+    let date = new Date();
+    let specificTimeZone = 'Asia/Ha_Noi';
+    let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     if (orderId == null) {
         return res.send({message: "order id is required", code: 0})
     }
@@ -201,7 +218,27 @@ exports.updateStatusOrder = async (req, res) => {
         order.employee_id = employeeId;
         order.status = status;
         await order.save();
-        return res.send({ message: "edit order success", code: 1 });
+        let detailOrder = await DetailOrder.detailOrderModel.find({order_id: orderId});
+        let product = await ProductModel.productModel.findById(detailOrder[0].product_id);
+        let cus = await CustomerModel.customerModel.findById(order.customer_id);
+        switch (status) {
+            case "PayComplete":
+                await createNotifi("Thanh toán đơn hàng", `Bạn đã nhận một đơn hàng vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "Cancel":
+                await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "WaitConfirm":
+                await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "WaitingGet":
+                await createNotifi("Đơn hàng đang được chuẩn bị", `Đơn hàng của bạn đang được nhân viên chuẩn bị vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+            case "InTransit":
+                await createNotifi("Đơn hàng đang được vận chuyển", `Đơn hàng đang được đơn vị vận chuyển giao đến bạn vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+                break;
+        }
+        return res.send({message: "edit order success", code: 1});
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});
@@ -363,7 +400,80 @@ const createOrderPaymentMethod = async (req, res, paymentMethod) => {
                 }
             }
         }))
+        let product = await ProductModel.productModel.findById(list_order[0].product_id);
+        await createNotifi("Đặt đơn hàng", `Bạn đã đặt một đơn hàng vào lúc ${create_time} phương thức thanh toán ${order._id} với mã đơn hàng${paymentMethod}`, product.img_cover, create_time, order.customer_id, cus.fcm);
         return res.send({message: "Create order success", code: 1});
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+}
+const sendMessage = (registrationToken, title, body) => {
+    let message = {
+        data: {
+            title: title,
+            body: body,
+        },
+        token: registrationToken,
+    };
+
+    admin.messaging().send(message)
+        .then((response) => {
+            console.log('Successfully sent message:', response);
+        })
+        .catch((error) => {
+            console.error('Error sending message:', error);
+        });
+}
+const createNotifi = async (title, content, img, create_time, customer_id, registrationToken) => {
+    let notification = new NotificationModel.notificationModel({
+        title: title,
+        content: content,
+        img: img,
+        create_time: create_time,
+    });
+    let mapNotiCus = new MapNotiCus.mapNotificationModel({
+        notification_id: notification._id,
+        customer_id: customer_id,
+        create_time: create_time,
+    });
+    await notification.save();
+    await mapNotiCus.save();
+    sendMessage(registrationToken, title, content);
+}
+exports.getOrderByOrderId = async (req, res) => {
+    let orderId = req.body.orderId;
+    if (orderId == null) {
+        return res.send({message: "orderId is required", code: 0})
+    }
+    try {
+        let listDetailOrder = [];
+        let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
+        let cus = await CustomerModel.customerModel.findById(data.cus._id);
+        let order = await OrderModel.oderModel.find({
+            customer_id: cus._id,
+            _id: orderId
+        })
+            .populate("map_voucher_cus_id")
+            .populate("customer_id")
+            .populate("employee_id")
+            .populate("delivery_address_id")
+        await Promise.all(order.map(async item => {
+            let listProduct = [];
+            let detailOrder = await DetailOrder.detailOrderModel.find({
+                order_id: item._id,
+            })
+                .populate("order_id")
+                .populate("product_id")
+            await Promise.all(detailOrder.map(async item => {
+                let product = await ProductModel.productModel.findById(item.product_id);
+                product.quantity = item.quantity;
+                listProduct.push(product);
+            }))
+            listDetailOrder.push({order: item, listProduct: listProduct});
+        }))
+        listDetailOrder.sort((b, a) => moment(a.order.create_time, "YYYY-MM-DD-HH:mm:ss") - moment(b.order.create_time, "YYYY-MM-DD-HH:mm:ss"));
+        return res.send({message: "get order success", listDetailOrder: listDetailOrder, code: 1})
     } catch (e) {
         console.log(e.message);
         return res.send({message: e.message.toString(), code: 0});

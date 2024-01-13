@@ -1,12 +1,14 @@
 const NotificationPrivate = require("../models/model.notification.private");
 const NotificationPublic = require("../models/model.notification.pulic");
 const UserModel = require("../models/model.user");
-const admin = require("firebase-admin");
-const serviceAccount = require("../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-b859cb4d1d.json");
+const admin = require('firebase-admin');
+const serviceAccount = require('../serviceaccountkey/datn-789e4-firebase-adminsdk-nbmof-aa2593c4f9.json');
+if (admin.apps.length === 0) {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+    });
+}
 const moment = require("moment-timezone");
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount)
-// });
 exports.addNotificationPublic = async (req, res) => {
     let date = new Date();
     let specificTimeZone = 'Asia/Ha_Noi';
@@ -184,8 +186,6 @@ exports.getPublicNotification = async (req, res) => {
     }
 }
 const sendMessage = (registrationToken, title, body) => {
-    console.log(title);
-    console.log(body);
     let message = {
         data: {
             title: title,
