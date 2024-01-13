@@ -99,7 +99,7 @@ router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBac
 // banner
 router.post(
     "/getListBanner",
-    Middleware.authorizationToken,
+    // Middleware.authorizationToken,
     BannerCtrl.getLisBanner
 );
 //notification
