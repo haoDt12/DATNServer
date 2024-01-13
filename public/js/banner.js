@@ -23,88 +23,19 @@ document.addEventListener('DOMContentLoaded', function () {
     CreateBanner.addEventListener("click", function (e){
         CreBannerModal.show();
     });
-    ConfirmCreBanner.addEventListener("click", async function () {
-        const img = document.getElementById("img");
-        let Id_banner;
-        console.log("img:" + img.files[0])
-        const formData = new FormData();
-        formData.append('file', img.files[0])
-        await axios.post("/apiv2/addBanner", formData, {
-            headers: {
-                'Authorization': token
-            }
-        })
-        .then(function (response) {
-            console.log(response);
-            location.reload();
-        }).catch(function (error) {
-            console.log(error);
-        });
-        CreBannerModal.hide();
-    });
-    DeleteBanner.forEach(function (button){
-        button.addEventListener("click", function (){
+
+    DeleteBanner.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const bannerId = this.getAttribute('data-id');
+            document.getElementById('idBannerDelete').value = bannerId;
             DelBannerModal.show();
-            const Id_banner = this.getAttribute("data-id");
-            console.log("img:"+ Id_banner)
-            ConfirmDelBanner.addEventListener("click", async function () {
-                await axios.post("/api/deleteBanner", {bannerId: Id_banner},{
-                    headers: {
-                        'Authorization': token
-                    }
-                })
-                .then(function (response) {
-                    console.log(response);
-                    location.reload();
-                }).catch(function (error) {
-                    console.log(error);
-                })
-            })
         })
-    })
-    UpdateBanner.forEach(function (button){
-        button.addEventListener("click", function (){
+    });
+    UpdateBanner.forEach(function (button) {
+        button.addEventListener('click', function (){
+            const bannerId = this.getAttribute('data-id');
+            document.getElementById('idUpdate').value = bannerId;
             UpBannerModal.show();
-            const Id_banner = this.getAttribute("data-id");
-            const id = document.getElementById("idBanner");
-            const imgUp = document.getElementById("imgUp");
-            console.log(Id_banner);
-            const dataBanner = {
-                bannerId: Id_banner
-            };
-            axios.post("/api/getBannerById", dataBanner,{
-                headers: {
-                    'Authorization': token
-                }
-            })
-            .then(function (response) {
-                let jsonData = response.data.banner
-                id.value = jsonData._id
-                imgUp.src = jsonData.img
-            }).catch(function (error) {
-                console.log(error);
-            })
         })
-    })
-    ConfirmUpdateBanner.addEventListener("click",async function (){
-        const idUp = document.getElementById("idBanner");
-        const imgUp = document.getElementById("imgUp");
-        let Id_banner;
-        console.log("id:" + idUp.value)
-        console.log("img:" + imgUp.files[0])
-        const formDataUp = new FormData();
-        formDataUp.append('bannerId', idUp.value)
-        formDataUp.append('file', imgUp.files[0])
-        await axios.post("/api/editBanner", formDataUp, {
-            headers: {
-                'Authorization': token
-            }
-        })
-            .then(function (response) {
-                console.log(response);
-                location.reload();
-            }).catch(function (error) {
-                console.log(error);
-            });
-    })
+    });
 });
