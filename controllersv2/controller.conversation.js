@@ -4,7 +4,8 @@ const CustomerModel = require("../modelsv2/model.customer");
 const AdminModel = require("../modelsv2/model.admin");
 const moment = require("moment-timezone");
 const mongoose = require('mongoose');
-
+const crypto = require("crypto");
+require("dotenv").config();
 
 exports.createConversation = async (req, res) => {
     // console.log(req.body);
@@ -191,11 +192,14 @@ async function getDataConversation(idUser) {
         // Tìm thông tin last message trong dataLastMessage
         let lastMessage = dataLastMessage.find(message => message.conversation_id.toString() === conversation._id.toString());
         // ! Tạo đối tượng mới với thông tin kết hợp từ ba mảng
-        // let messaage = await decryptedMessage(lastMessage ? lastMessage.message : '');
+        let message = await decryptedMessage(lastMessage ? lastMessage.message : '');
+        let newMsg = lastMessage ? lastMessage.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message : "";
+        let newMsg2 = lastMessage ? lastMessage.message_type == "image" ? "Đã gửi 1 ảnh" : newMsg : "";
+        let newMsg3 = lastMessage ? lastMessage.message_type == "video" ? "Đã gửi 1 video" : newMsg2 : "";
         let combinedData = {
             conversation_id: conversation._id,
             sender_id: lastMessage ? lastMessage.sender_id : "",
-            message: lastMessage ? lastMessage.message : '',
+            message: lastMessage ? message.sender_id == idUser ? "Bạn: " + newMsg3 : newMsg3 : "",
             message_type: lastMessage ? lastMessage.message_type : '',
             idMsg: lastMessage ? lastMessage._id : "",
             status: lastMessage ? lastMessage.status : 'unseen',

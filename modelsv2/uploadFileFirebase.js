@@ -19,18 +19,18 @@ async function createFoldersIfNotExist(...folders) {
         }
     }
 }
-exports.uploadFileCategory = async (req, id, fileType, folder, fileItem) => {
+exports.uploadFileToFBStorage = async (id, fileType, folder, fileItem) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!fileItem) {
                 return reject("0");
             }
 
-            const productFolder = `categories/${id}`;
+            const productFolder = `${folder}/${id}`;
             const typeFolder = fileType.length > 0 ? `${productFolder}/${fileType}` : `${productFolder}`;
 
             // Tạo các thư mục nếu chưa tồn tại
-            await createFoldersIfNotExist('categories', productFolder, typeFolder);
+            await createFoldersIfNotExist(`${folder}`, productFolder, typeFolder);
 
             // Lưu trữ file vào đúng thư mục
             const destinationPath = `${typeFolder}/${fileItem.originalname}`; // Sử dụng tên gốc của file

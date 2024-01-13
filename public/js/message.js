@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const areaMessage = document.getElementById('areaMessage');
+    if (areaMessage) {
+        areaMessage.scrollTop = areaMessage.scrollHeight;
+    }
 
     const socket = io({
         // Socket.IO options
@@ -25,7 +29,15 @@ document.addEventListener("DOMContentLoaded", function () {
             let conversationID = item.getAttribute("data-id");
             if (conversationID == conversation_id) {
                 if (idUserLoged == sender_id) {
-                    let newMsg = "Bạn: " + message;
+                    // let newMsg = "Bạn: " + message;
+                    let newMsg = "";
+                    if (message_type == "text") {
+                        newMsg = "Bạn: " + message;
+                    } else if (message_type == "image") {
+                        newMsg = "Bạn đã gửi 1 ảnh";
+                    } else if (message_type == "video") {
+                        newMsg = "Bạn đã gửi 1 video";
+                    }
                     item.textContent = newMsg;
                 }
                 else {
@@ -54,7 +66,38 @@ document.addEventListener("DOMContentLoaded", function () {
             areaMessage.scrollTop = areaMessage.scrollHeight
         }
 
-    })
+    });
+
+    const btnChooseFile = document.getElementById('open-file');
+    const btnChooseImage = document.getElementById('open-image');
+    const imageInput = document.getElementById("input-image");
+    const videoInput = document.getElementById("input-video");
+    let numberImageUpload = 0;
+    let numberVideoUpload = 0;
+
+    if (btnChooseImage && imageInput) {
+        btnChooseImage.addEventListener('click', (e) => {
+            imageInput.click();
+        })
+    }
+    if (btnChooseFile) {
+        btnChooseFile.addEventListener('click', (e) => {
+            videoInput.click();
+        })
+    }
+    if (imageInput) {
+        imageInput.addEventListener('change', (e) => {
+            const selectedFiles = e.target.files;
+            let length = selectedFiles.length;
+            numberImageUpload = length;
+        });
+    }
+    if (videoInput) {
+        videoInput.addEventListener('change', (e) => {
+            const selectedVideo = e.target.files;
+            numberVideoUpload = selectedVideo.length;
+        })
+    }
 
     const conversationFocus = document.getElementById('conversationFocus');
     const inputMsg = document.getElementById('textMessage');
@@ -81,14 +124,18 @@ document.addEventListener("DOMContentLoaded", function () {
         let conversationID = conversationFocus.getAttribute('data-id');
         if (conversationID.length <= 0) return
         let contentMsg = inputMsg.value.trim();
-        if (contentMsg.length > 0) {
-            // Send chat text
-            // doSendChat(contentMsg);
-            doSendChat2(conversationID, contentMsg, "text", null, null);
+        if (numberImageUpload == 0 && numberVideoUpload == 0 && contentMsg.length == 0) {
+            return
+        } else if (numberImageUpload > 0) {
+            doSendChat(conversationID, contentMsg, "image", imageInput, null);
+        } else if (numberVideoUpload > 0) {
+            doSendChat(conversationID, contentMsg, "video", null, videoInput);
+        } else {
+            doSendChat(conversationID, contentMsg, "text", null, null);
         }
     });
 
-    function doSendChat2(conversationID, message, messageType, images, video) {
+    function doSendChat(conversationID, message, messageType, images, video) {
         let isFakeChat = document.getElementById("fake-chat").checked;
         let idUser = conversationFocus.getAttribute('data-id-user');
 
@@ -139,16 +186,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         socket.emit('on-chat', {
                             message: data.dataMessage
                         })
-                        inputMsg.value = "";
-                        document.getElementById('area-upload').innerHTML = '';
-                        inputMsg.focus();
+                        resetInput();
                     }
                     else if (data.code == 0) {
                         if (data.message == "wrong token") {
                             window.location.href = "/stech.manager/type_login/";
                         }
-                    }
-                    else {
+                    } else {
                         console.log(`message from server: ${data}`);
                     }
                 })
@@ -158,10 +202,19 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.log(error);
         }
-
     }
 
-    const displayMessageRight = (id, message, type, time, images, video,) => {
+    const resetInput = () => {
+        inputMsg.value = "";
+        imageInput.value = "";
+        videoInput.value = "";
+        numberImageUpload = 0;
+        numberVideoUpload = 0;
+        document.getElementById('area-upload').innerHTML = '';
+        inputMsg.focus();
+    }
+
+    const displayMessageRight = (id, message, messageType, time, images, video,) => {
         var rightChatWrapper = document.createElement('div');
         rightChatWrapper.classList.add('d-flex', 'flex-row-reverse', 'mb-2');
 
@@ -192,9 +245,34 @@ document.addEventListener("DOMContentLoaded", function () {
         messageContent.classList.add('mb-0', 'mr-3', 'pr-4', 'pb-2');
 
         // text
-        if (message.length > 0) {
+        if (messageType == "text") {
             messageContent.innerHTML = '<div class="d-flex flex-row">' +
                 `<div class="pr-2">${message}</div></div>`;
+        } else if (messageType == "image") {
+            // if (images.length == 1) {
+            messageContent.innerHTML = '<div class="d-flex flex-row"><div>' +
+                `<img class="pr-6 mb-2" src=${message} width="150" height="100" alt="img" style='border-radius: 8px;'>` +
+                '</div></div>';
+            // }
+            // more image
+            // else if (images.length > 1) {
+            //     let startDiv = `<div class="d-flex flex-row"><div>`;
+            //     let imageDiv = '';
+            //     let enndDiv = `</div></div>`;
+            //     images.forEach(image => {
+            //         imageDiv += `<img class="pr-1 mb-2" src=${image} width="80" height="70" alt="img" style='border-radius: 8px;'>`;
+            //     });
+            //     let viewImage = startDiv + imageDiv + enndDiv;
+            //     messageContent.innerHTML = viewImage;
+            // }
+        }
+        else if (messageType == "video") {
+            let startDiv = `<div class="d-flex flex-row"><div>`;
+            let enndDiv = `</div></div>`;
+            let videoDiv = `<video class="pr-6 mb-2" src=${message} width="200" type='video/mp4' controls='' style='border-radius: 8px;'>`;
+
+            let viewImage = startDiv + videoDiv + enndDiv;
+            messageContent.innerHTML = viewImage;
         }
 
         rightChatMessage.appendChild(messageContent);
@@ -232,17 +310,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    const displayMessageLeft = (id, message, type, time, images, video) => {
+    const displayMessageLeft = (id, message, messageType, time, images, video) => {
         var leftChatMessage = document.createElement('div');
         leftChatMessage.classList.add('left-chat-message', 'fs-13', 'mb-2', 'pb-2');
 
         // Tạo nội dung của tin nhắn bên trái
         var messageContent = document.createElement('p');
-        if (message.length > 0) {
+        if (messageType == "text") {
             messageContent.classList.add('mb-0', 'mr-3', 'pr-4');
             messageContent.textContent = `${message}`;
         }
-        else if (images.length == 1) {
+        else if (messageType == "image") {
             messageContent = document.createElement('img');
             messageContent.classList.add('mb-0', 'mr-1', 'mt-1', 'pr-4');
             messageContent.src = images;
@@ -250,22 +328,22 @@ document.addEventListener("DOMContentLoaded", function () {
             messageContent.style.height = '100px';
             messageContent.style.borderRadius = '8px';
         }
-        else if (images.length > 1) {
-            const imagesContainer = document.createElement('div');
-            messageContent = document.createElement('img');
-            images.forEach(image => {
-                const imageElement = document.createElement('img');
-                imageElement.classList.add('mb-0', 'mr-1', 'mt-1', 'pr-1');
-                imageElement.src = image;
-                imageElement.style.width = '80px';
-                imageElement.style.height = '70px';
-                imageElement.style.borderRadius = '8px';
+        // else if (images.length > 1) {
+        //     const imagesContainer = document.createElement('div');
+        //     messageContent = document.createElement('img');
+        //     images.forEach(image => {
+        //         const imageElement = document.createElement('img');
+        //         imageElement.classList.add('mb-0', 'mr-1', 'mt-1', 'pr-1');
+        //         imageElement.src = image;
+        //         imageElement.style.width = '80px';
+        //         imageElement.style.height = '70px';
+        //         imageElement.style.borderRadius = '8px';
 
-                imagesContainer.appendChild(imageElement);
-            });
+        //         imagesContainer.appendChild(imageElement);
+        //     });
 
-            messageContent = imagesContainer;
-        }
+        //     messageContent = imagesContainer;
+        // }
 
         leftChatMessage.appendChild(messageContent);
 
@@ -345,16 +423,113 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
-
-    // const areaMessage = document.getElementById('areaMessage');
-    // if (areaMessage) {
-    //     areaMessage.scrollTop = areaMessage.scrollHeight;
-    //     inputMsg.value = "";
-    //     document.getElementById('area-upload').innerHTML = '';
-    //     inputMsg.focus();
-    // }
-
 });
+
+function handleImageUpload(event) {
+    const areaImageUpload = document.getElementById('area-upload');
+    const imgUpload = document.getElementById('img-upload');
+
+    const maxFilesToShow = 1;
+    const selectedFiles = event.target.files;
+    let length = selectedFiles.length;
+    if (length > maxFilesToShow) {
+        alert(`Chọn tối đa ${maxFilesToShow} ảnh`);
+        return
+    }
+
+    areaImageUpload.innerHTML = '';
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+        if (i >= maxFilesToShow) {
+            break;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const imgContainer = document.createElement('div');
+            imgContainer.style.position = 'relative';
+
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = '150px';
+            img.style.height = '150px';
+            // img.style.marginRight = '2px';
+
+            const removeIcon = document.createElement('div');
+            removeIcon.style.position = 'absolute';
+            removeIcon.style.top = '2px';
+            removeIcon.style.left = '4px';
+            removeIcon.style.fontSize = '18px';
+
+            const removeButton = document.createElement('i');
+            removeButton.classList.add('bx', 'bxs-x-circle', 'bx-tada-hover');
+            removeButton.id = 'remove-upload';
+            removeButton.style.cursor = 'pointer';
+
+            removeIcon.appendChild(removeButton);
+            imgContainer.appendChild(removeIcon);
+            imgContainer.appendChild(img);
+            areaImageUpload.appendChild(imgContainer);
+
+            removeButton.addEventListener('click', function () {
+                imgContainer.remove();
+            });
+        };
+        reader.readAsDataURL(selectedFiles[i]);
+        // areaImageUpload.scrollIntoView();
+    }
+
+    if (selectedFiles.length > 0) {
+        areaImageUpload.style.display = 'block';
+    } else {
+        areaImageUpload.style.display = 'none';
+    }
+};
+
+function handleVideoUpload(event) {
+    const areaVideoUpload = document.getElementById('area-upload');
+    const selectedVideo = event.target.files[0];
+    areaVideoUpload.innerHTML = '';
+    if (selectedVideo) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const videoContainer = document.createElement('div');
+
+            const video = document.createElement('video');
+            video.src = e.target.result;
+            video.controls = true;
+            video.autoplay = true;
+            video.style.width = '320px';
+            // video.style.height = '240px';
+
+            const removeIcon = document.createElement('div');
+            removeIcon.style.marginLeft = '10px';
+
+            const removeButton = document.createElement('i');
+            removeButton.classList.add('bx', 'bxs-x-circle', 'bx-tada-hover');
+            removeButton.id = 'remove-upload';
+            removeButton.style.cursor = 'pointer';
+
+            removeIcon.appendChild(removeButton);
+            videoContainer.appendChild(removeIcon);
+            videoContainer.appendChild(video);
+            areaVideoUpload.appendChild(videoContainer);
+
+            removeButton.addEventListener('click', function () {
+                videoContainer.remove();
+                areaVideoUpload.innerHTML = '';
+            });
+        };
+        reader.readAsDataURL(selectedVideo);
+        // areaVideoUpload.scrollIntoView();
+    }
+    if (selectedVideo) {
+        areaVideoUpload.style.display = 'block';
+    } else {
+        areaVideoUpload.style.display = 'none';
+    }
+};
+
 
 
 
