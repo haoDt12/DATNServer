@@ -8,6 +8,7 @@ const ProductCartCtrl = require("../controllersv2/controller.ProductCart");
 const DeliveryAddressCtrl = require("../controllersv2/controller.deliveryaddress");
 const VoucherCtrl = require("../controllersv2/controller.voucher");
 const OrderCtrl = require("../controllersv2/controller.order");
+const BannerCtrl = require("../controllersv2/controller.banner");
 const FeedBackCtrl = require("../controllersv2/controller.feedback");
 const AdminCtr = require("../controllersv2/controller.admin");
 const EmployeeCtrl = require("../controllersv2/controller.employee");
@@ -15,6 +16,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const VnPayCtrl = require("../controllers/api.payvnpay");
+const ApiBanner = require("../controllers/api.banner");
 const NotificationCtrl = require("../controllersv2/controller.notification");
 const ConversationCtrl = require("../controllersv2/controller.conversation");
 const MessageCtrl = require("../controllersv2/controller.message");
@@ -94,6 +96,12 @@ router.post("/addFeedback", Middleware.authorizationToken, FeedBackCtrl.addFeedb
 router.post("/getFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getFeedBackByProductId);
 router.post("/getAllFeedBackByProductId", Middleware.authorizationToken, FeedBackCtrl.getAllFeedBackByProductId);
 
+// banner
+router.post(
+    "/getListBanner",
+    Middleware.authorizationToken,
+    BannerCtrl.getLisBanner
+);
 //notification
 router.post("/getNotificationByUser", Middleware.authorizationToken, NotificationCtrl.getNotificationByUser);
 

@@ -159,14 +159,15 @@ block content
                             h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
                             button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form(action="/" method="post")
+                            form(action="/stech.manager/addBanner" method="post" enctype='multipart/form-data')
                                 .mb-3
                                     .form-group
                                         label(for='img') &#x1EA2;nh n&#x1EC1;n
-                                        input#img(type='file', accept='image/*')
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button#ConfirmCreBanner.btn.btn-outline-dark-light(type='button') Lưu ảnh
+                                        input#img(name='img' type='file', accept='image/*')
+
+                                .modal-footer
+                                    button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                                    button#ConfirmCreBanner.btn.btn-outline-dark-light(type='submit') Lưu ảnh
             #UpBannerModal.modal.fade
                 .modal-dialog
                     .modal-content
@@ -174,27 +175,29 @@ block content
                             h5.modal-title C&#x1EAD;p nh&#x1EAD;t s&#x1EA3;n ph&#x1EA9;m
                             button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
                         .modal-body
-                            form(action="/" method="post")
-                                .mb-3
-                                    .form-group
-                                        label(for='idBanner') id
-                                        input#idBanner(type="text", name="idBanner", class="form-control", placeholder="", aria-describedby="helpId" readonly)
+                            form(action="/stech.manager/updateBanner" method="post" enctype='multipart/form-data')
+                                .mb-3.d-none
+                                    label.form-label()
+                                    input#idUpdate.form-control(name='bannerId', type='text', aria-describedby='textHelp')
                                 .mb-3
                                     .form-group
                                         label(for='img') &#x1EA2;nh n&#x1EC1;n
-                                        input#imgUp(type='file', accept='image/*')
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Huỷ
-                            button#ConfirmUpBanner.btn.btn-primary(type='button') Cập nhật
-            #DelBannerModal.modal
+                                        input(name='img' type='file', accept='image/*')
+                                .modal-footer
+                                    button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
+                                    button.btn.btn-outline-dark-light(type='submit') Sửa ảnh
+            #DelBannerModal.modal(tabindex='-1')
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Xác nhận xóa !
-                            button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                            h5.modal-title Warning!
                         .modal-body
-                            p Bạn có chắc chắn muốn xoá sản phẩm này.
-                        .modal-footer
-                            button.btn.btn-dark(type='button', data-bs-dismiss='modal') Hủy
-                            button#ConfirmDelBanner.btn.btn-danger(type='button') Xác nhận
+                            p Bạn có chắc chắn muốn xóa?
+                            .modal-body
+                                form(action="/stech.manager/deleteBanner" method="post")
+                                    .mb-3.d-none
+                                        label.form-label
+                                        input#idBannerDelete.form-control(name='bannerId', type='text', aria-describedby='textHelp')
+                                    button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                    button.ms-3.btn.btn-danger(type='submit') Đồng ý
     script(src="/js/banner.js")
