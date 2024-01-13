@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
     socket.on('on-chat', data => {
         // console.log(data);
         // return
-        const { message } = data.message;
+        const { message, message_type } = data.message;
         // decrypt message
         let messageDecrypted = message;
         if (message.length <= 0) {
@@ -111,7 +111,7 @@ io.on("connection", (socket) => {
             let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
             decrypted += decipher.final('utf8');
 
-            messageDecrypted = decrypted
+            messageDecrypted = decrypted;
         }
 
         let newData = { ...data.message, message: messageDecrypted };

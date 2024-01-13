@@ -72,7 +72,12 @@ block content
                             if message.sender_id + "" !== userLoged._id + ""
                                 .left-chat-message.fs-13.mb-2.pb-2
                                     .d-flex.flex-row.mb-2
-                                        p.mb-0.mr-3.pr-4 #{message.message}
+                                        if message.message_type.toString() == "text"
+                                            p.mb-0.mr-3.pr-4 #{message.message}
+                                        else if message.message_type.toString() == "image"
+                                            img.mb-0.mr-1.mt-1.pr-4(src=`${message.message}` width='150' height='100' style='border-radius: 8px;')
+                                        else if message.message_type.toString() == "video"
+                                            video.mb-0.mr-3.pr-6(src=`${message.message}`  width='200' type='video/mp4'  controls='' style='border-radius: 8px;')
                                         |
                                         .message-options.mt-3
                                             .message-time #{message.created_at.slice(message.created_at.length-8, message.created_at.length-3)}
@@ -95,7 +100,12 @@ block content
                                     .right-chat-message.fs-13
                                         .mb-0.mr-3.pr-4.pb-2
                                             .d-flex.flex-row
-                                                .pr-2 #{message.message}
+                                                if message.message_type.toString() == "text"
+                                                    .pr-2 #{message.message}
+                                                else if message.message_type.toString() == "image"
+                                                    img.pr-6.mb-2(src=`${message.message}` width='150' height='100' style='border-radius: 8px;')
+                                                else if message.message_type.toString() == "video"
+                                                    video.pr-6.mb-2(src=`${message.message}`  width='200' type='video/mp4'  controls='' style='border-radius: 8px;')
                                                 |
                                         |
                                         .message-options.dark.mt-3

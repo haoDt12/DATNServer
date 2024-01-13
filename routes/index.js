@@ -17,7 +17,7 @@ const NotificationModel = require("./../modelsv2/model.notification");
 const MapVoucherCus = require("./../modelsv2/model.map_voucher_cust");
 const AdminModel = require("./../modelsv2/model.admin");
 const DetailOrderModel = require("./../modelsv2/model.detailorder");
-const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase")
+const UploadFileFirebase = require("./../modelsv2/uploadFileFirebase");
 const diliveryaddress = require("./../modelsv2/model.deliveryaddress");
 const MapNotiCus = require("../modelsv2/model.map_notifi_cust");
 const multer = require('multer');
@@ -398,14 +398,12 @@ router.post(
                 return res.send({ message: "image category require", code: 0 });
             }
 
-            // '2023-12-05-21:42:38'
             let category = new CategoryModel.categoryModel({
                 name,
                 create_time,
             });
 
-            let img = await UploadFileFirebase.uploadFileCategory(
-                req,
+            let img = await UploadFileFirebase.uploadFileToFBStorage(
                 category._id.toString(),
                 "",
                 "categories",
@@ -1098,10 +1096,14 @@ async function getDataConversation(idUserLoged) {
         let lastMessage = dataLastMessage.find(message => message.conversation_id.toString() === conversation._id.toString());
         // Tạo đối tượng mới với thông tin kết hợp từ ba mảng
         let message = await decryptedMessage(lastMessage ? lastMessage.message : '');
+        let newMsg = lastMessage ? lastMessage.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message : "";
+        let newMsg2 = lastMessage ? lastMessage.message_type == "image" ? "Đã gửi 1 ảnh" : newMsg : "";
+        let newMsg3 = lastMessage ? lastMessage.message_type == "video" ? "Đã gửi 1 video" : newMsg2 : "";
         let combinedData = {
             conversation_id: conversation._id,
             sender_id: lastMessage ? lastMessage.sender_id : "",
-            message: lastMessage ? lastMessage.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message : "",
+            // message: lastMessage ? lastMessage.deleted_at.length > 0 ? "Đã gỡ 1 tin nhắn" : message : "",
+            message: lastMessage ? message.sender_id == idUserLoged ? "Bạn: " + newMsg3 : newMsg3 : "",
             message_type: lastMessage ? lastMessage.message_type : '',
             idMsg: lastMessage ? lastMessage._id : "",
             status: lastMessage ? lastMessage.status : 'unseen',
@@ -1132,10 +1134,7 @@ async function getDataConversation(idUserLoged) {
 }
 
 router.get("/stech.manager/chat/c/", async function (req, res, next) {
-    const ADMIN_ROLE = "LoginWithAdmin";
-    const EMPLOYEE_ROLE = "LoginWithEmployee";
-
-
+    
     let dataChat = req.cookies.dataChat;
     let myData = Buffer.from(dataChat, 'base64').toString('utf8');
     let mData = JSON.parse(myData);
@@ -1162,14 +1161,9 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
         if (idMsg != null) {
             try {
                 let message = await MessageModel.messageModel.findByIdAndUpdate(idMsg, { status: "seen" });
-                if (message.nModified > 0) {
-                    console.log("321");
-                } else {
-                    console.log("123");
-                }
             } catch (e) {
                 console.log(e);
-                return res.send({ message: "update status message fail", code: 0 });
+                // return res.send({ message: "update status message fail", code: 0 });
             }
         }
 
@@ -1211,7 +1205,7 @@ router.get("/stech.manager/chat/c/", async function (req, res, next) {
                 deleted_at: msg.deleted_at
             }
             newDataMessage.push(itemMsg);
-        })
+        });
 
         return res.render("chat", {
             conversations: dataConversation.length > 0 ? dataConversation : [],
@@ -1241,7 +1235,7 @@ router.get("/stech.manager/chat", async function (req, res, next) {
 
         let dataConversation = await getDataConversation(idUserLoged);
         // let dataConversation = await ConversationModel.conversationModel.find({ creator_id: idUserLoged });
-        console.log(dataConversation);
+        // console.log(dataConversation);
         return res.render("chat", {
             conversations: dataConversation.length > 0 ? dataConversation : [],
             userLoged: dataUserLoged,
