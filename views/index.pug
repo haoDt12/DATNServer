@@ -170,26 +170,23 @@ block content
                                                         i.ti.ti-currency-dollar.fs-6
                                     #earning
                 .row
-                    .col-lg-4.d-flex.align-items-stretch
-                        .card.w-100
-                            .card-body.p-4
-                                .row
-                                    .col-lg-6
-                                        .mb-3
-                                            label.form-label From
-                                            input#from_input.form-control(type='date' placeholder='Enter start hear...')
-                                    .col-lg-6
-                                        .mb-3
-                                            label.form-label To
-                                            input#to_input.form-control(type='date' placeholder='Enter end hear...')
-                                    a#save.btn.btn-outline-success() Tính
-                .row
                     .col-lg-12.d-flex.align-items-strech
                         .card.w-100
                             .card-body
                                 .d-sm-flex.d-block.align-items-center.justify-content-between.mb-9
                                     .mb-3.mb-sm-0
-                                        h5.card-title.fw-semibold Overview
+                                    .row
+                                        .col-lg-6
+                                            .mb-3
+                                                label.form-label From
+                                                input#from_input.form-control(type='date' placeholder='Enter start hear...' required='true')
+                                        .col-lg-6
+                                            .mb-3
+                                                label.form-label To
+                                                input#to_input.form-control(type='date' placeholder='Enter end hear...' required='true')
+                                        .col-lg-6
+                                            .mb-3
+                                                a#save.btn.btn-outline-success() Tính
                                 #chart_custom
                 .row
                     .col-lg-12.d-flex.align-items-strech
@@ -199,6 +196,12 @@ block content
                                     .mb-3.mb-sm-0
                                         h5.card-title.fw-semibold Top Sale
                                 .row
+                                    .col-lg-3
+                                        .mb-3
+                                            input#TopNumberSale.form-control(type='number' placeholder='Enter end hear...' min='1' required='true')
+                                    .col-lg-3
+                                        .mb-3
+                                            a#BtnComfirmSale.btn.btn-outline-indigo() Tìm
                                     .col-xl-12
                                         .card
                                             .card-body
@@ -222,6 +225,12 @@ block content
                                     .mb-3.mb-sm-0
                                         h5.card-title.fw-semibold Running Out
                                 .row
+                                    .col-lg-3
+                                        .mb-3
+                                            input#TopNumberRunOut.form-control(type='number' placeholder='Enter end hear...' min='1' required='true')
+                                    .col-lg-3
+                                        .mb-3
+                                            a#BtnComfirmRunOut.btn.btn-outline-indigo() Tìm
                                     .col-xl-12
                                         .card
                                             .card-body

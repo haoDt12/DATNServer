@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", function() {
   const from_input = document.getElementById("from_input");
   const select_year = document.getElementById("select_year");
   const logout = document.getElementById("logout");
+  const BtnComfirmSale = document.getElementById("BtnComfirmSale");
+  const TopNumberSale = document.getElementById("TopNumberSale");
+  const BtnComfirmRunOut = document.getElementById("BtnComfirmRunOut");
+  const TopNumberRunOut = document.getElementById("TopNumberRunOut");
   logout.addEventListener("click", function (){
     window.location.assign("/stech.manager/login");
     utils.DeleteAllCookies();
@@ -464,166 +468,208 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
   //Tạo bảng Sold out
-  GetRunOutProducts(10).then(data =>{
-    if (data.code === 1){
-      // Dữ liệu cho các hàng
-      const data_sold_out = data.data;
+  function SoldProducts(sold_number){
+    GetRunOutProducts(sold_number).then(data =>{
+      if (data.code === 1){
+        // Dữ liệu cho các hàng
+        const data_sold_out = data.data;
 
-  // Lấy thẻ <tbody> trong bảng
-      const tbodyElement = document.getElementById('TopSoldOutTable');
+        // Lấy thẻ <tbody> trong bảng
+        const tbodyElement = document.getElementById('TopSoldOutTable');
 
-  // Tạo hàng cho mỗi phần tử trong mảng dữ liệu
-      for (let i = 0; i < data_sold_out.length; i++) {
-        const row = data_sold_out[i];
+        // Tạo hàng cho mỗi phần tử trong mảng dữ liệu
+        for (let i = 0; i < data_sold_out.length; i++) {
+          const row = data_sold_out[i];
 
-        // Tạo thẻ <tr> mới
-        const trElement = document.createElement('tr');
+          // Tạo thẻ <tr> mới
+          const trElement = document.createElement('tr');
 
-        // Tạo thẻ <td> cho cột hình ảnh
-        const imgTdElement = document.createElement('td');
-        const imgElement = document.createElement('img');
-        imgElement.classList.add('thumb-sm', 'rounded-circle', 'mr-2');
-        imgElement.setAttribute('src', row.img_cover);
-        imgElement.setAttribute('alt', '');
-        imgTdElement.appendChild(imgElement);
+          // Tạo thẻ <td> cho cột hình ảnh
+          const imgTdElement = document.createElement('td');
+          const imgElement = document.createElement('img');
+          imgElement.classList.add('thumb-sm', 'rounded-circle', 'mr-2');
+          imgElement.setAttribute('src', row.img_cover);
+          imgElement.setAttribute('alt', '');
+          imgTdElement.appendChild(imgElement);
 
-        // Tạo thẻ <td> cho cột tên
-        const nameTdElement = document.createElement('td');
-        nameTdElement.textContent = row.name;
+          // Tạo thẻ <td> cho cột tên
+          const nameTdElement = document.createElement('td');
+          nameTdElement.textContent = row.name;
 
-        // Tạo thẻ <td> cho cột thông số
-        const specsTdElement = document.createElement('td');
-        if (row.ram === null){
-          row.ram = ""
-        }else{
-          row.ram = row.ram+" - "
+          // Tạo thẻ <td> cho cột thông số
+          const specsTdElement = document.createElement('td');
+          if (row.ram === null){
+            row.ram = ""
+          }else{
+            row.ram = row.ram+" - "
+          }
+          if (row.rom === null){
+            row.rom = ""
+          }else{
+            row.rom = row.rom+" - "
+          }
+          specsTdElement.textContent = row.ram+row.rom+row.color;
+
+          // Tạo thẻ <td> cho cột số lượng bán ra
+          const soldTdElement = document.createElement('td');
+          soldTdElement.textContent = row.sold;
+
+          // Tạo thẻ <td> cho cột số lượng
+          const quantityTdElement = document.createElement('td');
+          quantityTdElement.textContent = row.quantity;
+
+          // Tạo thẻ <td> cho cột giá
+          const priceTdElement = document.createElement('td');
+          priceTdElement.textContent = row.price;
+
+          // Tạo thẻ <td> cho cột trạng thái
+          const statusTdElement = document.createElement('td');
+          const statusSpanElement = document.createElement('span');
+          if (row.quantity > 50){
+            statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-primary');
+          }else {
+            statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-warning');
+          }
+          statusSpanElement.textContent = row.status;
+          statusTdElement.appendChild(statusSpanElement);
+
+          // Gắn các thẻ <td> vào thẻ <tr>
+          trElement.appendChild(imgTdElement);
+          trElement.appendChild(nameTdElement);
+          trElement.appendChild(specsTdElement);
+          trElement.appendChild(soldTdElement);
+          trElement.appendChild(quantityTdElement);
+          trElement.appendChild(priceTdElement);
+          trElement.appendChild(statusTdElement);
+
+          // Gắn thẻ <tr> vào thẻ <tbody>
+          tbodyElement.appendChild(trElement);
         }
-        if (row.rom === null){
-          row.rom = ""
-        }else{
-          row.rom = row.rom+" - "
-        }
-        specsTdElement.textContent = row.ram+row.rom+row.color;
-
-        // Tạo thẻ <td> cho cột số lượng bán ra
-        const soldTdElement = document.createElement('td');
-        soldTdElement.textContent = row.sold;
-
-        // Tạo thẻ <td> cho cột số lượng
-        const quantityTdElement = document.createElement('td');
-        quantityTdElement.textContent = row.quantity;
-
-        // Tạo thẻ <td> cho cột giá
-        const priceTdElement = document.createElement('td');
-        priceTdElement.textContent = row.price;
-
-        // Tạo thẻ <td> cho cột trạng thái
-        const statusTdElement = document.createElement('td');
-        const statusSpanElement = document.createElement('span');
-        if (row.quantity > 50){
-          statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-primary');
-        }else {
-          statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-warning');
-        }
-        statusSpanElement.textContent = row.status;
-        statusTdElement.appendChild(statusSpanElement);
-
-        // Gắn các thẻ <td> vào thẻ <tr>
-        trElement.appendChild(imgTdElement);
-        trElement.appendChild(nameTdElement);
-        trElement.appendChild(specsTdElement);
-        trElement.appendChild(soldTdElement);
-        trElement.appendChild(quantityTdElement);
-        trElement.appendChild(priceTdElement);
-        trElement.appendChild(statusTdElement);
-
-        // Gắn thẻ <tr> vào thẻ <tbody>
-        tbodyElement.appendChild(trElement);
+      }else {
+        console.log(data.message);
       }
-    }else {
-      console.log(data.message);
+    });
+  }
+  //Tạo bảng Hot Sale
+  function SaleProducts(sale_number){
+    GetHotSaleProducts(sale_number).then(data_sale =>{
+      if (data_sale.code === 1){
+        // Dữ liệu cho các hàng
+        const data_hot_sale = data_sale.data;
+
+        // Lấy thẻ <tbody> trong bảng
+        const tbodyElement = document.getElementById('TopSaleTable');
+
+        // Tạo hàng cho mỗi phần tử trong mảng dữ liệu
+        for (let i = 0; i < data_hot_sale.length; i++) {
+          const row = data_hot_sale[i];
+
+          // Tạo thẻ <tr> mới
+          const trElement = document.createElement('tr');
+
+          // Tạo thẻ <td> cho cột hình ảnh
+          const imgTdElement = document.createElement('td');
+          const imgElement = document.createElement('img');
+          imgElement.classList.add('thumb-sm', 'rounded-circle', 'mr-2');
+          imgElement.setAttribute('src', row.img_cover);
+          imgElement.setAttribute('alt', '');
+          imgTdElement.appendChild(imgElement);
+
+          // Tạo thẻ <td> cho cột tên
+          const nameTdElement = document.createElement('td');
+          nameTdElement.textContent = row.name;
+
+          // Tạo thẻ <td> cho cột thông số
+          const specsTdElement = document.createElement('td');
+          if (row.ram === null){
+            row.ram = ""
+          }else{
+            row.ram = row.ram+" - "
+          }
+          if (row.rom === null){
+            row.rom = ""
+          }else{
+            row.rom = row.rom+" - "
+          }
+          specsTdElement.textContent = row.ram+row.rom+row.color;
+
+          // Tạo thẻ <td> cho cột số lượng bán ra
+          const soldTdElement = document.createElement('td');
+          soldTdElement.textContent = row.sold;
+
+          // Tạo thẻ <td> cho cột số lượng
+          const quantityTdElement = document.createElement('td');
+          quantityTdElement.textContent = row.quantity;
+
+          // Tạo thẻ <td> cho cột giá
+          const priceTdElement = document.createElement('td');
+          priceTdElement.textContent = row.price;
+
+          // Tạo thẻ <td> cho cột trạng thái
+          const statusTdElement = document.createElement('td');
+          const statusSpanElement = document.createElement('span');
+          if (row.quantity > 50){
+            statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-primary');
+          }else {
+            statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-warning');
+          }
+          statusSpanElement.textContent = row.status;
+          statusTdElement.appendChild(statusSpanElement);
+
+          // Gắn các thẻ <td> vào thẻ <tr>
+          trElement.appendChild(imgTdElement);
+          trElement.appendChild(nameTdElement);
+          trElement.appendChild(specsTdElement);
+          trElement.appendChild(soldTdElement);
+          trElement.appendChild(quantityTdElement);
+          trElement.appendChild(priceTdElement);
+          trElement.appendChild(statusTdElement);
+
+          // Gắn thẻ <tr> vào thẻ <tbody>
+          tbodyElement.appendChild(trElement);
+        }
+      }else {
+        console.log(data.message);
+      }
+    });
+  }
+  SaleProducts(10);
+  SoldProducts(10);
+  function sanitizeInput(input) {
+    // Loại bỏ các ký tự không phải số từ chuỗi đầu vào
+    const sanitizedInput = input.replace(/\D/g, '');
+
+    return sanitizedInput;
+  }
+  function removeTable(table){
+    while (table.firstChild) {
+      table.firstChild.remove();
+    }
+  }
+  TopNumberSale.addEventListener('change', function () {
+    sanitizeInput(this);
+  });
+  TopNumberRunOut.addEventListener('change', function () {
+    sanitizeInput(this);
+  });
+  BtnComfirmSale.addEventListener('click', function () {
+    if (TopNumberSale.value.trim().length !== 0) {
+      const table = document.getElementById('TopSaleTable');
+      removeTable(table);
+      let sale_number = TopNumberSale.value;
+      SaleProducts(sale_number);
+    } else {
+      utils.showMessage("Nhập số để tìm sản phẩm !")
     }
   });
-
-  //Tạo bảng Hot Sale
-  GetHotSaleProducts(10).then(data_sale =>{
-    if (data_sale.code === 1){
-      // Dữ liệu cho các hàng
-      const data_hot_sale = data_sale.data;
-
-      // Lấy thẻ <tbody> trong bảng
-      const tbodyElement = document.getElementById('TopSaleTable');
-
-      // Tạo hàng cho mỗi phần tử trong mảng dữ liệu
-      for (let i = 0; i < data_hot_sale.length; i++) {
-        const row = data_hot_sale[i];
-
-        // Tạo thẻ <tr> mới
-        const trElement = document.createElement('tr');
-
-        // Tạo thẻ <td> cho cột hình ảnh
-        const imgTdElement = document.createElement('td');
-        const imgElement = document.createElement('img');
-        imgElement.classList.add('thumb-sm', 'rounded-circle', 'mr-2');
-        imgElement.setAttribute('src', row.img_cover);
-        imgElement.setAttribute('alt', '');
-        imgTdElement.appendChild(imgElement);
-
-        // Tạo thẻ <td> cho cột tên
-        const nameTdElement = document.createElement('td');
-        nameTdElement.textContent = row.name;
-
-        // Tạo thẻ <td> cho cột thông số
-        const specsTdElement = document.createElement('td');
-        if (row.ram === null){
-          row.ram = ""
-        }else{
-          row.ram = row.ram+" - "
-        }
-        if (row.rom === null){
-          row.rom = ""
-        }else{
-          row.rom = row.rom+" - "
-        }
-        specsTdElement.textContent = row.ram+row.rom+row.color;
-
-        // Tạo thẻ <td> cho cột số lượng bán ra
-        const soldTdElement = document.createElement('td');
-        soldTdElement.textContent = row.sold;
-
-        // Tạo thẻ <td> cho cột số lượng
-        const quantityTdElement = document.createElement('td');
-        quantityTdElement.textContent = row.quantity;
-
-        // Tạo thẻ <td> cho cột giá
-        const priceTdElement = document.createElement('td');
-        priceTdElement.textContent = row.price;
-
-        // Tạo thẻ <td> cho cột trạng thái
-        const statusTdElement = document.createElement('td');
-        const statusSpanElement = document.createElement('span');
-        if (row.quantity > 50){
-          statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-primary');
-        }else {
-          statusSpanElement.classList.add('badge', 'badge-boxed', 'badge-soft-warning');
-        }
-        statusSpanElement.textContent = row.status;
-        statusTdElement.appendChild(statusSpanElement);
-
-        // Gắn các thẻ <td> vào thẻ <tr>
-        trElement.appendChild(imgTdElement);
-        trElement.appendChild(nameTdElement);
-        trElement.appendChild(specsTdElement);
-        trElement.appendChild(soldTdElement);
-        trElement.appendChild(quantityTdElement);
-        trElement.appendChild(priceTdElement);
-        trElement.appendChild(statusTdElement);
-
-        // Gắn thẻ <tr> vào thẻ <tbody>
-        tbodyElement.appendChild(trElement);
-      }
-    }else {
-      console.log(data.message);
+  BtnComfirmRunOut.addEventListener('click', function () {
+    if (TopNumberRunOut.value.trim().length !== 0) {
+    const table = document.getElementById('TopSoldOutTable');
+    removeTable(table);
+    let sold_number = TopNumberRunOut.value;
+    SoldProducts(sold_number);
+    } else {
+      utils.showMessage("Nhập số để tìm sản phẩm !")
     }
   });
   });
