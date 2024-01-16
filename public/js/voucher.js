@@ -8,92 +8,29 @@ document.addEventListener('DOMContentLoaded', function () {
     //Button openModal
     const openModalCreate = document.getElementById('openModalCreateVoucher');
     const openModalUpdate = document.querySelectorAll(".openModalUpdateVoucher");
-    const openModalDelete = document.querySelectorAll(".openModalDeleteVoucher");
-    // const logout = document.getElementById("logout");
-    // logout.addEventListener("click", function (){
-    //     window.location.assign("/stech.manager/login");
-    //     utils.DeleteAllCookies();
-    // });
-    //Button Confirm
-    // const confirmCreate = document.getElementById('buttonConfirmCreate');
-    // const confirmUpdate = document.getElementById('buttonConfirmUpdate');
-    // const confirmDelete = document.getElementById('buttonConfirmDelete');
+    //const openModalDelete = document.querySelectorAll(".openModalDeleteVoucher");
+    const logout = document.getElementById("logout");
+    logout.addEventListener("click", function (){
+        window.location.assign("/stech.manager/login");
+        utils.DeleteAllCookies();
+    });
+
 
     //Create
     openModalCreate.addEventListener('click', function () {
         modalCreateVoucher.show();
     });
 
-    // confirmCreate.addEventListener('click', function () {
-    //     const valueTitle = document.getElementById('title').value;
-    //     const valueContent = document.getElementById('content').value;
-    //     const valuePrice = document.getElementById('price').value;
-    //     const valueFromDate = document.getElementById('fromDate').value;
-    //     const valueToDate = document.getElementById('toDate').value;
-    //
-    //     const formData = new URLSearchParams();
-    //     formData.append("title", valueTitle);
-    //     formData.append("content", valueContent);
-    //     formData.append("price", valuePrice);
-    //     formData.append("toDate", formatDateTime(valueToDate));
-    //     formData.append("fromDate", formatDateTime(valueFromDate));
-    //
-    //     fetch('/api/addVoucherForAllUser', {
-    //         headers: {
-    //             'Authorization': `${token}`,
-    //             "Content-Type": "application/x-www-form-urlencoded",
-    //         },
-    //         method: "POST",
-    //         body: formData,
-    //     }).then((response) => {
-    //         console.log(response)
-    //         location.reload();
-    //     }).catch((error) => {
-    //         console.error("Error:", error);
-    //     });
-    // });
-
-    // function formatDateTime(dateTimeString) {
-    //     var selectedDate = new Date(dateTimeString);
-    //
-    //     // Lấy các thành phần của ngày và giờ
-    //     var year = selectedDate.getFullYear();
-    //     var month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
-    //     var day = selectedDate.getDate().toString().padStart(2, '0');
-    //     var hour = selectedDate.getHours().toString().padStart(2, '0');
-    //     var minute = selectedDate.getMinutes().toString().padStart(2, '0');
-    //     var second = selectedDate.getSeconds().toString().padStart(2, '0');
-    //
-    //     // Định dạng lại theo "YYYY-MM-DD HH:mm:ss"
-    //     var formattedDate = `${year}-${month}-${day}-${hour}:${minute}:${second}`;
-    //
-    //     return formattedDate;
-    // }
 
     //DELETE
-    openModalDelete.forEach(function (button) {
-        button.addEventListener('click', function () {
-
-            const voucherId = this.getAttribute('data-id');
-            document.getElementById('idVoucherDelete').value = voucherId;
-            modalDeleteVoucher.show();
-            // confirmDelete.addEventListener('click', function () {
-            //     fetch('/api/deleteVoucher', {
-            //         headers: {
-            //             'Authorization': `${token}`,
-            //             "Content-Type": "application/x-www-form-urlencoded",
-            //         },
-            //         method: "POST",
-            //         body: dataDelete,
-            //     }).then((response) => {
-            //         console.log(response)
-            //         location.reload();
-            //     }).catch((error) => {
-            //         console.error("Error:", error);
-            //     });
-            // })
-        })
-    })
+    // openModalDelete.forEach(function (button) {
+    //     button.addEventListener('click', function () {
+    //
+    //         const voucherId = this.getAttribute('data-id');
+    //         document.getElementById('idVoucherDelete').value = voucherId;
+    //         modalDeleteVoucher.show();
+    //     })
+    // })
 
     //Update
     openModalUpdate.forEach(function (button){
@@ -112,35 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('fromDateUp').value = convertDateTimeFormat(valueFromDate);
             document.getElementById('toDateUp').value = convertDateTimeFormat(valueToDate);
             modalUpdateVoucher.show();
-            // confirmUpdate.addEventListener('click', function (){
-            //     const newTitle = document.getElementById('upTitle').value;
-            //     const newContent = document.getElementById('upContent').value;
-            //     const newPrice = document.getElementById('upPrice').value;
-            //     const newFromDate = document.getElementById('upFromDate').value;
-            //     const newToDate = document.getElementById('upToDate').value;
-            //
-            //     const formData = new URLSearchParams();
-            //     formData.append("voucherId", voucherId);
-            //     formData.append("title", newTitle);
-            //     formData.append("content", newContent);
-            //     formData.append("price", newPrice);
-            //     formData.append("toDate", formatDateTime(newToDate));
-            //     formData.append("fromDate", formatDateTime(newFromDate));
-            //
-            //     fetch('/api/editVoucher', {
-            //         headers: {
-            //             'Authorization': `${token}`,
-            //             "Content-Type": "application/x-www-form-urlencoded",
-            //         },
-            //         method: "POST",
-            //         body: formData,
-            //     }).then((response) => {
-            //         console.log(response)
-            //         location.reload();
-            //     }).catch((error) => {
-            //         console.error("Error:", error);
-            //     });
-            // })
+
         })
     })
 

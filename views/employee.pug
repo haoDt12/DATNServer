@@ -164,34 +164,12 @@ block content
                                         td
                                             ul.list-unstyled.mb-0.d-flex
                                                 li
-                                                    a#Detail.text-primary.DetailUser( data-toggle='tooltip', title='', data-original-title='View' data-id=employee._id)
-                                                        i.far.fa-eye
+                                                    a.text-primary(class='EditUser' data-id=employee._id  data-bs-toggle="modal" data-bs-target="#UpdateEmployeeModal")
+                                                        i.bx.bx-edit-alt(style='color:#6b7aec')
                                                 li
                                                     a.text-danger(class="banEmployee" id="banEmployeeBtn" data-id=employee._id  data-bs-toggle="modal" data-bs-target="#banEmployeeModal")
                                                         i.fa.fa-ban
 
-                                                    a.text-primary(class='EditUser' data-id=employee._id  data-bs-toggle="modal" data-bs-target="#UpdateEmployeeModal")
-                                                        i.bx.bx-edit-alt(style='color:#6b7aec')
-                                                li
-                                                    a.text-danger(href='' class="deleteUs" id="deleteUserBtn" data-id=employee._id  data-bs-toggle="modal" data-bs-target="#deleteUserModal")
-                                                        i.far.fa-trash-alt
-                        .text-center.mt-3.mt-sm-3
-                            ul.pagination.justify-content-center.mb-0
-                                li.page-item.disabled
-                                    span.page-link Prev
-                                li.page-item.active(aria-current='page')
-                                    span.page-link 1
-                                    span.sr-only (current)
-                                li.page-item
-                                    a.page-link(href='#') 2
-                                li.page-item
-                                    a.page-link(href='#') 3
-                                li.page-item
-                                    a.page-link(href='#') ...
-                                li.page-item
-                                    a.page-link(href='#') 25
-                                li.page-item
-                                    a.page-link(href='#') Next
                 .py-6.px-6.text-center
                     p.mb-0.fs-4
                         | Design and Developed by&nbsp;
@@ -223,18 +201,31 @@ block content
                                             label(for="avatar") Hình ảnh
                                             input#avatar(type="file", name="avatar", accept="image/*")
                                     button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
-                                    button.btn.btn-primary#addEmployeeButton(type="submit") Add employe
+                                    button.btn.btn-primary#addEmployeeButton(type="submit") Add employee
 
             #banEmployeeModal.modal(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Warning!
+                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            p Bạn có chắc chắn muốn chặn người dùng  này.
+                        .modal-footer
+                            form(action="/stech.manager/banEmployee" method="post")
+                                .mb-3.d-none
+                                    input#idEmployeeBan.form-control(name='EmployeeId', type='text', aria-describedby='textHelp')
+                                button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                button.btn.btn-danger(type='submit' id='banEmployee') Đồng ý
             div#UpdateEmployeeModal.modal.fade
                 .modal-dialog
                     form(method="post" action="/stech.manager/UpdateEmployee" enctype='multipart/form-data')
                         .modal-content
                             .modal-header
-                                h5.modal-title ửa nhân viên
+                                h5.modal-title Sửa nhân viên
                                 button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                             .modal-body
-                                .mb-2
+                                .mb-2.d-none
                                     .form-group
                                         label(for="idEmployeUp") ID
                                         input#idEmployeUp(type="text", name="idEmployee", class="form-control", placeholder="", aria-describedby="helpId" readonly)
@@ -256,20 +247,7 @@ block content
                                         input#avatarUp(type="file", name="avatar", accept="image/*")
                                 button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
                                 button.btn.btn-primary#updateEmployeeButton(type="submit") Update employe
-            #deleteUserModal.modal(tabindex='-1')
-                .modal-dialog
-                    .modal-content
-                        .modal-header
-                            h5.modal-title Warning!
-                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                        .modal-body
-                            p Bạn có chắc chắn muốn chặn người dùng  này.
-                        .modal-footer
-                            form(action="/stech.manager/banEmployee" method="post")
-                                .mb-3.d-none
-                                    input#idEmployeeBan.form-control(name='EmployeeId', type='text', aria-describedby='textHelp')
-                                button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
-                                button.btn.btn-danger(type='submit' id='banEmployee') Đồng ý
+
     script(src='/js/employee.js')
     script.
         function removeDiacritics(str) {
