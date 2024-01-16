@@ -770,11 +770,105 @@ router.post('/stech.manager/AddEmployee', upload.fields([{
             create_time: create_time,
         });
 
-        let avatar = await UploadFileFirebase.uploadFile(
+        let avatar = await UploadFileFirebase.uploadFileProfile(
             req,
             employee._id.toString(),
             "avatar",
             "Employees",
+            fileAvatar[0]
+        );
+
+        if (avatar === 0) {
+            return res.send({ message: "Failed to upload avatar", code: 0 });
+        }
+
+        employee.avatar = avatar;
+        await employee.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "Error adding employee", code: 0 });
+    }
+});
+router.post('/stech.manager/AddCustomer', upload.fields([{
+    name: "avatar",
+    maxCount: 1
+}]), async function (req, res, next) {
+    try {
+        const full_name = req.body.full_name;
+        const password = req.body.password;
+        const fileAvatar = req.files["avatar"];
+        const email = req.body.email;
+        const phone_number = req.body.phone_number;
+        let date = new Date();
+        let create_time = moment(date).format("YYYY-MM-DD-HH:mm:ss")
+        let customer = new CustomerModel.customerModel({
+            full_name: full_name,
+            email: email,
+            password: password,
+            phone_number: phone_number,
+            create_time: create_time,
+        });
+        if(fileAvatar != null){
+            let avatar = await UploadFileFirebase.uploadFileProfile(
+                req,
+                customer._id.toString(),
+                "avatar",
+                "Customers",
+                fileAvatar[0]
+            );
+            customer.avatar = avatar;
+        }
+        await customer.save();
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e.message);
+        res.send({ message: "Error adding customer", code: 0 });
+    }
+});
+router.post('/stech.manager/UpdateCustomer', upload.fields([{
+    name: "avatar",
+    maxCount: 1
+}]), async function (req, res, next) {
+    try {
+        const idCustomer = req.body.idCustomer;
+        const full_name = req.body.full_name;
+        const password = req.body.password;
+        const fileAvatar = req.files["avatar"];
+        const email = req.body.email;
+        const phone_number = req.body.phone_number;
+        let date = new Date();
+        if (idCustomer == null) {
+            return res.send({ message: "customer not found", code: 0 });
+        }
+
+        let customer = await CustomerModel.customerModel.findById(idCustomer);
+        if (!customer) {
+            return res.send({ message: "customer not found", code: 0 });
+        }
+        if (fileAvatar === undefined) {
+            const result = await CustomerModel.customerModel.updateOne({ _id: idCustomer }, {
+                full_name: full_name,
+                password: password,
+                email: email,
+                phone_number: phone_number
+            });
+
+            if (result.nModified > 0) {
+                return res.json({ success: false, message: 'Failed to update employee' });
+            } else {
+                return res.redirect('customer')
+            }
+        }
+        // console.log("img", fileimg);
+        // xoá ảnh cũ ...
+        const imgCustomerFolder = `Customers/${idCustomer}`;
+        await UploadFileFirebase.deleteFolderAndFiles(res, imgCustomerFolder);
+        let avatar = await UploadFileFirebase.uploadFileProfile(
+            req,
+            customer._id.toString(),
+            "avatar",
+            "Customers",
             fileAvatar[0]
         );
 
@@ -855,7 +949,7 @@ router.post('/stech.manager/UpdateEmployee', upload.fields([{
         // xoá ảnh cũ ...
         const imgEmployeeFolder = `Employees/${idEmployee}`;
         await UploadFileFirebase.deleteFolderAndFiles(res, imgEmployeeFolder);
-        let avatar = await UploadFileFirebase.uploadFile(
+        let avatar = await UploadFileFirebase.uploadFileProfile(
             req,
             employee._id.toString(),
             "avatar",

@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // var myModalUp = new bootstrap.Modal(document.getElementById('UpdateUserModal'));
     var myModalBan = new bootstrap.Modal(document.getElementById('banCustomerModal'));
     const banButtons = document.querySelectorAll('.banCus');
-    const addUserButton = document.getElementById("addUserButton");
+    const UpdateButtons = document.querySelectorAll('.EditCus');
+    var myModalAdd = new bootstrap.Modal(document.getElementById('CustomerModal'));
 
 
     const logout = document.getElementById("logout");
@@ -17,26 +18,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     const deleteProButtons = document.querySelectorAll(".deleteUs");
-    const editUserButton = document.querySelectorAll(".updateUs");
 
     const detailLinks = document.querySelectorAll(".DetailUser");
-    const detailLink = document.getElementById("Detail");
-
-    const confirmUpdateButton = document.getElementById("UpdateUser");
-    const confirmDeleteButton = document.getElementById("deleteUser");
-    let roleAU;
-
-    //
-    // document.getElementById('openUserModal').addEventListener('click', function () {
-    //     myModal.show();
-    // });
+    document.getElementById('openUserModal').addEventListener('click', function () {
+        myModalAdd.show();
+    });
     document.getElementById('banCustomerBtn').addEventListener('click', function () {
         myModalBan.show();
     });
+
     banButtons.forEach(button => {
         button.addEventListener('click', function () {
             const customerId = this.getAttribute('data-id');
             document.getElementById('idCustomerBan').value = customerId;
+        });
+    });
+    UpdateButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const customerId = this.getAttribute('data-id');
+            const email = this.getAttribute('data-email');
+            const password = this.getAttribute('data-password');
+            const name = this.getAttribute('data-name');
+            const phone = this.getAttribute('data-phone');
+
+            document.getElementById('emailUp').value = email;
+            document.getElementById('passwordUp').value = password;
+            document.getElementById('full_nameUp').value = name;
+            document.getElementById('phone_numberUp').value = phone;
+
+            document.getElementById('idCusUp').value = customerId;
         });
     });
 
@@ -49,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         })
     })
+
     detailLinks.forEach(function (detailLink) {
         detailLink.addEventListener("click", function (event) {
             event.preventDefault();
