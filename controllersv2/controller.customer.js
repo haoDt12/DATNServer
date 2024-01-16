@@ -1,6 +1,6 @@
 const CustomerModel = require("../modelsv2/model.customer");
 const moment = require("moment-timezone");
-const {sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass, sendVerifyCus} = require("../models/otp");
+const { sendOTPByEmail, sendOTPByEmailGetPass, sendNewPassByEmailGetPass, sendVerifyCus } = require("../models/otp");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 require("dotenv").config();
@@ -18,7 +18,7 @@ exports.registerCustomer = async (req, res) => {
     let create_time = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
     let ipAddress = process.env.IP_ADDRESS;
     if (password === null) {
-        return res.send({message: "Password is required", code: 0});
+        return res.send({ message: "Password is required", code: 0 });
     }
     if (!passwordRegex.test(password)) {
         return res.send({
@@ -28,7 +28,7 @@ exports.registerCustomer = async (req, res) => {
         });
     }
     if (phone_number === null) {
-        return res.send({message: "Phone number is required", code: 0});
+        return res.send({ message: "Phone number is required", code: 0 });
     }
     if (!phoneNumberRegex.test(phone_number)) {
         return res.send({
@@ -37,7 +37,7 @@ exports.registerCustomer = async (req, res) => {
         });
     }
     if (email === null) {
-        return res.send({message: "Email is required", code: 0});
+        return res.send({ message: "Email is required", code: 0 });
     }
     if (!emailRegex.test(email)) {
         return res.send({
@@ -55,12 +55,12 @@ exports.registerCustomer = async (req, res) => {
         let cusPhone = await CustomerModel.customerModel.findOne({
             phone_number: phone_number,
         });
-        let cusEmail = await CustomerModel.customerModel.findOne({email: email});
+        let cusEmail = await CustomerModel.customerModel.findOne({ email: email });
         if (cusPhone && cusPhone.status !== "Not verified") {
-            return res.send({message: "phone number already exists", code: 0});
+            return res.send({ message: "phone number already exists", code: 0 });
         }
         if (cusEmail && cusEmail.status !== "Not verified") {
-            return res.send({message: "email already exists", code: 0});
+            return res.send({ message: "email already exists", code: 0 });
         }
         let cus = new CustomerModel.customerModel({
             email: email,
@@ -86,7 +86,7 @@ exports.registerCustomer = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.verifyCusRegister = async (req, res) => {
@@ -98,7 +98,7 @@ exports.verifyCusRegister = async (req, res) => {
             if (cus.status === "Not verified") {
                 cus.status = "Has been activated";
                 await cus.save();
-                await CustomerModel.customerModel.deleteMany({phone_number: cus.phone_number, status: "Not verified"});
+                await CustomerModel.customerModel.deleteMany({ phone_number: cus.phone_number, status: "Not verified" });
             }
         } else {
             return res.send({
@@ -112,23 +112,23 @@ exports.verifyCusRegister = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.loginCustomer = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     if (!username) {
-        return res.send({message: "cus name is required", code: 0});
+        return res.send({ message: "cus name is required", code: 0 });
     }
     if (!password) {
-        return res.send({message: "password is required", code: 0});
+        return res.send({ message: "password is required", code: 0 });
     }
     try {
         let cusEmail = await CustomerModel.customerModel
-            .findOne({email: username, password: password})
+            .findOne({ email: username, password: password })
         let cusPhone = await CustomerModel.customerModel
-            .findOne({phone_number: username, password: password})
+            .findOne({ phone_number: username, password: password })
         if (!cusEmail && !cusPhone) {
             return res.send({
                 message: "Login fail please check your username and password",
@@ -156,7 +156,7 @@ exports.loginCustomer = async (req, res) => {
             const payload = {
                 messages: [
                     {
-                        destinations: [{to}],
+                        destinations: [{ to }],
                         text,
                     },
                 ],
@@ -164,7 +164,7 @@ exports.loginCustomer = async (req, res) => {
 
             // Gửi tin nhắn OTP bằng InfoBip REST API
             axios
-                .post(baseUrl, payload, {headers})
+                .post(baseUrl, payload, { headers })
                 .then(async (response) => {
                     console.log('Axios Response:', response.data);
                     cusPhone.otp = otp;
@@ -177,7 +177,7 @@ exports.loginCustomer = async (req, res) => {
                 })
                 .catch((error) => {
                     console.error(error.message);
-                    return res.send({message: "Fail send code", code: 0});
+                    return res.send({ message: "Fail send code", code: 0 });
                 });
         }
         if (cusEmail) {
@@ -189,7 +189,7 @@ exports.loginCustomer = async (req, res) => {
             }
             let index = sendOTPByEmail(cusEmail.email);
             if (index === 0) {
-                return res.send({message: "Verify cus fail", code: 0});
+                return res.send({ message: "Verify cus fail", code: 0 });
             } else {
                 cusEmail.otp = index;
                 await cusEmail.save();
@@ -202,7 +202,7 @@ exports.loginCustomer = async (req, res) => {
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 const formatPhoneNumber = (phoneNumber) => {
@@ -219,13 +219,13 @@ exports.verifyCusLogin = async (req, res) => {
     let cusId = req.body.cusId;
     let otp = req.body.otp;
     if (otp == null) {
-        return res.send({message: "otp is required", code: 0});
+        return res.send({ message: "otp is required", code: 0 });
     }
     try {
         let cus = await CustomerModel.customerModel
-            .findOne({_id: cusId, otp: otp})
+            .findOne({ _id: cusId, otp: otp })
         if (cus) {
-            let token = jwt.sign({cus: cus}, process.env.ACCESS_TOKEN_SECRET, {
+            let token = jwt.sign({ cus: cus }, process.env.ACCESS_TOKEN_SECRET, {
                 expiresIn: "86400s",
             });
             cus.otp = null;
@@ -237,11 +237,11 @@ exports.verifyCusLogin = async (req, res) => {
                 code: 1,
             });
         } else {
-            return res.send({message: "otp wrong", code: 0});
+            return res.send({ message: "otp wrong", code: 0 });
         }
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.getInfoCus = async (req, res) => {
@@ -255,29 +255,29 @@ exports.getInfoCus = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.addFCM = async (req, res) => {
     let cusId = req.body.cusId;
     let fcm = req.body.fcm;
     if (fcm == null) {
-        return res.send({message: "fcm is required", code: 0});
+        return res.send({ message: "fcm is required", code: 0 });
     }
     if (cusId == null) {
-        return res.send({message: "cus id is required", code: 0});
+        return res.send({ message: "cus id is required", code: 0 });
     }
     try {
         let cus = await CustomerModel.customerModel.findById(cusId);
         if (!cus) {
-            return res.send({message: "cus not found", code: 0});
+            return res.send({ message: "cus not found", code: 0 });
         }
         cus.fcm = fcm;
         await cus.save();
-        return res.send({message: "add fcm success", code: 1});
+        return res.send({ message: "add fcm success", code: 1 });
     } catch (e) {
         console.log(`error add fcm: ${e.message}`);
-        return res.send({message: e.message.toString(), code: 0})
+        return res.send({ message: e.message.toString(), code: 0 })
     }
 }
 exports.sendOtpEditCus = async (req, res) => {
@@ -291,12 +291,12 @@ exports.sendOtpEditCus = async (req, res) => {
         let cus = await CustomerModel.customerModel.findById(data.cus._id);
         if (email !== null) {
             if (!emailRegex.test(email)) {
-                return res.send({message: "The email is not in the correct format", code: 0});
+                return res.send({ message: "The email is not in the correct format", code: 0 });
             }
         }
         if (phone_number !== null) {
             if (!emailRegex.test(email)) {
-                return res.send({message: "The number phone is not in the correct format", code: 0});
+                return res.send({ message: "The number phone is not in the correct format", code: 0 });
             }
         }
 
@@ -315,7 +315,7 @@ exports.sendOtpEditCus = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.getListCustomer = async (req, res) => {
@@ -328,7 +328,7 @@ exports.getListCustomer = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 };
 exports.editCus = async (req, res) => {
@@ -339,19 +339,19 @@ exports.editCus = async (req, res) => {
     let avatar = req.body.avatar;
     try {
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
-        let cus = await CustomerModel.customerModel.findOne({_id: data.cus._id, otp: otp});
+        let cus = await CustomerModel.customerModel.findOne({ _id: data.cus._id, otp: otp });
         if (cus) {
             cus.otp = null;
             if (email !== null) {
                 if (!emailRegex.test(email)) {
                     cus.email = email;
-                    return res.send({message: "The email is not in the correct format", code: 0});
+                    return res.send({ message: "The email is not in the correct format", code: 0 });
                 }
             }
             if (phone_number !== null) {
                 if (!emailRegex.test(email)) {
                     cus.phone_number = phone_number;
-                    return res.send({message: "The number phone is not in the correct format", code: 0});
+                    return res.send({ message: "The number phone is not in the correct format", code: 0 });
                 }
             }
             if (full_name !== null) {
@@ -366,22 +366,22 @@ exports.editCus = async (req, res) => {
                 code: 1,
             });
         } else {
-            return res.send({message: "wrong otp", code: 0});
+            return res.send({ message: "wrong otp", code: 0 });
         }
 
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.sendOtpEditPass = async (req, res) => {
     let currentPass = req.body.currentPass;
     let newPass = req.body.newPass;
     if (currentPass === null) {
-        return res.send({message: "current password is required", code: 0});
+        return res.send({ message: "current password is required", code: 0 });
     }
     if (newPass === null) {
-        return res.send({message: "new password is required", code: 0});
+        return res.send({ message: "new password is required", code: 0 });
     }
     if (!passwordRegex.test(newPass)) {
         return res.send({
@@ -394,7 +394,7 @@ exports.sendOtpEditPass = async (req, res) => {
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
         let cus = await CustomerModel.customerModel.findById(data.cus._id);
         if (cus.password !== currentPass) {
-            return res.send({message: "current password wrong", code: 0});
+            return res.send({ message: "current password wrong", code: 0 });
         }
         let index = sendOTPByEmail(cus.email);
         if (index === 0) {
@@ -411,7 +411,7 @@ exports.sendOtpEditPass = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.editPass = async (req, res) => {
@@ -419,10 +419,10 @@ exports.editPass = async (req, res) => {
     let currentPass = req.body.currentPass;
     let newPass = req.body.newPass;
     if (currentPass === null) {
-        return res.send({message: "current password is required", code: 0});
+        return res.send({ message: "current password is required", code: 0 });
     }
     if (newPass === null) {
-        return res.send({message: "new password is required", code: 0});
+        return res.send({ message: "new password is required", code: 0 });
     }
     if (!passwordRegex.test(newPass)) {
         return res.send({
@@ -435,10 +435,10 @@ exports.editPass = async (req, res) => {
         let data = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET);
         let cus = await CustomerModel.customerModel.findById(data.cus._id);
         if (cus.otp !== otp) {
-            return res.send({message: "otp wrong", code: 0});
+            return res.send({ message: "otp wrong", code: 0 });
         }
         if (cus.password !== currentPass) {
-            return res.send({message: "current password wrong", code: 0});
+            return res.send({ message: "current password wrong", code: 0 });
         }
         cus.password = newPass;
         cus.otp = null;
@@ -449,25 +449,25 @@ exports.editPass = async (req, res) => {
         });
     } catch (e) {
         console.log(e.message);
-        return res.send({message: e.message.toString(), code: 0});
+        return res.send({ message: e.message.toString(), code: 0 });
     }
 }
 exports.getPassWord = async (req, res) => {
     let username = req.body.username;
     let ipAddress = process.env.IP_ADDRESS;
     if (username == null) {
-        return res.send({message: "username is required", code: 0});
+        return res.send({ message: "username is required", code: 0 });
     }
     if (!phoneNumberRegex.test(username) && isNumeric(username)) {
-        return res.send({message: "The phone number is not in the correct format", code: 0});
+        return res.send({ message: "The phone number is not in the correct format", code: 0 });
     }
     if (!emailRegex.test(username) && !isNumeric(username)) {
-        return res.send({message: "The email is not in the correct format", code: 0});
+        return res.send({ message: "The email is not in the correct format", code: 0 });
     }
     if (phoneNumberRegex.test(username)) {
-        let user = await CustomerModel.customerModel.findOne({phone_number: username});
+        let user = await CustomerModel.customerModel.findOne({ phone_number: username });
         if (!user) {
-            return res.send({message: "user not found", code: 0});
+            return res.send({ message: "user not found", code: 0 });
         }
         const link = `https://${ipAddress}/api/resetPassword?key=${user._id}`;
         const text = `STECH xin chào bạn\n Ấn vào đây để khôi phục lại mật khẩu: ${link}`;
@@ -481,13 +481,13 @@ exports.getPassWord = async (req, res) => {
         const payload = {
             messages: [
                 {
-                    destinations: [{to}],
+                    destinations: [{ to }],
                     text,
                 },
             ],
         };
         axios
-            .post(baseUrl, payload, {headers})
+            .post(baseUrl, payload, { headers })
             .then(async () => {
                 return res.send({
                     message: "Please verify your account",
@@ -496,17 +496,17 @@ exports.getPassWord = async (req, res) => {
             })
             .catch((error) => {
                 console.error(error.message);
-                return res.send({message: "Fail send code", code: 0});
+                return res.send({ message: "Fail send code", code: 0 });
             });
     }
     if (emailRegex.test(username)) {
         try {
-            let user = await CustomerModel.customerModel.findOne({email: username});
+            let user = await CustomerModel.customerModel.findOne({ email: username });
             const link = `https://${ipAddress}/apiv2/resetPassword?key=${user._id}`;
             const text = `STECH xin chào bạn\n Ấn vào đây để khôi phục lại mật khẩu: ${link}`;
             let index = sendOTPByEmailGetPass(username, text);
             if (index === 0) {
-                return res.send({message: "Verify user fail", code: 0});
+                return res.send({ message: "Verify user fail", code: 0 });
             } else {
                 return res.send({
                     message: "Please verify your account",

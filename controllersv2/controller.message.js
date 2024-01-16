@@ -59,6 +59,7 @@ async function encryptedMessage(message) {
 
     return messageEncrypted;
 }
+
 exports.addMessage = async (req, res) => {
     let date = new Date();
     let specificTimeZone = 'Asia/Ha_Noi';
@@ -212,6 +213,7 @@ exports.getMessageByIDConversation = async (req, res) => {
             if (msg.message.length <= 0) {
                 return msg.message
             }
+
             const algorithm = process.env.ALGORITHM;
             const ENCRYPTION_KEY = process.env.API_KEY;
             const hash = crypto.createHash("sha1");
@@ -226,7 +228,6 @@ exports.getMessageByIDConversation = async (req, res) => {
             let decipher = crypto.createDecipheriv(algorithm, keyBuffer, iv);
             let decrypted = decipher.update(encryptedText, 'hex', 'utf-8');
             decrypted += decipher.final('utf8');
-
             message = decrypted;
 
             let itemMsg = {
@@ -285,12 +286,12 @@ exports.getMessageLatest = async (req, res) => {
 exports.deleteMessage = async (req, res) => {
     let date = new Date();
     let specificTimeZone = 'Asia/Ha_Noi';
-    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss")
+    let timestamp = moment(date).tz(specificTimeZone).format("YYYY-MM-DD-HH:mm:ss");
 
     let idMessage = req.body.msgID;
     let userLoggedID = req.body.userLoggedID;
     if (idMessage == null || idMessage.length <= 0) {
-        return res.send({ message: "idMessage is required" })
+        return res.send({ message: "idMessage is required" });
     }
 
     try {
@@ -301,7 +302,7 @@ exports.deleteMessage = async (req, res) => {
         else {
             let message = await MessageModel.messageModel.findByIdAndUpdate(idMessage, { deleted_at: timestamp });
             if (!message) {
-                return res.send({ message: "message not found", code: 0 })
+                return res.send({ message: "message not found", code: 0 });
             }
             return res.send({ message: message._id, code: 1 });
         }

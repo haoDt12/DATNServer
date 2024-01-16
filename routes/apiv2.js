@@ -108,17 +108,17 @@ router.post("/getNotificationByUser", Middleware.authorizationToken, Notificatio
 // conversation
 router.post("/createConversation", Middleware.authorizationToken, ConversationCtrl.createConversation);
 router.post("/getConversationByIDUser", Middleware.authorizationToken, ConversationCtrl.getConversationByIDUser);
-
+router.post("/getAnyUserById", Middleware.authorizationToken, ConversationCtrl.getAnyUserById);
 
 // chat
 router.post("/addMessage",
-Middleware.authorizationToken,
-upload.fields([
-    { name: "filess", maxCount: 3 },
-    { name: "images", maxCount: 3 },
-    { name: "video", maxCount: 1 },
-]),
-MessageCtrl.addMessage
+    Middleware.authorizationToken,
+    upload.fields([
+        { name: "filess", maxCount: 3 },
+        { name: "images", maxCount: 3 },
+        { name: "video", maxCount: 1 },
+    ]),
+    MessageCtrl.addMessage
 );
 router.post("/getMessageByIDConversation", Middleware.authorizationToken, MessageCtrl.getMessageByIDConversation);
 router.post("/updateStatusMessage", Middleware.authorizationToken, MessageCtrl.updateStatusMessage);

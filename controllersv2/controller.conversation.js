@@ -12,10 +12,10 @@ exports.createConversation = async (req, res) => {
     let idUserLoged = req.body.creator_id;
     let idUserSelected = req.body.receive_id;
     if (idUserLoged == undefined || idUserLoged.length == 0) {
-        return res.send({ message: "user loged is null", code: 0 });
+        return res.send({ message: "creator_id is null", code: 0 });
     }
     if (idUserSelected == undefined || idUserSelected.length == 0) {
-        return res.send({ message: "user selected is null", code: 0 });
+        return res.send({ message: "receive_id is null", code: 0 });
     }
     let date = new Date();
     let specificTimeZone = 'Asia/Ha_Noi';
@@ -34,10 +34,26 @@ exports.createConversation = async (req, res) => {
                 deleted_at: ""
             });
             await newConversation.save();
-            return res.send({ id: newConversation._id, message: "add conversation success", code: 1, time: timestamp });
+            let reponseConversation = {
+                conversation_id: newConversation._id,
+                creator_id: newConversation.creator_id,
+                receive_id: newConversation.receive_id,
+                created_at: newConversation.created_at,
+                updated_at: newConversation.updated_at,
+                deleted_at: newConversation.deleted_at,
+            }
+            return res.send({ conversation: reponseConversation, message: "add conversation success", code: 1, time: timestamp });
         }
         else {
-            return res.send({ id: conversation._id, message: "conversation exist", code: 1, time: timestamp });
+            let reponseConversation = {
+                conversation_id: conversation._id,
+                creator_id: conversation.creator_id,
+                receive_id: conversation.receive_id,
+                created_at: conversation.created_at,
+                updated_at: conversation.updated_at,
+                deleted_at: conversation.deleted_at,
+            }
+            return res.send({ conversation: reponseConversation, message: "conversation exist", code: 1, time: timestamp });
         }
     } catch (e) {
         console.error(e);
@@ -267,3 +283,18 @@ exports.getConversation = async (req, res) => {
         return res.send({ message: "conversation not found", code: 0 })
     }
 }
+
+exports.getAnyUserById = async (req, res) => {
+    let userId = req.body.userId;
+    if (userId == null || userId.length == 0) {
+        return res.send({ message: "userId is required", code: 0 });
+    }
+    try {
+        let user = await AdminModel.adminModel.findById({ _id: userId },
+            { avatar: true, email: true, full_name: true, phone_number: true });
+        return res.send({ user: user, message: "get user success", code: 1 });
+    } catch (e) {
+        console.log(e.message);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+};
