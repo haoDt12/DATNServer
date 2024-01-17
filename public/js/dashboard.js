@@ -16,6 +16,16 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   const date = new Date();
   let data_chart = [];
+  async function getYearStatic(year_input) {
+    try {
+      const response = await axios.post(`/apiv2/getYearStatic`, {
+        year_input: year_input
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async function getStatic(startDate,endDate) {
     try {
       const response = await axios.post(`/apiv2/getStatic`, {
@@ -64,21 +74,40 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return sum;
   }
-  function createArrayOfDates(startDate, endDate) {
-    const dates = [];
-    let currentDate = new Date(startDate);
-
-    while (currentDate <= endDate) {
-      dates.push(currentDate.toLocaleDateString());
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return dates;
-  }
+  // function createArrayOfDates(startDate, endDate) {
+  //   const dates = [];
+  //   let currentDate = new Date(startDate);
+  //
+  //   while (currentDate <= endDate) {
+  //     dates.push(currentDate.toLocaleDateString());
+  //     currentDate.setDate(currentDate.getDate() + 1);
+  //   }
+  //   return dates;
+  // }
 
   let chartCustom;
   const options = {month: 'numeric', day: 'numeric'};
   const options_full = { year: 'numeric', month: '2-digit', day: '2-digit' };
 
+  function getCurrentMonthTime() {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+    const dates = [];
+    let currentDateCopy = new Date(startDate);
+
+    while (currentDateCopy <= endDate) {
+      dates.push(new Date(currentDateCopy));
+      currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+    }
+
+    return dates;
+  }
+
+//Khởi tạo biến
+  const oneMonthTime = getCurrentMonthTime();
+  const formattedDates = oneMonthTime.map(date => date.toLocaleDateString('en-US', options_full));
   function FormatDate(array){
     array.map(date => date.toLocaleDateString('en-US', options));
   }
@@ -90,11 +119,8 @@ document.addEventListener("DOMContentLoaded", function() {
   to_input.addEventListener('change', function (){
     console.log(to_input.value);
   });
-
-  save.addEventListener('click', function (){
-    getStatic(from_input.value, to_input.value).then(data =>{
-      console.log(data.data)
-      console.log(data.date)
+  function CustomStatic(from_input, to_input){
+    getStatic(from_input, to_input).then(data =>{
       chartCustom = {
         series: [
           { name: "Earnings this day:", data: data.data },
@@ -175,9 +201,12 @@ document.addEventListener("DOMContentLoaded", function() {
       let chart_custom = new ApexCharts(document.querySelector("#chart_custom"), chartCustom);
       chart_custom.render().then(r =>{});
     });
+  }
+  save.addEventListener('click', function (){
+    CustomStatic(from_input.value, to_input.value);
   });
-
-  let dataSelect = ["2023", "2024", "2025"]
+  CustomStatic(formattedDates[0], formattedDates[formattedDates.length-1]);
+  let dataSelect = ["2024", "2025", "2026"]
   dataSelect.forEach(date =>{
     let child = document.createElement("option")
     child.value = date
@@ -188,25 +217,23 @@ document.addEventListener("DOMContentLoaded", function() {
   let year_selected = dataSelect[1];
   select_year.addEventListener('change', function (){
     year_selected = select_year.value;
-    const first_date = data_date[0];
-    const last_date = data_date[data_date.length - 1];
-    WeekStatic(first_date, last_date);
+    YearStatic(year_selected);
   });
 
-  let data_date = [];
-  const previousWeek = new Date(date);
-  previousWeek.setDate(previousWeek.getDate() - 6);
-  for (let i = 0; i < 7; i++) {
-    const currentDate = new Date(previousWeek);
-    currentDate.setDate(currentDate.getDate() + i);
-    const formattedDate = currentDate.toLocaleDateString('en-US', options_full);
-    data_date.push(formattedDate);
-  }
-  console.log(data_date)
-  const first_date = data_date[0];
-  const last_date = data_date[data_date.length - 1];
-  function WeekStatic(first_date, last_date){
-    getStatic(first_date, last_date).then(data =>{
+  // let data_date = [];
+  // const previousWeek = new Date(date);
+  // previousWeek.setDate(previousWeek.getDate() - 6);
+  // for (let i = 0; i < 7; i++) {
+  //   const currentDate = new Date(previousWeek);
+  //   currentDate.setDate(currentDate.getDate() + i);
+  //   const formattedDate = currentDate.toLocaleDateString('en-US', options_full);
+  //   data_date.push(formattedDate);
+  // }
+  // console.log(data_date)
+  // const first_date = data_date[0];
+  // const last_date = data_date[data_date.length - 1];
+  function YearStatic(year_input){
+    getYearStatic(year_input).then(data =>{
       if (data.code === 1){
         data_chart = data.data;
         console.log(data.data)
@@ -297,33 +324,33 @@ document.addEventListener("DOMContentLoaded", function() {
 
     });
   }
-  WeekStatic(first_date, last_date);
+  YearStatic(new Date().getFullYear());
 
 //Thông kê doanh thu trong 1 năm
   //Tạo hàm rage ra 1 năm
-  function getYearTime(year) {
-    const startDate = new Date(year, 0, 1);
-    const endDate = new Date(year, 11, 31);
-
-    const days = [];
-    let currentDateCopy = new Date(startDate);
-
-    while (currentDateCopy <= endDate) {
-      days.push(new Date(currentDateCopy));
-      currentDateCopy.setDate(currentDateCopy.getDate() + 1);
-    }
-
-    return days;
-  }
+  // function getYearTime(year) {
+  //   const startDate = new Date(year, 0, 1);
+  //   const endDate = new Date(year, 11, 31);
+  //
+  //   const days = [];
+  //   let currentDateCopy = new Date(startDate);
+  //
+  //   while (currentDateCopy <= endDate) {
+  //     days.push(new Date(currentDateCopy));
+  //     currentDateCopy.setDate(currentDateCopy.getDate() + 1);
+  //   }
+  //
+  //   return days;
+  // }
 
 //Khởi tạo biến
   const currentYear = new Date().getFullYear();
-  const yearTime = getYearTime(currentYear);
-  const formattedYear = yearTime.map(date => date.toLocaleDateString('en-US', options_full));
+  // const yearTime = getYearTime(currentYear);
+  // const formattedYear = yearTime.map(date => date.toLocaleDateString('en-US', options_full));
   let data_year = [];
 
   //Gọi API và render ra dữ liệu
-  getStatic(formattedYear[0], formattedYear[formattedYear.length-1]).then(data =>{
+  getYearStatic(currentYear).then(data =>{
     if (data.code === 1){
       data_year = data.data;
       let total = calculateSum(data_year);
@@ -335,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function() {
       let breakupData = {
         color: "#adb5bd",
         series: data_year,
-        labels: ["2022", "2021", "2020"],
+        labels: data.date,
         chart: {
           width: 180,
           type: "donut",
@@ -385,25 +412,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 //Thông kê doanh thu trong 1 tháng
   //Tạo hàm rage ra 1 tháng
-  function getCurrentMonthTime() {
-    const currentDate = new Date();
-    const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-    const dates = [];
-    let currentDateCopy = new Date(startDate);
-
-    while (currentDateCopy <= endDate) {
-      dates.push(new Date(currentDateCopy));
-      currentDateCopy.setDate(currentDateCopy.getDate() + 1);
-    }
-
-    return dates;
-  }
-
-//Khởi tạo biến
-  const oneMonthTime = getCurrentMonthTime();
-  const formattedDates = oneMonthTime.map(date => date.toLocaleDateString('en-US', options_full));
   let data_month = [];
 
   //Gọi API và render ra dữ liệu
