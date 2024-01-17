@@ -156,7 +156,7 @@ exports.cancelOrder = async (req, res) => {
         await order.save();
         let product = await ProductModel.productModel.findById(detailOrder[0].product_id);
         let cus = await CustomerModel.customerModel.findById(order.customer_id);
-        await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time}  mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
+        await createNotifi("Huỷ đơn hàng", `Bạn đã huỷ một đơn hàng vào lúc ${create_time} với mã đơn hàng ${order._id}`, product.img_cover, create_time, order.customer_id, cus.fcm);
         return res.send({message: "cancel order success", code: 1})
 
     } catch (e) {
