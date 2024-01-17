@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     socket.on('user-chat', (data) => {
         const idUserLoged = utils.GetCookie("Uid");
+        console.log(data);
         const { _id, conversation_id, sender_id, message, message_type, status, created_at, deleted_at } = data;
         let time = created_at.slice(created_at.length - 8, created_at.length - 3);
 
@@ -67,6 +68,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
     });
+
+    socket.on('user-update-chat', (data) => {
+        console.log(data);
+    })
 
     const btnChooseFile = document.getElementById('open-file');
     const btnChooseImage = document.getElementById('open-image');
@@ -185,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (data.code == 1) {
                         socket.emit('on-chat', {
                             message: data.dataMessage
-                        })
+                        });
                         resetInput();
                     }
                     else if (data.code == 0) {
@@ -323,7 +328,7 @@ document.addEventListener("DOMContentLoaded", function () {
         else if (messageType == "image") {
             messageContent = document.createElement('img');
             messageContent.classList.add('mb-0', 'mr-1', 'mt-1', 'pr-4');
-            messageContent.src = images;
+            messageContent.src = message;
             messageContent.style.width = '150px';
             messageContent.style.height = '100px';
             messageContent.style.borderRadius = '8px';
