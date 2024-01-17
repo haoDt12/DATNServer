@@ -202,6 +202,40 @@ exports.getStatic = async (req, res) => {
     }
 };
 
+exports.getYearStatic = async (req, res) => {
+    let year_input = req.body.year_input;
+
+    if (year_input === null) {
+        return res.send({message: "year is required", code: 0});
+    }
+    try {
+        let dataOrder = [];
+        let dataGetFromYear = [];
+        let data = [];
+        let date = [];
+        let order = await OrderModel.oderModel.find({status: "PayComplete"});
+        order.map(item => {
+            const formattedDate = moment(item.create_time, "YYYY-MM-DD-HH:mm:ss").format("MM-YYYY");
+            dataOrder.push({date: formattedDate, total: item.total_amount})
+        })
+        dataGetFromYear = calculateTotalOneMonth(dataOrder, year_input);
+        dataGetFromYear.map(item => {
+            data.push(item.total)
+            date.push(item.month)
+        })
+        return res.send({
+            message: "get order from date to date success",
+            code: 1,
+            name: "OrderFromDateToDate",
+            data: data,
+            date: date
+        })
+    } catch (e) {
+        console.log(e.message);
+        return res.send({message: e.message.toString(), code: 0});
+    }
+};
+
 exports.updateStatusOrder = async (req, res) => {
     let orderId = req.body.orderId;
     let employeeId = req.body.employeeId;
@@ -251,21 +285,41 @@ function calculateTotal(data, fromDate, toDate) {
     dateRange.forEach(date => {
         totals[date] = 0;
     });
+
     data.forEach(item => {
         const date = item.date;
         const total = Number(item.total);
 
-        if (!totals[date]) {
-            totals[date] = 0;
+        if (totals[date] !== undefined) {
+            totals[date] += total;
         }
-        totals[date] += total;
     });
+
     return Object.keys(totals).map(date => ({
         date,
         total: totals[date],
     }));
 }
 
+function calculateTotalOneMonth(data, year_input) {
+    const month_totals = {};
+    const dateRange = generateMonthRange(year_input);
+    dateRange.forEach(month => {
+        month_totals[month] = { month, total: 0 };
+    });
+    data.forEach(item => {
+        const date = item.date;
+        const total = Number(item.total);
+
+        if (month_totals[date]) {
+            month_totals[date].total += total;
+        } else if (dateRange.includes(date)) { // Kiểm tra nếu date nằm trong dateRange
+            month_totals[date] = { month: date, total };
+        }
+    });
+
+    return Object.values(month_totals);
+}
 function generateDateRange(fromDate, toDate) {
     const dateRange = [];
     const currentDate = new Date(fromDate);
@@ -273,6 +327,22 @@ function generateDateRange(fromDate, toDate) {
         dateRange.push(currentDate.toISOString().split('T')[0]);
         currentDate.setDate(currentDate.getDate() + 1);
     }
+    return dateRange;
+}
+
+function generateMonthRange(year_input) {
+    const dateRange = [];
+    const currentDate = new Date(year_input, 0); // Năm và tháng bắt đầu từ 0
+
+    for (let i = 0; i < 12; i++) {
+        const month = currentDate.getMonth() + 1;  // Lấy tháng từ 0-11, cần +1 để có giá trị từ 1-12
+        const formattedDate = `${month.toString().padStart(2, '0')}-${year_input.toString()}`;
+        dateRange.push(formattedDate);
+
+        // Tăng tháng đi 1 để tiếp tục vòng lặp với tháng tiếp theo
+        currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+    console.log(dateRange)
     return dateRange;
 }
 

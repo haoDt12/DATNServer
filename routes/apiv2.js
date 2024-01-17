@@ -83,6 +83,7 @@ router.post("/cancelOrder", Middleware.authorizationToken, OrderCtrl.cancelOrder
 router.post("/updateStatusOrder", OrderCtrl.updateStatusOrder);
 router.post("/createOrderGuest", Middleware.authorizationToken, OrderCtrl.createOrderGuest);
 router.post("/getStatic", OrderCtrl.getStatic);
+router.post("/getYearStatic", OrderCtrl.getYearStatic);
 router.post("/getPriceOrderZaloPay", Middleware.authorizationToken, OrderCtrl.getPriceOrderZaloPay);
 router.post("/createOrderZaloPay", Middleware.authorizationToken, OrderCtrl.createOrderZaloPay);
 router.post("/getOrderByOrderId", Middleware.authorizationToken, OrderCtrl.getOrderByOrderId);
