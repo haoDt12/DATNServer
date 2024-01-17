@@ -342,7 +342,6 @@ function generateMonthRange(year_input) {
         // Tăng tháng đi 1 để tiếp tục vòng lặp với tháng tiếp theo
         currentDate.setMonth(currentDate.getMonth() + 1);
     }
-    console.log(dateRange)
     return dateRange;
 }
 

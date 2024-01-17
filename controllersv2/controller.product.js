@@ -132,7 +132,6 @@ function getProductsInRange(products) {
 function getProductsInRangeSale(products) {
   let limit =
   products.reduce((max, product) => (Number(product.sold) > max ? Number(product.sold) : max), -Infinity);
-    console.log(limit)
   return products.filter(product => Number(product.sold) >= 1 && Number(product.sold) <= Number(limit));
 }
 
