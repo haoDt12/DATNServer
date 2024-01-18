@@ -344,14 +344,24 @@ router.post('/stech.manager/deleteProduct', async function (req, res, next) {
         return res.send({ message: "product not found", code: 0 });
     }
     try {
+        const updateStatus = { status: 'remove' };
+        await ProductModel.productModel.findByIdAndUpdate(productId,updateStatus);
 
-        await ProductModel.productModel.findByIdAndDelete(productId);
-        await ProductImg.productImgModel.deleteMany({ product_id: productId });
-        await ProductVideo.productVideoModel.findOneAndDelete({ product_id: productId });
+        res.redirect(req.get('referer'));
+    } catch (e) {
+        console.log(e);
+        return res.send({ message: e.message.toString(), code: 0 });
+    }
+});
+router.post('/stech.manager/undeleteProduct', async function (req, res, next) {
+    let productId = req.body.productId;
+    if (productId == null) {
+        return res.send({ message: "product not found", code: 0 });
+    }
+    try {
+        const updateStatus = { status: 'stocking' };
+        await ProductModel.productModel.findByIdAndUpdate(productId,updateStatus);
 
-
-        const productFirebase = `products/${productId}`;
-        await UploadFileFirebase.deleteFolderAndFiles(res, productFirebase);
         res.redirect(req.get('referer'));
     } catch (e) {
         console.log(e);

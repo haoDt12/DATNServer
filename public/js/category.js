@@ -2,22 +2,22 @@ document.addEventListener("DOMContentLoaded", function () {
     let confirmDeleteCate = new bootstrap.Modal(document.getElementById('confirmDeleteCate'));
 
 
-    let deleteCate = document.querySelectorAll('.deleteCate');
+    //let deleteCate = document.querySelectorAll('.deleteCate');
     let updateCate = document.querySelectorAll('.updateCate');
 
     // DELETE
-    deleteCate.forEach(function (button) {
-        button.addEventListener('click', function () {
-            const categoryID = this.getAttribute('data-id');
-            const categoryName = this.getAttribute('data-name');
-            let nameCateDelete = document.getElementById('nameCateDelete');
-            displayModal(nameCateDelete, categoryName);
-            let confirmDelete = document.getElementById('confirmDelete');
-            confirmDelete.addEventListener('click', () => {
-                deleteCategory(categoryID, null);
-            })
-        })
-    })
+    // deleteCate.forEach(function (button) {
+    //     button.addEventListener('click', function () {
+    //         const categoryID = this.getAttribute('data-id');
+    //         const categoryName = this.getAttribute('data-name');
+    //         let nameCateDelete = document.getElementById('nameCateDelete');
+    //         displayModal(nameCateDelete, categoryName);
+    //         let confirmDelete = document.getElementById('confirmDelete');
+    //         confirmDelete.addEventListener('click', () => {
+    //             deleteCategory(categoryID, null);
+    //         })
+    //     })
+    // })
     // UPDATE
     updateCate.forEach(function (button) {
         button.addEventListener('click', function () {
