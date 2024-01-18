@@ -170,9 +170,14 @@ block content
                                                             i.ti.ti-list-details.fs-6
                                                             p.mb-0.fs-3 Chi tiết sản phẩm
                                                         if terifyWith == "Admin"
-                                                            a.d-flex.align-items-center.gap-2.dropdown-item.DeletePro( class="openModalDeleteProduct" href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")
-                                                                i.ti.ti-trash.fs-6
-                                                                p.mb-0.fs-3 Xoá sản phẩm
+                                                            if product.status == "stocking"
+                                                                a.d-flex.align-items-center.gap-2.dropdown-item.DeletePro( class="openModalDeleteProduct" href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#DelProModal")
+                                                                    i.ti.ti-trash.fs-6
+                                                                    p.mb-0.fs-3 Ẩn sản phẩm
+                                                            else
+                                                                a.d-flex.align-items-center.gap-2.dropdown-item.DeletePro( class="openModalUnDeleteProduct" href='' data-id=product._id data-bs-toggle='modal' data-bs-target="#unDelProModal")
+                                                                    i.ti.ti-trash.fs-6
+                                                                    p.mb-0.fs-3 Hủy ẩn
                                                             a.d-flex.align-items-center.gap-2.dropdown-item( data-bs-toggle='modal' data-id=product._id class = 'OpenUpdateProduct')
                                                                 i.ti.ti-edit.fs-6
                                                                 p.mb-0.fs-3 Sửa sản phẩm
@@ -222,13 +227,26 @@ block content
                 .modal-dialog
                     .modal-content
                         .modal-header
-                            h5.modal-title Xóa Product!
+                            h5.modal-title Ẩn Product!
                         .modal-body
-                            p.ms-4 Bạn có chắc chắn muốn xóa?
+                            p.ms-4 Bạn có chắc chắn muốn ẩn?
                             .modal-body
                                 form(action="/stech.manager/deleteProduct" method="post")
                                     .mb-3.d-none
                                         input#idProductDelete.form-control(name='productId', type='text', aria-describedby='textHelp')
+                                    button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
+                                    button.ms-3.btn.btn-danger(type='submit') Đồng ý
+            #unDeleteProductModal.modal(tabindex='-1')
+                .modal-dialog
+                    .modal-content
+                        .modal-header
+                            h5.modal-title Hủy ẩn Product!
+                        .modal-body
+                            p.ms-4 Bạn có chắc chắn hủy ẩn?
+                            .modal-body
+                                form(action="/stech.manager/undeleteProduct" method="post")
+                                    .mb-3.d-none
+                                        input#idProductUnDelete.form-control(name='productId', type='text', aria-describedby='textHelp')
                                     button.btn.btn-dark(type='button' data-bs-dismiss='modal') Quay lại
                                     button.ms-3.btn.btn-danger(type='submit') Đồng ý
     script(src="/js/product.js")

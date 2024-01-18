@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const token = utils.GetCookie("token");
     const detailLinks = document.querySelectorAll(".DetailPro");
     const openModalDelete = document.querySelectorAll(".openModalDeleteProduct");
+    const openModalUnDelete = document.querySelectorAll(".openModalUnDeleteProduct");
     const detailLink = document.getElementById("Detail");
 
     //
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     // Modal
     const DelProModal = new bootstrap.Modal(document.getElementById('DeleteProductModal'));
+    const unDelProModal = new bootstrap.Modal(document.getElementById('unDeleteProductModal'));
     const AddCartModal = new bootstrap.Modal(document.getElementById('AddCartModal'));
     // Button call api
     const ConfirmCrePro = document.getElementById("ConfirmCrePro");
@@ -43,6 +45,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         })
     })
+    openModalUnDelete.forEach(function (button) {
+        button.addEventListener('click', function () {
+            const productId = this.getAttribute('data-id');
+            console.log(productId)
+            document.getElementById('idProductUnDelete').value = productId;
+            unDelProModal.show();
+
+        })
+    })
+
 
 
     AddCartPro.forEach(function (AddToCart){
